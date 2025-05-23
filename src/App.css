@@ -1,0 +1,117 @@
+.green-cell {
+  background-color: palegreen;
+}
+
+.money::before {
+  content: '₹';
+}
+
+.money {
+  color: green;
+}
+
+.modal-bg {
+  background-color: rgba(0, 0, 0, 0.187);
+  backdrop-filter: blur(5px);
+}
+
+.modal-close {
+  background-color: aqua;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 5002;
+  /* Above the modal content */
+}
+
+@media print {
+
+  @page  {
+    size: A4;
+    margin: 0;
+  }
+
+  body * {
+    visibility: hidden;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    /* border: 2px solid purple */
+  }
+  
+  #invoice-container {
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    font-weight: 500;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    /* border: 2px solid crimson; */
+    min-width: 100dvw;
+    min-width: 100vw;
+  }
+
+  #invoice-container * {
+    visibility: visible;
+  }
+
+  #invoice-cotent {
+    padding: 0;
+    margin: 0;
+  }
+
+  #invoice-content th {
+    background-color: #f1f1f1;
+  }
+}
+
+.pattern-bg {
+  background-color: #f1f5f9;
+  opacity: 0.8;
+  background-image: radial-gradient(#0d0e11 0.5px, transparent 0.5px), radial-gradient(#0d0e11 0.5px, #f1f5f9 0.5px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+}
+
+.ag-theme-quartz {
+  --ag-header-foreground-color: #f1f5f9;
+}
+
+.ag-theme-quartz .ag-header {
+  background-color: var(--color-primary) !important;
+}
+
+.ag-theme-quartz .ag-header-cell-label {
+  color: #f1f5f9 !important;
+  font-weight: bold;
+}
+
+.ag-icon-filter,
+.ag-icon-asc,
+.ag-icon-desc {
+  color: #f1f5f9 !important;
+}
+
+.ag-header-cell-resize {
+  background-color: var(--color-primary) !important;
+  filter: brightness(1.1);
+
+}
+
+.ag-center-cols-viewport {
+  /* background-color: var(--color-background) !important; */
+}
