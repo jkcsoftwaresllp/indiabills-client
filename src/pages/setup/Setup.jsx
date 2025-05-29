@@ -1,3 +1,5 @@
+const LocationMetadata = [ { name: "warehouseId", type: "string", label: "Location ID", placeholder: "Location ID", category: "Shipping", autocomplete: false, required: false, readonly: true, toAdd: false, }, { name: "warehouseName", type: "string", label: "Warehouse Name", placeholder: "", category: "Shipping", autocomplete: false, required: true, readonly: false, toAdd: true, }, { name: "capacity", type: "number", label: "Capacity", placeholder: "(cm3)", category: "Shipping", autocomplete: false, required: true, readonly: false, toAdd: true, }, { name: "addressLine", type: "string", label: "Address", placeholder: "Plot no. & Other details", category: "Shipping", autocomplete: false, required: true, readonly: false, toAdd: true, }, { name: "landmark", type: "string", label: "Landmark", placeholder: "Near anything recognisable?", category: "Shipping", autocomplete: false, required: false, readonly: false, toAdd: true, }, { name: "city", type: "string", label: "City", placeholder: "Patna, Delhi, etc.", category: "Shipping", autocomplete: false, required: true, readonly: false, toAdd: true, }, { name: "district", type: "string", label: "District", placeholder: "Specify district or area", category: "Shipping", autocomplete: false, required: true, readonly: false, toAdd: true, }, { name: "state", type: "string", label: "State", placeholder: "", category: "Shipping", autocomplete: true, required: true, readonly: false, toAdd: true, }, { name: "pinCode", type: "number", label: "Pin Code", placeholder: "xxxxxx", category: "Shipping", autocomplete: false, required: true, readonly: false, toAdd: true, }, { name: "dateAdded", type: "date", label: "Date Added", placeholder: "Date", category: "Additional Info", readonly: true, autocomplete: false, }, { name: "addedBy", type: "string", label: "Added By", placeholder: "Name", category: "Additional Info", readonly: true, autocomplete: false, }, { name: "lastEditedDate", type: "date", label: "Last Edited Date", placeholder: "Date", category: "Additional Info", readonly: true, autocomplete: false, }, { name: "lastEditedBy", type: "string", label: "Last Edited By", placeholder: "Name", category: "Additional Info", readonly: true, autocomplete: false, }, ];
+
 // noinspection SpellCheckingInspection
 
 import bg1 from "../../assets/bg_setup.png";
@@ -10,7 +12,10 @@ import InputBox from "../../components/FormComponent/InputBox";
 import React, { useEffect, useState, memo } from "react";
 import { addRow, uploadImg, apiLogin, checkSetup } from "../../network/api";
 import SetupTemplate from "../../components/core/SetupTemplate";
-import { initializeFlexibleOptions, initializePrefs } from "../../utils/PrefsHelper";
+import {
+  initializeFlexibleOptions,
+  initializePrefs,
+} from "../../utils/PrefsHelper";
 import { quickAdd } from "../../network/api";
 import { renameAndOptimize } from "../../utils/FormHelper";
 import { useStore } from "../../store/store";
@@ -71,19 +76,19 @@ const Setup = () => {
     website: "",
     addressLine: "",
     state: "",
+
     upi: "",
     accountNumber: "",
     ifscCode: "",
     bankBranch: "",
   });
-
   const submitOrganization = async () => {
     /* UPLOAD IMAGE */
     let workaround = "";
     if (logo) {
       const ImageData = await renameAndOptimize(
         organization.organizationName,
-        logo
+        logo,
       );
       const response = await uploadImg(ImageData.image, true);
       if (response !== 200) {
@@ -128,7 +133,6 @@ const Setup = () => {
     password: "",
     confirmPassword: "",
   });
-
   const submitAdmin = async () => {
     /* VALIDATION */
     if (admin.password !== admin.confirmPassword) {
@@ -140,6 +144,7 @@ const Setup = () => {
     let workaround = "";
     if (image) {
       const ImageData = await renameAndOptimize(admin.userName, image);
+      // console.info("image processed:", ImageData);
       const response = await uploadImg(ImageData.image, true);
       if (response !== 200) {
         console.error("Failed to upload the image");
@@ -147,7 +152,6 @@ const Setup = () => {
       }
       workaround = ImageData.name;
     }
-
     /* ADD / SIGN-IN */
     const response = await addRow(`/auth/signup`, {
       ...admin,
@@ -159,16 +163,16 @@ const Setup = () => {
     } else {
       console.log("User added:", response);
     }
-
-    /* LOGIN */
+    /* LOGIN */ // Creating Session ...
     const loginResponse = await apiLogin({
       email: admin.email,
       password: admin.password,
     });
 
-    const session = loginResponse.data;
+    const session= loginResponse.data;
+    console.log(session);
 
-    const payload = {
+    const payload= {
       id: session.user.id,
       name: session.user.name,
       role: session.user.role,
@@ -180,10 +184,7 @@ const Setup = () => {
   };
 
   /* ADD WAREHOUSE */
-  const [locationFormData, setLocationFormData] = useState(
-    initializeFormData(LocationMetadata)
-  );
-
+  const [locationFormData, setLocationFormData] = useState<Location>(initializeFormData(LocationMetadata));
   const submitLocation = () => {
     console.log(locationFormData);
     quickAdd("/inventory/warehouses/add", locationFormData).then((res) => {
@@ -207,6 +208,7 @@ const Setup = () => {
       className="grid place-items-center w-full rounded-xl p-4"
       style={{
         backgroundImage: `url(${getBackgroundImage()})`,
+        // backgroundImage: `url(${bg1})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         height: "100dvh",
@@ -242,3 +244,334 @@ const Setup = () => {
 };
 
 export default Setup;
+
+/*-----------LANDING----------*/
+
+const LandingSetup = memo(({ setPage }) => {
+  const main = (
+    <p className={"text-center text-md"}>
+      We commit to provide the modern solution for inventory and
+      distributorships. We are excited to have you onboard. Let&apos;s get you
+      started with the setup.
+    </p>
+  );
+
+  return (
+    <SetupTemplate
+      heading="Welcome to IndiaBills!"
+      main={main}
+      navigation="next"
+      setPage={setPage}
+    />
+  );
+});
+
+LandingSetup.displayName = "LandingSetup";
+
+/*-----------BRANDING----------*/
+
+const BrandingSetup = memo(({ setPage, setLogo, organization, setOrganization }) => {
+    const handleChange = (e) => {
+      const { name, value, type } = e.target;
+      setOrganization((prevState) => ({
+        ...prevState,
+        [name]: type === "number" ? Number(value) : value,
+      }));
+    };
+
+    // @formatter:off
+    const main = (
+      <div className="flex flex-col gap-8">
+        <div className="flex flex-col items-center gap-6">
+          <div className="flex w-full gap-4">
+            <InputBox
+              name="organizationName"
+              type="string"
+              label="Organization Name"
+              placeholder={""}
+              value={organization?.organizationName}
+              onChange={(e) => handleChange?.(e)}
+            />
+            <div className="flex w-full gap-4 items-center">
+              <ImageUpload
+                placeholder="Upload Logo ⤴ | 24 x 24"
+                setImage={setLogo}
+              />
+            </div>
+            <InputBox
+              name="gstin"
+              type="string"
+              label="GSTIN"
+              placeholder={""}
+              value={organization?.gstin}
+              onChange={(e) => handleChange?.(e)}
+            />
+          </div>
+          <div className={"flex w-full gap-4"}>
+            <InputBox
+              multiline
+              maxRows={3}
+              name={"about"}
+              type="string"
+              label="About"
+              placeholder={""}
+              value={organization?.about}
+              onChange={(e) => handleChange?.(e)}
+            />
+            <InputBox
+              name="tagline"
+              type="string"
+              label="Motto"
+              placeholder={"Your tagline for your brand"}
+              value={organization?.tagline}
+              onChange={(e) => handleChange?.(e)}
+            />
+          </div>
+          <div className="flex w-full gap-4">
+            <InputBox
+              name={"email"}
+              type="string"
+              label="Email"
+              placeholder={"example@domain"}
+              value={organization?.email}
+              onChange={(e) => handleChange?.(e)}
+            />
+            <InputBox
+              startText="https://www."
+              name={"website"}
+              type="string"
+              label="Website"
+              placeholder={"yourorganization.com"}
+              value={organization?.website}
+              onChange={(e) => handleChange?.(e)}
+            />
+            <MobileField
+              label={"Mobile"}
+              name={"phone"}
+              setData={setOrganization}
+              data={organization}
+            />
+          </div>
+          <div className="flex w-full gap-4">
+            <InputBox
+              name={"bankBranch"}
+              type="string"
+              label="Branch"
+              placeholder={""}
+              value={organization?.bankBranch}
+              onChange={(e) => handleChange?.(e)}
+            />
+            <InputBox
+              name={"accountNumber"}
+              type="string"
+              label="A/C No."
+              placeholder={"xxxxxx"}
+              value={organization?.accountNumber}
+              onChange={(e) => handleChange?.(e)}
+            />
+            <InputBox
+              name={"ifscCode"}
+              type="number"
+              label="IFSC Code"
+              placeholder={"xxxxxx"}
+              value={organization?.ifscCode}
+              onChange={(e) => handleChange?.(e)}
+            />
+            <InputBox
+              name={"upi"}
+              type="string"
+              label="UPI ID"
+              placeholder={"xxxxx@upi"}
+              value={organization?.upi}
+              onChange={(e) => handleChange?.(e)}
+            />
+          </div>
+          <div className="flex w-full gap-4">
+            <div className={"w-4/12"}>
+              <Dropdown
+                name={"state"}
+                label="State"
+                options={getOption("state")}
+                selectedData={organization}
+                setValue={setOrganization}
+              />
+            </div>
+            <InputBox
+              name={"addressLine"}
+              type="string"
+              label="Address Line"
+              placeholder={"Office building, Street Name, District"}
+              value={organization?.addressLine}
+              onChange={(e) => handleChange?.(e)}
+            />
+          </div>
+        </div>
+      </div>
+    );
+
+    return (
+      <SetupTemplate
+        big={true}
+        heading="Setup your [Organization]."
+        main={main}
+        navigation="both"
+        setPage={setPage}
+      />
+    );
+  },
+);
+
+BrandingSetup.displayName = "BrandingSetup";
+
+/*-----------ADMIN----------*/
+
+const AdminSetup = memo(({ setPage, setImage, admin, setAdmin }) => {
+  const handleChange = (e) => {
+    const { name, value, type } = e.target;
+    setAdmin((prevState) => ({
+      ...prevState,
+      [name]: type === "number" ? Number(value) : value,
+    }));
+  };
+
+  const main = (
+    <div>
+      <ImageUpload setImage={setImage} />
+      <div className="p-8 flex flex-col items-center gap-8">
+        <div className="flex w-full gap-4">
+          <InputBox
+            moreVisible={true}
+            name="userName"
+            type="string"
+            label="Name"
+            placeholder={"___________"}
+            value={admin?.userName}
+            onChange={(e) => handleChange?.(e)}
+          />
+        </div>
+        <div className="flex w-full gap-4">
+          <div className="w-1/2">
+            <InputBox
+              moreVisible={true}
+              name={"email"}
+              type="string"
+              label="Email"
+              placeholder={"example@domain"}
+              value={admin?.email}
+              onChange={(e) => handleChange?.(e)}
+            />
+          </div>
+          <MuiTelInput
+            style={{ borderRadius: "1rem" }}
+            label={"Phone"}
+            name={"phone"}
+            defaultCountry="IN"
+            onlyCountries={["FR", "IN", "BE", "SA"]}
+            InputProps={{ inputProps: { maxLength: 15 } }}
+            placeholder={"XXXXXXX"}
+            onChange={(value) => setAdmin({ ...admin, ["mobile"]: value })}
+            value={admin.mobile}
+          />
+        </div>
+        <div className="flex w-full gap-4">
+          <InputBox
+            moreVisible={true}
+            name={"password"}
+            type="password"
+            label="Password"
+            placeholder={"******"}
+            value={admin?.password}
+            onChange={(e) => handleChange?.(e)}
+          />
+          <InputBox
+            moreVisible={true}
+            name={"confirmPassword"}
+            type="password"
+            label="Confirm Password"
+            placeholder={"******"}
+            value={admin?.confirmPassword}
+            onChange={(e) => handleChange?.(e)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <SetupTemplate
+      heading="Create a [Root] User."
+      main={main}
+      navigation="both"
+      setPage={setPage}
+    />
+  );
+});
+
+AdminSetup.displayName = "AdminSetup";
+
+/*-----------WAREHOUSE----------*/
+
+const WarehouseSetup = memo(
+  ({ setPage, locationFormData, setLocationFormData, finish }) => {
+    const handleLocationChange =
+      (type, name, value) =>
+      (e) => {
+        if (type === "autocomplete") {
+          setLocationFormData((prevState) => ({
+            ...prevState,
+            [name]: value,
+          }));
+        } else {
+          setLocationFormData((prevState) => ({
+            ...prevState,
+            [name]: e.target.value,
+          }));
+        }
+      };
+
+    const main = (
+      <div className="grid grid-cols-2 gap-8 p-6">
+        {LocationMetadata.map((location) => {
+          if (location.toAdd) {
+            if (location.autocomplete) {
+              return (
+                <div key={location.name}>
+                  <DropdownStream
+                    moreVisible={true}
+                    field={location}
+                    options={getOption("state")}
+                    required={true}
+                    handleChange={handleLocationChange}
+                  />
+                </div>
+              );
+            } else {
+              return (
+                <div key={location.name} className={"idms-transparent-bg"}>
+                  <InputBoxStream
+                    moreVisible={true}
+                    field={location}
+                    value={locationFormData[location.name]}
+                    handleChange={handleLocationChange}
+                  />
+                </div>
+              );
+            }
+          }
+        })}
+      </div>
+    );
+
+    return (
+      <SetupTemplate
+        heading="Add a [Warehouse]."
+        main={main}
+        navigation="final"
+        setPage={setPage}
+        finish={finish}
+      />
+    );
+  },
+);
+
+WarehouseSetup.displayName = "WarehouseSetup";
