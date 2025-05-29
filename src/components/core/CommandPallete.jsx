@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import routesList from './routesList'; // Adjust the path as needed
+import routesList from './routesList';
 
 const CommandPalette = ({ open, onClose }) => {
   const navigate = useNavigate();

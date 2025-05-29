@@ -1,0 +1,277 @@
+import serverInstance from "./api-config";
+
+async function getStuff(path) {
+  try {
+    const response = await serverInstance.get(path);
+    return response.data;
+  } catch (e) {
+    console.error(`Failed to fetch the data for ${path}:`, e.response);
+    return [];
+  }
+}
+
+async function updateStuff(path, data) {
+  try {
+    const response = await serverInstance.put(path, data);
+    console.log("Success:", response.data);
+    return response.status;
+  } catch (e) {
+    console.error(`Failed to update the data for ${path}:`, e.response);
+    return 500;
+  }
+}
+
+async function getReport(path, data) {
+  try {
+    const response = await serverInstance.post(path, data);
+    return response.data;
+  } catch (e) {
+    console.error(`Failed to post the data for ${path}:`, e.response);
+    return 500;
+  }
+}
+
+export async function updateCredit(data) {
+  try {
+    const response = await serverInstance.put("reports/debit/update", data);
+    return response;
+  } catch (e) {
+    console.error(`Failed to update credit`, e.response);
+    return 500;
+  }
+}
+
+export async function deleteCredit(id) {
+  try {
+    const response = await serverInstance.post("reports/debit/delete", { id });
+    return response.data;
+  } catch (e) {
+    console.error(`Failed to update credit`, e.response);
+    return 500;
+  }
+}
+
+async function postData(path, data) {
+  try {
+    const response = await serverInstance.post(path, data);
+    return response.status;
+  } catch (e) {
+    console.error(`Failed to post the data for ${path}:`, e.response);
+    return 500;
+  }
+}
+
+async function deleteStuff(path, data) {
+  try {
+    const response = await serverInstance.delete(path, { data });
+    console.log("Success:", response.data);
+    return response.status;
+  } catch (e) {
+    console.error(`Failed to delete the data for ${path}:`, e.response);
+    return 500;
+  }
+}
+
+async function getData(path) {
+  try {
+    const response = await serverInstance.get(path);
+    return response.data;
+  } catch (e) {
+    console.error(`Failed to fetch the data for ${path}:`, e.response);
+    return [];
+  }
+}
+
+async function getRequest(path) {
+  try {
+    const response = await serverInstance.get(path);
+    return response.data;
+  } catch (e) {
+    console.error(`Failed to fetch the data for ${path}:`, e.response);
+    return [];
+  }
+}
+
+async function getRow(path) {
+  try {
+    const response = await serverInstance.get(path);
+    return response.data;
+  } catch (e) {
+    console.error(`Failed to fetch the data for ${path}:`, e.response);
+    return {};
+  }
+}
+
+async function deleteRow(path) {
+  try {
+    const response = await serverInstance.delete(path);
+    console.log("Success:", response.data);
+    return response.status;
+  } catch (e) {
+    console.error(`Failed to delete the data for ${path}:`, e.response);
+    return 500;
+  }
+}
+
+export async function getCount(path) {
+  try {
+    const response = await serverInstance.get(path);
+    return response.data;
+  } catch (e) {
+    console.error(`Failed to fetch the data for /count:`, e.response);
+    return 0;
+  }
+}
+
+async function addRow(path, data) {
+  try {
+    const response = await serverInstance.post(path, data);
+    return response.status;
+  } catch (e) {
+    console.error(`Failed to add the data for ${path}:`, e.response);
+    return e.response.status;
+  }
+}
+
+async function quickAdd(path, data) {
+  try {
+    const response = await serverInstance.post(path, data);
+    console.log("Success:", response.data);
+    return {
+      status: response.status,
+      data: response.data,
+    };
+  } catch (e) {
+    console.error(`Failed to add the data for ${path}:`, e.response);
+    return {
+      status: 500,
+      data: null,
+    };
+  }
+}
+
+async function updateRow(path, data) {
+  try {
+    const response = await serverInstance.post(path, data);
+    return response.status;
+  } catch (e) {
+    console.error(`Failed to update the data for ${path}:`, e.response);
+    return 500;
+  }
+}
+
+export async function updatePut(path, data) {
+  try {
+    const response = await serverInstance.put(path, data);
+    return response.status;
+  } catch (e) {
+    console.error(`Failed to update the data for ${path}:`, e.response);
+    return 500;
+  }
+}
+
+async function checkSetup() {
+  const response = await serverInstance.get("/auth/new");
+  return response.data;
+}
+
+export async function getInvoiceCount() {
+  const response = await serverInstance.get("/invoices/count");
+  localStorage.setItem("invoiceCount", response.data);
+  return;
+}
+
+/*--------LOGIN--------*/
+
+async function apiLogin(payload) {
+  try {
+    return await serverInstance.post("/auth/login", payload);
+  } catch (e) {
+    console.error(`Failed to login server:`, e.response);
+    return e.response;
+  }
+}
+
+async function uploadImg(image, root) {
+  const formData = new FormData();
+  formData.append("image", image);
+
+  const PATH = root === true ? "/auth/upload/" : "/users/upload/";
+
+  // Fire-and-forget the request
+  serverInstance
+    .post(PATH, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((response) => {
+      console.log("Upload successful:", response.status);
+    })
+    .catch((error) => {
+      console.error("Upload failed:", error.response);
+    });
+
+  return Promise.resolve(200);
+}
+
+async function fetchProduct(data) {
+  try {
+    return await serverInstance.post("/shop/place", data);
+  } catch (e) {
+    console.error("Failed to fetch products at shop", e.response);
+  }
+}
+
+async function fetchDiscount(data) {
+  try {
+    return await serverInstance.post("/shop/discount/fetch", data);
+  } catch (e) {
+    console.error(e.response);
+  }
+}
+
+async function placeOrder(data) {
+  try {
+    const response = await serverInstance.post("/shop/order/place", data);
+    return { status: response.status, message: response.data };
+  } catch (e) {
+    return {
+      status: e.response.status,
+      message: e.response.data.reason.message,
+    };
+  }
+}
+
+async function fetchLogo() {
+  try {
+    const response = await serverInstance.get("/logo");
+    return response.data;
+  } catch (e) {
+    console.error(`Failed to fetch the logo:`, e.response);
+    return "";
+  }
+}
+
+export {
+  getData,
+  getRequest,
+  getReport,
+  getStuff,
+  deleteRow,
+  addRow,
+  updateRow,
+  quickAdd,
+  getRow,
+  checkSetup,
+  uploadImg,
+  apiLogin,
+  fetchProduct,
+  fetchDiscount,
+  placeOrder,
+  fetchLogo,
+  updateStuff,
+  deleteStuff,
+  postData,
+};
+

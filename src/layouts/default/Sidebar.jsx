@@ -1,12 +1,10 @@
-// Sidebar.jsx
 import { useState, useEffect } from "react";
 import { getSession } from "../../utils/cacheHelper";
 import { useStore } from "../../store/store";
 import logo from "../../assets/IndiaBills_logo.png";
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton, useMediaQuery, useTheme, ListSubheader, Box, Avatar, Typography, Popover, MenuItem, Divider, } from "@mui/material";
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton, useMediaQuery, useTheme, ListSubheader, Box, Avatar, Typography, Popover, MenuItem, Divider } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
-import ExpandIcon from "@mui/icons-material/Expand";
 import DvrIcon from "@mui/icons-material/Dvr";
 import CachedIcon from "@mui/icons-material/Cached";
 import ContactSupportRoundedIcon from "@mui/icons-material/ContactSupportRounded";
@@ -33,7 +31,6 @@ const Sidebar = () => {
   const [hoveredGroup, setHoveredGroup] = useState(null);
   const [selectedPath, setSelectedPath] = useState(null);
 
-  // User menu state
   const [anchorEl, setAnchorEl] = useState(null);
   const [logoFetched, setLogoFetched] = useState(false);
 
@@ -96,13 +93,8 @@ const Sidebar = () => {
     navigate("/organization");
   };
 
-  const sidebarState = collapse ? "Expand" : "Collapse";
-
-  // console.log(Organization)
-
   const drawer = (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      {/* Organization Logo at the Top */}
       <Box
         sx={{
           display: "flex",
@@ -126,13 +118,12 @@ const Sidebar = () => {
             alt="Logo"
             style={{ height: "3rem", cursor: "pointer" }}
           />
-        )}{" "}
+        )}
         <h1 className="text-sm mt-1 text-white">{Organization.name}</h1>
       </Box>
 
       <Divider />
 
-      {/* Main Navigation */}
       <List sx={{ flexGrow: 1 }}>
         {filteredGroups.map((group) => (
           <div
@@ -196,7 +187,6 @@ const Sidebar = () => {
         ))}
       </List>
 
-      {/* User Info and Settings at the Bottom */}
       <Box sx={{ p: 2, borderTop: "1px solid #334155" }}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Avatar

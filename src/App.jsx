@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { getSession } from "./utils/cacheHelper";
 import { AuthProvider } from "./store/context";
 import { HotKeys } from "react-hotkeys";
-import InterfaceRouting from "./routes/InterfaceRouting";
 import Routing from "../src/routes/router";
 import PageAnimate from "./components/Animate/PageAnimate";
 import { useStore } from "./store/store";
