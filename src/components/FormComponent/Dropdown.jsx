@@ -3,6 +3,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { styled } from "@mui/system";
 import { Paper, Popper } from "@mui/material";
 import React from "react";
+import styles from './styles/Dropdown.module.css';
 
 const Dropdown = ({ name, label, options, required, setValue, selectedData }) => {
   const CustomPopper = styled(Popper)(() => ({
@@ -35,71 +36,51 @@ const Dropdown = ({ name, label, options, required, setValue, selectedData }) =>
   };
 
   return (
-    <Autocomplete
-      id={name}
-      options={options}
-      isOptionEqualToValue={(option, value) => option === value}
-      value={selectedData[name] ? selectedData[name] : null}
-      getOptionLabel={(option) => capitalize(option)}
-      aria-required={required}
-      PopperComponent={(props) => (
-        <CustomPopper
-          {...props}
-          modifiers={[
-            {
-              name: "zIndex",
-              options: { zIndex: 6000 },
-            },
-          ]}
-        />
-      )}
-      PaperComponent={CustomPaper}
-      sx={{
-        "& .MuiOutlinedInput-root": {
-          backgroundColor: "rgb(245, 247, 252)", // Set desired background color
-          borderRadius: "1rem",
-          "& fieldset": {
-            borderColor: "rgba(38, 38, 38, 0.18)", // Border color
-            boxShadow: "0.1px 0.2px 4px rgba(38, 38, 38, 0.18)",
+  <Autocomplete
+    id={name}
+    options={options}
+    isOptionEqualToValue={(option, value) => option === value}
+    value={selectedData[name] ?? null}
+    getOptionLabel={(option) => capitalize(option)}
+    aria-required={required}
+    PopperComponent={(props) => (
+      <CustomPopper
+        {...props}
+        modifiers={[{ name: "zIndex", options: { zIndex: 6000 } }]}
+      />
+    )}
+    PaperComponent={CustomPaper}
+    classes={{
+      inputRoot: styles.inputRoot,
+      input: styles.input,
+      popupIndicator: styles.popupIndicator, // if you have one
+    }}
+    renderOption={(props, option) => (
+      <li {...props} className={styles.option}>
+        {capitalize(option)}
+      </li>
+    )}
+    renderInput={(params) => (
+      <TextField
+        {...params}
+        label={label}
+        fullWidth
+        InputLabelProps={{
+          className: styles.label,
+        }}
+        InputProps={{
+          ...params.InputProps,
+          classes: {
+            root: styles.inputRoot,
+            input: styles.input,
+            notchedOutline: styles.notchedOutline,
           },
-          "&:hover fieldset": {
-            borderColor: "rgba(38, 38, 38, 0.5)", // Border color on hover
-          },
-          "&.Mui-focused fieldset": {
-            borderColor: "rgba(38, 38, 38, 0.7)", // Border color when focused
-          },
-          "& .MuiOutlinedInput-input": {
-            color: "rgb(68, 68, 68)", // Text color
-          },
-          "& .MuiInputBase-input::placeholder": {
-            color: "#666", // Placeholder color
-            opacity: 1, // Ensure placeholder is fully opaque
-          },
-        },
-        "& .MuiInputLabel-root": {
-          color: "rgb(68, 68, 68)", // Label color
-          textTransform: "capitalize",
-        },
-      }}
-      onChange={handleChange}
-      renderOption={(props, option) => (
-        <li {...props} style={{ textTransform: "capitalize" }}>
-          {capitalize(option)}
-        </li>
-      )}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label={label}
-          fullWidth
-          InputProps={{
-            ...params.InputProps,
-            value: selectedData[name] ? capitalize(selectedData[name]) : "",
-          }}
-        />
-      )}
-    />
-  );
+        }}
+      />
+    )}
+    onChange={handleChange}
+  />
+);
 };
 
 export default Dropdown;

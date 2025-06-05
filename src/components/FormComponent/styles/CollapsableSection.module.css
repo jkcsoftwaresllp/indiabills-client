@@ -1,0 +1,29 @@
+.wrapper {
+  width: 100%;
+  margin-top: 1rem; /* mt-4 */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* gap-2 */
+}
+
+.toggleButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem; /* p-3 */
+  background-color: #f3f4f6; /* bg-gray-100 */
+  border-radius: 0.5rem; /* rounded-lg */
+}
+
+.title {
+  font-weight: 600; /* font-semibold */
+}
+
+.icon {
+  color: #4b5563; /* text-gray-600 */
+}
+
+.content {
+  overflow: hidden;
+}

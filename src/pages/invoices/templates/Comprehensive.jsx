@@ -2,6 +2,7 @@ import React from "react";
 import QRCode from 'react-qr-code';
 import numberToWords from 'number-to-words';
 import { formatDateDDMMYYYY } from "../../../utils/FormHelper";
+import styles from './styles/ComprehensiveReportTemplate.module.css';
 
 const ComprehensiveReportTemplate = ({ invoice, organization, initials }) => {
   const upiUrl = `upi://pay?pa=${organization.upi}&pn=${encodeURIComponent(organization.organizationName)}&cu=INR`;
@@ -85,143 +86,150 @@ const ComprehensiveReportTemplate = ({ invoice, organization, initials }) => {
 
   const shippingCost = parseFloat(invoice.shippingCost);
 
-  return (
-    <div id="invoice-container" className="w-full flex flex-col items-center justify-center text-xs">
-      <div id="invoice-content" className="bg-white relative flex flex-col shadow-md rounded-xl py-3 px-4 min-w-full max-w-4xl">
+ return (
+  <div id="invoice-container" className={styles.invoiceContainer}>
+    <div id="invoice-content" className={styles.invoiceContent}>
 
-        <section id={"upper-row"} className={"flex w-full justify-between"}>
+      <section id="upper-row" className={styles.upperRow}>
 
-        <div id="contact" className="flex flex-col text-xs">
-            <p><b>GSTIN:</b> {organization.gstin}</p>
-            <p><b>UPI:</b> {organization.upi}</p>
-            <p><b>Phone:</b> {organization.phone}</p>
+        <div id="contact" className={styles.contact}>
+          <p><b>GSTIN:</b> {organization.gstin}</p>
+          <p><b>UPI:</b> {organization.upi}</p>
+          <p><b>Phone:</b> {organization.phone}</p>
         </div>
 
-        <div className="flex flex-col border-b-2 pb-2 text-center">
-          <h1 className="text-xl font-medium mb-2">Tax Invoice</h1>
-          <h2 className="text-2xl font-bold">{organization.organizationName}</h2>
-          <span className="flex self-center text-sm">
-            <p className="capitalize">{organization.addressLine}</p>
+        <div className={styles.titleSection}>
+          <h1 className={styles.taxInvoice}>Tax Invoice</h1>
+          <h2 className={styles.organizationName}>{organization.organizationName}</h2>
+          <span className={styles.addressWrapper}>
+            <p className={styles.address}>{organization.addressLine}</p>
           </span>
         </div>
 
-          {organization.upi && (
-              <div id="qr-sec" className="">
-                <QRCode value={upiUrl} size={80} />
-              </div>
-          )}
-
-        </section>
-
-        <div className="flex w-full justify-between gap-4 mt-1">
-          <div className="flex flex-col">
-            <p><strong>Customer Name:</strong> {invoice.customerName}</p>
-            {(invoice.gstin? invoice.gstin !== `0` : false) && <p><strong>GSTIN:</strong> {invoice.gstin}</p>}
-            <p className="capitalize"><strong>Address:</strong> {invoice.shippingAddress}</p>
-            <p><strong>Mobile:</strong> {invoice.mobile}</p>
+        {organization.upi && (
+          <div id="qr-sec">
+            <QRCode value={upiUrl} size={80} />
           </div>
-          <div className="flex flex-col">
-            <p><strong>Invoice Number:</strong> {`${initials}-${invoice.invoiceNumber}`}</p>
-            <p><strong>Invoice Date:</strong> {formatDateDDMMYYYY(new Date(invoice.invoiceDate))}</p>
-            <p className="capitalize"><strong>Payment Method:</strong> {invoice.paymentMethod === 'upi' ? 'UPI' : invoice.paymentMethod} </p>
-          </div>
+        )}
+
+      </section>
+
+      <div className={styles.customerInvoiceSection}>
+        <div className={styles.customerDetails}>
+          <p><strong>Customer Name:</strong> {invoice.customerName}</p>
+          {(invoice.gstin ? invoice.gstin !== `0` : false) && <p><strong>GSTIN:</strong> {invoice.gstin}</p>}
+          <p className={styles.capitalize}><strong>Address:</strong> {invoice.shippingAddress}</p>
+          <p><strong>Mobile:</strong> {invoice.mobile}</p>
         </div>
-
-        <div className="overflow-x-auto mt-1">
-          <table className="w-full table-fixed text-xs bg-white border border-gray-200 rounded-xl">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="w-2/12 py-1 border-b border-gray-200 text-center">S.No</th>
-                <th className="w-5/12 py-1 border-b border-gray-200 text-left">Item</th>
-                <th className="w-3/12 py-1 border-b border-gray-200 text-center">HSN</th>
-                <th className="w-2/12 py-1 border-b border-gray-200 text-center">MRP</th>
-                <th className="w-2/12 py-1 border-b border-gray-200 text-center">QTY</th>
-                <th className="w-3/12 py-1 border-b border-gray-200 text-center">Rate</th>
-                <th className="w-3/12 py-1 border-b border-gray-200 text-center">GST<span className="font-extralight text-xs uppercase"> (cgst+sgst+cess)</span></th>
-                <th className="w-2/12 py-1 border-b border-gray-200 text-center">DIS</th>
-                <th className="w-2/12 py-1 border-b border-gray-200 text-center">Net</th>
-              </tr>
-            </thead>
-            <tbody>
-              {processedItems.map((item, index) => {
-                const tax = `${formatPercent(item.totalTaxPercentage)}% (${formatPercent(item.cgst)}+${formatPercent(item.sgst)}+${formatPercent(item.cess)})`;
-                return (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="py-2 px-4 border-b border-gray-200 text-center text-xs">{index + 1}</td>
-                    <td className="capitalize py-1 border-b border-gray-200 text-left text-xs">{item.itemName}</td>
-                    <td className="py-1 border-b border-gray-200 text-center text-xs">{item.hsn || '-'}</td>
-                    <td className="py-1 border-b border-gray-200 text-center text-xs">{item.unitMRP || '-'}</td>
-                    <td className="py-1 border-b border-gray-200 text-center text-xs">{item.quantity}</td>
-                    <td className="py-1 border-b border-gray-200 text-center text-xs">{formatNumber(item.rate)}</td>
-                    <td className="py-1 border-b border-gray-200 text-center text-xs">{tax}</td>
-                    <td className="py-1 border-b border-gray-200 text-center text-xs">{Number(item.discount).toFixed(2)}</td>
-                    <td className="py-1 border-b border-gray-200 text-center text-xs">{formatNumber(item.total)}</td>
-                  </tr>
-                );
-              })}
-              <tr className="font-bold bg-gray-100">
-                <td className="py-1 px-2 border-b border-gray-200 text-center" colSpan={5}>Total</td>
-                <td className="py-1 px-2 border-b border-gray-200 text-center">₹{formatNumber(totals.rate)}</td>
-                <td className="py-1 px-2 border-b border-gray-200 text-center">₹{formatNumber(taxAmount)}</td>
-                <td className="py-1 px-2 border-b border-gray-200 text-center"></td>
-                <td className="py-1 px-2 border-b border-gray-200 text-center">₹{formatNumber(totals.netTotal)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <section className="p-2 flex justify-between w-full text-xs border-b-2">
-          <div className="flex flex-col w-full items-start text-nowrap">
-            <p><strong>Account Number:</strong> {organization.accountNumber}</p>
-            <p><strong>IFSC Code:</strong> {organization.ifscCode}</p>
-            <p className="capitalize"><strong>Bank Branch:</strong> {organization.bankBranch}</p>
-            <p className="capitalize"> <strong>Amount in Words:</strong> {amountInWords} </p>
-            <p><strong>Declaration:</strong> {invoice.declaration || "Thank you for your purchase!"} </p>
-          </div>
-        <div className="flex flex-col w-1/3">
-            <div className="flex justify-between w-full">
-              <p className="text-slate-500">Subtotal:</p>
-              <p className="text-slate-500">₹{formatNumber(subtotal)}</p>
-            </div>
-            <div className="flex justify-between w-full">
-              <p className="text-slate-500">Discount Applied:</p>
-              <p className="text-slate-500">₹{formatNumber(discountApplied)}</p>
-            </div>
-            <div className="flex justify-between w-full">
-              <p className="text-slate-500">Total Tax:</p>
-              <p className="text-slate-500">₹{formatNumber(taxAmount)}</p>
-            </div>
-            {shippingCost > 0 && <div className="flex justify-between w-full">
-              <p className="text-slate-500">Shipping Cost:</p>
-              <p className="text-slate-500">₹{formatNumber(shippingCost)}</p>
-            </div>}
-            <div className="flex justify-between font-bold w-full">
-              <p>Total Amount:</p>
-              <p>₹{formatNumber(totalAmount)}</p>
-            </div>
-            <div className="flex justify-between w-full">
-              <p className="text-slate-500">Rounded Off (Gross):</p>
-              <p className="text-slate-500">₹{formatNumber(roundedOffAmount)}</p>
-            </div>
-        </div>
-        </section>
-
-        <div className="mt-6 p-2 flex justify-between items-end">
-          <div> <p className="text-slate-500">This is a computer-generated invoice.</p> </div>
-          <div className="text-center">
-            {invoice.authorizedSignature && (
-              <img
-                src={invoice.authorizedSignature}
-                alt="Authorized Signature"
-                className="w-32 h-32 mb-2"
-              />
-            )}
-            <p className="font-medium">Authorized Signature</p>
-          </div>
+        <div className={styles.invoiceDetails}>
+          <p><strong>Invoice Number:</strong> {`${initials}-${invoice.invoiceNumber}`}</p>
+          <p><strong>Invoice Date:</strong> {formatDateDDMMYYYY(new Date(invoice.invoiceDate))}</p>
+          <p className={styles.capitalize}><strong>Payment Method:</strong> {invoice.paymentMethod === 'upi' ? 'UPI' : invoice.paymentMethod} </p>
         </div>
       </div>
+
+      <div className={styles.tableWrapper}>
+        <table className={styles.invoiceTable}>
+          <thead className={styles.tableHead}>
+            <tr>
+              <th className={styles.thSmallCenter}>S.No</th>
+              <th className={styles.thLargeLeft}>Item</th>
+              <th className={styles.thMediumCenter}>HSN</th>
+              <th className={styles.thSmallCenter}>MRP</th>
+              <th className={styles.thSmallCenter}>QTY</th>
+              <th className={styles.thMediumCenter}>Rate</th>
+              <th className={styles.thMediumCenter}>
+                GST<span className={styles.gstSpan}> (cgst+sgst+cess)</span>
+              </th>
+              <th className={styles.thSmallCenter}>DIS</th>
+              <th className={styles.thSmallCenter}>Net</th>
+            </tr>
+          </thead>
+          <tbody>
+            {processedItems.map((item, index) => {
+              const tax = `${formatPercent(item.totalTaxPercentage)}% (${formatPercent(item.cgst)}+${formatPercent(item.sgst)}+${formatPercent(item.cess)})`;
+              return (
+                <tr key={index} className={styles.tableRowHover}>
+                  <td className={styles.tdCenter}>{index + 1}</td>
+                  <td className={styles.tdLeftCap}>{item.itemName}</td>
+                  <td className={styles.tdCenter}>{item.hsn || '-'}</td>
+                  <td className={styles.tdCenter}>{item.unitMRP || '-'}</td>
+                  <td className={styles.tdCenter}>{item.quantity}</td>
+                  <td className={styles.tdCenter}>{formatNumber(item.rate)}</td>
+                  <td className={styles.tdCenter}>{tax}</td>
+                  <td className={styles.tdCenter}>{Number(item.discount).toFixed(2)}</td>
+                  <td className={styles.tdCenter}>{formatNumber(item.total)}</td>
+                </tr>
+              );
+            })}
+            <tr className={styles.totalRow}>
+              <td className={styles.tdCenterBold} colSpan={5}>Total</td>
+              <td className={styles.tdCenterBold}>₹{formatNumber(totals.rate)}</td>
+              <td className={styles.tdCenterBold}>₹{formatNumber(taxAmount)}</td>
+              <td className={styles.tdCenterBold}></td>
+              <td className={styles.tdCenterBold}>₹{formatNumber(totals.netTotal)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <section className={styles.paymentSection}>
+        <div className={styles.accountDetails}>
+          <p><strong>Account Number:</strong> {organization.accountNumber}</p>
+          <p><strong>IFSC Code:</strong> {organization.ifscCode}</p>
+          <p className={styles.capitalize}><strong>Bank Branch:</strong> {organization.bankBranch}</p>
+          <p className={styles.capitalize}><strong>Amount in Words:</strong> {amountInWords}</p>
+          <p><strong>Declaration:</strong> {invoice.declaration || "Thank you for your purchase!"}</p>
+        </div>
+        <div className={styles.paymentSummary}>
+          <div className={styles.flexBetween}>
+            <p className={styles.textSlate}>Subtotal:</p>
+            <p className={styles.textSlate}>₹{formatNumber(subtotal)}</p>
+          </div>
+          <div className={styles.flexBetween}>
+            <p className={styles.textSlate}>Discount Applied:</p>
+            <p className={styles.textSlate}>₹{formatNumber(discountApplied)}</p>
+          </div>
+          <div className={styles.flexBetween}>
+            <p className={styles.textSlate}>Total Tax:</p>
+            <p className={styles.textSlate}>₹{formatNumber(taxAmount)}</p>
+          </div>
+          {shippingCost > 0 && (
+            <div className={styles.flexBetween}>
+              <p className={styles.textSlate}>Shipping Cost:</p>
+              <p className={styles.textSlate}>₹{formatNumber(shippingCost)}</p>
+            </div>
+          )}
+          <div className={styles.flexBetweenBold}>
+            <p>Total Amount:</p>
+            <p>₹{formatNumber(totalAmount)}</p>
+          </div>
+          <div className={styles.flexBetween}>
+            <p className={styles.textSlate}>Rounded Off (Gross):</p>
+            <p className={styles.textSlate}>₹{formatNumber(roundedOffAmount)}</p>
+          </div>
+        </div>
+      </section>
+
+      <div className={styles.footerSection}>
+        <div>
+          <p className={styles.textSlate}>This is a computer-generated invoice.</p>
+        </div>
+        <div className={styles.signatureSection}>
+          {invoice.authorizedSignature && (
+            <img
+              src={invoice.authorizedSignature}
+              alt="Authorized Signature"
+              className={styles.signatureImage}
+            />
+          )}
+          <p className={styles.signatureText}>Authorized Signature</p>
+        </div>
+      </div>
+
     </div>
-  );
+  </div>
+);
 };
 
 export default ComprehensiveReportTemplate;

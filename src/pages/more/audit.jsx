@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import AuditModal from "../../components/core/AuditModal";
 import { getBaseURL } from "../../network/api/api-config";
+import styles from './styles/AuditQuickView.module.css';
 
 const AuditQuickView = () => {
     const [logs, setLogs] = useState([]);
@@ -71,26 +72,33 @@ const AuditQuickView = () => {
         }
     }
 
-    return (
-        <AuditModal>
-            <div className={"flex flex-col gap-2"} style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                {logs.slice(0, 6).map((log) => (
-                    <div className={"p-4 border-2 flex items-center gap-4"} key={log.auditId}>
-                        <Avatar src={log.avatar ? `${getBaseURL()}/${log.avatar}` : `${process.env.REACT_APP_SERVER_URL}/default.webp`} alt={log.addedBy} />
-                        <span className={"flex flex-col justify-center gap-2"}>
-                            <p className="font-medium">
-                                <HighlightedText
-                                    text={returnLog(log)}
-                                    highlights={[log.addedBy, log.objectOfInterest, log.target]}
-                                />
-                            </p>
-                            <p className={"text-slate-400"}>{formatDate(log.date)}</p>
-                        </span>
-                    </div>
-                ))}
-            </div>
-        </AuditModal>
-    );
+  return (
+  <AuditModal>
+    <div className={styles.logsContainer}>
+      {logs.slice(0, 6).map((log) => (
+        <div className={styles.logItem} key={log.auditId}>
+          <Avatar
+            src={
+              log.avatar
+                ? `${getBaseURL()}/${log.avatar}`
+                : `${process.env.REACT_APP_SERVER_URL}/default.webp`
+            }
+            alt={log.addedBy}
+          />
+          <span className={styles.logText}>
+            <p className={styles.logParagraph}>
+              <HighlightedText
+                text={returnLog(log)}
+                highlights={[log.addedBy, log.objectOfInterest, log.target]}
+              />
+            </p>
+            <p className={styles.logDate}>{formatDate(log.date)}</p>
+          </span>
+        </div>
+      ))}
+    </div>
+  </AuditModal>
+);
 };
 
 export default AuditQuickView;

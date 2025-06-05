@@ -3,6 +3,7 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
 import { useEffect, useRef, useState } from "react";
 import ContextMenu from "../core/ContextMenu";
+import styles from './Styles/DataGrid.module.css';
 
 const DataGrid = ({
   colDefs,
@@ -111,35 +112,26 @@ const DataGrid = ({
   }
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        width: "100%",
-        height: "100%",
-        position: "relative",
-        boxShadow: "2px 10px 16px rgba(42, 42, 42, 0.19)",
-        borderRadius: "8px",
-      }}
-    >
-      <AgGridReact
-        rowData={rowData}
-        columnDefs={colDefs}
-        onCellValueChanged={onCellValueChanged}
-        onRowDoubleClicked={onRowDoubleClicked}
-        onCellContextMenu={handleCellContextMenu}
-        onCellMouseDown={handleCellMouseDown}
-        onCellMouseUp={handleCellMouseUp}
+  <div ref={containerRef} className={styles.gridContainer}>
+    <AgGridReact
+      rowData={rowData}
+      columnDefs={colDefs}
+      onCellValueChanged={onCellValueChanged}
+      onRowDoubleClicked={onRowDoubleClicked}
+      onCellContextMenu={handleCellContextMenu}
+      onCellMouseDown={handleCellMouseDown}
+      onCellMouseUp={handleCellMouseUp}
+    />
+    {contextMenu && (
+      <ContextMenu
+        x={contextMenu.x}
+        y={contextMenu.y}
+        items={contextMenu.items}
+        onClose={handleCloseContextMenu}
       />
-      {contextMenu && (
-        <ContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          items={contextMenu.items}
-          onClose={handleCloseContextMenu}
-        />
-      )}
-    </div>
-  );
+    )}
+  </div>
+);
 };
 
 export default DataGrid;

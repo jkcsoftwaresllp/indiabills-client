@@ -1,0 +1,42 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.fitWidth {
+  width: fit-content;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.previewBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  border: 1px solid #d1d5db; /* gray-300 */
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+}
+
+.previewText {
+  opacity: 0.5;
+}
+
+.fileInputRoot .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border-radius: 1rem;
+}
+
+.fileInputLabel .MuiInputLabel-root {
+  width: 100%;
+  text-align: center;
+}
+
+.fileInputElement input[type="file"] {
+  opacity: 0;
+  color: #ffffff;
+}

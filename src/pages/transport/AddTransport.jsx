@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import Timeline from "../../components/FormComponent/Timeline";
 import { TransportMetadata } from "../../definitions/Metadata";
 import { getOption, initializeFormData } from "../../utils/FormHelper";
+import styles from './styles/AddTransport.module.css';
 
 const AddTransport = () => {
 	const { successPopup, errorPopup } = useStore();
@@ -55,29 +56,68 @@ const AddTransport = () => {
 
 	return (
 		<PageAnimate>
-			<div className={"h-full flex flex-col gap-12 justify-center items-center"}>
-				<button className={"self-start flex items-center"} onClick={() => navigate(-1)}>
-					<ArrowBackIosNewIcon/> Go back
+			<div className={styles.container0}>
+				<button className={styles.backButton} onClick={() => navigate(-1)}>
+					<ArrowBackIosNewIcon /> Go back
 				</button>
 
-				<h1 className="text-2xl rounded-lg lowercase transition hover:shadow-lg p-4 text-center w-3/4 idms-transparent-bg font-extrabold">
-					register a new<span className={"text-rose-400"}> transport</span> :)
+				<h1 className={styles.heading}>
+					register a new<span className={styles.highlight}> transport</span> :)
 				</h1>
 
 				<Timeline steps={steps} currentStep={page} />
 
 				<div>
-					<div className={"h-full w-full flex justify-center"}>
+					<div className={styles.formWrapper}>
 						<main>
-							{page === 1 && <BasicPage formData={formData} setFormData={setFormData} handleChange={handleChange} />}
-							{page === 2 && <AddressPage formData={formData} setFormData={setFormData} handleChange={handleChange} />}
-							{page === 3 && <DriverPage formData={formData} setFormData={setFormData} handleChange={handleChange} />}
+							{page === 1 && (
+								<BasicPage
+									formData={formData}
+									setFormData={setFormData}
+									handleChange={handleChange}
+								/>
+							)}
+							{page === 2 && (
+								<AddressPage
+									formData={formData}
+									setFormData={setFormData}
+									handleChange={handleChange}
+								/>
+							)}
+							{page === 3 && (
+								<DriverPage
+									formData={formData}
+									setFormData={setFormData}
+									handleChange={handleChange}
+								/>
+							)}
 						</main>
 
-						<div className={"p-2 flex flex-col gap-4"}>
-							{page === 3 && <button className="p-3 flex-grow shadow-xl form-button-submit" onClick={submit}> <CheckCircleIcon /></button>}
-							{page < 3 && <button className="p-3 flex-grow shadow-xl form-button-nav" onClick={nextPage}> <ArrowForwardIosIcon /></button>}
-							{page >= 2 && <button className="p-3 flex-grow shadow-xl form-button-nav" onClick={backPage}> <ArrowBackIosNewIcon /></button>}
+						<div className={styles.buttonGroup}>
+							{page === 3 && (
+								<button
+									className="p-3 flex-grow shadow-xl form-button-submit"
+									onClick={submit}
+								>
+									<CheckCircleIcon />
+								</button>
+							)}
+							{page < 3 && (
+								<button
+									className="p-3 flex-grow shadow-xl form-button-nav"
+									onClick={nextPage}
+								>
+									<ArrowForwardIosIcon />
+								</button>
+							)}
+							{page >= 2 && (
+								<button
+									className="p-3 flex-grow shadow-xl form-button-nav"
+									onClick={backPage}
+								>
+									<ArrowBackIosNewIcon />
+								</button>
+							)}
 						</div>
 					</div>
 				</div>
@@ -91,8 +131,8 @@ export default AddTransport;
 const BasicPage = React.memo(({ formData, handleChange }) => {
 	return (
 		<MultiPageAnimate>
-			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
-				<main className="grid grid-cols-2 gap-6">
+			<div className={styles.container}>
+				<main className={styles.grid}>
 					<InputBox name="transportName" type="string" label="Transport Name" placeholder={"__________"} value={formData.transportName} onChange={handleChange} />
 					<InputBox name="businessName" type="string" label="Business Name" placeholder={"__________"} value={formData.businessName} onChange={handleChange} />
 					<InputBox name="vehicleName" type="string" label="Vehicle Name" placeholder={"__________"} value={formData.vehicleName} onChange={handleChange} />
@@ -111,8 +151,8 @@ BasicPage.displayName = 'BasicPage';
 const AddressPage = React.memo(({ formData, handleChange, setFormData }) => {
 	return (
 		<MultiPageAnimate>
-			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
-				<main className="grid grid-cols-2 gap-6">
+			<div className={styles.container}>
+				<main className={styles.grid}>
 					<InputBox name="addressLine1" type="string" label="Address Line 1" placeholder={"__________"} value={formData.addressLine1} onChange={handleChange} />
 					<InputBox name="addressLine2" type="string" label="Address Line 2" placeholder={"__________"} value={formData.addressLine2} onChange={handleChange} />
 					<InputBox name="landmark" type="string" label="Landmark" placeholder={"__________"} value={formData.landmark} onChange={handleChange} />
@@ -132,8 +172,8 @@ AddressPage.displayName = 'AddressPage';
 const DriverPage = React.memo(({ formData, handleChange }) => {
 	return (
 		<MultiPageAnimate>
-			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
-				<main className="grid grid-cols-2 gap-6">
+			<div className={styles.container}>
+				<main className={styles.grid}>
 					<InputBox name="aadharNumber" type="number" label="Aadhar Number" placeholder={"1234567890"} value={formData.aadharNumber} onChange={handleChange} />
 					<InputBox name="panNumber" type="number" label="Pan Number" placeholder={"1234567890"} value={formData.panNumber} onChange={handleChange} />
 					<InputBox name="driverName" type="string" label="Driver Name" placeholder={"Name"} value={formData.driverName} onChange={handleChange} />

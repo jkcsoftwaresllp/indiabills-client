@@ -18,6 +18,7 @@ import { cutShort, cutToName } from "../../utils/FormHelper";
 import { CircularProgress, Container, Grid, Button, Typography } from "@mui/material";
 import MouseHoverPopover from "../../components/core/Explain";
 import { useStore } from "../../store/store";
+import styles from './styles/ViewData.module.css';
 
 const ViewData = ({ title, url, initialColDefs, disableControls, menuOptions, dateRange }) => {
   const navigate = useNavigate();
@@ -148,54 +149,82 @@ const ViewData = ({ title, url, initialColDefs, disableControls, menuOptions, da
 
   return (
     <PageAnimate>
-      <header className={"flex items-center justify-between px-4 py-1"}>
-        <div><h4 className={"text-3xl transition font-bold hover:text-rose-500"}>{title}</h4></div>
-        <div className="flex items-center mb-4 md:mb-0">
-          <IconButton type="button" aria-label="search"><SearchIcon /></IconButton>
-          <InputBase placeholder={`Search by ${title} name`} inputProps={{ 'aria-label': 'search' }} value={searchTerm} onChange={handleSearchChange} className="ml-2"/>
+      <header className={styles.header}>
+        <div>
+          <h4 className={styles.title}>{title}</h4>
+        </div>
+
+        <div className={styles.searchGroup}>
+          <IconButton type="button" aria-label="search">
+            <SearchIcon />
+          </IconButton>
+          <InputBase
+            placeholder={`Search by ${title} name`}
+            inputProps={{ 'aria-label': 'search' }}
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className={styles.searchInput}
+          />
         </div>
 
         {dateRange && (
-          <section className="flex gap-2 w-fit justify-between items-center border-2 transition p-2 hover:shadow-lg rounded-xl">
-            <div className="flex flex-col items-end"><input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="p-2 bg-light rounded-xl border text-sm"/></div>
-            <div className="flex flex-col"><input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="p-2 bg-light rounded-xl border text-sm"/></div>
-            <button className="bg-primary flex items-center justify-center transition rounded-full hover:bg-accent text-light font-medium p-2 hover:brightness-125 shadow-2xl" onClick={() => handleFilter()}>
-              <CheckCircleOutlineIcon fontSize='small' />
+          <section className={styles.dateRange}>
+            <div className={styles.dateInputContainer}>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className={styles.dateInput}
+              />
+            </div>
+            <div className={styles.dateInputContainer}>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className={styles.dateInput}
+              />
+            </div>
+            <button className={styles.filterButton} onClick={handleFilter}>
+              <CheckCircleOutlineIcon fontSize="small" />
             </button>
           </section>
         )}
 
-        <section className={"flex items-center justify-between gap-2"}>
-          <div>
-            {!disableControls && <MouseHoverPopover
+        <section className={styles.controls}>
+          {!disableControls && (
+            <MouseHoverPopover
               triggerElement={
-                <button onClick={() => setEditable(!editable)} className={`transition ease-in-out p-2 w-fit bg-primary rounded-full ${!editable ? 'text-slate-200' : `text-amber-500 -translate-y-1 shadow-lg`}`}><ElectricBoltIcon /></button>
-              }
-              popoverContent={<span className="text-xs"> Quick Edit </span>}
-            />}
-          </div>
-
-          <div>
-            {<MouseHoverPopover
-              triggerElement={
-                <button onClick={() => setIsModalOpen(true)} className="p-2 min-w-20 bg-primary text-slate-200 rounded-full">
-                  <ViewColumnIcon/>
+                <button
+                  onClick={() => setEditable(!editable)}
+                  className={`${styles.controlButton} ${editable ? styles.editable : styles.notEditable}`}
+                >
+                  <ElectricBoltIcon />
                 </button>
               }
-              popoverContent={<span className="text-xs"> Select Columns </span>}
-            />}
-          </div>
+              popoverContent={<span className={styles.popoverText}>Quick Edit</span>}
+            />
+          )}
 
-          <div>
-            {!disableControls && <MouseHoverPopover
+          <MouseHoverPopover
+            triggerElement={
+              <button onClick={() => setIsModalOpen(true)} className={styles.columnButton}>
+                <ViewColumnIcon />
+              </button>
+            }
+            popoverContent={<span className={styles.popoverText}>Select Columns</span>}
+          />
+
+          {!disableControls && (
+            <MouseHoverPopover
               triggerElement={
-                <button onClick={() => add()} className="p-2 w-fit bg-primary text-slate-200 rounded-full hover:bg-accent hover:brightness-200">
+                <button onClick={add} className={styles.addButton}>
                   <AddIcon />
                 </button>
               }
-              popoverContent={<span className="text-xs"> New {title} </span>}
-            />}
-          </div>
+              popoverContent={<span className={styles.popoverText}>New {title}</span>}
+            />
+          )}
         </section>
       </header>
 
@@ -208,16 +237,23 @@ const ViewData = ({ title, url, initialColDefs, disableControls, menuOptions, da
             menuOptions={menuOptions}
           />
         ) : (
-          <div className="h-full grid place-items-center">
-            <div className="flex gap-4 items-center">
-              <h1 className="text-2xl">No data found <span className="ml-4">ʕ•́ᴥ•̀ʔっ</span></h1>
+          <div className={styles.noDataContainer}>
+            <div className={styles.noDataMessage}>
+              <h1 className={styles.noDataText}>
+                No data found <span className={styles.bear}>ʕ•́ᴥ•̀ʔっ</span>
+              </h1>
             </div>
           </div>
         )}
       </div>
+
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <ColumnSelector
-          columns={colDefs.map((col) => ({ field: col.field, headerName: col.headerName, editable: col.editable }))}
+          columns={colDefs.map((col) => ({
+            field: col.field,
+            headerName: col.headerName,
+            editable: col.editable
+          }))}
           selectedColumns={selectedColumns}
           onColumnChange={handleColumnChange}
         />

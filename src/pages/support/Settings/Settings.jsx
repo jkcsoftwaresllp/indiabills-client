@@ -3,6 +3,7 @@ import DivAnimate from "../../../components/Animate/DivAnimate";
 import { getData, updateStuff } from "../../../network/api";
 import { useStore } from "../../../store/store";
 import Switch from "@mui/material/Switch";
+import styles from "./Settings.module.css";
 
 const Settings = () => {
   const [selectedSection, setSelectedSection] = useState("general");
@@ -125,250 +126,203 @@ const Settings = () => {
     switch (selectedSection) {
       case "general":
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold mb-4">General Settings</h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Language
-              </label>
-              <select className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
-                <option>English</option>
-                <option>Spanish</option>
-                <option>French</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Timezone
-              </label>
-              <select className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
-                <option>GMT</option>
-                <option>PST</option>
-                <option>EST</option>
-              </select>
-            </div>
+        <div className={styles.sectionWrapper}>
+          <h2 className={styles.sectionTitle}>General Settings</h2>
+          <div>
+            <label className={styles.label}>Language</label>
+            <select className={styles.select}>
+              <option>English</option>
+              <option>Spanish</option>
+              <option>French</option>
+            </select>
           </div>
-        );
+          <div>
+            <label className={styles.label}>Timezone</label>
+            <select className={styles.select}>
+              <option>GMT</option>
+              <option>PST</option>
+              <option>EST</option>
+            </select>
+          </div>
+        </div>
+      );
       case "account":
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold mb-4">Account Settings</h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email
+        <div className={styles.sectionWrapper}>
+          <h2 className={styles.sectionTitle}>Account Settings</h2>
+          <div>
+            <label className={styles.label}>Email</label>
+            <input
+              type="email"
+              className={styles.input}
+              placeholder="you@example.com"
+            />
+          </div>
+          <div>
+            <label className={styles.label}>Password</label>
+            <input
+              type="password"
+              className={styles.input}
+              placeholder="********"
+            />
+          </div>
+        </div>
+      );
+      case "preferences":
+          return (
+        <div className={styles.sectionWrapper}>
+          <h2 className={styles.sectionTitle}>Preferences</h2>
+          <div>
+            <label className={styles.label}>Theme</label>
+            <select className={styles.select}>
+              <option>Light</option>
+              <option>Dark</option>
+            </select>
+          </div>
+          <div>
+            <label className={styles.label}>Notifications</label>
+            <div className={styles.checkboxGroup}>
+              <label className={styles.checkboxLabel}>
+                <input type="checkbox" className={styles.checkbox} />
+                <span className={styles.checkboxText}>Email Notifications</span>
               </label>
-              <input
-                type="email"
-                className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
-                placeholder="you@example.com"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Password
+              <label className={styles.checkboxLabel}>
+                <input type="checkbox" className={styles.checkbox} />
+                <span className={styles.checkboxText}>SMS Notifications</span>
               </label>
-              <input
-                type="password"
-                className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
-                placeholder="********"
-              />
             </div>
           </div>
-        );
-      case "preferences":
-        return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold mb-4">Preferences</h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Theme
-              </label>
-              <select className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
-                <option>Light</option>
-                <option>Dark</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Notifications
-              </label>
-              <div className="mt-1">
-                <label className="inline-flex items-center">
+          <div>
+            <label className={styles.label}>Payment Methods</label>
+            <div className={styles.checkboxGroup}>
+              {availablePaymentMethods.map((method) => (
+                <label key={method} className={styles.checkboxLabel}>
                   <input
                     type="checkbox"
-                    className="form-checkbox h-5 w-5 text-emerald-600"
+                    className={styles.checkbox}
+                    checked={paymentMethods.includes(method)}
+                    onChange={() => handlePaymentMethodChange(method)}
+                    disabled={!isEditing}
                   />
-                  <span className="ml-2 text-gray-700">Email Notifications</span>
+                  <span className={styles.checkboxText}>{method}</span>
                 </label>
-              </div>
-              <div className="mt-1">
-                <label className="inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-emerald-600"
-                  />
-                  <span className="ml-2 text-gray-700">SMS Notifications</span>
-                </label>
-              </div>
+              ))}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Payment Methods
-              </label>
-              <div className="mt-1 space-y-2">
-                {availablePaymentMethods.map((method) => (
-                  <label key={method} className="inline-flex items-center">
-                    <input
-                      type="checkbox"
-                      className="form-checkbox h-5 w-5 text-emerald-600"
-                      checked={paymentMethods.includes(method)}
-                      onChange={() => handlePaymentMethodChange(method)}
-                      disabled={!isEditing}
-                    />
-                    <span className="ml-2 text-gray-700 capitalize">
-                      {method}
-                    </span>
-                  </label>
-                ))}
-              </div>
-              <div>
-              <label className="text-sm font-medium text-gray-700 flex items-center">
+              <label className={styles.labelRow}>
                 <span>Enable Page Animations</span>
                 <Switch
                   checked={animationsEnabled}
                   onChange={handleAnimationToggle}
                   color="emerald"
-                  className="ml-2"
+                  className={styles.switch}
                 />
               </label>
             </div>
-              <div className="mt-4">
-                {isEditing ? (
-                  <button
-                    className="bg-emerald-500 text-white py-2 px-4 rounded-md"
-                    onClick={handleSave}
-                  >
-                    Save
-                  </button>
-                ) : (
-                  <button
-                    className="bg-emerald-500 text-white py-2 px-4 rounded-md"
-                    onClick={handleEdit}
-                  >
-                    Edit
-                  </button>
-                )}
-              </div>
+            <div className={styles.buttonWrapper}>
+              {isEditing ? (
+                <button className={styles.primaryButton} onClick={handleSave}>
+                  Save
+                </button>
+              ) : (
+                <button className={styles.primaryButton} onClick={handleEdit}>
+                  Edit
+                </button>
+              )}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Invoice Template
-              </label>
-              <div className="mt-1 space-y-2">
-                <label className="inline-flex items-center">
-                  <input
-                    type="radio"
-                    className="form-radio h-5 w-5 text-emerald-600"
-                    name="invoiceTemplate"
-                    value="Short"
-                    checked={invoiceTemplate === "Short"}
-                    onChange={() => handleInvoiceTemplateChange("Short")}
-                  />
-                  <span className="ml-2 text-gray-700">Short</span>
-                </label>
-                <label className="inline-flex items-center">
-                  <input
-                    type="radio"
-                    className="form-radio h-5 w-5 text-emerald-600"
-                    name="invoiceTemplate"
-                    value="Comprehensive"
-                    checked={invoiceTemplate === "Comprehensive"}
-                    onChange={() => handleInvoiceTemplateChange("Comprehensive")}
-                  />
-                  <span className="ml-2 text-gray-700">Comprehensive</span>
-                </label>
-              </div>
-            </div>
+          </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Primary Color
-            </label>
+            <label className={styles.label}>Invoice Template</label>
+            <div className={styles.radioGroup}>
+              <label className={styles.radioLabel}>
+                <input
+                  type="radio"
+                  className={styles.radio}
+                  name="invoiceTemplate"
+                  value="Short"
+                  checked={invoiceTemplate === "Short"}
+                  onChange={() => handleInvoiceTemplateChange("Short")}
+                />
+                <span className={styles.radioText}>Short</span>
+              </label>
+              <label className={styles.radioLabel}>
+                <input
+                  type="radio"
+                  className={styles.radio}
+                  name="invoiceTemplate"
+                  value="Comprehensive"
+                  checked={invoiceTemplate === "Comprehensive"}
+                  onChange={() => handleInvoiceTemplateChange("Comprehensive")}
+                />
+                <span className={styles.radioText}>Comprehensive</span>
+              </label>
+            </div>
+          </div>
+          <div>
+            <label className={styles.label}>Primary Color</label>
             <input
               type="color"
               value={primaryColor}
               onChange={(e) => setPrimaryColor(e.target.value)}
-              className="mt-1 w-16 h-10 p-0 border-none"
+              className={styles.colorPicker}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Accent Color
-            </label>
+            <label className={styles.label}>Accent Color</label>
             <input
               type="color"
               value={accentColor}
               onChange={(e) => setAccentColor(e.target.value)}
-              className="mt-1 w-16 h-10 p-0 border-none"
+              className={styles.colorPicker}
             />
           </div>
-          <button onClick={handleColorChange} className="bg-emerald-500 text-white py-2 px-4 rounded-md mt-4">
+          <button onClick={handleColorChange} className={styles.primaryButton}>
             Save Colors
           </button>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <DivAnimate className="w-full p-8">
-      <div className="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6 flex">
-        <div className="w-1/4 border-r border-gray-200 pr-4">
-          <h1 className="text-3xl text-emerald-500 mb-6">Settings</h1>
-          <ul className="space-y-4">
-            <li>
-              <button
-                className={`w-full text-left py-2 px-4 rounded-md ${
-                  selectedSection === "general"
-                    ? "bg-emerald-500 text-white"
-                    : "bg-gray-100 text-gray-700"
-                }`}
-                onClick={() => setSelectedSection("general")}
-              >
-                General
-              </button>
-            </li>
-            <li>
-              <button
-                className={`w-full text-left py-2 px-4 rounded-md ${
-                  selectedSection === "account"
-                    ? "bg-emerald-500 text-white"
-                    : "bg-gray-100 text-gray-700"
-                }`}
-                onClick={() => setSelectedSection("account")}
-              >
-                Account
-              </button>
-            </li>
-            <li>
-              <button
-                className={`w-full text-left py-2 px-4 rounded-md ${
-                  selectedSection === "preferences"
-                    ? "bg-emerald-500 text-white"
-                    : "bg-gray-100 text-gray-700"
-                }`}
-                onClick={() => setSelectedSection("preferences")}
-              >
-                Preferences
-              </button>
-            </li>
-          </ul>
         </div>
-        <div className="w-3/4 pl-6">{renderSection()}</div>
+      );
+    default:
+      return null;
+  }
+};
+
+return (
+  <DivAnimate className={styles.pageWrapper}>
+    <div className={styles.container}>
+      <div className={styles.sidebar}>
+        <h1 className={styles.sidebarTitle}>Settings</h1>
+        <ul className={styles.navList}>
+          <li>
+            <button
+              className={`${styles.navButton} ${selectedSection === "general" ? styles.active : styles.inactive}`}
+              onClick={() => setSelectedSection("general")}
+            >
+              General
+            </button>
+          </li>
+          <li>
+            <button
+              className={`${styles.navButton} ${selectedSection === "account" ? styles.active : styles.inactive}`}
+              onClick={() => setSelectedSection("account")}
+            >
+              Account
+            </button>
+          </li>
+          <li>
+            <button
+              className={`${styles.navButton} ${selectedSection === "preferences" ? styles.active : styles.inactive}`}
+              onClick={() => setSelectedSection("preferences")}
+            >
+              Preferences
+            </button>
+          </li>
+        </ul>
       </div>
-    </DivAnimate>
-  );
+      <div className={styles.content}>{renderSection()}</div>
+    </div>
+  </DivAnimate>
+);
+
 };
 
 export default Settings;

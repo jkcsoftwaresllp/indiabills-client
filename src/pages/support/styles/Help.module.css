@@ -1,0 +1,13 @@
+.wrapper {
+  width: fit-content;
+}
+
+.centered {
+  display: grid;
+  place-items: center;
+}
+
+.heading {
+  font-size: 1.875rem; /* text-3xl */
+  color: #10b981; /* text-emerald-500 */
+}

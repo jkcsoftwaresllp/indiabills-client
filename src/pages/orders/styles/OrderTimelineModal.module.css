@@ -1,0 +1,75 @@
+/* Wrapper padding */
+.wrapper {
+  padding: 1rem; /* p-4 */
+}
+
+/* Heading */
+.heading {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700; /* font-bold */
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+/* Timeline container margin */
+.timelineContainer {
+  margin-top: 1.5rem; /* mt-6 */
+}
+
+/* Toggle button */
+.toggleButton {
+  display: flex;
+  align-items: center;
+  color: #474a77;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  transition: text-decoration 0.3s ease;
+}
+
+.toggleButton:hover {
+  text-decoration: underline;
+}
+
+/* Timeline list */
+.timelineList {
+  border-left: 2px solid #d1d5db; /* border-gray-300 */
+  padding-left: 1rem; /* pl-4 */
+  margin-top: 1rem; /* mt-4 */
+}
+
+/* Timeline list item */
+.timelineListItem {
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+/* Status item container */
+.statusItem {
+  display: flex;
+  align-items: center;
+}
+
+/* Status color dot */
+.statusDot {
+  height: 1rem; /* h-4 */
+  width: 1rem;  /* w-4 */
+  border-radius: 9999px; /* rounded-full */
+  margin-right: 0.5rem; /* mr-2 */
+}
+
+/* Status text */
+.statusText {
+  font-weight: 500; /* font-medium */
+}
+
+/* Date text */
+.dateText {
+  color: #4b5563; /* text-gray-600 */
+  margin-left: 1.5rem; /* ml-6 */
+}
+
+/* No history message */
+.noHistory {
+  color: #4b5563; /* text-gray-600 */
+}

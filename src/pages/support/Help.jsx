@@ -1,12 +1,13 @@
 import DivAnimate from "../../components/Animate/DivAnimate";
+import styles from './styles/Help.module.css';
 
 const Help = () => {
     return (
-        <DivAnimate className={"w-fit"}>
-        <div className="grid place-items-center">
-          <h1 className="text-3xl text-emerald-500">Help running!</h1>
-        </div>
-        </DivAnimate>
+        <DivAnimate className={styles.wrapper}>
+    <div className={styles.centered}>
+      <h1 className={styles.heading}>Help running!</h1>
+    </div>
+  </DivAnimate>
     );
   }
   

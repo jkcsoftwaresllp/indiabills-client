@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 import { getBaseURL } from "../../network/api/api-config";
 import SpinnerFullPage from "../more/spinner";
+import styles from "./styles/InspectOrder.module.css"; 
 
 const InspectOrder = () => {
   const [openInvoice, setOpenInvoice] = useState(false);
@@ -257,306 +258,319 @@ const InspectOrder = () => {
     })),
   };
 
-  return (
-    <PageAnimate>
-      <h2 className="text-2xl font-bold mb-4">Edit Order #{orderId}</h2>
-      <div className="flex justify-between items-center">
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<ReceiptIcon />}
-          onClick={handleOpenInvoice}
-        >
-          View Invoice
-        </Button>
-      </div>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Order Details */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold">Order Details</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <FormControl fullWidth margin="dense">
-                <InputLabel>Customer</InputLabel>
-                <Select
-                  value={formState.customerId}
-                  onChange={(e) =>
-                    setFormState((prevState) => ({
-                      ...prevState,
-                      customerId: e.target.value,
-                    }))
-                  }
-                  input={<OutlinedInput label="Customer" />}
-                  renderValue={(selected) => {
-                    const customer = customers.find(
-                      (customer) => customer.id === selected
-                    );
-                    return customer ? (
-                      <div className="flex items-center">
-                        <Avatar
-                          src={
-                            customer.avatar
-                              ? `${getBaseURL()}/${customer.avatar}`
-                              : `${getBaseURL()}/default.webp`
-                          }
-                          alt={customer.name}
-                          sx={{ width: 28, height: 28 }}
-                        />
-                        <span
-                          className="font-regular"
-                          style={{ marginLeft: 8 }}
-                        >
-                          {customer.name}
-                        </span>
-                        <span className="font-medium" style={{ marginLeft: 8 }}>
-                          #{customer.id}
-                        </span>
-                      </div>
-                    ) : null;
-                  }}
-                >
-                  {customers.map((customer) => (
-                    <MenuItem key={customer.id} value={customer.id}>
-                      <div className="flex items-center">
-                        <Avatar
-                          src={
-                            customer.avatar
-                              ? `${getBaseURL()}/${customer.avatar}`
-                              : `${getBaseURL()}/default.webp`
-                          }
-                          alt={customer.name}
-                          sx={{ width: 28, height: 28 }}
-                        />
-                        <span
-                          className="font-regular"
-                          style={{ marginLeft: 8 }}
-                        >
-                          {customer.name}
-                        </span>
-                        <span className="font-medium" style={{ marginLeft: 8 }}>
-                          #{customer.id}
-                        </span>
-                      </div>
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Order Date
-                <input
-                  type="date"
-                  name="orderDate"
-                  value={formState.orderDate.substring(0, 10)}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                />
-              </label>
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Shipping Address
-                <textarea
-                  name="shippingAddress"
-                  value={formState.shippingAddress}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                  rows={3}
-                />
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Shipping Cost
-                <input
-                  type="number"
-                  name="shippingCost"
-                  value={formState.shippingCost}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                  step="0.01"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Discount on Order
-                <input
-                  type="number"
-                  name="discountOnOrder"
-                  value={formState.discountOnOrder}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                  step="0.01"
-                />
-              </label>
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Order Status
-                <select
-                  name="orderStatus"
-                  value={formState.orderStatus}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                >
-                  <option value="pending">Pending</option>
-                  <option value="shipped">Shipped</option>
-                  <option value="fulfilled">Fulfilled</option>
-                  <option value="returned">Returned</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Shipping Date
-                <input
-                  type="date"
-                  name="shippingDate"
-                  value={
-                    formState.shippingDate
-                      ? formState.shippingDate.substring(0, 10)
-                      : ""
-                  }
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                />
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* Invoice Details */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold">Invoice Details</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Invoice Number
-                <input
-                  type="text"
-                  name="invoiceNumber"
-                  value={formState.invoiceNumber}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                />
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Invoice Date
-                <input
-                  type="date"
-                  name="invoiceDate"
-                  value={formState.invoiceDate.substring(0, 10)}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                />
-              </label>
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Due Date
-                <input
-                  type="date"
-                  name="dueDate"
-                  value={formState.dueDate.substring(0, 10)}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                />
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* Payment Details */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold">Payment Details</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Payment Status
-                <select
-                  name="paymentStatus"
-                  value={formState.paymentStatus}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                >
-                  <option value="paid">Paid</option>
-                  <option value="pending">Pending</option>
-                </select>
-              </label>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Payment Method
-                <select
-                  name="paymentMethod"
-                  value={formState.paymentMethod}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                >
-                  <option value="cash">Cash</option>
-                  <option value="card">Card</option>
-                  <option value="upi">UPI</option>
-                  <option value="credit">Credit</option>
-                </select>
-              </label>
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Payment Date
-                <input
-                  type="date"
-                  name="paymentDate"
-                  value={formState.paymentDate.substring(0, 10)}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                />
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* Items */}
-        <ItemsEditTable
-          items={formState.items}
-          availableItems={products}
-          handleItemChange={handleItemChange}
-          handleDeleteItem={handleDeleteItem}
-          handleAddItem={handleAddItem}
-        />
-
-        {/* Submit Button */}
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
-          >
-            Update Order
-          </button>
-        </div>
-      </form>
-
-      {/* Invoice Preview Modal */}
-      <Modal
-        open={openInvoice}
-        onClose={handleCloseInvoice}
-        aria-labelledby="invoice-modal-title"
-        aria-describedby="invoice-modal-description"
+  
+return (
+  <PageAnimate>
+    <h2 className={styles.heading}>Edit Order #{orderId}</h2>
+    <div className={styles.flexBetweenCenter}>
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<ReceiptIcon />}
+        onClick={handleOpenInvoice}
       >
-        <section id="invoice">
-          <ComprehensiveInvoiceTemplate
-            initials={initials}
-            invoice={invoiceReport}
-            organization={organization}
-          />
-        </section>
-      </Modal>
-    </PageAnimate>
-  );
+        View Invoice
+      </Button>
+    </div>
+    <form onSubmit={handleSubmit} className={styles.spaceY6}>
+      {/* Order Details */}
+      <div className={styles.spaceY6}>
+        <h3 className={styles.sectionTitle}>Order Details</h3>
+        <div className={`${styles.gridCols1} ${styles.gridCols2Md}`}>
+          <div>
+            <FormControl fullWidth margin="dense">
+              <InputLabel>Customer</InputLabel>
+              <Select
+                value={formState.customerId}
+                onChange={(e) =>
+                  setFormState((prevState) => ({
+                    ...prevState,
+                    customerId: e.target.value,
+                  }))
+                }
+                input={<OutlinedInput label="Customer" />}
+                renderValue={(selected) => {
+                  const customer = customers.find(
+                    (customer) => customer.id === selected
+                  );
+                  return customer ? (
+                    <div className={styles.flexRow}>
+                      <Avatar
+                        src={
+                          customer.avatar
+                            ? `${getBaseURL()}/${customer.avatar}`
+                            : `${getBaseURL()}/default.webp`
+                        }
+                        alt={customer.name}
+                        sx={{ width: 28, height: 28 }}
+                      />
+                      <span className={styles.fontRegular}>{customer.name}</span>
+                      <span className={styles.fontMedium}>#{customer.id}</span>
+                    </div>
+                  ) : null;
+                }}
+              >
+                {customers.map((customer) => (
+                  <MenuItem key={customer.id} value={customer.id}>
+                    <div className={styles.flexRow}>
+                      <Avatar
+                        src={
+                          customer.avatar
+                            ? `${getBaseURL()}/${customer.avatar}`
+                            : `${getBaseURL()}/default.webp`
+                        }
+                        alt={customer.name}
+                        sx={{ width: 28, height: 28 }}
+                      />
+                      <span className={styles.fontRegular}>{customer.name}</span>
+                      <span className={styles.fontMedium}>#{customer.id}</span>
+                    </div>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
+          <div>
+            <label htmlFor="orderDate" className={styles.blockLabel}>
+              Order Date
+              <input
+                id="orderDate"
+                type="date"
+                name="orderDate"
+                value={formState.orderDate.substring(0, 10)}
+                onChange={handleInputChange}
+                className={styles.inputStyle}
+              />
+            </label>
+          </div>
+          <div className={`${styles.mdColSpan2}`}>
+            <label htmlFor="shippingAddress" className={styles.blockLabel}>
+              Shipping Address
+              <textarea
+                id="shippingAddress"
+                name="shippingAddress"
+                value={formState.shippingAddress}
+                onChange={handleInputChange}
+                className={styles.textAreaStyle}
+                rows={3}
+              />
+            </label>
+          </div>
+          <div>
+            <label htmlFor="shippingCost" className={styles.blockLabel}>
+              Shipping Cost
+              <input
+                id="shippingCost"
+                type="number"
+                name="shippingCost"
+                value={formState.shippingCost}
+                onChange={handleInputChange}
+                className={styles.inputStyle}
+                step="0.01"
+              />
+            </label>
+          </div>
+          <div>
+            <label htmlFor="discountOnOrder" className={styles.blockLabel}>
+              Discount on Order
+              <input
+                id="discountOnOrder"
+                type="number"
+                name="discountOnOrder"
+                value={formState.discountOnOrder}
+                onChange={handleInputChange}
+                className={styles.inputStyle}
+                step="0.01"
+              />
+            </label>
+          </div>
+          <div className={`${styles.mdColSpan2}`}>
+            <label htmlFor="orderStatus" className={styles.blockLabel}>
+              Order Status
+              <select
+                id="orderStatus"
+                name="orderStatus"
+                value={formState.orderStatus}
+                onChange={handleInputChange}
+                className={styles.inputStyle}
+              >
+                <option value="pending">Pending</option>
+                <option value="shipped">Shipped</option>
+                <option value="fulfilled">Fulfilled</option>
+                <option value="returned">Returned</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <label htmlFor="shippingDate" className={styles.blockLabel}>
+              Shipping Date
+              <input
+                id="shippingDate"
+                type="date"
+                name="shippingDate"
+                value={
+                  formState.shippingDate
+                    ? formState.shippingDate.substring(0, 10)
+                    : ""
+                }
+                onChange={handleInputChange}
+                className={styles.inputStyle}
+              />
+            </label>
+          </div>
+          <div>
+            <label htmlFor="deliveryDate" className={styles.blockLabel}>
+              Delivery Date
+              <input
+                id="deliveryDate"
+                type="date"
+                name="deliveryDate"
+                value={
+                  formState.deliveryDate
+                    ? formState.deliveryDate.substring(0, 10)
+                    : ""
+                }
+                onChange={handleInputChange}
+                className={styles.inputStyle}
+              />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      {/* Invoice Details */}
+      <div className={styles.spaceY6}>
+        <h3 className={styles.sectionTitle}>Invoice Details</h3>
+        <div className={styles.gridCols1}>
+          <label htmlFor="invoiceNumber" className={styles.blockLabel}>
+            Invoice Number
+            <input
+              id="invoiceNumber"
+              type="text"
+              name="invoiceNumber"
+              value={formState.invoiceNumber}
+              onChange={handleInputChange}
+              className={styles.inputStyle}
+            />
+          </label>
+          <label htmlFor="invoiceDate" className={styles.blockLabel}>
+            Invoice Date
+            <input
+              id="invoiceDate"
+              type="date"
+              name="invoiceDate"
+              value={formState.invoiceDate.substring(0, 10)}
+              onChange={handleInputChange}
+              className={styles.inputStyle}
+            />
+          </label>
+          <label htmlFor="dueDate" className={styles.blockLabel}>
+            Due Date
+            <input
+              id="dueDate"
+              type="date"
+              name="dueDate"
+              value={formState.dueDate.substring(0, 10)}
+              onChange={handleInputChange}
+              className={styles.inputStyle}
+            />
+          </label>
+        </div>
+      </div>
+
+      {/* Payment Details */}
+      <div className={styles.spaceY6}>
+        <h3 className={styles.sectionTitle}>Payment Details</h3>
+        <div className={styles.gridCols1}>
+          <label htmlFor="paymentStatus" className={styles.blockLabel}>
+            Payment Status
+            <select
+              id="paymentStatus"
+              name="paymentStatus"
+              value={formState.paymentStatus}
+              onChange={handleInputChange}
+              className={styles.inputStyle}
+            >
+              <option value="unpaid">Unpaid</option>
+              <option value="pending">Pending</option>
+              <option value="paid">Paid</option>
+              <option value="failed">Failed</option>
+            </select>
+          </label>
+          <label htmlFor="paymentMethod" className={styles.blockLabel}>
+            Payment Method
+            <select
+              id="paymentMethod"
+              name="paymentMethod"
+              value={formState.paymentMethod}
+              onChange={handleInputChange}
+              className={styles.inputStyle}
+            >
+              <option value="cod">Cash on Delivery</option>
+              <option value="credit_card">Credit Card</option>
+              <option value="debit_card">Debit Card</option>
+              <option value="paypal">PayPal</option>
+              <option value="bank_transfer">Bank Transfer</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+          <label htmlFor="paymentDate" className={styles.blockLabel}>
+            Payment Date
+            <input
+              id="paymentDate"
+              type="date"
+              name="paymentDate"
+              value={
+                formState.paymentDate
+                  ? formState.paymentDate.substring(0, 10)
+                  : ""
+              }
+              onChange={handleInputChange}
+              className={styles.inputStyle}
+            />
+          </label>
+        </div>
+      </div>
+
+      {/* ItemsEditTable Component */}
+      <ItemsEditTable
+        products={products}
+        orderItems={formState.items}
+        setOrderItems={(items) =>
+          setFormState((prev) => ({ ...prev, items }))
+        }
+      />
+
+      {/* Submit Button */}
+      <div className={styles.flexRow} style={{ justifyContent: "flex-end" }}>
+        <button type="submit" className={styles.btnSubmit}>
+          Update Order
+        </button>
+      </div>
+    </form>
+
+    {/* Invoice Modal */}
+    <Modal open={showInvoiceModal} onClose={handleCloseInvoice}>
+      <Box className={styles.modalSection}>
+        <ComprehensiveInvoiceTemplate
+          invoiceNumber={formState.invoiceNumber}
+          invoiceDate={formState.invoiceDate}
+          dueDate={formState.dueDate}
+          customer={customers.find(
+            (customer) => customer.id === formState.customerId
+          )}
+          orderItems={formState.items}
+          shippingCost={formState.shippingCost}
+          discountOnOrder={formState.discountOnOrder}
+          paymentStatus={formState.paymentStatus}
+          paymentMethod={formState.paymentMethod}
+        />
+      </Box>
+    </Modal>
+  </PageAnimate>
+);
+
 };
 
 export default InspectOrder;

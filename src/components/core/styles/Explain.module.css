@@ -1,0 +1,16 @@
+.customPopover {
+  pointer-events: none;
+}
+
+.popoverPaper {
+  background-color: rgba(229, 229, 229, 0.85);
+  backdrop-filter: blur(20px);
+  box-shadow: none;
+}
+
+.popoverContent {
+  border-radius: 0.75rem; /* equivalent to rounded-xl */
+  font-size: 1.125rem;     /* equivalent to text-lg */
+  font-weight: 600;        /* equivalent to font-semibold */
+  padding: 0.25rem 0.75rem; /* equivalent to px-3 py-1 */
+}

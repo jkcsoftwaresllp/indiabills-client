@@ -1,0 +1,48 @@
+/* NavLinkButton.module.css */
+
+.navLink {
+  margin-left: 1.5rem; /* mx-6 approx */
+  margin-right: 1.5rem;
+  transition-timing-function: ease-in-out;
+  transition-duration: 300ms;
+  transition-property: transform;
+}
+
+.navLinkHover {
+  cursor: pointer;
+  transform: translateY(0);
+}
+
+.navLinkHover:hover {
+  transform: translateY(-0.25rem) scale(1.05);
+}
+
+.navLinkHoverPending {
+  transform: translateY(0);
+  transition-timing-function: ease-in-out;
+  transition-duration: 300ms;
+  cursor: pointer;
+}
+
+.navLinkHoverPending:hover {
+  transform: translateY(-0.25rem) scale(1.10);
+}
+
+.active {
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  border-radius: 0.5rem; /* rounded-lg */
+  padding: 1px; /* p-px */
+  transition-timing-function: ease-out;
+  transition-duration: 300ms;
+  transform: translateY(0.25rem) scale(1.10);
+  display: inline-block;
+}
+
+.activeAccent {
+  background-color: rgba(147, 197, 253, 0.3); /* idms-accent-transparent-bg (example light blue) */
+}
+
+.activeError {
+  background-color: #fee2e2; /* bg-red-100 */
+}

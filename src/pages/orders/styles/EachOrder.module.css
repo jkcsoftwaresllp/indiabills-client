@@ -1,0 +1,174 @@
+.main {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  height: 100%;
+  z-index: 30;
+}
+
+.motionContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.orderHead {
+  position: relative;
+  z-index: 40;
+}
+
+.statusWrapper {
+  position: absolute;
+  top: 0.75rem; /* 3 * 0.25rem */
+  right: 0.75rem;
+  z-index: 40;
+}
+
+.statusIndicatorWrapper {
+  position: relative;
+  display: flex;
+  height: 1rem; /* 4 * 0.25rem */
+  width: 1rem;
+}
+
+.ping {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  position: absolute;
+  display: inline-flex;
+  height: 100%;
+  width: 100%;
+  border-radius: 9999px; /* rounded-full */
+  opacity: 0.75;
+}
+
+.statusIndicator {
+  position: relative;
+  display: inline-flex;
+  border-radius: 9999px;
+  height: 1rem;
+  width: 1rem;
+}
+
+.orderTitleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem; /* 1 */
+}
+
+.orderTitle {
+  color: black;
+  font-size: 1.25rem; /* xl */
+  font-weight: 700;
+}
+
+.invoiceNumberWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.invoiceNumber {
+  color: black;
+  font-size: 1rem; /* md */
+  font-weight: 300;
+}
+
+.priceDateWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.totalAmount {
+  font-size: 1.125rem; /* lg */
+  color: #047857; /* green-700 */
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.invoiceDate {
+  color: #4b5563; /* gray-600 */
+  margin-top: 0.25rem;
+}
+
+.customerWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #374151; /* gray-700 */
+  margin: 0.5rem;
+}
+
+.customerInfo {
+  display: flex;
+  align-items: center;
+}
+
+.customerName {
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+.paymentSection {
+  display: flex;
+  margin-top: 0.5rem;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.paid {
+  color: #10b981; /* emerald-500 */
+}
+
+.unpaid {
+  color: #b45309; /* amber-700 */
+}
+
+.paymentIcons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rotatedBars {
+  display: flex;
+  flex-direction: column;
+  transform: rotate(90deg);
+}
+
+.iconWrapper {
+  margin: 0 0.5rem;
+}
+
+.itemsSection {
+  height: 100%;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.itemsHeader {
+  text-align: center;
+  color: #f43f5e; /* rose-600 */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.itemsHeader:hover {
+  text-decoration: underline;
+}
+
+/* Ping animation from Tailwind */
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}

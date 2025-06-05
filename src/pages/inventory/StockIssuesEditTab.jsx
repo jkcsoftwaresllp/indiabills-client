@@ -14,6 +14,7 @@ import {
   MenuItem,
   InputLabel,
 } from '@mui/material';
+import styles from './styles/StockIssuesEditTab.module.css';
 
 const REASON_OPTIONS = [
   { value: 'leakage', label: 'Leakage' },
@@ -31,7 +32,8 @@ const StockIssuesEditTab = ({
 }) => {
   return (
     <div>
-      <h3 className="text-xl font-semibold">Stock Issues</h3>
+      <h3 className={styles.heading}>Stock Issues</h3>
+
       <Button
         variant="contained"
         color="primary"
@@ -112,7 +114,7 @@ const StockIssuesEditTab = ({
                 <TableCell>
                   <p
                     onClick={() => handleDeleteIssue(issue.id)}
-                    className="text-sm font-bold text-rose-700 cursor-pointer"
+                    className={styles.deleteBtn}
                   >
                     x
                   </p>

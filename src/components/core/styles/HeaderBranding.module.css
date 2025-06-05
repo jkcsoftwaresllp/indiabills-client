@@ -1,0 +1,12 @@
+.logoTitle {
+  font-size: 1.875rem; /* text-3xl = 30px */
+  font-weight: 800;    /* font-extrabold */
+}
+
+.gradientText {
+  background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to right, #ec4899, #8b5cf6); /* from-pink-500 to-violet-500 */
+  -webkit-background-clip: text; /* for Safari support */
+  -webkit-text-fill-color: transparent;
+}

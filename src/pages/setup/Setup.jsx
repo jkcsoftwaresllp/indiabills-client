@@ -28,6 +28,7 @@ import { MuiTelInput } from "mui-tel-input";
 import DropdownStream from "../../components/FormComponent/DropdownStream";
 import InputBoxStream from "../../components/FormComponent/InputBoxStream";
 import MobileField from "../../components/FormComponent/MobileField";
+import styles from './Setup.module.css';
 
 const Setup = () => {
   const { errorPopup, successPopup } = useStore();
@@ -205,7 +206,7 @@ const Setup = () => {
 
   return (
     <main
-      className="grid place-items-center w-full rounded-xl p-4"
+      className={styles.main}
       style={{
         backgroundImage: `url(${getBackgroundImage()})`,
         // backgroundImage: `url(${bg1})`,
@@ -281,9 +282,9 @@ const BrandingSetup = memo(({ setPage, setLogo, organization, setOrganization })
 
     // @formatter:off
     const main = (
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-col items-center gap-6">
-          <div className="flex w-full gap-4">
+      <div className={styles.flexColumn}>
+    <div className={styles.centerColumn}>
+      <div className={styles.row}>
             <InputBox
               name="organizationName"
               type="string"
@@ -292,7 +293,7 @@ const BrandingSetup = memo(({ setPage, setLogo, organization, setOrganization })
               value={organization?.organizationName}
               onChange={(e) => handleChange?.(e)}
             />
-            <div className="flex w-full gap-4 items-center">
+            <div className={styles.uploadContainer}>
               <ImageUpload
                 placeholder="Upload Logo ⤴ | 24 x 24"
                 setImage={setLogo}
@@ -307,7 +308,7 @@ const BrandingSetup = memo(({ setPage, setLogo, organization, setOrganization })
               onChange={(e) => handleChange?.(e)}
             />
           </div>
-          <div className={"flex w-full gap-4"}>
+          <div className={styles.row}>
             <InputBox
               multiline
               maxRows={3}
@@ -327,7 +328,7 @@ const BrandingSetup = memo(({ setPage, setLogo, organization, setOrganization })
               onChange={(e) => handleChange?.(e)}
             />
           </div>
-          <div className="flex w-full gap-4">
+          <div className={styles.row}>
             <InputBox
               name={"email"}
               type="string"
@@ -352,7 +353,7 @@ const BrandingSetup = memo(({ setPage, setLogo, organization, setOrganization })
               data={organization}
             />
           </div>
-          <div className="flex w-full gap-4">
+          <div className={styles.row}>
             <InputBox
               name={"bankBranch"}
               type="string"
@@ -386,7 +387,7 @@ const BrandingSetup = memo(({ setPage, setLogo, organization, setOrganization })
               onChange={(e) => handleChange?.(e)}
             />
           </div>
-          <div className="flex w-full gap-4">
+          <div className={styles.row}>
             <div className={"w-4/12"}>
               <Dropdown
                 name={"state"}
@@ -437,8 +438,8 @@ const AdminSetup = memo(({ setPage, setImage, admin, setAdmin }) => {
   const main = (
     <div>
       <ImageUpload setImage={setImage} />
-      <div className="p-8 flex flex-col items-center gap-8">
-        <div className="flex w-full gap-4">
+    <div className={styles.adminFormWrapper}>
+          <div className={styles.row}>
           <InputBox
             moreVisible={true}
             name="userName"
@@ -449,8 +450,8 @@ const AdminSetup = memo(({ setPage, setImage, admin, setAdmin }) => {
             onChange={(e) => handleChange?.(e)}
           />
         </div>
-        <div className="flex w-full gap-4">
-          <div className="w-1/2">
+         <div className={styles.row}>
+            <div className={styles.halfWidth}>
             <InputBox
               moreVisible={true}
               name={"email"}
@@ -473,7 +474,7 @@ const AdminSetup = memo(({ setPage, setImage, admin, setAdmin }) => {
             value={admin.mobile}
           />
         </div>
-        <div className="flex w-full gap-4">
+        <div className={styles.row}>
           <InputBox
             moreVisible={true}
             name={"password"}
@@ -530,7 +531,7 @@ const WarehouseSetup = memo(
       };
 
     const main = (
-      <div className="grid grid-cols-2 gap-8 p-6">
+      <div className={styles.twoColumnGrid}>
         {LocationMetadata.map((location) => {
           if (location.toAdd) {
             if (location.autocomplete) {

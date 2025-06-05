@@ -13,6 +13,7 @@ import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import ImageUpload from "./ImageUpload";
 import { MuiTelInput } from "mui-tel-input";
+import styles from './styles/AddForm.module.css';
 
 const AddForm = ({ title, metadata }) => {
 	const navigate = useNavigate();
@@ -112,69 +113,67 @@ const AddForm = ({ title, metadata }) => {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="w-full flex gap-3">
-			<div className="grid grid-cols-3 h-fit grid-row-2 gap-10">
-				{Object.entries(groupedData).map(
-					([category, items]) => (
-						<div className="shadow-md transition flex flex-col min-w-4 h-fit items-center gap-6 border rounded-2xl p-8 backdrop-filter backdrop-blur-lg bg-white bg-opacity-90" key={category} >
-							<h2 className="font-semibold lowercase mb-2">{category}</h2>
-							{items.map((item, index) => {
-								if (item.autocomplete) {
-									const options = getOption(item.name);
-									return (
-										<DropdownStream
-											key={index}
-											field={item}
-											handleChange={handleChange}
-											options={options}
-											required={item.required ? item.required : false}
-										/>
-									);
-								} else {
-									if (item.name === "avatar") {
-										return <ImageUpload key={index} setImage={setImage} />;
-									} else if ((item.name).includes("mobile")) {
-										const field = String(formData[item.name]);
-										return (
-											<MuiTelInput
-												key={index}
-												label={item.label}
-												name={item.name}
-												defaultCountry="IN"
-												onlyCountries={["FR", "IN", "BE", "SA"]}
-												InputProps={{ inputProps: { maxLength: 15 } }}
-												placeholder={"XXXXXXX"}
-												onChange={(value) =>
-													setFormData({ ...formData, [item.name]: value })
-												}
-												value={field}
-											/>
-										);
-									} else {
-										return (
-											<div key={index} className={"idms-transparent-bg w-full"}>
-												<InputBoxStream
-													field={item}
-													required={item.required}
-													value={formData[item.name]}
-													handleChange={handleChange}
-												/>
-											</div>
-										);
-									}
-								}
-							})}
-						</div>
-					)
-				)}
-			</div>
-			<div className="flex justify-center">
-				<button type="submit" className="p-3 m-5 shadow-xl idms-submit">
-					<CheckCircleIcon />
-				</button>
-			</div>
-		</form>
-	);
+  <form onSubmit={handleSubmit} className={styles.form}>
+    <div className={styles.gridWrapper}>
+      {Object.entries(groupedData).map(([category, items]) => (
+        <div className={styles.categoryCard} key={category}>
+          <h2 className={styles.categoryTitle}>{category}</h2>
+          {items.map((item, index) => {
+            if (item.autocomplete) {
+              const options = getOption(item.name);
+              return (
+                <DropdownStream
+                  key={index}
+                  field={item}
+                  handleChange={handleChange}
+                  options={options}
+                  required={item.required ? item.required : false}
+                />
+              );
+            } else {
+              if (item.name === "avatar") {
+                return <ImageUpload key={index} setImage={setImage} />;
+              } else if ((item.name).includes("mobile")) {
+                const field = String(formData[item.name]);
+                return (
+                  <MuiTelInput
+                    key={index}
+                    label={item.label}
+                    name={item.name}
+                    defaultCountry="IN"
+                    onlyCountries={["FR", "IN", "BE", "SA"]}
+                    InputProps={{ inputProps: { maxLength: 15 } }}
+                    placeholder={"XXXXXXX"}
+                    onChange={(value) =>
+                      setFormData({ ...formData, [item.name]: value })
+                    }
+                    value={field}
+                  />
+                );
+              } else {
+                return (
+                  <div key={index} className={styles.transparentBg}>
+                    <InputBoxStream
+                      field={item}
+                      required={item.required}
+                      value={formData[item.name]}
+                      handleChange={handleChange}
+                    />
+                  </div>
+                );
+              }
+            }
+          })}
+        </div>
+      ))}
+    </div>
+    <div className={styles.submitWrapper}>
+      <button type="submit" className={styles.submitButton}>
+        <CheckCircleIcon />
+      </button>
+    </div>
+  </form>
+);
 };
 
 export default AddForm;

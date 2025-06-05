@@ -1,0 +1,52 @@
+.main {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.centerColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.row {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+}
+
+.uploadContainer {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+  align-items: center;
+}
+
+.adminFormWrapper {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.halfWidth {
+  width: 50%;
+}
+
+.twoColumnGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  padding: 1.5rem;
+}

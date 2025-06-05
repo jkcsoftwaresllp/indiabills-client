@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import ImageUpload from "../../components/FormComponent/ImageUpload";
 import MobileField from "../../components/FormComponent/MobileField";
 import Timeline from "../../components/FormComponent/Timeline";
+import styles from "./styles/AddCustomers.module.css";
 
 const AddCustomers = () => {
   const { successPopup, errorPopup } = useStore();
@@ -76,75 +77,61 @@ const AddCustomers = () => {
 
   const steps = ["User", "Verification", "Address"];
 
-  return (
+   return (
     <PageAnimate>
-      <div className={"h-full flex flex-col gap-12 justify-center items-center"}>
-        <button
-          className={"self-start flex items-center"}
-          onClick={() => navigate(-1)}
-        >
+      <div className={styles.container}>
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
           <ArrowBackIosNewIcon /> Go back
         </button>
 
-        <h1 className="text-2xl rounded-lg lowercase transition hover:shadow-lg p-4 text-center w-3/4 idms-transparent-bg font-extrabold">
-          register a new<span className={"text-rose-400"}> customer</span> :)
+        <h1 className={styles.heading}>
+          register a new <span className={styles.highlight}>customer</span> :)
         </h1>
 
         <Timeline steps={steps} currentStep={page} />
 
-        <div>
-          <div className={"h-full w-full flex justify-center"}>
-            <main>
-              {page === 1 && (
-                <BasicPage
-                  setImage={setImage}
-                  formData={formData}
-                  setFormData={setFormData}
-                  handleChange={handleChange}
-                />
-              )}
-              {page === 2 && (
-                <BusinessPage
-                  formData={formData}
-                  setFormData={setFormData}
-                  handleChange={handleChange}
-                />
-              )}
-              {page === 3 && (
-                <AddressPage
-                  formData={formData}
-                  setFormData={setFormData}
-                  handleChange={handleChange}
-                />
-              )}
-            </main>
+        <div className={styles.timelineWrapper}>
+          <main>
+            {page === 1 && (
+              <BasicPage
+                setImage={setImage}
+                formData={formData}
+                setFormData={setFormData}
+                handleChange={handleChange}
+              />
+            )}
+            {page === 2 && (
+              <BusinessPage
+                formData={formData}
+                setFormData={setFormData}
+                handleChange={handleChange}
+              />
+            )}
+            {page === 3 && (
+              <AddressPage
+                formData={formData}
+                setFormData={setFormData}
+                handleChange={handleChange}
+              />
+            )}
+          </main>
 
-            <div className={"p-2 flex flex-col gap-4"}>
-              {page === 3 && (
-                <button
-                  className="p-3 flex-grow shadow-xl form-button-submit"
-                  onClick={submit}
-                >
-                  <CheckCircleIcon />
-                </button>
-              )}
-              {page < 3 && (
-                <button
-                  className="p-3 flex-grow shadow-xl form-button-nav"
-                  onClick={nextPage}
-                >
-                  <ArrowForwardIosIcon />
-                </button>
-              )}
-              {page >= 2 && (
-                <button
-                  className="p-3 flex-grow shadow-xl form-button-nav"
-                  onClick={backPage}
-                >
-                  <ArrowBackIosNewIcon />
-                </button>
-              )}
-            </div>
+          <div className={styles.formControls}>
+            {page === 3 && (
+              <button className={styles.submitButton} onClick={submit}>
+                <CheckCircleIcon />
+              </button>
+            )}
+            {page < 3 && (
+              <button className={styles.navButton} onClick={nextPage}>
+                <ArrowForwardIosIcon />
+              </button>
+            )}
+            {page >= 2 && (
+              <button className={styles.navButton} onClick={backPage}>
+                <ArrowBackIosNewIcon />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -157,8 +144,8 @@ export default AddCustomers;
 const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage }) => {
   return (
     <MultiPageAnimate>
-      <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-        <main className="grid grid-cols-2 gap-6">
+      <div className={styles.pageWrapper}>
+        <main className={styles.gridTwoCols}>
           <InputBox
             name="customerName"
             type="string"
@@ -208,56 +195,14 @@ BasicPage.displayName = "BasicPage";
 const BusinessPage = React.memo(({ formData, handleChange }) => {
   return (
     <MultiPageAnimate>
-      <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-        <main className="grid grid-cols-2 gap-6">
-          <InputBox
-            name="businessName"
-            type="string"
-            label="Business Name"
-            placeholder={"__________"}
-            value={formData.businessName}
-            onChange={handleChange}
-          />
-          <InputBox
-            name="gstin"
-            type="text"
-            label="GSTIN"
-            placeholder={"__________"}
-            value={formData.gstin}
-            onChange={handleChange}
-          />
-          <InputBox
-            name="fssai"
-            type="text"
-            label="FSSAI"
-            placeholder={"__________"}
-            value={formData.fssai}
-            onChange={handleChange}
-          />
-          <InputBox
-            name="registrationNumber"
-            type="text"
-            label="Registration Number"
-            placeholder={"__________"}
-            value={formData.registrationNumber}
-            onChange={handleChange}
-          />
-          <InputBox
-            name="aadharNumber"
-            type="text"
-            label="Aadhar Number"
-            placeholder={"__________"}
-            value={formData.aadharNumber}
-            onChange={handleChange}
-          />
-          <InputBox
-            name="panNumber"
-            type="text"
-            label="PAN Number"
-            placeholder={"__________"}
-            value={formData.panNumber}
-            onChange={handleChange}
-          />
+      <div className={styles.pageWrapper}>
+        <main className={styles.gridTwoCols}>
+          <InputBox name="businessName" type="string" label="Business Name" value={formData.businessName} onChange={handleChange} />
+          <InputBox name="gstin" type="text" label="GSTIN" value={formData.gstin} onChange={handleChange} />
+          <InputBox name="fssai" type="text" label="FSSAI" value={formData.fssai} onChange={handleChange} />
+          <InputBox name="registrationNumber" type="text" label="Registration Number" value={formData.registrationNumber} onChange={handleChange} />
+          <InputBox name="aadharNumber" type="text" label="Aadhar Number" value={formData.aadharNumber} onChange={handleChange} />
+          <InputBox name="panNumber" type="text" label="PAN Number" value={formData.panNumber} onChange={handleChange} />
         </main>
       </div>
     </MultiPageAnimate>
@@ -269,62 +214,15 @@ BusinessPage.displayName = "BusinessPage";
 const AddressPage = React.memo(({ formData, handleChange, setFormData }) => {
   return (
     <MultiPageAnimate>
-      <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-        <main className="flex flex-col gap-6">
-          <InputBox
-            required
-            name="addressType"
-            type="string"
-            label="Address Type"
-            placeholder={""}
-            value={formData.addressType}
-            onChange={handleChange}
-          />
-          <InputBox
-            multiline={true}
-            required
-            name="addressLine"
-            type="string"
-            label="Address Line"
-            placeholder={"Plot, Street, Town"}
-            value={formData.addressLine}
-            onChange={handleChange}
-          />
-          <div className={"grid grid-cols-2 gap-4"}>
-            <InputBox
-              name="landmark"
-              type="string"
-              label="Landmark"
-              placeholder={""}
-              value={formData.landmark}
-              onChange={handleChange}
-            />
-            <InputBox
-              required
-              name="city"
-              type="string"
-              label="City"
-              placeholder={""}
-              value={formData.city}
-              onChange={handleChange}
-            />
-            <Dropdown
-              required
-              name={"state"}
-              label="State"
-              options={getOption("state")}
-              selectedData={formData}
-              setValue={setFormData}
-            />
-            <InputBox
-              required
-              name="pinCode"
-              type="string"
-              label="Pin Code"
-              placeholder={"00000"}
-              value={formData.pinCode}
-              onChange={handleChange}
-            />
+      <div className={styles.pageWrapper}>
+        <main className={styles.flexColumnGap}>
+          <InputBox required name="addressType" type="string" label="Address Type" value={formData.addressType} onChange={handleChange} />
+          <InputBox required multiline={true} name="addressLine" type="string" label="Address Line" placeholder="Plot, Street, Town" value={formData.addressLine} onChange={handleChange} />
+          <div className={styles.gridTwoColsSmallGap}>
+            <InputBox name="landmark" type="string" label="Landmark" value={formData.landmark} onChange={handleChange} />
+            <InputBox required name="city" type="string" label="City" value={formData.city} onChange={handleChange} />
+            <Dropdown required name="state" label="State" options={getOption("state")} selectedData={formData} setValue={setFormData} />
+            <InputBox required name="pinCode" type="string" label="Pin Code" placeholder="00000" value={formData.pinCode} onChange={handleChange} />
           </div>
         </main>
       </div>

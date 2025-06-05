@@ -34,6 +34,7 @@ import {
 } from "@mui/material";
 import MouseHoverPopover from "../../../components/core/Explain";
 import ShortInvoiceTemplate from "../../invoices/templates/Short";
+import styles from "./styles/AdminCheckout.module.css";
 
 const AdminCheckout = () => {
   const { errorPopup, successPopup, selectedProducts, clearSelectedProducts } =
@@ -442,80 +443,57 @@ const AdminCheckout = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
 
   return (
-    <PageAnimate nostyle>
-      <main className="p-6 w-full flex flex-col gap-8 bg-white rounded-xl">
-        <section className="p-4 w-full flex items-center justify-between">
-          <button className={""} onClick={() => navigate("/shop")}>
-            <ArrowBackIosNewIcon />
-            Back to Shop
+  <PageAnimate nostyle>
+    <main className={styles.container}>
+      <section className={styles.header}>
+        <button onClick={() => navigate("/shop")}>
+          <ArrowBackIosNewIcon />
+          Back to Shop
+        </button>
+
+        <div className={styles.invoiceActions}>
+          <MouseHoverPopover
+            triggerElement={
+              <Button variant="outlined" color="primary" onClick={handleOpen}>
+                <ReceiptIcon />
+              </Button>
+            }
+            popoverContent={<span className="text-xs"> View Invoice </span>}
+          />
+          <Modal open={open} onClose={handleClose}>
+            <section id="invoice">
+              {TemplateType === "short" ? (
+                <ShortInvoiceTemplate
+                  invoice={invoiceReport}
+                  Organization={organization}
+                />
+              ) : (
+                <ComprehensiveInvoiceTemplate
+                  invoice={invoiceReport}
+                  organization={organization}
+                />
+              )}
+            </section>
+          </Modal>
+
+          <button onClick={handlePayClick} className={styles.payButton}>
+            <PaymentIcon /> Pay
           </button>
-          <div className={"flex gap-2 items-center"}>
-            <div>
-              <MouseHoverPopover
-                triggerElement={
-                  <Button
-                    variant={"outlined"}
-                    color="primary"
-                    onClick={handleOpen}
-                  >
-                    <ReceiptIcon />
-                  </Button>
-                }
-                popoverContent={<span className="text-xs"> View Invoice </span>}
-              />
-              <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="invoice-modal-title"
-                aria-describedby="invoice-modal-description"
-              >
-                <section id="invoice">
-                  {TemplateType === "short" ? (
-                    <ShortInvoiceTemplate
-                      invoice={invoiceReport}
-                      Organization={organization}
-                    />
-                  ) : (
-                    <ComprehensiveInvoiceTemplate
-                      invoice={invoiceReport}
-                      organization={organization}
-                    />
-                  )}
-                </section>
-              </Modal>
-            </div>
-            <button
-              onClick={handlePayClick}
-              className="p-2 min-w-32 bg-primary text-slate-200 rounded-md"
-            >
-              <PaymentIcon /> Pay
-            </button>
-            <div
-              className="flex items-center gap-2"
-              onClick={() => setShip(!ship)}
-            >
-              Instant Ship?
-              <span class={"text-rose-500 font-medium"}>
-                {ship ? "Yes" : "No"}
-              </span>
-            </div>
+
+          <div className={styles.instantShip} onClick={() => setShip(!ship)}>
+            Instant Ship?
+            <span className={styles.shipStatus}>{ship ? "Yes" : "No"}</span>
           </div>
+        </div>
+      </section>
+
+      {Object.keys(selectedProducts).length > 0 ? (
+        <section id="selected-products" className={styles.productList}>
+          <OrderCard products={products} />
         </section>
-
-        {Object.keys(selectedProducts).length > 0 ? (
-          <section
-            id="selected-products"
-            className="flex overflow-x-scroll gap-2 text-slate-500 p-4"
-          >
-            <OrderCard products={products} />
-          </section>
-        ) : (
-          <h1 className="text-slate-500 p-4 idms-control">
-            {" "}
-            Nothing to show :p{" "}
-          </h1>
-        )}
-
+      ) : (
+        <h1 className={styles.noProducts}>Nothing to show :p</h1>
+      )}
         <CustomerSection
           isNewCustomer={isNewCustomer}
           setIsNewCustomer={setIsNewCustomer}
@@ -563,136 +541,133 @@ const AdminCheckout = () => {
         />
 
         <Modal
-          open={isPaymentModalOpen}
-          onClose={handlePaymentModalClose}
-          aria-labelledby="payment-method-modal-title"
-          aria-describedby="payment-method-modal-description"
+  open={isPaymentModalOpen}
+  onClose={handlePaymentModalClose}
+  aria-labelledby="payment-method-modal-title"
+  aria-describedby="payment-method-modal-description"
+>
+  <div className={styles.modalContainer}>
+    <div className={styles.modalContent}>
+      <h2 id="payment-method-modal-title" className={styles.modalTitle}>
+        Select Payment Method
+      </h2>
+
+      <FormControl fullWidth className={styles.fieldSpacing}>
+        <InputLabel id="payment-method-label">Payment Method</InputLabel>
+        <Select
+          labelId="payment-method-label"
+          id="payment-method-select"
+          value={selectedPaymentMethod}
+          label="Payment Method"
+          onChange={handlePaymentMethodChange}
         >
-          <div className="flex justify-center items-center h-full">
-            <div className="bg-white p-6 rounded-md shadow-lg w-96">
-              <h2 id="payment-method-modal-title" className="text-xl mb-4">
-                Select Payment Method
-              </h2>
-              <FormControl fullWidth className="mb-4">
-                <InputLabel id="payment-method-label">
-                  Payment Method
-                </InputLabel>
-                <Select
-                  labelId="payment-method-label"
-                  id="payment-method-select"
-                  value={selectedPaymentMethod}
-                  label="Payment Method"
-                  onChange={handlePaymentMethodChange}
-                >
-                  <MenuItem value="upi">UPI</MenuItem>
-                  <MenuItem value="card">Card</MenuItem>
-                  <MenuItem value="cash">Cash</MenuItem>
-                  <MenuItem value="credit">Credit</MenuItem>
-                </Select>
-              </FormControl>
+          <MenuItem value="upi">UPI</MenuItem>
+          <MenuItem value="card">Card</MenuItem>
+          <MenuItem value="cash">Cash</MenuItem>
+          <MenuItem value="credit">Credit</MenuItem>
+        </Select>
+      </FormControl>
 
-              {selectedPaymentMethod === "upi" && (
-                <TextField
-                  label="UPI ID"
-                  variant="outlined"
-                  fullWidth
-                  className="mb-4"
-                  value={payment.upi}
-                  onChange={(e) =>
-                    setPayment({ ...payment, upi: e.target.value })
-                  }
-                />
-              )}
+      {selectedPaymentMethod === "upi" && (
+        <TextField
+          label="UPI ID"
+          variant="outlined"
+          fullWidth
+          className={styles.fieldSpacing}
+          value={payment.upi}
+          onChange={(e) =>
+            setPayment({ ...payment, upi: e.target.value })
+          }
+        />
+      )}
 
-              {selectedPaymentMethod === "card" && (
-                <>
-                  <TextField
-                    label="Card Number"
-                    variant="outlined"
-                    fullWidth
-                    className="mb-4"
-                    value={payment.cardNumber}
-                    onChange={(e) =>
-                      setPayment({ ...payment, cardNumber: e.target.value })
-                    }
-                  />
-                  <TextField
-                    label="Card Holder Name"
-                    variant="outlined"
-                    fullWidth
-                    className="mb-4"
-                    value={payment.cardHolderName}
-                    onChange={(e) =>
-                      setPayment({ ...payment, cardHolderName: e.target.value })
-                    }
-                  />
-                  <TextField
-                    label="Expiry Date"
-                    variant="outlined"
-                    type="date"
-                    fullWidth
-                    className="mb-4"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    value={payment.expiryDate}
-                    onChange={(e) =>
-                      setPayment({ ...payment, expiryDate: e.target.value })
-                    }
-                  />
-                  <TextField
-                    label="CVV"
-                    variant="outlined"
-                    fullWidth
-                    className="mb-4"
-                    type="password"
-                    value={payment.cvv}
-                    onChange={(e) =>
-                      setPayment({ ...payment, cvv: e.target.value })
-                    }
-                  />
-                  <TextField
-                    label="Card Type"
-                    variant="outlined"
-                    fullWidth
-                    className="mb-4"
-                    value={payment.cardType}
-                    onChange={(e) =>
-                      setPayment({ ...payment, cardType: e.target.value })
-                    }
-                  />
-                  <TextField
-                    label="Bank Name"
-                    variant="outlined"
-                    fullWidth
-                    className="mb-4"
-                    value={payment.bankName}
-                    onChange={(e) =>
-                      setPayment({ ...payment, bankName: e.target.value })
-                    }
-                  />
-                </>
-              )}
+      {selectedPaymentMethod === "card" && (
+        <>
+          <TextField
+            label="Card Number"
+            variant="outlined"
+            fullWidth
+            className={styles.fieldSpacing}
+            value={payment.cardNumber}
+            onChange={(e) =>
+              setPayment({ ...payment, cardNumber: e.target.value })
+            }
+          />
+          <TextField
+            label="Card Holder Name"
+            variant="outlined"
+            fullWidth
+            className={styles.fieldSpacing}
+            value={payment.cardHolderName}
+            onChange={(e) =>
+              setPayment({ ...payment, cardHolderName: e.target.value })
+            }
+          />
+          <TextField
+            label="Expiry Date"
+            variant="outlined"
+            type="date"
+            fullWidth
+            className={styles.fieldSpacing}
+            InputLabelProps={{ shrink: true }}
+            value={payment.expiryDate}
+            onChange={(e) =>
+              setPayment({ ...payment, expiryDate: e.target.value })
+            }
+          />
+          <TextField
+            label="CVV"
+            variant="outlined"
+            fullWidth
+            type="password"
+            className={styles.fieldSpacing}
+            value={payment.cvv}
+            onChange={(e) =>
+              setPayment({ ...payment, cvv: e.target.value })
+            }
+          />
+          <TextField
+            label="Card Type"
+            variant="outlined"
+            fullWidth
+            className={styles.fieldSpacing}
+            value={payment.cardType}
+            onChange={(e) =>
+              setPayment({ ...payment, cardType: e.target.value })
+            }
+          />
+          <TextField
+            label="Bank Name"
+            variant="outlined"
+            fullWidth
+            className={styles.fieldSpacing}
+            value={payment.bankName}
+            onChange={(e) =>
+              setPayment({ ...payment, bankName: e.target.value })
+            }
+          />
+        </>
+      )}
 
-              {(selectedPaymentMethod === "cash" ||
-                selectedPaymentMethod === "credit") && (
-                <Typography variant="body1" className="mb-4">
-                  No additional information required for{" "}
-                  {selectedPaymentMethod.charAt(0).toUpperCase() +
-                    selectedPaymentMethod.slice(1)}{" "}
-                  payments.
-                </Typography>
-              )}
+      {(selectedPaymentMethod === "cash" ||
+        selectedPaymentMethod === "credit") && (
+        <Typography variant="body1" className={styles.infoText}>
+          No additional information required for{" "}
+          {selectedPaymentMethod.charAt(0).toUpperCase() +
+            selectedPaymentMethod.slice(1)}{" "}
+          payments.
+        </Typography>
+      )}
 
-              <div className="flex justify-end gap-2">
-                <Button
-                  onClick={handlePaymentModalClose}
-                  color="secondary"
-                  variant="contained"
-                >
-                  Cancel
-                </Button>
-                <Button
+      <div className={styles.actions}>
+        <Button
+          onClick={handlePaymentModalClose}
+          color="secondary"
+          variant="contained"
+        >
+          Cancel
+        </Button>
+        <Button
                   onClick={() => {
                     let hasWarnings = false;
 

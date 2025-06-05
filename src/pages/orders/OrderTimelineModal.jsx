@@ -2,6 +2,7 @@ import React from "react";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ModalMaker from "../../components/core/ModalMaker";
+import styles from './styles/OrderTimelineModal.module.css';
 
 const OrderTimelineModal = ({
   isOpen,
@@ -27,43 +28,56 @@ const OrderTimelineModal = ({
     }
   };
 
-  return (
-    <ModalMaker isOpen={isOpen} onClose={onClose}>
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-4">Order Timeline</h2>
-        <section id={"Timeline"}>
-          <div className="mt-6">
-            <button className="flex items-center text-[#474a77] hover:underline" onClick={() => toggleTimeline(order.orderId)}>
-              {timelineCollapsed[order.orderId] ? ( <> <ExpandMoreIcon /> Show Timeline </> ) : ( <> <ExpandLessIcon /> Hide Timeline </> )}
-            </button>
-            {!timelineCollapsed[order.orderId] && (
-              <div className="mt-4">
-                <ul className="border-l-2 border-gray-300 pl-4">
-                  {order.statusHistory && order.statusHistory.length > 0 ? (
-                    order.statusHistory.map((status, index) => (
-                      <li key={index} className="mb-4">
-                        <div className="flex items-center">
-                          <div className={`h-4 w-4 rounded-full ${getStatusColor(status.status)} mr-2`}></div>
-                          <p className="font-medium">
-                            {status.status.charAt(0).toUpperCase() + status.status.slice(1)}
-                          </p>
-                        </div>
-                        <p className="text-gray-600 ml-6">
-                          {new Date(status.updatedAt).toLocaleString()}
-                        </p>
-                      </li>
-                    ))
-                  ) : (
-                    <p className="text-gray-600">No status history available.</p>
-                  )}
-                </ul>
-              </div>
+ return (
+  <ModalMaker isOpen={isOpen} onClose={onClose}>
+    <div className={styles.wrapper}>
+      <h2 className={styles.heading}>Order Timeline</h2>
+      <section id="Timeline" className={styles.timelineContainer}>
+        <button
+          className={styles.toggleButton}
+          onClick={() => toggleTimeline(order.orderId)}
+          aria-expanded={!timelineCollapsed[order.orderId]}
+          aria-controls="timeline-list"
+        >
+          {timelineCollapsed[order.orderId] ? (
+            <>
+              <ExpandMoreIcon /> Show Timeline
+            </>
+          ) : (
+            <>
+              <ExpandLessIcon /> Hide Timeline
+            </>
+          )}
+        </button>
+
+        {!timelineCollapsed[order.orderId] && (
+          <div className={styles.timelineList} id="timeline-list">
+            {order.statusHistory && order.statusHistory.length > 0 ? (
+              order.statusHistory.map((status, index) => (
+                <li key={index} className={styles.timelineListItem}>
+                  <div className={styles.statusItem}>
+                    <div
+                      className={`${styles.statusDot} ${getStatusColor(status.status)}`}
+                      aria-hidden="true"
+                    ></div>
+                    <p className={styles.statusText}>
+                      {status.status.charAt(0).toUpperCase() + status.status.slice(1)}
+                    </p>
+                  </div>
+                  <p className={styles.dateText}>
+                    {new Date(status.updatedAt).toLocaleString()}
+                  </p>
+                </li>
+              ))
+            ) : (
+              <p className={styles.noHistory}>No status history available.</p>
             )}
           </div>
-        </section>
-      </div>
-    </ModalMaker>
-  );
+        )}
+      </section>
+    </div>
+  </ModalMaker>
+);
 };
 
 export default OrderTimelineModal;

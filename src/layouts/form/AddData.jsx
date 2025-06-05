@@ -1,21 +1,21 @@
 import PageAnimate from "../../components/Animate/PageAnimate";
 import AddForm from "../../components/FormComponent/AddForm";
+import styles from './styles/AddData.module.css';
 
 const AddData = ({ title, metadata }) => {
     return (
-        <PageAnimate>
-            <div className="w-full flex justify-center items-center gap-5">
-                <div className="p-4 h-fit items-center justify-center flex-col flex gap-5">
-                    <h1 className="text-2xl transition shadow-sm hover:shadow-lg p-4 text-center w-full idms-control font-extrabold"> add to <span className={"capitalize text-rose-400"}> {title} </span> table </h1>
+    <PageAnimate>
+      <div className={styles.wrapper}>
+        <div className={styles.formContainer}>
+          <h1 className={styles.heading}>
+            add to <span className={styles.titleSpan}>{title}</span> table
+          </h1>
 
-                    <AddForm
-                        title={title}
-                        metadata={metadata}
-                    />
-                </div>
-            </div>
-        </PageAnimate>
-    );
+          <AddForm title={title} metadata={metadata} />
+        </div>
+      </div>
+    </PageAnimate>
+  );
 };
 
 export default AddData;

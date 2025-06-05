@@ -27,6 +27,7 @@ import { TextInput } from "../../components/FormComponent/TextInput";
 import { BigTextInput } from "../../components/FormComponent/BigTextInput";
 import { DropdownInput } from "../../components/FormComponent/DropdownInput";
 import { CollapsableSection } from "../../components/FormComponent/CollapsableSection";
+import styles from './styles/AddProducts.module.css';
 
 const AddProducts = () => {
   const { successPopup, errorPopup } = useStore();
@@ -162,178 +163,162 @@ const AddProducts = () => {
   ]);
 
   return (
-    <PageAnimate>
-      <div
-        className={"flex flex-col justify-center items-center overflow-scroll"}
-      >
-        <header className="p-4 flex gap-8 w-full items-center justify-center mt-4 mb-8">
-          <button className={"flex items-center"} onClick={() => navigate(-1)}>
-            {" "}
-            <ArrowBackIosNewIcon />
-          </button>
-          <h1 className="text-2xl lowercase font-extrabold">
-            {" "}
-            add to <span className={"text-rose-600"}> item</span> to catalogue.{" "}
-          </h1>
-        </header>
+  <PageAnimate>
+    <div className={styles.container1}>
+      <header className={styles.header}>
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
+          <ArrowBackIosNewIcon />
+        </button>
+        <h1 className={styles.title}>
+          add to <span className={styles.highlight}>item</span> to catalogue.
+        </h1>
+      </header>
 
-        <div className="w-full flex justify-center">
-          <div className="flex justify-between">
-            {page >= 2 && (
-              <button
-                className="p-3 flex-grow shadow-xl form-button-nav"
-                onClick={backPage}
-              >
-                {" "}
-                <ArrowBackIosNewIcon />{" "}
-              </button>
-            )}
-            <Timeline steps={steps} currentStep={page} />
-            {page < 3 && (
-              <button
-                className="p-3 shadow-xl form-button-nav"
-                onClick={nextPage}
-              >
-                {" "}
-                <ArrowForwardIosIcon />{" "}
-              </button>
-            )}
-            {page === 3 && (
-              <button
-                className="p-3 flex-grow shadow-xl form-button-submit"
-                onClick={submit}
-              >
-                {" "}
-                <CheckCircleIcon />{" "}
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className={"h-fit p-4 w-full flex justify-center"}>
-          {page === 1 && (
-            <BasicPage
-              formData={formData}
-              setFormData={setFormData}
-              handleChange={handleChange}
-            />
+      <div className={styles.timelineWrapper}>
+        <div className={styles.timelineInner}>
+          {page >= 2 && (
+            <button className={styles.navButton} onClick={backPage}>
+              <ArrowBackIosNewIcon />
+            </button>
           )}
-          {page === 2 && (
-            <InventoryPage
-              formData={formData}
-              setFormData={setFormData}
-              handleChange={handleChange}
-              rateType={rateType}
-              handleRateTypeChange={handleRateTypeChange}
-            />
+          <Timeline steps={steps} currentStep={page} />
+          {page < 3 && (
+            <button className={styles.navButton} onClick={nextPage}>
+              <ArrowForwardIosIcon />
+            </button>
           )}
           {page === 3 && (
-            <VariantPage
-              variants={formData.variants}
-              addVariantRow={addVariantRow}
-              handleVariantChange={handleVariantChange}
-            />
+            <button className={styles.submitButton} onClick={submit}>
+              <CheckCircleIcon />
+            </button>
           )}
         </div>
       </div>
-    </PageAnimate>
-  );
+
+      <div className={styles.pageWrapper}>
+        {page === 1 && (
+          <BasicPage
+            formData={formData}
+            setFormData={setFormData}
+            handleChange={handleChange}
+          />
+        )}
+        {page === 2 && (
+          <InventoryPage
+            formData={formData}
+            setFormData={setFormData}
+            handleChange={handleChange}
+            rateType={rateType}
+            handleRateTypeChange={handleRateTypeChange}
+          />
+        )}
+        {page === 3 && (
+          <VariantPage
+            variants={formData.variants}
+            addVariantRow={addVariantRow}
+            handleVariantChange={handleVariantChange}
+          />
+        )}
+      </div>
+    </div>
+  </PageAnimate>
+);
 };
 
 export default AddProducts;
 
 const BasicPage = React.memo(({ formData, handleChange }) => {
   return (
-    <MultiPageAnimate>
-      <div className="flex flex-col w-full items-center rounded-xl">
-        <main className="flex flex-col gap-4 w-2/3 mt-8">
-          <TextInput
-            label={"Product Name"}
-            name={"itemName"}
-            placeholder={"Enter Product Name"}
-            value={formData?.itemName}
-            onChange={handleChange}
-          />
-          <BigTextInput
-            label={"Product Description"}
-            name={"description"}
-            placeholder={"Describe the product"}
-            value={formData?.description}
-            onChange={handleChange}
-          />
-          <TextInput
-            name={"manufacturer"}
-            label="Manufacturer"
-            maxLength={100}
-            placeholder={"Company behind the product"}
-            value={formData?.manufacturer}
-            onChange={(e) => handleChange?.(e)}
-          />
+  <MultiPageAnimate>
+    <div className={styles.container2}>
+      <main className={styles.main2}>
+        <TextInput
+          label={"Product Name"}
+          name={"itemName"}
+          placeholder={"Enter Product Name"}
+          value={formData?.itemName}
+          onChange={handleChange}
+        />
+        <BigTextInput
+          label={"Product Description"}
+          name={"description"}
+          placeholder={"Describe the product"}
+          value={formData?.description}
+          onChange={handleChange}
+        />
+        <TextInput
+          name={"manufacturer"}
+          label="Manufacturer"
+          maxLength={100}
+          placeholder={"Company behind the product"}
+          value={formData?.manufacturer}
+          onChange={(e) => handleChange?.(e)}
+        />
 
-          <CollapsableSection title={"More Details"}>
-            <DropdownInput
-              label={"Category"}
-              name={"category"}
-              value={formData?.category}
-              onChange={handleChange}
-              options={[
-                "Electronics",
-                "Sports",
-                "Home Decorations",
-                "Toys",
-                "Fashion",
-                "Food",
-                "Others",
-              ]}
-            />
-            <div id="optional" className="mt-2">
-              <div className="flex gap-4 justify-between xs:flex-col">
-                <TextInput
-                  width={"w-2/4"}
-                  label="UPC"
-                  name="upc"
-                  placeholder="xxxxxxxxxx"
-                  value={formData?.upc}
-                  onChange={handleChange}
-                  maxlength={12}
-                />
-                <TextInput
-                  width={"w-2/4"}
-                  label="HSN"
-                  name="hsn"
-                  placeholder="xxxxxxxxxx"
-                  value={formData?.hsn}
-                  onChange={handleChange}
-                  maxlength={12}
-                />
-              </div>
-              <div className="flex gap-4 justify-between xs:flex-col mt-4">
-                <TextInput
-                  width={"w-2/3"}
-                  label="Dimensions"
-                  name="dimensions"
-                  placeholder="Length, Width, Height"
-                  value={formData?.dimensions}
-                  onChange={handleChange}
-                  maxlength={100}
-                />
-                <TextInput
-                  width={"w-1/3"}
-                  label="Weight"
-                  name="weight"
-                  placeholder="0"
-                  endText="g"
-                  value={formData?.weight}
-                  onChange={handleChange}
-                  maxlength={10}
-                />
-              </div>
+        <CollapsableSection title={"More Details"}>
+          <DropdownInput
+            label={"Category"}
+            name={"category"}
+            value={formData?.category}
+            onChange={handleChange}
+            options={[
+              "Electronics",
+              "Sports",
+              "Home Decorations",
+              "Toys",
+              "Fashion",
+              "Food",
+              "Others",
+            ]}
+          />
+          <div id="optional" className={styles.optional}>
+            <div className={styles.row2}>
+              <TextInput
+                width={styles.half}
+                label="UPC"
+                name="upc"
+                placeholder="xxxxxxxxxx"
+                value={formData?.upc}
+                onChange={handleChange}
+                maxlength={12}
+              />
+              <TextInput
+                width={styles.half}
+                label="HSN"
+                name="hsn"
+                placeholder="xxxxxxxxxx"
+                value={formData?.hsn}
+                onChange={handleChange}
+                maxlength={12}
+              />
             </div>
-          </CollapsableSection>
-        </main>
-      </div>
-    </MultiPageAnimate>
-  );
+            <div className={`${styles.row2} ${styles.marginTop}`}>
+              <TextInput
+                width={styles.twoThird}
+                label="Dimensions"
+                name="dimensions"
+                placeholder="Length, Width, Height"
+                value={formData?.dimensions}
+                onChange={handleChange}
+                maxlength={100}
+              />
+              <TextInput
+                width={styles.oneThird}
+                label="Weight"
+                name="weight"
+                placeholder="0"
+                endText="g"
+                value={formData?.weight}
+                onChange={handleChange}
+                maxlength={10}
+              />
+            </div>
+          </div>
+        </CollapsableSection>
+      </main>
+    </div>
+  </MultiPageAnimate>
+);
 });
 
 BasicPage.displayName = "BasicPage";
@@ -341,195 +326,191 @@ BasicPage.displayName = "BasicPage";
 const InventoryPage = React.memo(
   ({ formData, handleChange, rateType, handleRateTypeChange }) => {
     return (
-      <MultiPageAnimate>
-        <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-          <div className="flex justify-between w-full gap-4">
-            <InputBox
-              name="reorderLevel"
-              type="number"
-              label="Reorder Level"
-              placeholder={"0"}
-              value={formData?.reorderLevel}
-              onChange={(e) => handleChange?.(e)}
-            />
-            <InputBox
-              name={"packSize"}
-              type="number"
-              label="Pack size"
-              placeholder={"1"}
-              max={5}
-              maxLength={5}
-              value={formData?.packSize}
-              onChange={(e) => handleChange?.(e)}
-            />
-          </div>
-          <div className="flex justify-between gap-4 w-full">
-            <InputBox
-              name="unitMRP"
-              type="number"
-              label="Unit MRP"
-              placeholder={"₹"}
-              value={formData?.unitMRP}
-              onChange={(e) => handleChange?.(e)}
-            />
-            <InputBox
-              name="salePrice"
-              type="number"
-              label="Sale Rate"
-              placeholder={"₹"}
-              value={formData?.salePrice}
-              onChange={(e) => handleChange?.(e)}
-            />
-          </div>
-          <div className="flex justify-between w-full gap-4">
-            <InputBox
-              startText={"%"}
-              name={"cess"}
-              type="number"
-              label="CESS"
-              placeholder={"0"}
-              value={formData?.cess}
-              onChange={(e) => handleChange?.(e)}
-            />
-            <InputBox
-              startText={"%"}
-              name={"cgst"}
-              type="number"
-              label="CGST"
-              placeholder={"0"}
-              value={formData?.cgst}
-              onChange={(e) => handleChange?.(e)}
-            />
-            <InputBox
-              startText={"%"}
-              name={"sgst"}
-              type="number"
-              label="SGST"
-              placeholder={"0"}
-              value={formData?.sgst}
-              onChange={(e) => handleChange?.(e)}
-            />
-          </div>
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Enter Rate Type</FormLabel>
-            <RadioGroup
-              row
-              aria-label="rateType"
-              name="rateType"
-              value={rateType}
-              onChange={handleRateTypeChange}
-            >
-              <FormControlLabel
-                value="purchasePriceWithoutTax"
-                control={<Radio />}
-                label="Without Tax"
-              />
-              <FormControlLabel
-                value="purchaseRate"
-                control={<Radio />}
-                label="With Tax"
-              />
-            </RadioGroup>
-          </FormControl>
+  <MultiPageAnimate>
+    <div className={styles.container3}>
+      <div className={styles.row3}>
+        <InputBox
+          name="reorderLevel"
+          type="number"
+          label="Reorder Level"
+          placeholder={"0"}
+          value={formData?.reorderLevel}
+          onChange={(e) => handleChange?.(e)}
+        />
+        <InputBox
+          name={"packSize"}
+          type="number"
+          label="Pack size"
+          placeholder={"1"}
+          max={5}
+          maxLength={5}
+          value={formData?.packSize}
+          onChange={(e) => handleChange?.(e)}
+        />
+      </div>
 
-          {rateType === "purchasePriceWithoutTax" && (
-            <>
-              <InputBox
-                name="purchasePriceWithoutTax"
-                type="number"
-                label="Purchase Price (without taxes)"
-                placeholder={"₹"}
-                value={formData?.purchasePriceWithoutTax}
-                onChange={(e) => handleChange?.(e)}
-              />
-              <p>
-                {" "}
-                Purchase Rate with Tax:{" "}
-                {formData?.purchaseRate !== undefined
-                  ? formData.purchaseRate.toFixed(2)
-                  : ""}{" "}
-              </p>
-            </>
-          )}
-          {rateType === "purchaseRate" && (
-            <>
-              <InputBox
-                name="purchaseRate"
-                type="number"
-                label="Purchase Rate with Taxes"
-                placeholder={"₹"}
-                value={formData?.purchaseRate}
-                onChange={(e) => handleChange?.(e)}
-              />
-              <p>
-                {" "}
-                Purchase Price without Tax:{" "}
-                {formData?.purchasePriceWithoutTax !== undefined
-                  ? formData.purchasePriceWithoutTax.toFixed(2)
-                  : ""}{" "}
-              </p>
-            </>
-          )}
+      <div className={styles.row3}>
+        <InputBox
+          name="unitMRP"
+          type="number"
+          label="Unit MRP"
+          placeholder={"₹"}
+          value={formData?.unitMRP}
+          onChange={(e) => handleChange?.(e)}
+        />
+        <InputBox
+          name="salePrice"
+          type="number"
+          label="Sale Rate"
+          placeholder={"₹"}
+          value={formData?.salePrice}
+          onChange={(e) => handleChange?.(e)}
+        />
+      </div>
 
-          <div className="flex justify-between gap-4 w-full">
-            <InputBox
-              name="loadingPrice"
-              type="number"
-              label="Loading Price"
-              placeholder={"₹"}
-              value={formData?.loadingPrice}
-              onChange={(e) => handleChange?.(e)}
-            />
-            <InputBox
-              name="unloadingPrice"
-              type="number"
-              label="Unloading Price"
-              placeholder={"₹"}
-              value={formData?.unloadingPrice}
-              onChange={(e) => handleChange?.(e)}
-            />
-          </div>
-        </div>
-      </MultiPageAnimate>
-    );
-  }
+      <div className={styles.row3}>
+        <InputBox
+          startText={"%"}
+          name={"cess"}
+          type="number"
+          label="CESS"
+          placeholder={"0"}
+          value={formData?.cess}
+          onChange={(e) => handleChange?.(e)}
+        />
+        <InputBox
+          startText={"%"}
+          name={"cgst"}
+          type="number"
+          label="CGST"
+          placeholder={"0"}
+          value={formData?.cgst}
+          onChange={(e) => handleChange?.(e)}
+        />
+        <InputBox
+          startText={"%"}
+          name={"sgst"}
+          type="number"
+          label="SGST"
+          placeholder={"0"}
+          value={formData?.sgst}
+          onChange={(e) => handleChange?.(e)}
+        />
+      </div>
+
+      <FormControl component="fieldset">
+        <FormLabel component="legend">Enter Rate Type</FormLabel>
+        <RadioGroup
+          row
+          aria-label="rateType"
+          name="rateType"
+          value={rateType}
+          onChange={handleRateTypeChange}
+        >
+          <FormControlLabel
+            value="purchasePriceWithoutTax"
+            control={<Radio />}
+            label="Without Tax"
+          />
+          <FormControlLabel
+            value="purchaseRate"
+            control={<Radio />}
+            label="With Tax"
+          />
+        </RadioGroup>
+      </FormControl>
+
+      {rateType === "purchasePriceWithoutTax" && (
+        <>
+          <InputBox
+            name="purchasePriceWithoutTax"
+            type="number"
+            label="Purchase Price (without taxes)"
+            placeholder={"₹"}
+            value={formData?.purchasePriceWithoutTax}
+            onChange={(e) => handleChange?.(e)}
+          />
+          <p>
+            Purchase Rate with Tax:{" "}
+            {formData?.purchaseRate !== undefined
+              ? formData.purchaseRate.toFixed(2)
+              : ""}
+          </p>
+        </>
+      )}
+
+      {rateType === "purchaseRate" && (
+        <>
+          <InputBox
+            name="purchaseRate"
+            type="number"
+            label="Purchase Rate with Taxes"
+            placeholder={"₹"}
+            value={formData?.purchaseRate}
+            onChange={(e) => handleChange?.(e)}
+          />
+          <p>
+            Purchase Price without Tax:{" "}
+            {formData?.purchasePriceWithoutTax !== undefined
+              ? formData.purchasePriceWithoutTax.toFixed(2)
+              : ""}
+          </p>
+        </>
+      )}
+
+      <div className={styles.row3}>
+        <InputBox
+          name="loadingPrice"
+          type="number"
+          label="Loading Price"
+          placeholder={"₹"}
+          value={formData?.loadingPrice}
+          onChange={(e) => handleChange?.(e)}
+        />
+        <InputBox
+          name="unloadingPrice"
+          type="number"
+          label="Unloading Price"
+          placeholder={"₹"}
+          value={formData?.unloadingPrice}
+          onChange={(e) => handleChange?.(e)}
+        />
+      </div>
+    </div>
+  </MultiPageAnimate>
 );
-
+  });
 InventoryPage.displayName = "InventoryPage";
 
 const VariantPage = React.memo(
   ({ variants, addVariantRow, handleVariantChange }) => {
-    return (
-      <MultiPageAnimate>
-        <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-          <main className="flex flex-col gap-6">
-            <div className="w-full flex flex-col items-center">
-              {variants?.map((variant, index) => (
-                <div key={index} className="flex gap-4 mb-2">
-                  <TextField
-                    label="Key"
-                    value={variant.key}
-                    onChange={handleVariantChange(index, "key")}
-                  />
-                  <TextField
-                    label="Values (comma separated)"
-                    value={variant.values.join(",")}
-                    onChange={handleVariantChange(index, "values")}
-                  />
-                </div>
-              ))}
+   return (
+  <MultiPageAnimate>
+    <div className={styles.container4}>
+      <main className={styles.main4}>
+        <div className={styles.variantsWrapper}>
+          {variants?.map((variant, index) => (
+            <div key={index} className={styles.variantRow}>
+              <TextField
+                label="Key"
+                value={variant.key}
+                onChange={handleVariantChange(index, "key")}
+              />
+              <TextField
+                label="Values (comma separated)"
+                value={variant.values.join(",")}
+                onChange={handleVariantChange(index, "values")}
+              />
             </div>
-            <button
-              className="p-3 flex-grow shadow-xl idms-add opacity-70"
-              onClick={addVariantRow}
-            >
-              <AddCircleOutlineIcon />
-            </button>
-          </main>
+          ))}
         </div>
-      </MultiPageAnimate>
-    );
-  }
+        <button className={styles.addButton} onClick={addVariantRow}>
+          <AddCircleOutlineIcon />
+        </button>
+      </main>
+    </div>
+  </MultiPageAnimate>
 );
+  });
 
 VariantPage.displayName = "VariantPage";

@@ -21,6 +21,7 @@ import { socket } from '../../network/websocket';
 import { useAuth } from '../../hooks/useAuth';
 import PageAnimate from '../../components/Animate/PageAnimate';
 import { getBaseURL } from '../../network/api/api-config';
+import styles from './styles/OrganizationChannel.module.css';
 
 const OrganizationChannel = () => {
   const { user } = useAuth();
@@ -140,7 +141,7 @@ const OrganizationChannel = () => {
 
   return (
     <PageAnimate>
-      <div className="container mx-auto p-4">
+      <div className={styles.container}>
         {user.role === 'admin' && (
           <div>
             <Button
@@ -160,17 +161,17 @@ const OrganizationChannel = () => {
                 setNewItemType('note');
                 setOpenDialog(true);
               }}
-              style={{ marginLeft: '10px' }}
+              className={styles.createNoteButton}
             >
               Create Note
             </Button>
           </div>
         )}
-        <h2 className="text-xl font-semibold mb-2">Announcements</h2>
-        <div className="mt-4 flex flex-col-reverse">
+        <h2 className={styles.header}>Announcements</h2>
+        <div className={styles.announcementList}>
           {announcements.map((item, index) => (
-            <div key={index} className="border p-4 mb-2">
-              <h3 className="text-lg font-bold">{item.title}</h3>
+            <div key={index} className={styles.card}>
+              <h3 className={styles.cardTitle}>{item.title}</h3>
               <p>{item.message}</p>
               {item.expiryDate && (
                 <p>Expires on: {new Date(item.expiryDate).toLocaleDateString()}</p>
@@ -178,33 +179,34 @@ const OrganizationChannel = () => {
             </div>
           ))}
         </div>
-        <h2 className="text-xl font-semibold mb-2">Notes</h2>
-        <div className="mt-4 flex flex-col-reverse">
+
+        <h2 className={styles.header}>Notes</h2>
+        <div className={styles.noteList}>
           {notes.map((item, index) => (
-            <div key={index} className="border p-4 mb-2">
-              <h3 className="text-lg font-bold">{item.title}</h3>
+            <div key={index} className={styles.card}>
+              <h3 className={styles.cardTitle}>{item.title}</h3>
               <p>{item.message}</p>
-              <div className="capitalize flex gap-4 p-2 items-center">
+              <div className={styles.roleInfo}>
                 For:{' '}
                 {item.roles && item.roles.length > 0
                   ? item.roles.join(', ')
                   : item.users?.map((id) => {
-                      const user = users.find((user) => user.userId === id);
-                      return user ? (
-                        <span key={id} className="flex items-center">
-                          <Avatar
-                            src={
-                              user.avatar
-                                ? `${process.env.REACT_APP_SERVER_URL}/${user.avatar}`
-                                : `${process.env.REACT_APP_SERVER_URL}/default.webp`
-                            }
-                            alt={user.username}
-                            sx={{ width: 24, height: 24, marginRight: 1 }}
-                          />
-                          {user.username}
-                        </span>
-                      ) : null;
-                    })}
+                    const user = users.find((user) => user.userId === id);
+                    return user ? (
+                      <span key={id} className={styles.userInfo}>
+                        <Avatar
+                          src={
+                            user.avatar
+                              ? `${process.env.REACT_APP_SERVER_URL}/${user.avatar}`
+                              : `${process.env.REACT_APP_SERVER_URL}/default.webp`
+                          }
+                          alt={user.username}
+                          sx={{ width: 24, height: 24, marginRight: 1 }}
+                        />
+                        {user.username}
+                      </span>
+                    ) : null;
+                  })}
               </div>
               <Button variant="outlined" onClick={() => handleDismissNote(item.id)}>
                 Dismiss

@@ -1,0 +1,128 @@
+/* EditOrder.module.css */
+
+.container {
+  /* no container class directly, so no styles here */
+}
+
+.heading {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700; /* font-bold */
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+.flexBetweenCenter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.spaceY6 {
+  /* vertical spacing between children */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* 6 * 0.25rem */
+}
+
+.sectionTitle {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 600; /* font-semibold */
+  margin-bottom: 1rem; /* spacing between heading and content */
+}
+
+.gridCols1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem; /* gap-4 */
+}
+
+.gridCols2Md {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.marginDense {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.blockLabel {
+  display: block;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  color: #4b5563; /* text-gray-700 */
+}
+
+.inputStyle {
+  margin-top: 0.25rem; /* mt-1 */
+  width: 100%;
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.375rem; /* rounded-md */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* shadow-sm */
+  padding: 0.5rem; /* p-2 */
+  font-size: 1rem;
+}
+
+.textAreaStyle {
+  margin-top: 0.25rem;
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  padding: 0.5rem;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.mdColSpan2 {
+  grid-column: span 2 / span 2;
+}
+
+.flexRow {
+  display: flex;
+  align-items: center;
+}
+
+.fontRegular {
+  font-weight: 400;
+  margin-left: 0.5rem; /* 8px */
+}
+
+.fontMedium {
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+.btnSubmit {
+  background-color: #2563eb; /* bg-blue-600 */
+  color: white;
+  padding: 0.5rem 1.5rem; /* px-6 py-2 */
+  border-radius: 0.375rem; /* rounded-md */
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.btnSubmit:hover {
+  background-color: #1d4ed8; /* bg-blue-700 */
+}
+
+.itemsCount {
+  cursor: pointer;
+  color: #dc2626; /* text-rose-600 */
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem; /* gap-1 */
+}
+
+.modalSection {
+  padding: 1rem;
+  background: white;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 0.5rem;
+}
+

@@ -91,7 +91,7 @@ const ViewInventory = () => {
     setSelectedSubBatches(null);
     setIsModalOpen(false);
   };
-
+///////
   const colDefs = [
     { headerName: "ID", field: "batchId", width: 50, cellRenderer: (params) => (<p><span className="text-blue-950">#</span><span className="font-medium">{params.value}</span></p>) },
     { headerName: "Batch Number", field: "batchNumber", width: 150 },

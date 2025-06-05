@@ -10,6 +10,7 @@ import { useStore } from "../../store/store";
 import { useNavigate, useParams } from "react-router-dom";
 import Timeline from "../../components/FormComponent/Timeline";
 import { getOption, validateForm } from "../../utils/FormHelper";
+import styles from './styles/AddCustomerAddress.module.css';
 
 const AddCustomerAddress = () => {
   const customerId = useParams();
@@ -64,22 +65,19 @@ const AddCustomerAddress = () => {
 
   return (
     <PageAnimate>
-      <div className={"h-full flex flex-col gap-12 justify-center items-center"}>
-        <button
-          className={"self-start flex items-center"}
-          onClick={() => navigate(-1)}
-        >
+      <div className={styles.wrapper}>
+        <button className={styles.goBackButton} onClick={() => navigate(-1)}>
           <ArrowBackIosNewIcon /> Go back
         </button>
 
-        <h1 className="text-2xl rounded-lg lowercase transition hover:shadow-lg p-4 text-center w-3/4 idms-transparent-bg font-extrabold">
-          add a new<span className={"text-rose-400"}> address</span> :)
+        <h1 className={styles.heading}>
+          add a new <span className={styles.highlight}>address</span> :)
         </h1>
 
         <Timeline steps={steps} currentStep={page} />
 
-        <div>
-          <div className={"h-full w-full flex justify-center"}>
+        <div className={styles.formWrapper}>
+          <div className={styles.formContent}>
             <main>
               {page === 1 && (
                 <AddressPage
@@ -90,20 +88,14 @@ const AddCustomerAddress = () => {
               )}
             </main>
 
-            <div className={"p-2 flex flex-col gap-4"}>
+            <div className={styles.buttonGroup}>
               {page === 1 && (
-                <button
-                  className="p-3 flex-grow shadow-xl form-button-submit"
-                  onClick={submit}
-                >
+                <button className={styles.submitButton} onClick={submit}>
                   <CheckCircleIcon />
                 </button>
               )}
               {page >= 1 && (
-                <button
-                  className="p-3 flex-grow shadow-xl cursor-not-allowed form-button-nav"
-                  onClick={backPage}
-                >
+                <button className={styles.backButton} onClick={backPage}>
                   <ArrowBackIosNewIcon />
                 </button>
               )}

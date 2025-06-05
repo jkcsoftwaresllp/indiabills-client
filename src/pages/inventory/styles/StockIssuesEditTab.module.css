@@ -1,0 +1,11 @@
+.heading {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 600;   /* font-semibold */
+}
+
+.deleteBtn {
+  font-size: 0.875rem;   /* text-sm */
+  font-weight: 700;      /* font-bold */
+  color: #be123c;        /* text-rose-700 */
+  cursor: pointer;
+}

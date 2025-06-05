@@ -1,0 +1,145 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 1rem; /* py-1 px-4 */
+}
+
+.title {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.title:hover {
+  color: #f43f5e; /* hover:text-rose-500 */
+}
+
+.searchGroup {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.searchInput {
+  margin-left: 0.5rem;
+}
+
+.dateRange {
+  display: flex;
+  gap: 0.5rem;
+  width: fit-content;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid #e5e7eb;
+  padding: 0.5rem;
+  transition: box-shadow 0.3s;
+  border-radius: 0.75rem;
+}
+
+.dateRange:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.dateInputContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}
+
+.dateInput {
+  padding: 0.5rem;
+  background-color: #f8fafc; /* bg-light */
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+}
+
+.filterButton {
+  background-color: #0f172a; /* bg-primary */
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  transition: all 0.3s;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.filterButton:hover {
+  background-color: #1e293b; /* bg-accent */
+  filter: brightness(1.25);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.controlButton {
+  padding: 0.5rem;
+  width: fit-content;
+  background-color: #0f172a;
+  border-radius: 9999px;
+  transition: all 0.3s ease-in-out;
+}
+
+.notEditable {
+  color: #e2e8f0;
+}
+
+.editable {
+  color: #f59e0b;
+  transform: translateY(-0.25rem);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+.columnButton {
+  padding: 0.5rem;
+  min-width: 5rem;
+  background-color: #0f172a;
+  color: #e2e8f0;
+  border-radius: 9999px;
+}
+
+.addButton {
+  padding: 0.5rem;
+  width: fit-content;
+  background-color: #0f172a;
+  color: #e2e8f0;
+  border-radius: 9999px;
+  transition: all 0.3s;
+}
+
+.addButton:hover {
+  background-color: #1e293b;
+  filter: brightness(2);
+}
+
+.popoverText {
+  font-size: 0.75rem;
+}
+
+.noDataContainer {
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.noDataMessage {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.noDataText {
+  font-size: 1.5rem;
+}
+
+.bear {
+  margin-left: 1rem;
+}

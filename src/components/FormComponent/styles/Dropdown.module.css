@@ -1,0 +1,35 @@
+.inputRoot {
+  background-color: rgb(245, 247, 252);
+  border-radius: 1rem;
+}
+
+.notchedOutline {
+  border-color: rgba(38, 38, 38, 0.18);
+  box-shadow: 0.1px 0.2px 4px rgba(38, 38, 38, 0.18);
+}
+
+.inputRoot:hover .notchedOutline {
+  border-color: rgba(38, 38, 38, 0.5);
+}
+
+.inputRoot.Mui-focused .notchedOutline {
+  border-color: rgba(38, 38, 38, 0.7);
+}
+
+.input {
+  color: rgb(68, 68, 68);
+}
+
+.placeholder::placeholder {
+  color: #666;
+  opacity: 1;
+}
+
+.label {
+  color: rgb(68, 68, 68);
+  text-transform: capitalize;
+}
+
+.option {
+  text-transform: capitalize;
+}

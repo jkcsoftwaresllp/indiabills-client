@@ -5,6 +5,7 @@ import { AgGridReact } from 'ag-grid-react';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import AddExpenseModal from './ExpenseModal';
+import styles from './styles/ExpenseReport.module.css';
 
 const ExpenseReport = () => {
     const [expenseData, setExpenseData] = useState([]);
@@ -34,25 +35,27 @@ const ExpenseReport = () => {
         { headerName: 'Last Edited By', field: 'lastEditedBy' },
     ];
 
-    return (
-        <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Expense Report</h1>
-            <button className="mb-4" onClick={() => setIsAddExpenseModalOpen(true)}>Add Expense</button>
-            <AddExpenseModal
-                isOpen={isAddExpenseModalOpen}
-                onClose={() => setIsAddExpenseModalOpen(false)}
-                onExpenseAdded={fetchExpenseData}
-            />
-            <div className="ag-theme-quartz" style={{ height: 400, width: '100%' }}>
-                <AgGridReact
-                    rowData={expenseData}
-                    columnDefs={columnDefs}
-                    pagination={true}
-                    paginationPageSize={20}
-                />
-            </div>
-        </div>
-    );
+   return (
+  <div className={styles.container}>
+    <h1 className={styles.heading}>Expense Report</h1>
+    <button className={styles.addButton} onClick={() => setIsAddExpenseModalOpen(true)}>
+      Add Expense
+    </button>
+    <AddExpenseModal
+      isOpen={isAddExpenseModalOpen}
+      onClose={() => setIsAddExpenseModalOpen(false)}
+      onExpenseAdded={fetchExpenseData}
+    />
+    <div className={`ag-theme-quartz ${styles.gridWrapper}`}>
+      <AgGridReact
+        rowData={expenseData}
+        columnDefs={columnDefs}
+        pagination={true}
+        paginationPageSize={20}
+      />
+    </div>
+  </div>
+);
 };
 
 export default ExpenseReport;

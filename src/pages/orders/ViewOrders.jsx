@@ -10,6 +10,7 @@ import { IconButton, InputBase, MenuItem, Select } from '@mui/material';
 import React from 'react';
 import { EachOrder } from './EachOrder';
 import PageAnimate from '../../components/Animate/PageAnimate';
+import styles from './styles/ViewOrders.module.css';
 
 const safeParse = (jsonString) => {
   try {
@@ -175,103 +176,116 @@ const ViewOrders = () => {
   });
 
   if (loading) {
-    return (
-      <div className="container mx-auto p-4">
-        <div className="flex justify-center">
-          <div className="loader"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (orders.length === 0) {
-    return (
-      <div className="container mx-auto p-4">
-        <h6 className="text-lg">No orders found</h6>
-      </div>
-    );
-  }
-
-  const legendTextClasses = 'text-sm text-gray-700';
-
   return (
-    <PageAnimate>
-      <div className="container mx-auto p-4 w-full">
-        {/* Search and Sorting Controls */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-          <div className="flex items-center mb-4 md:mb-0">
-            <IconButton type="button" aria-label="search">
-              <SearchIcon />
-            </IconButton>
-            <InputBase
-              placeholder="Search by Customer Name, Invoice Number or Order ID"
-              inputProps={{ 'aria-label': 'search' }}
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="ml-2"
-            />
+    <div className={styles.container}>
+      <div className={styles.loaderWrapper}>
+        <div className="loader"></div> {/* Assuming .loader CSS stays in global */}
+      </div>
+    </div>
+  );
+}
+
+if (orders.length === 0) {
+  return (
+    <div className={styles.container}>
+      <h6 className={styles.headingText}>No orders found</h6>
+    </div>
+  );
+}
+
+const legendTextClasses = styles.legendText;
+
+return (
+  <PageAnimate>
+    <div className={`${styles.container} w-full`}>
+      {/* Search and Sorting Controls */}
+      <div className={styles.controlsContainer}>
+        <div className={styles.searchWrapper}>
+          <IconButton type="button" aria-label="search">
+            <SearchIcon />
+          </IconButton>
+          <InputBase
+            placeholder="Search by Customer Name, Invoice Number or Order ID"
+            inputProps={{ 'aria-label': 'search' }}
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className={styles.inputMarginLeft}
+          />
+        </div>
+        <div className={styles.sortWrapper}>
+          <SortIcon />
+          <Select
+            value={sortField}
+            onChange={handleSortFieldChange}
+            displayEmpty
+            className={styles.marginLeftSmall}
+            inputProps={{ 'aria-label': 'sort' }}
+          >
+            <MenuItem value="orderDate">Date Added</MenuItem>
+            <MenuItem value="totalAmount">Total Price</MenuItem>
+          </Select>
+          <IconButton
+            onClick={handleSortOrderToggle}
+            aria-label="toggle sort order"
+            className={styles.marginLeftSmall}
+          >
+            {sortOrder === 'asc' ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </IconButton>
+        </div>
+      </div>
+
+      <button onClick={toggleCollapse} className={styles.toggleLegendButton}>
+        {isCollapsed ? 'Show Legend' : 'Hide'}
+      </button>
+
+      {!isCollapsed && (
+        <div id="color-meaning" className={styles.legendContainer}>
+          <div className={styles.legendItem}>
+            <div className={`${styles.legendDot} ${styles.legendDotPending}`}></div>
+            <p className={legendTextClasses}>Pending</p>
           </div>
-          <div className="flex items-center">
-            <SortIcon />
-            <Select
-              value={sortField}
-              onChange={handleSortFieldChange}
-              displayEmpty
-              className="ml-2"
-              inputProps={{ 'aria-label': 'sort' }}
-            >
-              <MenuItem value="orderDate">Date Added</MenuItem>
-              <MenuItem value="totalAmount">Total Price</MenuItem>
-            </Select>
-            <IconButton onClick={handleSortOrderToggle} aria-label="toggle sort order">
-              {sortOrder === 'asc' ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
+          <div className={styles.legendItem}>
+            <div className={`${styles.legendDot} ${styles.legendDotShipped}`}></div>
+            <p className={legendTextClasses}>Shipped</p>
+          </div>
+          <div className={styles.legendItem}>
+            <div className={`${styles.legendDot} ${styles.legendDotReturned}`}></div>
+            <p className={legendTextClasses}>Returned</p>
+          </div>
+          <div className={styles.legendItem}>
+            <div className={`${styles.legendDot} ${styles.legendDotFulfilled}`}></div>
+            <p className={legendTextClasses}>Fulfilled</p>
+          </div>
+          <div className={styles.legendItem}>
+            <div className={`${styles.legendDot} ${styles.legendDotCancelled}`}></div>
+            <p className={legendTextClasses}>Cancelled</p>
           </div>
         </div>
+      )}
 
-        <button onClick={toggleCollapse} className="text-link underline mb-4">
-          {isCollapsed ? 'Show Legend' : 'Hide'}
-        </button>
-        {!isCollapsed && (
-          <div id="color-meaning" className="p-2 xs:grid xs:grid-cols-2 md:flex md:justify-around w-full mb-4 bg-[#e6ebf1] shadow-inner rounded-xl">
-            <div className="flex items-center gap-4">
-              <div className="bg-[#dea01e] w-4 h-4 rounded-full"></div>
-              <p className={legendTextClasses}>Pending</p>
+      {sortedOrders.length === 0 ? (
+        <div className={styles.container}>
+          <h6 className={styles.headingText}>No orders matched your search</h6>
+        </div>
+      ) : (
+        <div className={styles.ordersGrid}>
+          {sortedOrders.map((order) => (
+            <div key={order.orderId} className={styles.orderCard}>
+              <EachOrder
+                initials={initials}
+                order={order}
+                handleMarkPayment={handleMarkPayment}
+                handleChangeOrderStatus={handleChangeOrderStatus}
+                toggleTimeline={toggleTimeline}
+                timelineCollapsed={timelineCollapsed}
+              />
             </div>
-            <div className="flex items-center gap-4">
-              <div className="bg-[#0db0b4] w-4 h-4 rounded-full"></div>
-              <p className={legendTextClasses}>Shipped</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="bg-red-500 w-4 h-4 rounded-full"></div>
-              <p className={legendTextClasses}>Returned</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="bg-[#23ae8d] w-4 h-4 rounded-full"></div>
-              <p className={legendTextClasses}>Fulfilled</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="bg-gray-500 w-4 h-4 rounded-full"></div>
-              <p className={legendTextClasses}>Cancelled</p>
-            </div>
-          </div>
-        )}
-        {sortedOrders.length === 0 ? (
-          <div className="container mx-auto p-4">
-            <h6 className="text-lg">No orders matched your search</h6>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sortedOrders.map((order) => (
-              <div key={order.orderId} className="border bg-card-bg flex flex-col h-64 rounded-lg p-4 shadow-lg relative">
-                <EachOrder initials={initials} order={order} handleMarkPayment={handleMarkPayment} handleChangeOrderStatus={handleChangeOrderStatus} toggleTimeline={toggleTimeline} timelineCollapsed={timelineCollapsed} />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </PageAnimate>
-  );
+          ))}
+        </div>
+      )}
+    </div>
+  </PageAnimate>
+);
 };
 
 export default ViewOrders;

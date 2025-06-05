@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useAuth } from "../../hooks/useAuth";
+import styles from "./styles/Login.module.css";
 
 const quotes = [
   "The best way to get started is to quit talking and begin doing.",
@@ -83,87 +84,92 @@ const LoginPage = () => {
     navigate("/");
   };
 
-  return (
-    <div style={{
-        backgroundImage: `url(${bg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "100dvh",
-        width: "100%",
-        position: "fixed",
-        inset: 0,
-      }}
-      className={"grid place-items-center justify-center"}
-    >
-        <form onSubmit={HandleLogin} className="px-20 py-12 flex flex-col gap-12 w-[27rem] items-center bg-slate-800 bg-opacity-75 border border-slate-500 rounded-lg shadow-lg">
-          <div className={"flex flex-col gap-4 items-center text-center"}>
-            <img src={logo} alt="logo" className="w-52 hover:brightness-200" />
-            <p className={"text-slate-400 font-light opacity-75"}> {quote} </p>
-          </div>
+ return (
+  <div
+    style={{
+      backgroundImage: `url(${bg})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      height: "100dvh",
+      width: "100%",
+      position: "fixed",
+      inset: 0,
+    }}
+    className={styles.wrapper}
+  >
+    <form onSubmit={HandleLogin} className={styles.form}>
+      <div className={styles.logoContainer}>
+        <img src={logo} alt="logo" className={styles.logo} />
+        <p className={styles.quote}> {quote} </p>
+      </div>
 
-          <div className="flex flex-col gap-8">
-          <TextField
+      <div className={styles.fields}>
+        <TextField
           label={"Email"}
           name={"email"}
           type={"email"}
           sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '16px', // Rounded borders
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              color: 'white',
-              '&.Mui-focused fieldset': {
-                borderColor: 'white',
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "16px",
+              backgroundColor: "rgba(255,255,255,0.2)",
+              color: "white",
+              "&.Mui-focused fieldset": {
+                borderColor: "white",
               },
             },
-            '& .MuiInputLabel-root': {
-              color: 'white',
+            "& .MuiInputLabel-root": {
+              color: "white",
             },
           }}
-          onChange={(e) => setData({ ...data, ["email"]: e.target.value })}
+          onChange={(e) => setData({ ...data, email: e.target.value })}
           placeholder={"example@address.com"}
           value={data.email}
         />
 
-  <TextField
-    label={"Password"}
-    name={"password"}
-    type={showPassword ? "text" : "password"}
-    onChange={(e) => setData({ ...data, ["password"]: e.target.value })}
-    placeholder={"******"}
-    sx={{
-      '& .MuiOutlinedInput-root': {
-        borderRadius: '16px',
-        color: 'white',
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        '&.Mui-focused fieldset': {
-          borderColor: 'white',
-        },
-      },
-      '& .MuiInputLabel-root': {
-        color: 'white',
-      },
-    }}
-    value={data.password}
-    InputProps={{
-      endAdornment: (
-        <InputAdornment position="end">
-          <IconButton
-            aria-label="toggle password visibility"
-            onClick={handleClickShowPassword}
-            onMouseDown={handleMouseDownPassword}
-          >
-            {showPassword ? <Visibility /> : <VisibilityOff />}
-          </IconButton>
-        </InputAdornment>
-      ),
-    }}
-  />
-          </div>
+        <TextField
+          label={"Password"}
+          name={"password"}
+          type={showPassword ? "text" : "password"}
+          onChange={(e) => setData({ ...data, password: e.target.value })}
+          placeholder={"******"}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "16px",
+              backgroundColor: "rgba(255,255,255,0.2)",
+              color: "white",
+              "&.Mui-focused fieldset": {
+                borderColor: "white",
+              },
+            },
+            "& .MuiInputLabel-root": {
+              color: "white",
+            },
+          }}
+          value={data.password}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+      </div>
 
-          <input value={'Login'} type="submit" className="bg-rose-600 w-full rounded-xl p-2 text-slate-300 shadow-xl transition hover:shadow-none cursor-pointer hover:bg-rose-700" />
-        </form>
-    </div>
-  );
+      <input
+        value={"Login"}
+        type="submit"
+        className={styles.submitButton}
+      />
+    </form>
+  </div>
+);
 };
 
 export default LoginPage;

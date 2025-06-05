@@ -16,6 +16,7 @@ import PageAnimate from "./components/Animate/PageAnimate";
 import { useStore } from "./store/store";
 import CommandPalette from "./components/core/CommandPallete";
 import { useHotkeys } from 'react-hotkeys-hook';
+import styles from './AppLayout.module.css';
 
 function App() {
   const navigate = useNavigate();
@@ -93,16 +94,16 @@ function App() {
   return (
     <AuthProvider>
       <HotKeys keyMap={keyMap} handlers={handlers}>
-        <div id="appbar" className="min-h-screen flex flex-col relative">
+        <div id="appbar" className={styles.appbar}>
           {/* 2 types of routes -- public and private */}
           {/*<Header />*/}
-          <main className="flex flex-grow min-h-full max-h-full">
-            <div id="content" className="flex relative flex-grow min-h-full max-h-full">
-              <div className="h-full bg-transparent overscroll-none">
+          <main className={styles.main}>
+            <div id="content" className={styles.content}>
+              <div className={styles.sidebarWrapper}>
                 <Sidebar /> 
               </div>
-              <div className={'py-2 w-full flex flex-col'}>
-              <main className="min-h-full w-full shadow-inner"> <Routing /> </main>
+              <div className={styles.contentMain}>
+              <main className={styles.innerMain}> <Routing /> </main>
               </div>
               <Popup />
               <AuditLogTable />

@@ -30,7 +30,7 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 import AddLocationModal from "./AddLocationModal";
 import DropdownBar from "../../components/FormComponent/DropdownBar";
 import BatchInvoicePreview from "./yeah";
-
+import styles from "./styles/AddInventory.module.css"
 const AddInventory = () => {
   const [locations, setLocations] = useState([]);
   const [openLocationModal, setOpenLocationModal] = useState(false);
@@ -175,98 +175,89 @@ const AddInventory = () => {
 
   return (
     <PageAnimate>
-      <div className={"w-full flex flex-col gap-8 justify-center items-center"}>
-        <div className="flex items-center justify-between p-4 gap-4 w-full">
-          <h1
-            className={
-              "text-2xl transition p-4 hover:shadow-lg w-full text-center border font-extrabold idms-inventory"
-            }
-          >
-            adding to <span className={"text-rose-400"}>inventory</span>.
-          </h1>
-          <div>
-            <MouseHoverPopover
-              triggerElement={
-                <Button variant={"outlined"} color="primary" onClick={handleOpenInvoice}>
-                  <ReceiptIcon />
-                </Button>
-              }
-              popoverContent={<span className="text-xs"> View Invoice </span>}
-            />
-            <BatchInvoicePreview
-              open={openInvoice}
-              handleClose={handleCloseInvoice}
-              formData={formData}
-              selectedProducts={selectedProducts}
-              totalPrice={totalPrice}
-              selectedSupplier={selectedSupplier}
-              selectedLocation={selectedLocation}
-              stockIssues={stockIssues}
-            />
-          </div>
+      <div className={styles.container}>
+  <div className={styles.header}>
+    <h1 className={styles.title}>
+      adding to <span className={styles.highlight}>inventory</span>.
+    </h1>
+
+    <div>
+      <MouseHoverPopover
+        triggerElement={
+          <Button variant="outlined" color="primary" onClick={handleOpenInvoice}>
+            <ReceiptIcon />
+          </Button>
+        }
+        popoverContent={<span className={styles.popoverText}>View Invoice</span>}
+      />
+      <BatchInvoicePreview
+        open={openInvoice}
+        handleClose={handleCloseInvoice}
+        formData={formData}
+        selectedProducts={selectedProducts}
+        totalPrice={totalPrice}
+        selectedSupplier={selectedSupplier}
+        selectedLocation={selectedLocation}
+        stockIssues={stockIssues}
+      />
+    </div>
+
+    <button
+      onClick={handleSubmit}
+      type="submit"
+      className={styles.submitBtn}
+      disabled={
+        !selectedLocation ||
+        !selectedSupplier ||
+        selectedProducts.length === 0
+      }
+    >
+      <CheckCircleIcon />
+      <span className={styles.submitText}>Submit</span>
+    </button>
+  </div>
+
+  {selectedProducts.length > 0 && (
+    <section className={styles.selectedProducts}>
+      {selectedProducts.map((product, index) => (
+        <div key={index} className={styles.productCard}>
+          <h1 className={styles.productName}>{product.itemName}</h1>
+          <p className={styles.productInfo}>Quantity: {product.quantity}</p>
+          <p className={styles.productInfo}>Pack Size: {product.packSize}</p>
+          <p className={styles.productInfo}>Discount: {product.discount}</p>
+          <p className={styles.productInfo}>
+            Manufacture Date: {product.manufactureDate}
+          </p>
+          <p className={styles.productInfo}>
+            {product.expiryDate
+              ? `Expiry Date: ${product.expiryDate}`
+              : "No expiry for the product"}
+          </p>
           <button
-            onClick={handleSubmit}
-            type="submit"
-            className="py-3 px-12 m-5 shadow-xl w-fit misc-button"
-            disabled={
-              !selectedLocation ||
-              !selectedSupplier ||
-              selectedProducts.length === 0
-            }
+            onClick={() => handleRemoveProduct(product.itemId)}
+            className={styles.removeBtn}
           >
-            <CheckCircleIcon />
-            <span className="ml-2">Submit</span>
+            <RemoveCircleOutlineIcon />
           </button>
         </div>
+      ))}
+    </section>
+  )}
 
-        {selectedProducts.length > 0 && (
-          <section className="flex gap-4 p-4 w-full overflow-x-scroll">
-            {selectedProducts.map((product, index) => (
-              <div
-                key={index}
-                className="flex flex-col gap-2 border-2 p-2 rounded-lg relative"
-              >
-                <h1 className="text-lg font-semibold">{product.itemName}</h1>
-                <p className="text-sm">Quantity: {product.quantity}</p>
-                <p className="text-sm">Pack Size: {product.packSize}</p>
-                <p className="text-sm">Discount: {product.discount}</p>
-                <p className="text-sm font-semibold">
-                  Manufacture Date: {product.manufactureDate}
-                </p>
-                <p className="text-sm font-semibold">
-                  {product.expiryDate
-                    ? `Expiry Date: ${product.expiryDate}`
-                    : "No expiry for the product"}
-                </p>
-                <button
-                  onClick={() => handleRemoveProduct(product.itemId)}
-                  className="p-2 rounded-full text-red-400 absolute top-0 right-0"
-                >
-                  <RemoveCircleOutlineIcon />
-                </button>
-              </div>
-            ))}
-          </section>
-        )}
+  <Typography variant="h6" className={styles.totalPrice}>
+    Total Price: ₹{formatToIndianCurrency(totalPrice.toFixed(2))}
+  </Typography>
 
-        <Typography variant="h6" className="mt-4">
-          Total Price: ₹{formatToIndianCurrency(totalPrice.toFixed(2))}
-        </Typography>
-
-        <form
-          className={
-            "flex flex-col justify-center items-center p-8 gap-8 border-2 w-full h-fit"
-          }
-        >
-          <div className={"flex gap-2 w-full"}>
-            <div className="w-full">
-              <DropdownBar
-                data={locations}
-                selectedData={selectedLocation}
-                setSelectedData={setSelectedLocation}
-                label={"Warehouse"}
-              />
-            </div>
+  <form className={styles.form}>
+    <div className={styles.dropdownRow}>
+      <div className={styles.dropdownWrapper}>
+        <DropdownBar
+          data={locations}
+          selectedData={selectedLocation}
+          setSelectedData={setSelectedLocation}
+          label="Warehouse"
+        />
+      </div>
             <Button
               sx={{
                 textTransform: "capitalize",
@@ -406,7 +397,7 @@ const AddInventory = () => {
                   </Button>
                 </Box>
               ))}
-              <Typography variant="h6" className="mt-4">
+              <Typography variant="h6" className={styles.mt4}>
                 Aggregated Price for Faulty Units: ₹
                 {formatToIndianCurrency(calculateFaultyUnitsPrice().toFixed(2))}
               </Typography>

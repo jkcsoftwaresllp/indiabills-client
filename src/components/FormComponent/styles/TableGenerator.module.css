@@ -1,0 +1,56 @@
+.tableHeadCell {
+  text-transform: capitalize;
+  font-weight: 600;
+  color: #1e293b; /* slate-800 */
+  transition: color 0.3s ease;
+}
+
+.tableHeadCell:hover {
+  color: #0369a1; /* sky-700 */
+}
+
+.tableRow {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.tableRow:hover {
+  background-color: #f8fafc; /* slate-50 */
+}
+
+.greenText {
+  color: #15803d; /* green-700 */
+}
+
+.redText {
+  color: #b91c1c; /* red-700 */
+}
+
+.hoverBlueText {
+  transition: color 0.3s ease;
+}
+
+.hoverBlueText:hover {
+  color: #0369a1; /* sky-700 */
+}
+
+.hoverAmberText {
+  transition: color 0.3s ease;
+}
+
+.hoverAmberText:hover {
+  color: #d97706; /* amber-700 */
+}
+
+.defaultText {
+  color: #334155; /* slate-700 */
+}
+
+.statusText {
+  color: #047857; /* emerald-700 */
+  background-color: #d1fae5; /* emerald-200 */
+  padding: 2px;
+  border: 1px solid #10b981; /* emerald-500 */
+  border-radius: 1rem;
+  text-transform: capitalize;
+}

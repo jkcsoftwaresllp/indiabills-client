@@ -1,0 +1,42 @@
+.container {
+  padding: 1rem; /* equivalent to p={4} */
+}
+
+.section {
+  margin-bottom: 1rem; /* mb={4} */
+}
+
+.headerFlex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.addressesContainer {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+}
+
+.addressCard {
+  margin: 0.5rem;
+  text-transform: capitalize;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.addressType {
+  margin-bottom: 0.6rem;
+}
+
+.pinCode {
+  margin-top: 0.3rem;
+}

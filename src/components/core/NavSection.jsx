@@ -1,25 +1,25 @@
 // client/src/components/core/NavSection.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import styles from './styles/NavSection.module.css';
+
 
 const NavSection = ({ buttons }) => {
   const navigate = useNavigate();
 
   return (
-    <section className="flex flex-col gap-2">
-      {buttons.map((button, index) => (
-        <button
-          className="text-sky-100 ml-2 transition self-start p-2 w-full hover:text-rose-500 flex items-center"
-          key={index}
-          onClick={() => navigate(button.to)}
-        >
-          {button.icon}
-          <span className="ml-3 transition-opacity duration-300">
-            {button.label}
-          </span>
-        </button>
-      ))}
-    </section>
+   <section className={styles.section}>
+    {buttons.map((button, index) => (
+      <button
+        key={index}
+        onClick={() => navigate(button.to)}
+        className={styles.button}
+      >
+        {button.icon}
+        <span className={styles.label}>{button.label}</span>
+      </button>
+    ))}
+  </section>
   );
 };
 

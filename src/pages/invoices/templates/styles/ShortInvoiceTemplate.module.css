@@ -1,0 +1,119 @@
+.container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1rem; /* 16px */
+}
+
+.invoice {
+  background-color: white;
+  box-shadow: 0 4px 6px rgb(0 0 0 / 0.1);
+  border-radius: 1rem; /* 16px */
+  padding: 2rem; /* 32px */
+  width: fit-content;
+}
+
+.headerGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+}
+
+.logoWrapper {
+  width: fit-content;
+}
+
+.logo {
+  width: 8rem; /* 128px */
+  height: 8rem; /* 128px */
+  margin-bottom: 1rem; /* 16px */
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.invoiceTitle {
+  font-size: 1.25rem; /* 20px */
+  font-weight: 500;
+  margin: 0;
+}
+
+.organizationName {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 700;
+  margin: 0.25rem 0 0; /* 4px 0 0 */
+}
+
+.invoiceDetails {
+  color: #64748b; /* slate-600 */
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem; /* 4px */
+  margin-top: 0.5rem; /* 8px */
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin-top: 1rem; /* 16px */
+}
+
+.table {
+  min-width: 100%;
+  background-color: white;
+  border-collapse: collapse;
+}
+
+.th, .td {
+  padding: 0.5rem 1rem; /* 8px 16px */
+  border-bottom: 1px solid #e5e7eb; /* gray-200 */
+  text-align: left;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem; /* 16px */
+  margin-top: 1rem; /* 16px */
+}
+
+.summaryBoxBorder {
+  padding: 0.5rem; /* 8px */
+  border-right: 2px solid #e5e7eb; /* gray-200 */
+}
+
+.summaryBox {
+  padding: 0.5rem; /* 8px */
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.summaryLabel {
+  color: #64748b; /* slate-500 */
+}
+
+.summaryValue {
+  color: #64748b; /* slate-500 */
+}
+
+.totalAmountBox {
+  grid-column: span 2;
+}
+
+.totalAmountTitle {
+  font-size: 1.25rem; /* 20px */
+  margin-top: 0.5rem; /* 8px */
+  font-weight: 600;
+}
+
+.totalAmountValue {
+  color: #064e3b; /* emerald-900 */
+}

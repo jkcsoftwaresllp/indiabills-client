@@ -5,6 +5,7 @@ import ShortInvoiceTemplate from "./templates/Short";
 import ComprehensiveInvoiceTemplate from "./templates/Comprehensive";
 import { useNavigate, useParams } from "react-router-dom";
 import { getData, getRequest } from "../../network/api";
+import styles from './OrderInvoice.module.css';
 
 const OrderInvoice = () => {
     const { orderId } = useParams();
@@ -70,45 +71,46 @@ const OrderInvoice = () => {
         }
     };
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <div className="loader">Loading...</div>
-            </div>
-        );
-    }
+    
+if (loading) {
+  return (
+    <div className={styles.loadingContainer}>
+      <div className={styles.loader}>Loading...</div>
+    </div>
+  );
+}
 
-    if (!invoiceInfo) {
-        return (
-            <div className="container mx-auto p-4">
-                <h6 className="text-xl font-semibold">Order not found</h6>
-            </div>
-        );
-    }
+if (!invoiceInfo) {
+  return (
+    <div className={styles.container}>
+      <h6 className={styles.heading}>Order not found</h6>
+    </div>
+  );
+}
 
-    return (
-        <main className="w-full min-h-full overflow-none flex flex-row-reverse items-center justify-around gap-8">
-            <section id="controls" className="border-b-black flex flex-col items-center justify-center w-fit gap-4">
-                <button onClick={() => navigate(-1)} className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-700">
-                    Go Back
-                </button>
-                <button onClick={handlePrint} className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-700">
-                    <PrintIcon />
-                </button>
-                <button onClick={handleShare} className="bg-primary text-white px-4 py-2 rounded hover:bg-green-700">
-                    <ShareIcon />
-                </button>
-            </section>
+return (
+  <main className={styles.main}>
+    <section id="controls" className={styles.controls}>
+      <button onClick={() => navigate(-1)} className={styles.btnPrimary}>
+        Go Back
+      </button>
+      <button onClick={handlePrint} className={styles.btnPrimary}>
+        <PrintIcon />
+      </button>
+      <button onClick={handleShare} className={styles.btnPrimaryGreen}>
+        <ShareIcon />
+      </button>
+    </section>
 
-            <section id="invoice">
-                {TemplateType === 'short' ? (
-                    <ShortInvoiceTemplate invoice={invoiceInfo} Organization={organization} />
-                ) : (
-                    <ComprehensiveInvoiceTemplate initials={initials} invoice={invoiceInfo} organization={organization} />
-                )}
-            </section>
-        </main>
-    );
+    <section id="invoice">
+      {TemplateType === 'short' ? (
+        <ShortInvoiceTemplate invoice={invoiceInfo} Organization={organization} />
+      ) : (
+        <ComprehensiveInvoiceTemplate initials={initials} invoice={invoiceInfo} organization={organization} />
+      )}
+    </section>
+  </main>
+);
 };
 
 export default OrderInvoice;

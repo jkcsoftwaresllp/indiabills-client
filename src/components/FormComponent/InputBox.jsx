@@ -1,6 +1,7 @@
 import React from 'react';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
+import styles from './styles/InputBox.module.css';
 
 const InputBox = ({
     name,
@@ -52,22 +53,22 @@ const InputBox = ({
             InputLabelProps={{
                 shrink: true
             }}
-            InputProps={{
-                startAdornment: startText ? (
-                    <InputAdornment position="start">
-                        <span className="mr-1 font-semibold text-sky-700 break-keep text-nowrap w-fit">
-                            {startText}
-                        </span>
-                    </InputAdornment>
-                ) : undefined,
-                endAdornment: endText ? (
-                    <InputAdornment position="end">
-                        <span className="ml-1 font-semibold text-slate-700 break-keep text-nowrap w-fit">
-                            {endText}
-                        </span>
-                    </InputAdornment>
-                ) : undefined,
-            }}
+           InputProps={{
+  startAdornment: startText ? (
+    <InputAdornment position="start">
+      <span className={`${styles.adornmentText} ${styles.startText}`}>
+        {startText}
+      </span>
+    </InputAdornment>
+  ) : undefined,
+  endAdornment: endText ? (
+    <InputAdornment position="end">
+      <span className={`${styles.adornmentText} ${styles.endText}`}>
+        {endText}
+      </span>
+    </InputAdornment>
+  ) : undefined,
+}}
             sx={{
                 '& .MuiOutlinedInput-root': {
                     backgroundColor: 'rgb(245, 247, 252)', // Set desired background color

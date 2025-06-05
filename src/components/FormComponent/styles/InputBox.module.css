@@ -1,0 +1,16 @@
+.adornmentText {
+  font-weight: 600;
+  white-space: nowrap;
+  word-break: keep-all;
+  width: fit-content;
+}
+
+.startText {
+  margin-right: 0.25rem; /* Tailwind: mr-1 */
+  color: #0369a1;         /* Tailwind: text-sky-700 */
+}
+
+.endText {
+  margin-left: 0.25rem;  /* Tailwind: ml-1 */
+  color: #334155;        /* Tailwind: text-slate-700 */
+}

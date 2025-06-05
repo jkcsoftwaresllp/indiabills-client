@@ -2,37 +2,32 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import SettingsIcon from '@mui/icons-material/Settings';
+import styles from './styles/Footer.module.css';
 
 const Footer = () => {
 
 	const [popDown, setPopDown] = useState(true);
 
 	return (
-		<motion.div
-			initial={{
-				translateY: "100px",
-			}}
-			animate={{
-				translateY: popDown ? "0px" : "100px",
-			}}
-			transition={{
-				duration: 1,
-				type: "spring",
-			}}
-			// onClick={() => setPopDown(!popDown)}
-			className="flex-wrap fixed bottom-0 w-full flex py-5 px-12 items-center text-slate-500 rounded-lg border backdrop-filter backdrop-blur-lg bg-white bg-opacity-40"
-			// className="flex-wrap fixed bottom-0 w-full flex py-5 px-12 items-center text-slate-500 rounded-lg bg-transparent"
-		>
-			<div className="border-2 items-center flex gap-2 rounded-xl w-full">
-				<div className="flex ml-2 border-r-2">
-				<ContactSupportIcon />
-				</div>
-				<input className="w-full p-2 bg-transparent" placeholder="Smart Chat" type="text" />
-			</div>
-<SettingsIcon/>
-
-		</motion.div>
-	);
+  <motion.div
+    initial={{ translateY: '100px' }}
+    animate={{ translateY: popDown ? '0px' : '100px' }}
+    transition={{ duration: 1, type: 'spring' }}
+    className={styles.container}
+  >
+    <div className={styles.inputWrapper}>
+      <div className={styles.iconBox}>
+        <ContactSupportIcon />
+      </div>
+      <input
+        className={styles.input}
+        placeholder="Smart Chat"
+        type="text"
+      />
+    </div>
+    <SettingsIcon />
+  </motion.div>
+);
 }
 
 export default Footer;

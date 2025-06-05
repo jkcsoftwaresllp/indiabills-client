@@ -1,0 +1,60 @@
+.form {
+  width: 100%;
+  display: flex;
+  gap: 0.75rem; /* gap-3 */
+}
+
+.gridWrapper {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* grid-cols-3 */
+  grid-template-rows: repeat(2, auto); /* grid-row-2 */
+  gap: 2.5rem; /* gap-10 */
+  height: fit-content;
+}
+
+.categoryCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem; /* gap-6 */
+  min-width: 1rem; /* min-w-4 */
+  height: fit-content;
+  padding: 2rem; /* p-8 */
+  border-radius: 1rem; /* rounded-2xl */
+  border: 1px solid rgba(0, 0, 0, 0.1); /* border */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.9); /* bg-white bg-opacity-90 */
+}
+
+.categoryTitle {
+  font-weight: 600; /* font-semibold */
+  text-transform: lowercase; /* lowercase */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.transparentBg {
+  width: 100%;
+  background: transparent;
+}
+
+.submitWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.submitButton {
+  padding: 0.75rem; /* p-3 */
+  margin: 1.25rem; /* m-5 */
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2); /* shadow-xl */
+  background-color: #4f46e5; /* fallback in case 'idms-submit' is Tailwind */
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background-color: #4338ca;
+}

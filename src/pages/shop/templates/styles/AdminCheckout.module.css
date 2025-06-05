@@ -1,0 +1,91 @@
+.container {
+  padding: 1.5rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: white;
+  border-radius: 0.75rem;
+}
+
+.header {
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.invoiceActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.payButton {
+  padding: 0.5rem;
+  min-width: 8rem;
+  background-color: var(--primary); /* Use CSS variable or fallback */
+  color: #e2e8f0;
+  border-radius: 0.375rem;
+}
+
+.instantShip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.shipStatus {
+  color: #f43f5e; /* rose-500 */
+  font-weight: 500;
+}
+
+.productList {
+  display: flex;
+  overflow-x: auto;
+  gap: 0.5rem;
+  padding: 1rem;
+  color: #64748b; /* slate-500 */
+}
+
+.noProducts {
+  color: #64748b;
+  padding: 1rem;
+}
+
+/* //////// */
+
+.modalContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.modalContent {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  width: 24rem; /* 96 / 4 rem */
+}
+
+.modalTitle {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.fieldSpacing {
+  margin-bottom: 1rem;
+}
+
+.infoText {
+  margin-bottom: 1rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

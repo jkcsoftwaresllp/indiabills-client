@@ -8,6 +8,7 @@ import ContextMenu from "../../components/core/ContextMenu";
 import OrderTimelineModal from "./OrderTimelineModal";
 import { motion, AnimatePresence } from "framer-motion";
 import ItemSection from "./ItemSection";
+import styles from './styles/EachOrder.module.css';
 
 export const EachOrder = ({
   order,
@@ -132,124 +133,124 @@ export const EachOrder = ({
     exit: { opacity: 0, y: 20 },
   };
 
-  return (
-    <main
-      ref={containerRef}
-      className="flex relative flex-col h-full z-30"
-      onContextMenu={handleContextMenu}
-    >
-      <AnimatePresence>
-        <motion.div
-          key="main-view"
-          variants={mainViewVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          transition={{ duration: 0.3 }}
-          className="flex flex-col"
+ return (
+  <main
+    ref={containerRef}
+    className={styles.main}
+    onContextMenu={handleContextMenu}
+  >
+    <AnimatePresence>
+      <motion.div
+        key="main-view"
+        variants={mainViewVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        transition={{ duration: 0.3 }}
+        className={styles.motionContainer}
+      >
+        <section id="OrderHead" className={styles.orderHead}>
+          <div className={styles.statusWrapper}>
+            <span className={styles.statusIndicatorWrapper}>
+              <span
+                className={`${styles.ping} ${getStatusColor(order.orderStatus)}`}
+              />
+              <span
+                className={`${styles.statusIndicator} ${getStatusColor(order.orderStatus)}`}
+              />
+            </span>
+          </div>
+
+          <div className={styles.orderTitleWrapper}>
+            <h1 className={styles.orderTitle}>Order #{order.orderId}</h1>
+          </div>
+
+          <div className={styles.invoiceNumberWrapper}>
+            <h1 className={styles.invoiceNumber}>
+              {`${initials}-${order.invoiceNumber}`}
+            </h1>
+          </div>
+
+          <div className={styles.priceDateWrapper}>
+            <p className={styles.totalAmount}>
+              ₹ {parseFloat(order.totalAmount).toFixed(2)}
+            </p>
+            <p className={styles.invoiceDate}>{formatDate(order.invoiceDate)}</p>
+          </div>
+
+          <div className={styles.customerWrapper}>
+            <div className={styles.customerInfo}>
+              <Avatar
+                src={
+                  order.avatar
+                    ? `${process.env.REACT_APP_SERVER_URL}/${order.avatar}`
+                    : `${process.env.REACT_APP_SERVER_URL}/default.webp`
+                }
+                alt={order.customerName}
+                sx={{ width: 28, height: 28 }}
+              />
+              <span className={styles.customerName}>{order.customerName}</span>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="Payment"
+          className={`${styles.paymentSection} ${
+            order.paymentStatus === 'paid' ? styles.paid : styles.unpaid
+          }`}
         >
-          <section id="OrderHead" className="z-40">
-            <div className="absolute top-3 right-3 z-40">
-              <span className="relative flex h-4 w-4">
-                <span
-                  className={`animate-ping absolute inline-flex h-full w-full rounded-full ${getStatusColor(
-                    order.orderStatus
-                  )} opacity-75`}
-                ></span>
-                <span
-                  className={`relative inline-flex rounded-full h-4 w-4 ${getStatusColor(
-                    order.orderStatus
-                  )}`}
-                ></span>
+          {order.paymentStatus === 'paid' ? (
+            <div className={styles.paymentIcons}>
+              <p className={styles.rotatedBars}>|||</p>
+              <span className={styles.iconWrapper}>
+                <TaskAltIcon />
               </span>
+              <p className={styles.rotatedBars}>|||</p>
             </div>
-            <div className="flex items-center justify-between mb-1">
-              <h1 className="text-black text-xl font-bold">Order #{order.orderId}</h1>
+          ) : (
+            <div className={styles.paymentIcons}>
+              <p className={styles.rotatedBars}>|||</p>
+              <span className={styles.iconWrapper}>
+                <WatchLaterIcon />
+              </span>
+              <p className={styles.rotatedBars}>|||</p>
             </div>
-            <div className="flex items-center justify-between mb-1">
-              <h1 className="text-black text-md font-light">{`${initials}-${order.invoiceNumber}`}</h1>
-            </div>
-            <div className="flex justify-between">
-              <p className="text-lg text-green-700 mb-2 font-medium">
-                ₹ {parseFloat(order.totalAmount).toFixed(2)}
-              </p>
-              <p className="text-gray-600 mt-1">{formatDate(order.invoiceDate)}</p>
-            </div>
-            <div className="flex items-center gap-2 text-gray-700 m-2">
-              <div className="flex items-center">
-                <Avatar
-                  src={
-                    order.avatar
-                      ? `${process.env.REACT_APP_SERVER_URL}/${order.avatar}`
-                      : `${process.env.REACT_APP_SERVER_URL}/default.webp`
-                  }
-                  alt={order.customerName}
-                  sx={{ width: 28, height: 28 }}
-                />
-                <span className="font-medium" style={{ marginLeft: 8 }}>
-                  {order.customerName}
-                </span>
-              </div>
-            </div>
-          </section>
+          )}
+        </section>
+      </motion.div>
+    </AnimatePresence>
 
-          <section
-            id="Payment"
-            className={`flex mt-2 w-full justify-center items-center ${
-              order.paymentStatus === "paid" ? "text-emerald-500" : "text-amber-700"
-            }`}
-          >
-            {order.paymentStatus === "paid" ? (
-              <div className="flex justify-between">
-                <p className="flex flex-col rotate-90">|||</p>
-                <span className="mx-2">
-                  <TaskAltIcon />
-                </span>
-                <p className="flex flex-col rotate-90">|||</p>
-              </div>
-            ) : (
-              <div className="flex justify-between">
-                <p className="flex flex-col rotate-90">|||</p>
-                <span className="mx-2">
-                  <WatchLaterIcon />
-                </span>
-                <p className="flex flex-col rotate-90">|||</p>
-              </div>
-            )}
-          </section>
-        </motion.div>
-      </AnimatePresence>
-
-      <section id={"Items"} className="h-full p-2 mt-4 w-full">
-        <h3
-          className="text-center text-rose-600 hover:underline cursor-pointer flex items-center justify-center gap-1"
-          onClick={toggleItemsVisibility}
-        >
-          {order.items.length} Items
-        </h3>
-        <ItemSection
-          order={order}
-          toggleItemsVisibility={toggleItemsVisibility}
-          isItemsVisible={isItemsVisible}
-        />
-      </section>
-
-      {contextMenu && (
-        <ContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          items={contextMenu.items}
-          onClose={handleCloseContextMenu}
-        />
-      )}
-
-      <OrderTimelineModal
-        isOpen={isTimelineModalOpen}
-        onClose={() => setIsTimelineModalOpen(false)}
+    <section id="Items" className={styles.itemsSection}>
+      <h3
+        className={styles.itemsHeader}
+        onClick={toggleItemsVisibility}
+      >
+        {order.items.length} Items
+      </h3>
+      <ItemSection
         order={order}
-        timelineCollapsed={timelineCollapsed}
-        toggleTimeline={toggleTimeline}
+        toggleItemsVisibility={toggleItemsVisibility}
+        isItemsVisible={isItemsVisible}
       />
-    </main>
-  );
+    </section>
+
+    {contextMenu && (
+      <ContextMenu
+        x={contextMenu.x}
+        y={contextMenu.y}
+        items={contextMenu.items}
+        onClose={handleCloseContextMenu}
+      />
+    )}
+
+    <OrderTimelineModal
+      isOpen={isTimelineModalOpen}
+      onClose={() => setIsTimelineModalOpen(false)}
+      order={order}
+      timelineCollapsed={timelineCollapsed}
+      toggleTimeline={toggleTimeline}
+    />
+  </main>
+);
 };

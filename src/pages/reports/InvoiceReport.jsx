@@ -3,6 +3,7 @@ import { getData } from '../../network/api';
 import { AgGridReact } from 'ag-grid-react';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
+import styles from './styles/InvoiceReport.module.css';
 
 const InvoiceReport = () => {
     const [invoiceNumber, setInvoiceNumber] = useState('');
@@ -50,36 +51,33 @@ const InvoiceReport = () => {
         { headerName: 'Shipping Address', field: 'shippingAddress' },
     ];
 
-    return (
-        <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">Invoice Report</h1>
-            <div className="mb-4">
-                <input
-                    type="text"
-                    value={invoiceNumber}
-                    onChange={(e) => setInvoiceNumber(e.target.value)}
-                    placeholder="Enter Invoice Number"
-                    className="border p-2 rounded mr-2"
-                />
-                <button
-                    onClick={handleFetchData}
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                >
-                    Fetch Data
-                </button>
-            </div>
-            {invoiceData && (
-                <div className="ag-theme-quartz" style={{ height: 400, width: '100%' }}>
-                    <AgGridReact
-                        rowData={invoiceData}
-                        columnDefs={columnDefs}
-                        pagination={true}
-                        paginationPageSize={20}
-                    />
-                </div>
-            )}
-        </div>
-    );
+   return (
+  <div className={styles.container}>
+    <h1 className={styles.heading}>Invoice Report</h1>
+    <div className={styles.inputGroup}>
+      <input
+        type="text"
+        value={invoiceNumber}
+        onChange={(e) => setInvoiceNumber(e.target.value)}
+        placeholder="Enter Invoice Number"
+        className={styles.input}
+      />
+      <button onClick={handleFetchData} className={styles.button}>
+        Fetch Data
+      </button>
+    </div>
+    {invoiceData && (
+      <div className={`ag-theme-quartz ${styles.gridWrapper}`}>
+        <AgGridReact
+          rowData={invoiceData}
+          columnDefs={columnDefs}
+          pagination={true}
+          paginationPageSize={20}
+        />
+      </div>
+    )}
+  </div>
+);
 };
 
 export default InvoiceReport;

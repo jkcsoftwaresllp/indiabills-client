@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { getStuff } from "../../../network/api";
+import styles from "./styles/HomeAdmin.module.css";
 
 const HomeAdmin = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -75,268 +76,162 @@ const HomeAdmin = () => {
     : [];
 
   if (loading) {
-    return (
-      <div className="m-5 text-center">
-        <p>Loading dashboard data...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="m-5 text-center">
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col m-5 space-y-10">
-      {/* Today's Metrics Section */}
-      <section className="bg-gray-50 p-5 rounded-lg">
-        <h2 className="text-2xl font-bold mb-5">Today's Metrics</h2>
-        <div className="flex flex-wrap gap-5">
-          <div className="bg-gray-100 border border-gray-300 rounded-lg p-5 flex-1 min-w-[200px]">
-            <h3 className="text-lg font-semibold">Total Cash In Today</h3>
-            <p className="mt-2 text-xl">
-              ₹{dashboardData?.totalSale.toLocaleString()}
-            </p>
-          </div>
-          <div className="bg-gray-100 border border-gray-300 rounded-lg p-5 flex-1 min-w-[200px]">
-            <h3 className="text-lg font-semibold">Products Shipped Today</h3>
-            <p className="mt-2 text-xl">
-              {dashboardData?.totalProductsShipped.toLocaleString()}
-            </p>
-          </div>
-          <div className="bg-gray-100 border border-gray-300 rounded-lg p-5 flex-1 min-w-[200px]">
-            <h3 className="text-lg font-semibold">Products Fulfilled Today</h3>
-            <p className="mt-2 text-xl">
-              {dashboardData?.totalFulfilledShipped.toLocaleString()}
-            </p>
-          </div>
-          <div className="bg-gray-100 border border-gray-300 rounded-lg p-5 flex-1 min-w-[200px]">
-            <h3 className="text-lg font-semibold">Active Customers</h3>
-            <p className="mt-2 text-xl">
-              {dashboardData?.totalActiveCustomers.toLocaleString()}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Fiscal Overview Section */}
-      <section className="bg-gray-50 p-5 rounded-lg">
-        <h2 className="text-2xl font-bold mb-5">Fiscal Overview</h2>
-        <div className="bg-gray-100 border border-gray-300 rounded-lg p-5">
-          {pieData.length > 0 && (
-            <PieChart width={400} height={400}>
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) =>
-                  `${name}: ${(percent * 100).toFixed(0)}%`
-                }
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {pieData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          )}
-        </div>
-      </section>
-
-      {/* Top Product Sales Section */}
-      <section className="bg-gray-50 p-5 rounded-lg">
-        <h2 className="text-2xl font-bold mb-5">Top Product Sales</h2>
-        <div className="flex space-x-5 overflow-x-auto">
-          {topProductSales.length > 0 ? (
-            topProductSales.map((item) => (
-              <div
-                key={item.itemId}
-                className="bg-gray-200 border border-gray-300 rounded-lg p-5 min-w-[250px] flex-shrink-0"
-              >
-                <h3 className="text-lg font-semibold mb-2">{item.itemName}</h3>
-                <p className="text-sm text-gray-700">
-                  Sale Price: ₹{item.salePrice.toFixed(2)}
-                </p>
-                <p className="text-sm text-gray-700">
-                  Total Sales: {item.totalSale.toLocaleString()}
-                </p>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-500">
-              No top product sales data available.
-            </p>
-          )}
-        </div>
-      </section>
-
-      {/* Products Expiring Soon Section */}
-      {dashboardData?.productsExpiringSoon && (
-        <section className="bg-gray-50 p-5 rounded-lg">
-          <h2 className="text-2xl font-bold mb-5">Products Expiring Soon</h2>
-          <div className="bg-gray-100 border border-gray-300 rounded-lg p-5">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Batch Number
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Item Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Quantity
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Expiry Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {dashboardData?.productsExpiringSoon.map((product) => (
-                  <tr key={product.batchId}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {product.batchNumber}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {product.itemName}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {product.quantity}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {new Date(product.expiryDate).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      )}
-
-      {/* Low Inventory Stock Section */}
-      <section className="bg-gray-50 p-5 rounded-lg">
-        <h2 className="text-2xl font-bold mb-5">Low Inventory Stock</h2>
-        <div className="bg-gray-100 border border-gray-300 rounded-lg p-5">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Item Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Current Quantity
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Reorder Level
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {dashboardData?.lowInventory.map((item) => (
-                <tr key={item.itemId}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {item.itemName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {item.quantity}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {item.reorderLevel}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* Customers with Dues Section */}
-      <section className="bg-gray-50 p-5 rounded-lg">
-        <h2 className="text-2xl font-bold mb-5">Customers with Dues</h2>
-        <div className="bg-gray-100 border border-gray-300 rounded-lg p-5">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Customer Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Due Amount
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {dashboardData?.topCustomersByCredit.map((customer) => (
-                <tr key={customer.customerId}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {customer.customerName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    ₹{customer.totalCredit.toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* Top Customers by Sales Section */}
-      <section className="bg-gray-50 p-5 rounded-lg">
-        <h2 className="text-2xl font-bold mb-5">Top Customers by Sales</h2>
-        <div className="bg-gray-100 border border-gray-300 rounded-lg p-5">
-          {topCustomers.length > 0 ? (
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Customer ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Customer Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Total Sale
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {topCustomers.map((customer) => (
-                  <tr key={customer.customerId}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {customer.customerId}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {customer.customerName}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ₹{customer.totalSale.toLocaleString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p className="text-gray-500">No top customers data available.</p>
-          )}
-        </div>
-      </section>
+    <div className={styles.centeredMargin}>
+      <p>Loading dashboard data...</p>
     </div>
   );
+}
+
+if (error) {
+  return (
+    <div className={styles.centeredMargin}>
+      <p className={styles.errorText}>{error}</p>
+    </div>
+  );
+}
+
+return (
+  <div className={styles.container}>
+    {/* Today's Metrics Section */}
+    <section className={styles.section}>
+      <h2 className={styles.header}>Today's Metrics</h2>
+      <div className={styles.metricsGrid}>
+        <div className={styles.metricCard}>
+          <h3 className={styles.metricTitle}>Total Cash In Today</h3>
+          <p className={styles.metricValue}>₹{dashboardData?.totalSale.toLocaleString()}</p>
+        </div>
+        <div className={styles.metricCard}>
+          <h3 className={styles.metricTitle}>Products Shipped Today</h3>
+          <p className={styles.metricValue}>
+            {dashboardData?.totalProductsShipped.toLocaleString()}
+          </p>
+        </div>
+        <div className={styles.metricCard}>
+          <h3 className={styles.metricTitle}>Products Fulfilled Today</h3>
+          <p className={styles.metricValue}>
+            {dashboardData?.totalFulfilledShipped.toLocaleString()}
+          </p>
+        </div>
+        <div className={styles.metricCard}>
+          <h3 className={styles.metricTitle}>Active Customers</h3>
+          <p className={styles.metricValue}>
+            {dashboardData?.totalActiveCustomers.toLocaleString()}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* Fiscal Overview Section */}
+    <section className={styles.section}>
+      <h2 className={styles.header}>Fiscal Overview</h2>
+      <div className={styles.tableWrapper}>
+        {pieData.length > 0 && (
+          <PieChart width={400} height={400}>
+            <Pie
+              data={pieData}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+              outerRadius={100}
+              fill="#8884d8"
+              dataKey="value"
+            >
+              {pieData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        )}
+      </div>
+    </section>
+
+    {/* Top Product Sales Section */}
+    <section className={styles.section}>
+      <h2 className={styles.header}>Top Product Sales</h2>
+      <div className={styles.topProductContainer}>
+        {topProductSales.length > 0 ? (
+          topProductSales.map((item) => (
+            <div key={item.itemId} className={styles.topProductCard}>
+              <h3 className={styles.topProductTitle}>{item.itemName}</h3>
+              <p className={styles.topProductText}>Sale Price: ₹{item.salePrice.toFixed(2)}</p>
+              <p className={styles.topProductText}>Total Sales: {item.totalSale.toLocaleString()}</p>
+            </div>
+          ))
+        ) : (
+          <p className={styles.noDataText}>No top product sales data available.</p>
+        )}
+      </div>
+    </section>
+
+    {/* Products Expiring Soon Section */}
+    {dashboardData?.productsExpiringSoon && (
+      <section className={styles.section}>
+        <h2 className={styles.header}>Products Expiring Soon</h2>
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead className={styles.thead}>
+              <tr>
+                <th className={styles.th}>Batch Number</th>
+                <th className={styles.th}>Item Name</th>
+                <th className={styles.th}>Quantity</th>
+                <th className={styles.th}>Expiry Date</th>
+              </tr>
+            </thead>
+            <tbody className={styles.tbody}>
+              {dashboardData.productsExpiringSoon.map((product) => (
+                <tr key={product.batchId} className={styles.tr}>
+                  <td className={styles.td}>{product.batchNumber}</td>
+                  <td className={styles.td}>{product.itemName}</td>
+                  <td className={styles.td}>{product.quantity}</td>
+                  <td className={styles.td}>
+                    {new Date(product.expiryDate).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+
+    {/* Low Inventory Stock Section */}
+    <section className={styles.section}>
+      <h2 className={styles.header}>Low Inventory Stock</h2>
+      <div className={styles.tableWrapper}>
+        <table className={styles.table}>
+          <thead className={styles.thead}>
+            <tr>
+              <th className={styles.th}>Item Name</th>
+              <th className={styles.th}>Current Quantity</th>
+              <th className={styles.th}>Reorder Level</th>
+            </tr>
+          </thead>
+          <tbody className={styles.tbody}>
+            {dashboardData?.lowInventoryStock?.length > 0 ? (
+              dashboardData.lowInventoryStock.map((item) => (
+                <tr key={item.itemId} className={styles.tr}>
+                  <td className={styles.td}>{item.itemName}</td>
+                  <td className={styles.td}>{item.currentQuantity}</td>
+                  <td className={styles.td}>{item.reorderLevel}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={3} className={`${styles.td} ${styles.textGray500}`}>
+                  No low inventory items.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+);
 };
 
 export default HomeAdmin;

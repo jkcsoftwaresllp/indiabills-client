@@ -17,6 +17,7 @@ import {
 import SpinnerFullPage from "../more/spinner";
 import { useStore } from "../../store/store";
 import MouseHoverPopover from "../../components/core/Explain";
+import styles from './styles/EditBatch.module.css';
 
 const EditBatch = () => {
   const { batchId } = useParams();
@@ -311,166 +312,166 @@ const EditBatch = () => {
   if (!batchData) return <SpinnerFullPage />;
 
   return (
-    <PageAnimate>
-      <h2 className="text-2xl font-bold mb-4">Edit Batch #{batchId}</h2>
+  <PageAnimate>
+    <h2 className={styles.heading}>Edit Batch #{batchId}</h2>
 
-      <MouseHoverPopover
-        triggerElement={
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={handleOpenInvoice}
-          >
-            <ReceiptIcon />
-          </Button>
-        }
-        popoverContent={<span className="text-xs">View Invoice</span>}
-      />
+    <MouseHoverPopover
+      triggerElement={
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={handleOpenInvoice}
+        >
+          <ReceiptIcon />
+        </Button>
+      }
+      popoverContent={<span className={styles.popoverText}>View Invoice</span>}
+    />
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold">Batch Details</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <TextField
-                label="Batch Number"
-                name="batchNumber"
-                value={formState.batchNumber}
+    <form onSubmit={handleSubmit} className={styles.formSpacing}>
+      <div className={styles.sectionSpacing}>
+        <h3 className="text-xl font-semibold">Batch Details</h3>
+        <div className={styles.gridCols}>
+          <div>
+            <TextField
+              label="Batch Number"
+              name="batchNumber"
+              value={formState.batchNumber}
+              onChange={handleInputChange}
+              fullWidth
+            />
+          </div>
+          <div>
+            <TextField
+              label="Invoice Number"
+              name="invoiceNumber"
+              value={formState.invoiceNumber}
+              onChange={handleInputChange}
+              fullWidth
+            />
+          </div>
+          <div>
+            <TextField
+              label="Batch Price"
+              name="batchPrice"
+              type="number"
+              value={formState.batchPrice}
+              onChange={handleInputChange}
+              fullWidth
+            />
+          </div>
+          <div>
+            <TextField
+              label="Entry Date"
+              name="entryDate"
+              type="date"
+              value={formState.entryDate}
+              onChange={handleInputChange}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+            />
+          </div>
+          <div>
+            <FormControl fullWidth>
+              <InputLabel>Quality Pass</InputLabel>
+              <Select
+                name="qualityPass"
+                value={formState.qualityPass}
                 onChange={handleInputChange}
-                fullWidth
-              />
-            </div>
-            <div>
-              <TextField
-                label="Invoice Number"
-                name="invoiceNumber"
-                value={formState.invoiceNumber}
+              >
+                <MenuItem value="ok">OK</MenuItem>
+                <MenuItem value="rejected">Rejected</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+          <div>
+            <FormControl fullWidth>
+              <InputLabel>Status</InputLabel>
+              <Select
+                name="status"
+                value={formState.status}
                 onChange={handleInputChange}
-                fullWidth
-              />
-            </div>
-            <div>
-              <TextField
-                label="Batch Price"
-                name="batchPrice"
-                type="number"
-                value={formState.batchPrice}
+              >
+                <MenuItem value="in stock">In Stock</MenuItem>
+                <MenuItem value="sold">Sold</MenuItem>
+                <MenuItem value="returned">Returned</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+          <div>
+            <FormControl fullWidth>
+              <InputLabel>Warehouse</InputLabel>
+              <Select
+                name="warehouseId"
+                value={formState.warehouseId}
                 onChange={handleInputChange}
-                fullWidth
-              />
-            </div>
-            <div>
-              <TextField
-                label="Entry Date"
-                name="entryDate"
-                type="date"
-                value={formState.entryDate}
+              >
+                {warehousesList.map((warehouse) => (
+                  <MenuItem key={warehouse.id} value={warehouse.id}>
+                    {warehouse.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
+          <div>
+            <FormControl fullWidth>
+              <InputLabel>Supplier</InputLabel>
+              <Select
+                name="supplierId"
+                value={formState.supplierId}
                 onChange={handleInputChange}
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-              />
-            </div>
-            <div>
-              <FormControl fullWidth>
-                <InputLabel>Quality Pass</InputLabel>
-                <Select
-                  name="qualityPass"
-                  value={formState.qualityPass}
-                  onChange={handleInputChange}
-                >
-                  <MenuItem value="ok">OK</MenuItem>
-                  <MenuItem value="rejected">Rejected</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div>
-              <FormControl fullWidth>
-                <InputLabel>Status</InputLabel>
-                <Select
-                  name="status"
-                  value={formState.status}
-                  onChange={handleInputChange}
-                >
-                  <MenuItem value="in stock">In Stock</MenuItem>
-                  <MenuItem value="sold">Sold</MenuItem>
-                  <MenuItem value="returned">Returned</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-            <div>
-              <FormControl fullWidth>
-                <InputLabel>Warehouse</InputLabel>
-                <Select
-                  name="warehouseId"
-                  value={formState.warehouseId}
-                  onChange={handleInputChange}
-                >
-                  {warehousesList.map((warehouse) => (
-                    <MenuItem key={warehouse.id} value={warehouse.id}>
-                      {warehouse.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
-            <div>
-              <FormControl fullWidth>
-                <InputLabel>Supplier</InputLabel>
-                <Select
-                  name="supplierId"
-                  value={formState.supplierId}
-                  onChange={handleInputChange}
-                >
-                  {suppliersList.map((supplier) => (
-                    <MenuItem key={supplier.id} value={supplier.id}>
-                      {supplier.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
+              >
+                {suppliersList.map((supplier) => (
+                  <MenuItem key={supplier.id} value={supplier.id}>
+                    {supplier.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
         </div>
+      </div>
 
-        <BatchItemsEditTab
-          items={formState.subBatch}
-          availableItems={itemsList}
-          handleItemChange={handleItemChange}
-          handleDeleteItem={handleDeleteItem}
-          handleAddItem={handleAddItem}
-        />
-
-        <StockIssuesEditTab
-          issues={formState.stockIssues}
-          availableItems={itemsInBatch}
-          handleIssueChange={handleIssueChange}
-          handleDeleteIssue={handleDeleteIssue}
-          handleAddIssue={handleAddIssue}
-        />
-
-        <div className="flex justify-end">
-          <Button type="submit" variant="contained" color="primary">
-            Update Batch
-          </Button>
-        </div>
-      </form>
-
-      <BatchInvoicePreview
-        open={openInvoice}
-        handleClose={handleCloseInvoice}
-        formData={formState}
-        selectedProducts={formState.subBatch}
-        totalPrice={formState.batchPrice}
-        selectedSupplier={suppliersList.find(
-          (s) => s.id === Number(formState.supplierId)
-        )}
-        selectedLocation={warehousesList.find(
-          (w) => w.id === Number(formState.warehouseId)
-        )}
-        stockIssues={formState.stockIssues}
+      <BatchItemsEditTab
+        items={formState.subBatch}
+        availableItems={itemsList}
+        handleItemChange={handleItemChange}
+        handleDeleteItem={handleDeleteItem}
+        handleAddItem={handleAddItem}
       />
-    </PageAnimate>
-  );
+
+      <StockIssuesEditTab
+        issues={formState.stockIssues}
+        availableItems={itemsInBatch}
+        handleIssueChange={handleIssueChange}
+        handleDeleteIssue={handleDeleteIssue}
+        handleAddIssue={handleAddIssue}
+      />
+
+      <div className={styles.alignRight}>
+        <Button type="submit" variant="contained" color="primary">
+          Update Batch
+        </Button>
+      </div>
+    </form>
+
+    <BatchInvoicePreview
+      open={openInvoice}
+      handleClose={handleCloseInvoice}
+      formData={formState}
+      selectedProducts={formState.subBatch}
+      totalPrice={formState.batchPrice}
+      selectedSupplier={suppliersList.find(
+        (s) => s.id === Number(formState.supplierId)
+      )}
+      selectedLocation={warehousesList.find(
+        (w) => w.id === Number(formState.warehouseId)
+      )}
+      stockIssues={formState.stockIssues}
+    />
+  </PageAnimate>
+);
 };
 
 export default EditBatch;

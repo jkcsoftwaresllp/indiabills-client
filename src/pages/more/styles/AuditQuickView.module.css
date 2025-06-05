@@ -1,0 +1,31 @@
+.logsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* 8px */
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.logItem {
+  padding: 1rem; /* 16px */
+  border: 2px solid #d1d5db; /* Tailwind border-gray-300 */
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* 16px */
+}
+
+.logText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem; /* 8px */
+}
+
+.logParagraph {
+  font-weight: 500; /* medium */
+}
+
+.logDate {
+  color: #94a3b8; /* Tailwind text-slate-400 */
+  font-size: 0.875rem; /* 14px */
+}

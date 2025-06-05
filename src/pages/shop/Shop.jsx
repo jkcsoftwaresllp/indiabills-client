@@ -8,6 +8,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import styles from './styles/ShopPage.module.css';
 
 const ShopPage = () => {
   const [products, setProducts] = useState([]);
@@ -65,93 +66,89 @@ const ShopPage = () => {
     exit: { opacity: 0, y: 20 },
   };
 
-  const Catalogue = () => {
-    if (isLoading) {
-      return (
-        <div className="w-full grid place-items-center">
-          <CircularProgress />
-        </div>
-      );
-    }
+ const Catalogue = () => {
+  if (isLoading) {
     return (
-      <div className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}>
-        <AnimatePresence>
-          {filteredData.map((product, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              layout
-            >
-              <ProductCard key={index} product={product} />
-            </motion.div>
-          ))}
-        </AnimatePresence>
+      <div className={styles.loadingWrapper}>
+        <CircularProgress />
       </div>
     );
-  };
-
-  if (products.length === 0) {
-    return <p>No Product available in stock</p>;
   }
-
   return (
-    <PageAnimate>
-      <div className={"p-6 flex flex-col gap-4 "}>
-        <section className={"flex gap-4"}>
-          <div className={"w-full idms-shop-bg"}>
-            <img
-              src={
-                "https://mir-s3-cdn-cf.behance.net/project_modules/max_3840/cf8c5599420499.5f09d760d115b.jpg"
-              }
-              alt={"shop"}
-              className={"w-full h-60 object-cover rounded-xl"}
-            />
-          </div>
-        </section>
-        {announcement.message && (
-          <marquee className={"bg-primary py-2 px-px rounded-xl text-slate-400"}>
-            <span className={"text-yellow-200 font-semibold"}>
-              <b>Announcement:</b>
-            </span>{" "}
-            {announcement.message}
-          </marquee>
-        )}
-        <section
-          className={"p-2 w-full flex justify-between gap-4 items-center"}
-        >
-          <SearchBar
-            className={"w-full"}
-            title={"product by name"}
-            value={searchFieldByName}
-            setSearchFieldByName={setSearchFieldByName}
-          />
-
-          <div className={"p-2 rounded-xl idms-transparent-control relative"}>
-            <ShoppingCartIcon />
-            <p className={"absolute top-0 right-0 bg-rose-500 outline-none border-none text-slate-200 px-1 rounded-full text-xs"}>
-              {Object.keys(selectedProducts).length > 0 &&
-                Object.keys(selectedProducts).length}
-            </p>
-          </div>
-          <div
-            onClick={ShowCart}
-            className={
-              "p-2 cursor-pointer hover:shadow-md transition rounded-xl idms-transparent-control relative"
-            }
+    <div className={styles.catalogueGrid}>
+      <AnimatePresence>
+        {filteredData.map((product, index) => (
+          <motion.div
+            key={index}
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            layout
           >
-            <p className={"text-nowrap font-medium px-2"}>Checkout</p>
-          </div>
-        </section>
-
-        <main>
-          <Catalogue />
-        </main>
-      </div>
-    </PageAnimate>
+            <ProductCard key={index} product={product} />
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
   );
+};
+
+if (products.length === 0) {
+  return <p>No Product available in stock</p>;
+}
+
+return (
+  <PageAnimate>
+    <div className={styles.container}>
+      <section className={styles.shopSection}>
+        <div className={styles.shopImageWrapper}>
+          <img
+            src={
+              "https://mir-s3-cdn-cf.behance.net/project_modules/max_3840/cf8c5599420499.5f09d760d115b.jpg"
+            }
+            alt={"shop"}
+            className={styles.shopImage}
+          />
+        </div>
+      </section>
+      {announcement.message && (
+        <marquee className={styles.marquee}>
+          <span className={styles.marqueeStrong}>
+            <b>Announcement:</b>
+          </span>{" "}
+          {announcement.message}
+        </marquee>
+      )}
+      <section className={styles.searchSection}>
+        <SearchBar
+          className={styles.searchBar}
+          title={"product by name"}
+          value={searchFieldByName}
+          setSearchFieldByName={setSearchFieldByName}
+        />
+
+        <div className={styles.cartIconWrapper}>
+          <ShoppingCartIcon />
+          <p className={styles.cartCount}>
+            {Object.keys(selectedProducts).length > 0 &&
+              Object.keys(selectedProducts).length}
+          </p>
+        </div>
+        <div
+          onClick={ShowCart}
+          className={styles.checkoutBtn}
+        >
+          <p className={styles.noWrap}>Checkout</p>
+        </div>
+      </section>
+
+      <main>
+        <Catalogue />
+      </main>
+    </div>
+  </PageAnimate>
+);
 };
 
 export default ShopPage;

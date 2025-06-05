@@ -1,0 +1,43 @@
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 12rem; /* py-48 ~ 192px */
+  padding-bottom: 12rem;
+}
+
+.centerWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2.5rem; /* gap-10 ~ 40px */
+}
+
+.messageWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem; /* gap-6 ~ 24px */
+}
+
+.titleText {
+  font-size: 1.5rem; /* text-2xl */
+}
+
+.titleHighlight {
+  text-transform: capitalize;
+  color: #f43f5e; /* rose-400 */
+}
+
+.button {
+  /* replicate your "idms-button" styles here or import it */
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  text-transform: capitalize;
+  cursor: pointer;
+}

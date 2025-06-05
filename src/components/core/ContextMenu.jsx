@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import styles from './styles/ContextMenu.module.css';
 
 const ContextMenu = ({ x, y, items, onClose }) => {
   const handleClickOutside = (event) => {
@@ -22,66 +23,44 @@ const ContextMenu = ({ x, y, items, onClose }) => {
     setSubMenu(null);
   };
 
-  return (
-    <main style={{ zIndex: '99999999' }} className="" onClick={handleClickOutside}>
-      <ul
-        className="context-menu"
-        style={{
-          top: y,
-          left: x,
-          position: "absolute",
-          listStyle: "none",
-          margin: 0,
-          padding: "4px 0",
-          backgroundColor: "#fff",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-          zIndex: 999999,
-        }}
-      >
-        {items.map((item, index) => (
-          <li
-            key={index}
-            className="context-menu-item flex items-center border-b"
-            style={{
-              padding: "8px 16px",
-              margin: 0,
-              cursor: "pointer",
-              position: "relative",
-            }}
-            onClick={item.onClick}
-            onMouseEnter={item.subItems ? (e) => handleMouseEnter(e, item.subItems) : undefined}
-          >
-            {item.label}
-            {item.subItems && (
-              <>
-                <span style={{ marginLeft: "8px" }}>▶</span>
-                <ul className="context-submenu">
-                  {item.subItems.map((subItem, subIndex) => (
-                    <li
-                      key={subIndex}
-                      className="context-menu-item"
-                      style={{
-                        padding: "8px 16px",
-                        margin: 0,
-                        cursor: "pointer",
-                      }}
-                      onClick={() => {
-                        subItem.onClick();
-                        onClose();
-                      }}
-                    >
-                      {subItem.label}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
-    </main>
-  );
+ return (
+  <main style={{ zIndex: '99999999' }} className={styles.contextOverlay} onClick={handleClickOutside}>
+    <ul
+      className={styles.contextMenu}
+      style={{ top: y, left: x }}
+    >
+      {items.map((item, index) => (
+        <li
+          key={index}
+          className={`${styles.contextMenuItem} ${item.subItems ? styles.hasSubmenu : ''}`}
+          onClick={item.onClick}
+          onMouseEnter={item.subItems ? (e) => handleMouseEnter(e, item.subItems) : undefined}
+        >
+          {item.label}
+          {item.subItems && (
+            <>
+              <span className={styles.submenuArrow}>▶</span>
+              <ul className={styles.contextSubmenu}>
+                {item.subItems.map((subItem, subIndex) => (
+                  <li
+                    key={subIndex}
+                    className={styles.contextMenuItem}
+                    onClick={() => {
+                      subItem.onClick();
+                      onClose();
+                    }}
+                  >
+                    {subItem.label}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </li>
+      ))}
+    </ul>
+  </main>
+);
 };
 
 export default ContextMenu;

@@ -1,0 +1,165 @@
+.pageWrapper {
+  width: 100%;
+  padding: 2rem;
+}
+
+.container {
+  max-width: 96rem;
+  margin: 0 auto;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  display: flex;
+}
+
+.sidebar {
+  width: 25%;
+  border-right: 1px solid #e5e7eb;
+  padding-right: 1rem;
+}
+
+.sidebarTitle {
+  font-size: 1.875rem;
+  color: #10b981;
+  margin-bottom: 1.5rem;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.navButton {
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+}
+
+.active {
+  background-color: #10b981;
+  color: white;
+}
+
+.inactive {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.content {
+  width: 75%;
+  padding-left: 1.5rem;
+}
+
+.sectionWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.select,
+.input {
+  margin-top: 0.25rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  background-color: white;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-size: 0.875rem;
+}
+
+.checkboxGroup {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+}
+
+.checkbox {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #10b981;
+}
+
+.checkboxText {
+  margin-left: 0.5rem;
+  color: #374151;
+}
+
+.labelRow {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.switch {
+  margin-left: 0.5rem;
+}
+
+.buttonWrapper {
+  margin-top: 1rem;
+}
+
+.primaryButton {
+  background-color: #10b981;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+}
+
+.radioGroup {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.radioLabel {
+  display: inline-flex;
+  align-items: center;
+}
+
+.radio {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #10b981;
+}
+
+.radioText {
+  margin-left: 0.5rem;
+  color: #374151;
+}
+
+.colorPicker {
+  margin-top: 0.25rem;
+  width: 4rem;
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+}

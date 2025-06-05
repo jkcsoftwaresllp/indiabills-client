@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './styles/Widget.module.css';
 
 const Widget = ({ widgetKey, removeWidget }) => {
   const renderContent = () => {
@@ -18,17 +19,18 @@ const Widget = ({ widgetKey, removeWidget }) => {
     }
   };
 
-  return (
-    <div style={{ background: '#f0f0f0', padding: '10px', height: '100%', position: 'relative' }}>
-      <button
-        onClick={() => removeWidget(widgetKey)}
-        style={{ position: 'absolute', top: 5, right: 5 }}
-      >
-        ×
-      </button>
-      {renderContent()}
-    </div>
-  );
+ return (
+  <div className={styles.container}>
+    <button
+      onClick={() => removeWidget(widgetKey)}
+      className={styles.closeBtn}
+      aria-label="Remove widget"
+    >
+      ×
+    </button>
+    {renderContent()}
+  </div>
+);
 };
 
 export default Widget;

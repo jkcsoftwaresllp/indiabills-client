@@ -19,6 +19,7 @@ import EditCreditModal from "./EditCredit";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import MouseHoverPopover from "../../components/core/Explain";
 import { Button } from "@mui/material";
+import styles from './styles/CreditReport.module.css';
 
 const CreditReport = () => {
   const [creditData, setCreditData] = useState([]);
@@ -346,119 +347,98 @@ const CreditReport = () => {
   ];
 
   return (
-    <div className="p-6 flex flex-col gap-4 bg-light h-full rounded-xl">
-      <section className="control-bar">
-        <CustomerSelector
-          data={selectedCustomerId}
-          setData={setSelectedCustomerId}
-        />
+    <div className={styles.container}>
+  <section className={styles.controlBar}>
+    <CustomerSelector data={selectedCustomerId} setData={setSelectedCustomerId} />
 
-        <div className="flex flex-col items-end">
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="p-2 bg-light rounded-xl border text-sm"
-          />
-        </div>
-        <div className="flex flex-col">
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="p-2 bg-light rounded-xl border text-sm"
-          />
-        </div>
-        <button
-          className="bg-primary flex items-center justify-center transition rounded-full hover:bg-accent text-light font-medium p-2 hover:brightness-125 shadow-2xl"
-          onClick={() =>
-            fetchCreditData(selectedCustomerId, startDate, endDate)
-          }
-        >
-          <CheckCircleOutlineIcon fontSize="small" />
-        </button>
-      </section>
+    <div className={styles.flexColEnd}>
+      <input
+        type="date"
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        className={styles.input}
+      />
+    </div>
 
-      <section className="control-bar w-fit self-center">
-        <div className="flex flex-col items-end">
-          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-            Opening Balance
-          </p>
-          <p
-            className={`text-lg font-semibold text-gray-700 dark:text-gray-300`}
-          >
-            {openingBalance.toLocaleString(undefined, {
-              style: "currency",
-              currency: "INR",
-            })}
-          </p>
-        </div>
+    <div className="flex flex-col">
+      <input
+        type="date"
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        className={styles.input}
+      />
+    </div>
 
-        <div className="flex items-center font-bold gap-4 border-x-4 px-4 py-2 transition cursor-pointer hover:bg-slate-100 rounded-xl">
-          <label>Debit</label>
+    <button
+      className={styles.submitButton}
+      onClick={() => fetchCreditData(selectedCustomerId, startDate, endDate)}
+    >
+      <CheckCircleOutlineIcon fontSize="small" />
+    </button>
+  </section>
+
+  <section className={`${styles.controlBar} ${styles.sectionCentered}`}>
+    <div className={styles.flexColEnd}>
+      <p className={styles.textLabel}>Opening Balance</p>
+      <p className={styles.textValue}>
+        {openingBalance.toLocaleString(undefined, {
+          style: "currency",
+          currency: "INR",
+        })}
+      </p>
+    </div>
+
+    <div className={styles.debitContainer}>
+      <label>Debit</label>
+      <button
+        className={styles.submitButton}
+        onClick={() => setIsSettleModalOpen(true)}
+      >
+        <PointOfSaleIcon />
+      </button>
+    </div>
+
+    <div className="flex gap-4">
+      <MouseHoverPopover
+        triggerElement={
           <button
-            className="bg-primary flex items-center justify-center transition rounded-full hover:bg-accent text-light font-medium p-2 hover:brightness-125 shadow-2xl"
-            onClick={() => setIsSettleModalOpen(true)}
+            className={styles.iconButton}
+            onClick={() => setIsEditModalOpen(!isEditModalOpen)}
           >
-            <PointOfSaleIcon />
+            <BorderColorIcon />
           </button>
-        </div>
+        }
+        popoverContent={<span className="text-xs"> Edit </span>}
+      />
+      <MouseHoverPopover
+        triggerElement={
+          <button className={styles.iconButton} onClick={handleExportPDF}>
+            <PictureAsPdfIcon />
+          </button>
+        }
+        popoverContent={<span className="text-xs"> Export as PDF </span>}
+      />
+      <MouseHoverPopover
+        triggerElement={
+          <button className={styles.iconButton} onClick={handleExportCSV}>
+            <DescriptionIcon />
+          </button>
+        }
+        popoverContent={<span className="text-xs"> Export as CSV </span>}
+      />
+    </div>
+  </section>
 
-        <div className="flex gap-4">
-          <MouseHoverPopover
-            triggerElement={
-              <button
-                className="p-2 min-w-12 text-slate-200 text-sm bg-primary rounded-xl hover:bg-accent transition"
-                onClick={() => setIsEditModalOpen(!isEditModalOpen)}
-              >
-                <BorderColorIcon />
-              </button>
-            }
-            popoverContent={<span className="text-xs"> Edit </span>}
-          />
-          <MouseHoverPopover
-            triggerElement={
-              <button
-                className="p-2 min-w-12 text-slate-200 text-sm bg-primary rounded-xl hover:bg-accent transition"
-                onClick={handleExportPDF}
-              >
-                <PictureAsPdfIcon />
-              </button>
-            }
-            popoverContent={<span className="text-xs"> Export as PDF </span>}
-          />
-          <MouseHoverPopover
-            triggerElement={
-              <button
-                className="p-2 min-w-12 text-slate-200 text-sm bg-primary rounded-xl hover:bg-accent transition"
-                onClick={handleExportCSV}
-              >
-                <DescriptionIcon />
-              </button>
-            }
-            popoverContent={<span className="text-xs"> Export as CSV </span>}
-          />
-        </div>
-      </section>
-
-      {creditData && (
-        <main className="flex flex-col gap-4">
-          <DebitModal
-            isOpen={isDebitModalOpen}
-            onClose={handleCloseDebitModal}
-            onDebitSuccess={handleDebitSuccess}
-            creditId={selectedCreditId}
-          />
-          <div
-            className="ag-theme-quartz"
-            style={{
-              height: 400,
-              width: "100%",
-              boxShadow: "2px 10px 16px rgba(42, 42, 42, 0.19)",
-              borderRadius: "8px",
-              fontWeight: 500,
-            }}
-          >
+  {creditData && (
+    <main className={styles.mainSection}>
+      <DebitModal
+        isOpen={isDebitModalOpen}
+        onClose={handleCloseDebitModal}
+        onDebitSuccess={handleDebitSuccess}
+        creditId={selectedCreditId}
+      />
+      <div className={`ag-theme-quartz ${styles.tableContainer}`}>
+        {/* AG Grid content */}
             <AgGridReact
               rowData={creditData}
               columnDefs={columnDefs}

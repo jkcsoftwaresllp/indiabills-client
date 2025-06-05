@@ -1,0 +1,61 @@
+.centerButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem; /* mt-6 */
+}
+
+.editButton {
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  background-color: #3b82f6; /* bg-blue-500 */
+  color: white;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+}
+
+.container {
+  max-width: 64rem; /* max-w-4xl */
+  margin: 0 auto;
+  padding: 1.5rem; /* p-6 */
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
+  border-radius: 0.5rem; /* rounded-lg */
+}
+
+.centeredColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  width: 8rem;  /* w-32 */
+  height: 8rem; /* h-32 */
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.subtitle {
+  text-align: center;
+  color: #4b5563; /* text-gray-600 */
+  margin-bottom: 1.5rem;
+}
+
+.detailContainer {
+  width: 100%;
+}
+
+.detailItem {
+  margin-bottom: 1rem;
+}
+
+.websiteLink {
+  color: #3b82f6; /* text-blue-500 */
+  text-decoration: none;
+}

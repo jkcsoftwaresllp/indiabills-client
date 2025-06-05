@@ -1,0 +1,63 @@
+.container0 {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem; /* gap-12 */
+  justify-content: center;
+  align-items: center;
+}
+
+.backButton {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+}
+
+.heading {
+  font-size: 1.5rem; /* text-2xl */
+  border-radius: 0.5rem; /* rounded-lg */
+  text-transform: lowercase;
+  transition: box-shadow 0.2s ease-in-out;
+  padding: 1rem; /* p-4 */
+  text-align: center;
+  width: 75%; /* w-3/4 */
+  font-weight: 800; /* font-extrabold */
+}
+
+.heading:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* shadow-lg */
+}
+
+.highlight {
+  color: #fb7185; /* text-rose-400 */
+}
+
+.formWrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.buttonGroup {
+  padding: 0.5rem; /* p-2 */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* gap-4 */
+}
+  /* //// */
+
+  .container {
+  padding: 2rem; /* p-8 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem; /* gap-8 */
+  background-color: var(--idms-bg-color); /* idms-bg - define this in your global CSS or here */
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* grid-cols-2 */
+  gap: 1.5rem; /* gap-6 */
+}

@@ -1,0 +1,37 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 1.25rem 3rem; /* py-5 px-12 */
+  align-items: center;
+  color: #64748b; /* text-slate-500 */
+  border-radius: 0.5rem; /* rounded-lg */
+  border: 1px solid rgba(203, 213, 225, 0.6); /* Tailwind's border */
+  backdrop-filter: blur(1rem); /* backdrop-blur-lg */
+  background-color: rgba(255, 255, 255, 0.4); /* bg-white bg-opacity-40 */
+}
+
+.inputWrapper {
+  display: flex;
+  gap: 0.5rem;
+  border: 2px solid #e5e7eb; /* border-2 */
+  border-radius: 0.75rem; /* rounded-xl */
+  width: 100%;
+  align-items: center;
+}
+
+.iconBox {
+  display: flex;
+  margin-left: 0.5rem; /* ml-2 */
+  border-right: 2px solid #e5e7eb; /* border-r-2 */
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem; /* p-2 */
+  background-color: transparent;
+  border: none;
+  outline: none;
+}

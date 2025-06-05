@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* h-screen */
+}
+
+.mainContent {
+  display: flex;
+  flex-grow: 1;
+  padding-top: 4rem; /* pt-16 = 64px */
+}
