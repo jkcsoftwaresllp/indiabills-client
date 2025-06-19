@@ -62,7 +62,8 @@ const ViewAudit = () => {
   function formatDate(date) {
     const parsedDate = parseISO(date);
     const now = new Date();
-    const diffInHours = (now.getTime() - parsedDate.getTime()) / (1000 * 60 * 60);
+    const diffInHours =
+      (now.getTime() - parsedDate.getTime()) / (1000 * 60 * 60);
 
     if (diffInHours < 24) {
       return formatDistanceToNow(parsedDate, { addSuffix: true });

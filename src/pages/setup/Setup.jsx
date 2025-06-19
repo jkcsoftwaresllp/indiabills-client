@@ -184,7 +184,7 @@ const Setup = () => {
   };
 
   /* ADD WAREHOUSE */
-  const [locationFormData, setLocationFormData] = useState<Location>(initializeFormData(LocationMetadata));
+  const [locationFormData, setLocationFormData] = useState(initializeFormData(LocationMetadata));
   const submitLocation = () => {
     console.log(locationFormData);
     quickAdd("/inventory/warehouses/add", locationFormData).then((res) => {
