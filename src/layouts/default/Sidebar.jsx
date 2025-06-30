@@ -1,38 +1,30 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { getSession } from "../../utils/cacheHelper";
 import { useStore } from "../../store/store";
 import logo from "../../assets/IndiaBills_logo.png";
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton, useMediaQuery, useTheme, ListSubheader, Box, Avatar, Typography, Popover, MenuItem, Divider } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
-import DvrIcon from "@mui/icons-material/Dvr";
-import CachedIcon from "@mui/icons-material/Cached";
-import ContactSupportRoundedIcon from "@mui/icons-material/ContactSupportRounded";
-import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { useNavigate } from "react-router-dom";
 import buttons from "./sidebar_buttons";
-import { motion, AnimatePresence } from "framer-motion";
 import { fetchLogo } from "../../network/api";
 import { getBaseURL } from "../../network/api/api-config";
 import { useAuth } from "../../hooks/useAuth";
+import styles from "./Sidebar.module.css";
+
+const groupIcons = {
+  Dashboard: "\u2302",   // House icon
+  Management: "\u2699",  // Gear icon
+  Operations: "\u2692", // Hammer and Pick
+  Shop: "\u26D1",       // Shopping Cart
+};
 
 const Sidebar = () => {
   const { collapse, setCollapse, openAudit, Organization, setOrganization } = useStore();
   const session = getSession();
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
-  const [expandedGroup, setExpandedGroup] = useState(null);
-  const [hoveredGroup, setHoveredGroup] = useState(null);
   const [selectedPath, setSelectedPath] = useState(null);
-
-  const [anchorEl, setAnchorEl] = useState(null);
   const [logoFetched, setLogoFetched] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [expandedGroup, setExpandedGroup] = useState(null);
 
   useEffect(() => {
     if (
@@ -59,29 +51,9 @@ const Sidebar = () => {
     }))
     .filter((group) => group.items.length > 0);
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const drawerWidth = 240;
-
-  const handleItemClick = (groupName, path) => {
+  const handleItemClick = (path) => {
     navigate(path);
-    setExpandedGroup(groupName);
     setSelectedPath(path);
-  };
-
-  const variants = {
-    hidden: { height: 0, opacity: 0 },
-    visible: { height: "auto", opacity: 1 },
-  };
-
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
   };
 
   const handleLogout = () => {
@@ -93,245 +65,104 @@ const Sidebar = () => {
     navigate("/organization");
   };
 
-  const drawer = (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          p: 2,
-        }}
-      >
+  const toggleUserMenu = () => {
+    setShowUserMenu(!showUserMenu);
+  };
+
+  const toggleGroup = (groupName) => {
+    if (expandedGroup === groupName) {
+      setExpandedGroup(null); // Collapse if already open
+    } else {
+      setExpandedGroup(groupName); // Open the clicked group
+    }
+  };
+
+  return (
+    <div className={`${styles.sidebar} ${collapse ? styles.collapsed : ""}`}>
+      <div className={styles.logoContainer}>
         {Organization.logo ? (
           <img
             src={`${getBaseURL()}/${Organization.logo}`}
             onClick={handleViewOrganization}
             alt="Logo"
-            style={{ height: "3rem", cursor: "pointer" }}
+            className={styles.logo}
           />
         ) : (
           <img
             src={logo}
             onClick={handleViewOrganization}
             alt="Logo"
-            style={{ height: "3rem", cursor: "pointer" }}
+            className={styles.logo}
           />
         )}
-        <h1 className="text-sm mt-1 text-white">{Organization.name}</h1>
-      </Box>
+        <h1 className={styles.orgName}>{Organization.name}</h1>
+      </div>
 
-      <Divider />
-
-      <List sx={{ flexGrow: 1 }}>
+      <nav className={styles.nav}>
         {filteredGroups.map((group) => (
-          <div
-            key={group.group}
-            onMouseEnter={() => setHoveredGroup(group.group)}
-            onMouseLeave={() => setHoveredGroup(null)}
-            style={{ position: "relative" }}
-          >
-            <ListSubheader
-              sx={{
-                backgroundColor: "transparent",
-                color: "#f1f1e6",
-                fontWeight: "bold",
-                cursor: "default",
-                textAlign: "center",
-                pt: 2,
-                pb: 2,
-              }}
+          <div key={group.group} className={styles.group}>
+            <button
+              className={styles.groupTitle}
+              onClick={() => toggleGroup(group.group)}
             >
+              <span className={styles.groupIcon}>{groupIcons[group.group]}</span>
               {group.group}
-            </ListSubheader>
-            <AnimatePresence>
-              {(expandedGroup === group.group ||
-                hoveredGroup === group.group) && (
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  variants={variants}
-                  transition={{ duration: 0.3 }}
-                >
-                  <List component="div" disablePadding>
-                    {group.items.map((button) => (
-                      <ListItem
-                        button
-                        key={button.label}
-                        onClick={() => handleItemClick(group.group, button.to)}
-                        selected={selectedPath === button.to}
-                        sx={{
-                          pl: 4,
-                          "&:hover": { backgroundColor: "#334155" },
-                          backgroundColor:
-                            selectedPath === button.to ? "#f8fafc" : "inherit",
-                        }}
-                      >
-                        <ListItemIcon sx={{ color: "#b9c5d8" }}>
-                          {button.icon}
-                        </ListItemIcon>
-                        <ListItemText
-                          primaryTypographyProps={{ fontSize: "0.875rem" }}
-                          sx={{ color: "#b9c5d8" }}
-                          primary={button.label}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            </button>
+            {expandedGroup === group.group && (
+              <ul>
+                {group.items.map((button) => (
+                  <li key={button.label}>
+                    <button
+                      className={`${styles.navItem} ${selectedPath === button.to ? styles.active : ""}`}
+                      onClick={() => handleItemClick(button.to)}
+                    >
+                      <span className={styles.icon}>{button.icon}</span>
+                      {button.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         ))}
-      </List>
+      </nav>
 
-      <Box sx={{ p: 2, borderTop: "1px solid #334155" }}>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Avatar
-            alt={session.name}
+      <div className={styles.userSection}>
+        <div className={styles.userInfo} onClick={toggleUserMenu}>
+          <img
             src={`${getBaseURL()}/${session.avatar}`}
-            sx={{ width: 32, height: 32 }}
+            alt="User Avatar"
+            className={styles.avatar}
           />
-          {!isMobile && (
-            <Box sx={{ ml: 1 }}>
-              <Typography
-                variant="subtitle2"
-                sx={{
-                  fontWeight: "bold",
-                  textTransform: "capitalize",
-                  fontSize: "0.875rem",
-                }}
-              >
-                {session.name}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                sx={{
-                  ml: "2px",
-                  color: "beige",
-                  textTransform: "capitalize",
-                  fontSize: "0.75rem",
-                }}
-              >
-                {session.role}
-              </Typography>
-            </Box>
-          )}
-          <IconButton onClick={handleMenuClick} sx={{ color: "#ffffff" }}>
-            <ArrowDropDownRoundedIcon />
-          </IconButton>
-        </Box>
-        <Popover
-          open={Boolean(anchorEl)}
-          anchorEl={anchorEl}
-          onClose={handleMenuClose}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          transformOrigin={{ vertical: "top", horizontal: "right" }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              minWidth: 200,
-              p: 1,
-            }}
-          >
-            {session.role === "admin" && (
-              <MenuItem
-                sx={{ padding: ".6rem" }}
-                onClick={() => {
-                  openAudit();
-                  handleMenuClose();
-                }}
-              >
-                <DvrIcon sx={{ mr: 1 }} />
-                Audit
-              </MenuItem>
-            )}
-            <MenuItem
-              sx={{ padding: ".6rem" }}
-              onClick={() => {
-                window.location.reload();
-                handleMenuClose();
-              }}
-            >
-              <CachedIcon sx={{ mr: 1 }} />
-              Refresh
-            </MenuItem>
-            <MenuItem
-              sx={{ padding: ".6rem" }}
-              onClick={() => {
-                navigate("/help");
-                handleMenuClose();
-              }}
-            >
-              <ContactSupportRoundedIcon sx={{ mr: 1 }} />
-              Get Help
-            </MenuItem>
-            <MenuItem
-              sx={{ padding: ".6rem" }}
-              onClick={() => {
-                navigate("/settings");
-                handleMenuClose();
-              }}
-            >
-              <TuneRoundedIcon sx={{ mr: 1 }} />
-              Settings
-            </MenuItem>
-            <MenuItem sx={{ padding: ".6rem" }} onClick={handleLogout}>
-              <LogoutRoundedIcon sx={{ mr: 1 }} />
-              Logout
-            </MenuItem>
-          </Box>
-        </Popover>
-      </Box>
-    </div>
-  );
+          <div className={styles.userDetails}>
+            <p className={styles.userName}>{session.name}</p>
+            <p className={styles.userRole}>{session.role}</p>
+          </div>
+        </div>
 
-  return (
-    <>
-      {isMobile && (
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          edge="start"
-          onClick={handleDrawerToggle}
-          sx={{
-            position: "fixed",
-            top: 16,
-            left: 16,
-            zIndex: theme.zIndex.drawer + 1,
-          }}
-        >
-          <MenuIcon />
-        </IconButton>
-      )}
-      <Drawer
-        variant={isMobile ? "temporary" : "persistent"}
-        open={isMobile ? mobileOpen : !collapse}
-        onClose={handleDrawerToggle}
-        ModalProps={{ keepMounted: true }}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-            backgroundColor: "var(--color-primary)",
-            color: "#ffffff",
-            height: "100vh",
-            overflowX: "hidden",
-            display: "flex",
-            flexDirection: "column",
-          },
-        }}
-      >
-        {drawer}
-      </Drawer>
-    </>
+        {showUserMenu && (
+          <div className={styles.userMenu}>
+            {session.role === "admin" && (
+              <button className={styles.menuItem} onClick={openAudit}>
+                Audit
+              </button>
+            )}
+            <button className={styles.menuItem} onClick={() => window.location.reload()}>
+              Refresh
+            </button>
+            <button className={styles.menuItem} onClick={() => navigate("/help")}>
+              Get Help
+            </button>
+            <button className={styles.menuItem} onClick={() => navigate("/settings")}>
+              Settings
+            </button>
+            <button className={styles.menuItem} onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
