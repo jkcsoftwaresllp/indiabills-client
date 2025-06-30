@@ -16,6 +16,7 @@ import PageAnimate from "./components/Animate/PageAnimate";
 import { useStore } from "./store/store";
 import CommandPalette from "./components/core/CommandPallete";
 import { useHotkeys } from 'react-hotkeys-hook';
+import styles from "./App.module.css";
 
 function App() {
   const navigate = useNavigate();
@@ -93,27 +94,29 @@ function App() {
   return (
     <AuthProvider>
       <HotKeys keyMap={keyMap} handlers={handlers}>
-        <div id="appbar" className="min-h-screen flex flex-col relative">
-          {/* 2 types of routes -- public and private */}
-          {/*<Header />*/}
-          <main className="flex flex-grow min-h-full max-h-full">
-            <div id="content" className="flex relative flex-grow min-h-full max-h-full">
-              <div className="h-full bg-transparent overscroll-none">
-                <Sidebar /> 
-              </div>
-              <div className={'py-2 w-full flex flex-col'}>
-              <main className="min-h-full w-full shadow-inner"> <Routing /> </main>
-              </div>
+        <div id="appbar" className={styles.appWrapper}>
+          {/* Sidebar + Content Wrapper */}
+          <div className={styles.layoutWrapper}>
+            {/* Sidebar */}
+            <div className={`${styles.sidebarWrapper} ${collapse ? styles.collapsed : ""}`}>
+              <Sidebar />
+            </div>
+
+            {/* Scrollable Main Content */}
+            <div className={styles.contentWrapper}>
+              <main className={styles.mainContent}>
+                <Routing />
+              </main>
               <Popup />
               <AuditLogTable />
             </div>
-          </main>
+          </div>
         </div>
+
+        <CommandPalette
+         open={isCommandPaletteOpen}
+         onClose={handleCloseCommandPalette} />
       </HotKeys>
-      <CommandPalette
-        open={isCommandPaletteOpen}
-        onClose={handleCloseCommandPalette}
-      />
     </AuthProvider>
   );
 }
