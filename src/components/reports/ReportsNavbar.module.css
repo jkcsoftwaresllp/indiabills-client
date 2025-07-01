@@ -1,0 +1,136 @@
+.navbar {
+  position: relative; 
+  z-index: 100;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #2a3441 100%);
+  border-bottom: 2px solid var(--color-accent);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.scrollContainer {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  justify-content: center;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.reportItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid transparent;
+  color: #f1f5f9;
+  text-decoration: none;
+  user-select: none;
+}
+
+.reportItem:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.reportItem.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+  box-shadow: 0 4px 12px rgba(196, 32, 50, 0.3);
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  font-size: 24px;
+}
+
+.title {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 8px;
+  }
+  
+  .reportItem {
+    min-width: 70px;
+    padding: 6px 8px;
+  }
+  
+  .iconWrapper {
+    font-size: 20px;
+    margin-bottom: 2px;
+  }
+  
+  .title {
+    font-size: 10px;
+    max-width: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reportItem {
+    min-width: 60px;
+    padding: 4px 6px;
+  }
+  
+  .iconWrapper {
+    font-size: 18px;
+  }
+  
+  .title {
+    font-size: 9px;
+    max-width: 60px;
+  }
+}
+
+.scrollContainer {
+  scroll-behavior: smooth;
+}
+
+.reportItem.active .iconWrapper {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
