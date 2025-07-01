@@ -1,23 +1,42 @@
 .reportsLayout {
-  min-height: 100vh;
-  background: #f1f5f9;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  background: #f1f5f9;
 }
 
-.navbar {
+/* Sticky navbar wrapper - stays at top */
+.navbarWrapper {
   position: sticky;
   top: 0;
   z-index: 100;
   flex-shrink: 0;
+  background: #f1f5f9;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.content {
+/* Scrollable content wrapper */
+.contentWrapper {
   flex: 1;
   overflow-y: auto;
-  padding-top: 16px;
+  padding: 16px;
+  min-height: 0; /* Important for flex child to be scrollable */
 }
 
-.content > * {
-  min-height: calc(100vh - 96px); 
+/* Ensure proper spacing and layout */
+.contentWrapper > * {
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .contentWrapper {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contentWrapper {
+    padding: 8px;
+  }
 }
