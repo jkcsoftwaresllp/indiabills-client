@@ -13,8 +13,11 @@ const ReportsLayout = ({ children }) => {
 
   return (
     <div className={styles.reportsLayout}>
-      <ReportsNavbar />
-      <div className={styles.content}>
+      <div className={styles.navbarWrapper}>
+        <ReportsNavbar />
+      </div>
+      
+      <div className={styles.contentWrapper}>
         {children}
       </div>
     </div>
