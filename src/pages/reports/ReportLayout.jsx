@@ -263,7 +263,7 @@ const ReportLayout = ({
     .filter(Boolean);
 
   return (
-    <Container className="p-6">
+    <div style={{ padding: '16px', height: '100%', overflow: 'auto' }}>
       <Breadcrumbs aria-label="breadcrumb" className="mb-4">
         <Link
           color="inherit"
@@ -327,20 +327,13 @@ const ReportLayout = ({
         </Grid>
       </Grid>
       {loading ? (
-        <Container>
-          <Grid
-            container
-            style={{ minHeight: "80vh" }}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <CircularProgress />
-          </Grid>
-        </Container>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+          <CircularProgress />
+        </div>
       ) : data.length === 0 ? (
-        <Container>
+        <div style={{ textAlign: 'center', padding: '40px' }}>
           <Typography variant="h6">No data found</Typography>
-        </Container>
+        </div>
       ) : (
         <>
           <Grid container spacing={2} className="mb-2">
@@ -400,7 +393,7 @@ const ReportLayout = ({
                 style={{ height: 600, width: "100%" }}
               >
                 <AgGridReact
-                rowData={Array.isArray(data) ? data : []}
+                  rowData={Array.isArray(data) ? data : []}
                   columnDefs={filteredColDefs}
                   pagination={true}
                   paginationPageSize={20}
@@ -435,7 +428,7 @@ const ReportLayout = ({
           </Modal>
         </>
       )}
-    </Container>
+    </div>
   );
 };
 
