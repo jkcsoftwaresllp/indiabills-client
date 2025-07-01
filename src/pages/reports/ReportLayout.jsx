@@ -263,8 +263,9 @@ const ReportLayout = ({
     .filter(Boolean);
 
   return (
-    <div style={{ padding: '16px', height: '100%', overflow: 'auto' }}>
-      <Breadcrumbs aria-label="breadcrumb" className="mb-4">
+    <div style={{ padding: '0', height: '100%', overflow: 'hidden' }}>
+      <div style={{ padding: '16px', height: '100%', overflow: 'auto' }}>
+        <Breadcrumbs aria-label="breadcrumb" className="mb-4">
         <Link
           color="inherit"
           onClick={() => navigate("/")}
@@ -428,6 +429,7 @@ const ReportLayout = ({
           </Modal>
         </>
       )}
+      </div>
     </div>
   );
 };
