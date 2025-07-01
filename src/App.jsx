@@ -17,6 +17,7 @@ import { useStore } from "./store/store";
 import CommandPalette from "./components/core/CommandPallete";
 import { useHotkeys } from 'react-hotkeys-hook';
 import styles from "./App.module.css";
+import ReportsLayout from './components/reports/ReportsLayout';
 
 function App() {
   const navigate = useNavigate();
@@ -105,7 +106,9 @@ function App() {
             {/* Scrollable Main Content */}
             <div className={styles.contentWrapper}>
               <main className={styles.mainContent}>
-                <Routing />
+                <ReportsLayout>
+                  <Routing />
+                </ReportsLayout>
               </main>
               <Popup />
               <AuditLogTable />
@@ -114,8 +117,8 @@ function App() {
         </div>
 
         <CommandPalette
-         open={isCommandPaletteOpen}
-         onClose={handleCloseCommandPalette} />
+          open={isCommandPaletteOpen}
+          onClose={handleCloseCommandPalette} />
       </HotKeys>
     </AuthProvider>
   );
