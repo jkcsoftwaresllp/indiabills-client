@@ -1,213 +1,127 @@
-// ViewReports.tsx
-
-import React, { useState } from "react";
-import {
-  Box,
-  Grid,
-  Paper,
-  Typography,
-  useTheme,
-  useMediaQuery,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import Carousel from "react-material-ui-carousel";
-import PageAnimate from "../../components/Animate/PageAnimate";
+import { useNavigate } from 'react-router-dom';
 import {
   Inventory as InventoryIcon,
   Person as PersonIcon,
   Assessment as AssessmentIcon,
   TrendingUp as TrendingUpIcon,
-  LocationOn as LocationOnIcon,
   BugReport as BugReportIcon,
   Category as CategoryIcon,
   LocalOffer as LocalOfferIcon,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
+import PageAnimate from '../../components/Animate/PageAnimate';
+import styles from './styles/ViewReports.module.css'; 
 
 const reports = [
   {
-    key: "stock-level",
-    title: "Stock and Sales Summary",
-    description: "View current stock levels and sales summaries.",
-    icon: <InventoryIcon fontSize="large" />,
-    navigateTo: "/reports/stocklevel",
+    key: 'stock-level',
+    title: 'Stock and Sales Summary',
+    description: 'View current stock levels and sales summaries.',
+    icon: <InventoryIcon />,
+    path: '/reports/stocklevel',
   },
   {
-    key: "supplier-performance",
-    title: "Supplier Performance",
-    description: "Analyze performance of your suppliers.",
-    icon: <PersonIcon fontSize="large" />,
-    navigateTo: "/reports/supplierperformance",
+    key: 'supplier-performance',
+    title: 'Supplier Performance',
+    description: 'Analyze performance of your suppliers.',
+    icon: <PersonIcon />,
+    path: '/reports/supplierperformance',
   },
   {
-    key: "invoice",
-    title: "Invoice",
-    description: "Check invoice details and summaries.",
-    icon: <AssessmentIcon fontSize="large" />,
-    navigateTo: "/reports/invoice",
+    key: 'invoice',
+    title: 'Invoice Reports',
+    description: 'Check invoice details and summaries.',
+    icon: <AssessmentIcon />,
+    path: '/reports/invoice',
   },
   {
-    key: "customer-purchase",
-    title: "Customer Purchase",
-    description: "Review customer purchase reports.",
-    icon: <PersonIcon fontSize="large" />,
-    navigateTo: "/reports/customerpurchase",
+    key: 'customer-purchase',
+    title: 'Customer Purchase',
+    description: 'Review customer purchase reports.',
+    icon: <PersonIcon />,
+    path: '/reports/customerpurchase',
   },
   {
-    key: "expense",
-    title: "Expense",
-    description: "Monitor your expenses over time.",
-    icon: <TrendingUpIcon fontSize="large" />,
-    navigateTo: "/reports/expenses",
-  },
-  // {
-  //   key: "warehouse-utilization",
-  //   title: "Warehouse Utilization",
-  //   description: "Evaluate warehouse space utilization.",
-  //   icon: <LocationOnIcon fontSize="large" />,
-  //   navigateTo: "/reports/warehouse-utilization",
-  // },
-  {
-    key: "stock-issue",
-    title: "Stock Issue",
-    description: "Identify and resolve stock issues.",
-    icon: <BugReportIcon fontSize="large" />,
-    navigateTo: "/reports/stockissue",
+    key: 'expense',
+    title: 'Expense Reports',
+    description: 'Monitor your expenses over time.',
+    icon: <TrendingUpIcon />,
+    path: '/reports/expenses',
   },
   {
-    key: "credits",
-    title: "Credit",
-    description: "Manage credit reports and analyses.",
-    icon: <CategoryIcon fontSize="large" />,
-    navigateTo: "/reports/credits",
+    key: 'stock-issue',
+    title: 'Stock Issues',
+    description: 'Identify and resolve stock issues.',
+    icon: <BugReportIcon />,
+    path: '/reports/stockissue',
   },
   {
-    key: "revenue",
-    title: "Revenue Report",
-    description: "Track revenue reports over periods.",
-    icon: <TrendingUpIcon fontSize="large" />,
-    navigateTo: "/reports/revenue",
+    key: 'credits',
+    title: 'Credit Management',
+    description: 'Manage credit reports and analyses.',
+    icon: <CategoryIcon />,
+    path: '/reports/credits',
   },
   {
-    key: "HSN",
-    title: "HSN Report",
-    description: "Report of HSN.",
-    icon: <LocalOfferIcon fontSize="large" />,
-    navigateTo: "/reports/hsn",
+    key: 'revenue',
+    title: 'Revenue Reports',
+    description: 'Track revenue reports over periods.',
+    icon: <TrendingUpIcon />,
+    path: '/reports/revenue',
   },
   {
-    key: "Sales",
-    title: "Sales Report",
-    description: "Viewing invoice ordered by their tax slabs.",
-    icon:  <AssessmentIcon fontSize="large" />,
-    navigateTo: "/reports/pms",
+    key: 'hsn',
+    title: 'HSN Reports',
+    description: 'HSN classification and tax reports.',
+    icon: <LocalOfferIcon />,
+    path: '/reports/hsn',
+  },
+  {
+    key: 'sales',
+    title: 'Sales Reports',
+    description: 'View invoices organized by tax slabs.',
+    icon: <AssessmentIcon />,
+    path: '/reports/pms',
   },
 ];
 
 const ViewReports = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [activeIndex, setActiveIndex] = useState(0);
 
-  const handleCarouselChange = (index) => {
-    setActiveIndex(index);
-  };
-
-  const handleReportClick = (index) => {
-    setActiveIndex(index);
-  };
-
-  const handleNavigate = () => {
-    navigate(reports[activeIndex].navigateTo);
+  const handleReportClick = (path) => {
+    navigate(path);
   };
 
   return (
     <PageAnimate nostyle>
-      <Box
-        p={2}
-        width="100%"
-        minHeight="100vh"
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-      >
-        <Box width="100%" maxWidth={800}>
-          <Carousel
-            index={activeIndex}
-            onChange={handleCarouselChange}
-            interval={5000}
-            indicators={false}
-            navButtonsAlwaysVisible
-          >
-            {reports.map((report, index) => (
-              <Paper
+      <div className={styles.container}>
+        <div className={styles.content}>
+          {/* <div className={styles.header}>
+            <h1 className={styles.title}>Reports Dashboard</h1>
+            <p className={styles.subtitle}>
+              Select a report from the navigation above or choose from the detailed view below
+            </p>
+          </div> */}
+
+          <div className={styles.reportsGrid}>
+            {reports.map((report) => (
+              <div
                 key={report.key}
-                elevation={3}
-                sx={{
-                  padding: theme.spacing(4),
-                  textAlign: "center",
-                  cursor: "pointer",
-                  backgroundColor: "var(--color-primary)",
-                  color: theme.palette.getContrastText("#1e2938"),
-                }}
-                onClick={handleNavigate}
+                className={styles.reportCard}
+                onClick={() => handleReportClick(report.path)}
               >
-                {React.cloneElement(report.icon, {
-                  style: { fontSize: "80px" },
-                })}
-                <Typography
-                  variant="h4"
-                  sx={{ marginTop: theme.spacing(2), fontWeight: "bold" }}
-                >
-                  {report.title}
-                </Typography>
-                <Typography
-                  variant="subtitle1"
-                  sx={{ marginTop: theme.spacing(1) }}
-                >
-                  {report.description}
-                </Typography>
-              </Paper>
+                <div className={styles.cardIcon}>
+                  {report.icon}
+                </div>
+                <div className={styles.cardContent}>
+                  <h3 className={styles.cardTitle}>{report.title}</h3>
+                  <p className={styles.cardDescription}>{report.description}</p>
+                </div>
+                <div className={styles.cardArrow}>→</div>
+              </div>
             ))}
-          </Carousel>
-        </Box>
-        <Box
-          mt={4}
-          width="100%"
-          maxWidth={800}
-          display="flex"
-          justifyContent="center"
-          overflow="overflow"
-        >
-          <Grid container spacing={2} justifyContent="center">
-            {reports.map((report, index) => (
-              <Grid item key={report.key}>
-                <Paper
-                  elevation={3}
-                  sx={{
-                    padding: theme.spacing(1),
-                    cursor: "pointer",
-                    borderRadius: theme.shape.borderRadius,
-                    border:
-                      activeIndex === index
-                        ? `4px solid var(--color-accent)`
-                        : `4px solid transparent`,
-                    backgroundColor: "var(--color-primary)",
-                    color: theme.palette.getContrastText("#1e2938"),
-                    "&:hover": {
-                      borderColor: "var(--color-accent)",
-                    },
-                  }}
-                  onClick={() => handleReportClick(index)}
-                >
-                  {React.cloneElement(report.icon)}
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Box>
+          </div>
+        </div>
+      </div>
     </PageAnimate>
   );
 };
