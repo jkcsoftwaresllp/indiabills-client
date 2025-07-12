@@ -1,0 +1,22 @@
+/* SetupComponents/AdminSetup.module.css */
+.mainContainer {
+  /* Add any main container styles here */
+}
+
+.formContainer {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.inputRow {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+}
+
+.inputColumn {
+  width: 50%;
+}
