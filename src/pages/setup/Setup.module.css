@@ -1,0 +1,11 @@
+/* Setup.module.css */
+.main {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  border-radius: 1rem;
+  padding: 1rem;
+  background-size: cover;
+  background-position: center;
+  height: 100dvh;
+}
