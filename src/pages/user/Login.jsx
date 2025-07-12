@@ -1,53 +1,56 @@
-import PageAnimate from "../../components/Animate/PageAnimate";
-import React, { useEffect, useState } from "react";
-import TextField from "@mui/material/TextField";
-import logo from "../../assets/IndiaBills_logo.png";
-import bg from "../../assets/bglogo.png";
-import { InputAdornment } from "@mui/material";
-import { apiLogin } from "../../network/api";
-import { useStore } from "../../store/store";
-import { useNavigate } from "react-router-dom";
-import IconButton from "@mui/material/IconButton";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useAuth } from "../../hooks/useAuth";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { apiLogin } from '../../network/api';
+import { useStore } from '../../store/store';
+import { useAuth } from '../../hooks/useAuth';
+import logo from '../../assets/IndiaBills_logo.png';
+import bg from '../../assets/bglogo.png';
+import styles from './Login.module.css';
 
 const quotes = [
   "The best way to get started is to quit talking and begin doing.",
   "The pessimist sees difficulty in every opportunity. The optimist sees opportunity in every difficulty.",
-  "Don’t let yesterday take up too much of today.",
-  "You learn more from failure than from success. Don’t let it stop you. Failure builds character.",
-  "It’s not whether you get knocked down, it’s whether you get up.",
+  "Don't let yesterday take up too much of today.",
+  "You learn more from failure than from success. Don't let it stop you. Failure builds character.",
+  "It's not whether you get knocked down, it's whether you get up.",
 ];
 
 const LoginPage = () => {
-  const [quote, setQuote] = useState("");
-
-  const { successPopup, errorPopup } = useStore();
-  const navigate = useNavigate();
-
-  const { login } = useAuth();
-
+  const [quote, setQuote] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
-  const handleMouseDownPassword = () => setShowPassword(!showPassword);
-
   const [data, setData] = useState({
     email: '',
     password: '',
   });
 
+  const { successPopup, errorPopup } = useStore();
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   useEffect(() => {
-    if (localStorage.getItem("session")) {
-      console.log("Session already exists");
-      navigate("/");
+    if (localStorage.getItem('session')) {
+      console.log('Session already exists');
+      navigate('/');
       return;
     } else {
       const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
       setQuote(randomQuote);
     }
-  }, []);
+  }, [navigate]);
 
-  const HandleLogin = async (e) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     if (!data.email || !data.password) {
@@ -55,113 +58,118 @@ const LoginPage = () => {
       return;
     }
 
-    const response = await apiLogin({
-      email: data.email,
-      password: data.password,
-    });
+    try {
+      const response = await apiLogin({
+        email: data.email,
+        password: data.password,
+      });
 
-    if (response.status !== 200) {
-      switch (response.status) {
-        case 404:
-          errorPopup("User or password incorrect");
-          return;
-        case 500:
-          errorPopup("Something went wrong");
-          return;
+      if (response.status !== 200) {
+        switch (response.status) {
+          case 404:
+            errorPopup('User or password incorrect');
+            return;
+          case 500:
+            errorPopup('Something went wrong');
+            return;
+          default:
+            errorPopup('Login failed');
+            return;
+        }
       }
-    }
 
-    const session = response.data;
-    const payload = {
-      id: session.user.id,
-      name: session.user.name,
-      role: session.user.role.toLocaleLowerCase(),
-      avatar: session.avatar,
-      token: session.token,
-    };
-    login(payload);
-    navigate("/");
+      const session = response.data;
+      const payload = {
+        id: session.data.user.id,
+        email: session.data.user.email,
+        name: session.data.user.fullName,
+        userType: session.data.user.userType,
+        organizationId: session.data.user.organizationId,
+        // role: session.data.user.role, // TODO: add role during registration
+        role: "admin" 
+      };
+
+      console.log('Login API response:', response.data);
+      
+      login(payload);
+      successPopup('Welcome back!');
+      navigate('/');
+    } catch (error) {
+      console.error('Login error:', error);
+      errorPopup('Login failed. Please try again.');
+    }
   };
 
   return (
-    <div style={{
+    <div 
+      className={styles.container}
+      style={{
         backgroundImage: `url(${bg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "100dvh",
-        width: "100%",
-        position: "fixed",
-        inset: 0,
       }}
-      className={"grid place-items-center justify-center"}
     >
-        <form onSubmit={HandleLogin} className="px-20 py-12 flex flex-col gap-12 w-[27rem] items-center bg-slate-800 bg-opacity-75 border border-slate-500 rounded-lg shadow-lg">
-          <div className={"flex flex-col gap-4 items-center text-center"}>
-            <img src={logo} alt="logo" className="w-52 hover:brightness-200" />
-            <p className={"text-slate-400 font-light opacity-75"}> {quote} </p>
+      <form onSubmit={handleLogin} className={styles.loginForm}>
+        <div className={styles.header}>
+          <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
+          <p className={styles.quote}>{quote}</p>
+        </div>
+
+        <div className={styles.formFields}>
+          <div className={styles.inputGroup}>
+            <label htmlFor="email" className={styles.label}>
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              className={styles.input}
+              onChange={handleInputChange}
+              placeholder="example@address.com"
+              value={data.email}
+              required
+            />
           </div>
 
-          <div className="flex flex-col gap-8">
-          <TextField
-          label={"Email"}
-          name={"email"}
-          type={"email"}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '16px', // Rounded borders
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              color: 'white',
-              '&.Mui-focused fieldset': {
-                borderColor: 'white',
-              },
-            },
-            '& .MuiInputLabel-root': {
-              color: 'white',
-            },
-          }}
-          onChange={(e) => setData({ ...data, ["email"]: e.target.value })}
-          placeholder={"example@address.com"}
-          value={data.email}
-        />
-
-  <TextField
-    label={"Password"}
-    name={"password"}
-    type={showPassword ? "text" : "password"}
-    onChange={(e) => setData({ ...data, ["password"]: e.target.value })}
-    placeholder={"******"}
-    sx={{
-      '& .MuiOutlinedInput-root': {
-        borderRadius: '16px',
-        color: 'white',
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        '&.Mui-focused fieldset': {
-          borderColor: 'white',
-        },
-      },
-      '& .MuiInputLabel-root': {
-        color: 'white',
-      },
-    }}
-    value={data.password}
-    InputProps={{
-      endAdornment: (
-        <InputAdornment position="end">
-          <IconButton
-            aria-label="toggle password visibility"
-            onClick={handleClickShowPassword}
-            onMouseDown={handleMouseDownPassword}
-          >
-            {showPassword ? <Visibility /> : <VisibilityOff />}
-          </IconButton>
-        </InputAdornment>
-      ),
-    }}
-  />
+          <div className={styles.inputGroup}>
+            <label htmlFor="password" className={styles.label}>
+              Password
+            </label>
+            <div className={styles.passwordContainer}>
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                className={styles.input}
+                onChange={handleInputChange}
+                placeholder="******"
+                value={data.password}
+                required
+              />
+              <button
+                type="button"
+                className={styles.passwordToggle}
+                onClick={togglePasswordVisibility}
+                aria-label="Toggle password visibility"
+              >
+                {showPassword ? '👁️' : '👁️‍🗨️'}
+              </button>
+            </div>
           </div>
+        </div>
 
-          <input value={'Login'} type="submit" className="bg-rose-600 w-full rounded-xl p-2 text-slate-300 shadow-xl transition hover:shadow-none cursor-pointer hover:bg-rose-700" />
-        </form>
+        <button type="submit" className={styles.loginButton}>
+          Login
+        </button>
+
+        <div className={styles.signupPrompt}>
+          <p className={styles.signupText}>
+            Don't have an account?{' '}
+            <Link to="/register" className={styles.signupLink}>
+              Sign up here
+            </Link>
+          </p>
+        </div>
+      </form>
     </div>
   );
 };
