@@ -10,10 +10,15 @@ import { useAuth } from "../../hooks/useAuth";
 import styles from "./Sidebar.module.css";
 
 const groupIcons = {
-  Dashboard: "\u2302",   // House icon
-  Management: "\u2699",  // Gear icon
-  Operations: "\u2692", // Hammer and Pick
-  Shop: "\u26D1",       // Shopping Cart
+  Dashboard: "\u{1F4CA}",
+  // Dashboard: "\u2302",   // House icon
+  Management: "\u{1F4BC}",
+  // Management: "\u2699",  // Gear icon
+  Operations: "\u{1F6E0}",
+  // Operations: "\u2692", // Hammer and Pick
+  Shop: "\u{1F6D2}",
+  // Shop: "\u26D1",       // Shopping Cart
+  "Setup Dashboard": "\u{1F9F0}", // Toolbox
 };
 
 const Sidebar = () => {
@@ -26,18 +31,18 @@ const Sidebar = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [expandedGroup, setExpandedGroup] = useState(null);
 
-  useEffect(() => {
-    if (
-      session !== null &&
-      !logoFetched &&
-      (!Organization.logo || Organization.logo === "")
-    ) {
-      fetchLogo().then((res) => {
-        setOrganization({ ...res, fiscalStart: res.fiscalStart.split("T")[0] });
-        setLogoFetched(true);
-      });
-    }
-  }, [session, Organization, setOrganization, logoFetched]);
+  // useEffect(() => {
+  //   if (
+  //     session !== null &&
+  //     !logoFetched &&
+  //     (!Organization.logo || Organization.logo === "")
+  //   ) {
+  //     fetchLogo().then((res) => {
+  //       setOrganization({ ...res, fiscalStart: res.fiscalStart.split("T")[0] });
+  //       setLogoFetched(true);
+  //     });
+  //   }
+  // }, [session, Organization, setOrganization, logoFetched]);
 
   if (session === null) {
     return null;
