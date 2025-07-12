@@ -1,0 +1,11 @@
+/* SetupComponents/WarehouseSetup.module.css */
+.mainContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.formItem {
+  /* Add any styles for individual form items here */
+}
