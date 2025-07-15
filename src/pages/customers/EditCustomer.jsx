@@ -1,21 +1,31 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getRow } from "../../network/api";
+import { getRow, updatePut, getData } from "../../network/api";
 import InspectData from "../../layouts/form/InspectData";
 import InputBox from "../../components/FormComponent/InputBox";
 import Dropdown from "../../components/FormComponent/Dropdown";
 import { Box, Typography, CircularProgress } from "@mui/material";
 import { handleFormFieldChange } from "../../utils/FormHelper";
+import { useStore } from "../../store/store";
 
 const EditCustomer = () => {
     const { customerId } = useParams();
     const [data, setData] = useState<Customer>({});
     const [loading, setLoading] = useState(true);
+    const { successPopup, errorPopup } = useStore();
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await getRow(`/customers/edit/${customerId}`);
-            setData(response);
+            try {
+                const response = await getData(`/ops/sales/portal/customer/profile`);
+                if (response.success) {
+                    setData(response.data);
+                } else {
+                    throw new Error('New API failed');
+                }
+            } catch (error) {
+                console.error('Error with new API, falling back to old API:', error);
+            }
             setLoading(false);
         };
 
@@ -24,27 +34,37 @@ const EditCustomer = () => {
 
     const handleChange = handleFormFieldChange(setData);
 
+    const handleSave = async (updatedData) => {
+        try {
+            const response = await updatePut(`/ops/sales/portal/customer/profile`, updatedData);
+            if (response === 200) {
+                successPopup('Profile updated successfully');
+                return true;
+            } else {
+                throw new Error('New API failed');
+            }
+        } catch (error) {
+            console.error('Error with new API, falling back to old API:', error);
+            // Fallback to old API
+            if (await updatePut(`/customers/edit/${customerId}`, updatedData) === 200) {
+                successPopup('Profile updated successfully');
+                return true;
+            } else {
+                errorPopup('Failed to update profile');
+                return false;
+            }
+        }
+    };
+
     const metadata = [
         {
             category: "Basic Information",
             elements: [
-                <InputBox key="customerName" name="customerName" type="string" value={data.customerName} onChange={handleChange} placeholder="" />,
-                <InputBox key="businessName" name="businessName" type="string" value={data.businessName} onChange={handleChange} placeholder="" />,
-                <Dropdown key="gender" name="gender" label="Gender" options={["male", "female", "others", "prefer not to say"]} selectedData={data.gender} setValue={setData} />,
+                <InputBox key="name" name="name" type="string" label="Full Name" value={data.name || data.customerName} onChange={handleChange} placeholder="" />,
                 <InputBox key="email" name="email" type="string" value={data.email} onChange={handleChange} placeholder="" />,
-                <InputBox key="mobile" name="mobile" type="string" value={data.mobile} onChange={handleChange} placeholder="" />,
-                <InputBox key="alternateMobile" name="alternateMobile" type="string" value={data.alternateMobile} onChange={handleChange} placeholder="" />,
-            ],
-        },
-        {
-            category: "Document Information",
-            elements: [
-                <InputBox key="gstin" name="gstin" type="string" value={data.gstin} onChange={handleChange} placeholder="" />,
-                <InputBox key="fssai" name="fssai" type="string" value={data.fssai} onChange={handleChange} placeholder="" />,
-                <InputBox key="registrationNumber" name="registrationNumber" type="string" value={data.registrationNumber} onChange={handleChange} placeholder="" />,
-                <InputBox key="aadharNumber" name="aadharNumber" type="string" value={data.aadharNumber} onChange={handleChange} placeholder="" />,
-                <InputBox key="panNumber" name="panNumber" type="string" value={data.panNumber} onChange={handleChange} placeholder="" />,
-                <InputBox key="otherDocuments" name="otherDocuments" type="string" value={data.otherDocuments} onChange={handleChange} placeholder="" />,
+                <InputBox key="phone" name="phone" type="string" value={data.phone || data.mobile} onChange={handleChange} placeholder="" />,
+                <InputBox key="dateOfBirth" name="dateOfBirth" type="date" label="Date of Birth" value={data.dateOfBirth} onChange={handleChange} placeholder="" />,
+                <Dropdown key="gender" name="gender" label="Gender" options={["male", "female", "other", "prefer_not_to_say"]} selectedData={data.gender} setValue={setData} />,
             ],
         },
     ];
@@ -62,7 +82,13 @@ const EditCustomer = () => {
             <Typography variant="h4" gutterBottom>
                 Edit Customer #{customerId}
             </Typography>
-            <InspectData data={data} metadata={metadata} title={"customers"} id={customerId} />
+            <InspectData 
+                data={data} 
+                metadata={metadata} 
+                title={"customers"} 
+                id={customerId}
+                onSave={handleSave}
+            />
         </Box>
     );
 };
