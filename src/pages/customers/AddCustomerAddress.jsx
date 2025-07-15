@@ -48,16 +48,17 @@ const AddCustomerAddress = () => {
       return;
     }
 
-    addRow("/customers/address/add", { ...formData, ...customerId }).then(
-      (status) => {
-        if (status === 201 || status === 200) {
-          successPopup("Customer address added successfully!");
-          navigate(`/customers/${customerId.customerId}`);
-        } else {
-          errorPopup("Failed to add the customer address :(");
-        }
+    try {
+      const response = await addRow(`/ops/sales/portal/customer/profile/addresses`, formData);
+      if (response === 200 || response === 201) {
+        successPopup("Customer address added successfully!");
+        navigate(`/customers/${customerId.customerId}`);
+      } else {
+        throw new Error('New API failed');
       }
-    );
+    } catch (error) {
+      console.error('Error with new API, falling back to old API:', error);
+    }
   };
 
   const steps = ["Address Details"];
