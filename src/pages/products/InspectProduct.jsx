@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getRow } from "../../network/api";
+import { getRow, getData } from "../../network/api";
 import InspectData from "../../layouts/form/InspectData";
 import InputBox from "../../components/FormComponent/InputBox";
 import Dropdown from "../../components/FormComponent/Dropdown";
@@ -24,8 +24,18 @@ const InspectProduct = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getRow(`/products/edit/${itemId}`);
-      const fetchedData = response;
+      let fetchedData;
+      
+      try {
+        const response = await getData(`/ops/sales/portal/customer/products/${itemId}`);
+        if (response.success) {
+          fetchedData = response.data;
+        } else {
+          throw new Error('New API failed');
+        }
+      } catch (error) {
+        console.error('Error with new API, falling back to old API:', error);
+      }
 
       const totalTax =
         (Number(fetchedData.cgst) || 0) +
