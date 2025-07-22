@@ -8,11 +8,15 @@ import bg from '../../assets/bglogo.png';
 import styles from './Login.module.css';
 
 const quotes = [
-  "The best way to get started is to quit talking and begin doing.",
-  "The pessimist sees difficulty in every opportunity. The optimist sees opportunity in every difficulty.",
+  'The best way to get started is to quit talking and begin doing.',
+  'The pessimist sees difficulty in every opportunity. The optimist sees opportunity in every difficulty.',
   "Don't let yesterday take up too much of today.",
   "You learn more from failure than from success. Don't let it stop you. Failure builds character.",
   "It's not whether you get knocked down, it's whether you get up.",
+  'Welcome to your personal shopping experience.',
+  'Discover amazing products tailored just for you.',
+  'Your satisfaction is our priority.',
+  'Shop with confidence and convenience.',
 ];
 
 const LoginPage = () => {
@@ -29,8 +33,13 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (localStorage.getItem('session')) {
-      console.log('Session already exists');
-      navigate('/');
+      const session = JSON.parse(localStorage.getItem('session'));
+      // Redirect based on existing session role
+      if (session.role === 'customer') {
+        navigate('/customer');
+      } else {
+        navigate('/');
+      }
       return;
     } else {
       const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
@@ -40,9 +49,9 @@ const LoginPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setData(prev => ({
+    setData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -58,6 +67,21 @@ const LoginPage = () => {
       return;
     }
 
+    // Check for hardcoded customer credentials first
+    if (data.email === 'customer@example.com' && data.password === 'customer123') {
+      const customerPayload = {
+        id: 999,
+        name: 'John Customer',
+        role: 'customer',
+        avatar: 'default.webp',
+        token: 'hardcoded-customer-token',
+      };
+
+      login(customerPayload);
+      successPopup('Welcome to your portal!');
+      navigate('/customer');
+      return;
+    }
     try {
       const response = await apiLogin({
         email: data.email,
@@ -80,20 +104,22 @@ const LoginPage = () => {
 
       const session = response.data;
       const payload = {
-        id: session.data.user.id,
-        email: session.data.user.email,
-        name: session.data.user.fullName,
-        userType: session.data.user.userType,
-        organizationId: session.data.user.organizationId,
-        // role: session.data.user.role, // TODO: add role during registration
-        role: "admin" 
+        id: session.user.id,
+        name: session.user.name,
+        role: session.user.role.toLowerCase(),
+        avatar: session.avatar,
+        token: session.token,
       };
 
-      console.log('Login API response:', response.data);
-      
       login(payload);
       successPopup('Welcome back!');
-      navigate('/');
+      
+      // Redirect based on user role
+      if (payload.role === 'customer') {
+        navigate('/customer');
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       console.error('Login error:', error);
       errorPopup('Login failed. Please try again.');
@@ -101,7 +127,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div 
+    <div
       className={styles.container}
       style={{
         backgroundImage: `url(${bg})`,
@@ -110,6 +136,7 @@ const LoginPage = () => {
       <form onSubmit={handleLogin} className={styles.loginForm}>
         <div className={styles.header}>
           <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
+          <h2 className="text-white text-xl font-semibold mb-2">Login Portal</h2>
           <p className={styles.quote}>{quote}</p>
         </div>
 
@@ -124,7 +151,7 @@ const LoginPage = () => {
               type="email"
               className={styles.input}
               onChange={handleInputChange}
-              placeholder="example@address.com"
+              placeholder="admin@example.com or customer@example.com"
               value={data.email}
               required
             />
@@ -141,7 +168,7 @@ const LoginPage = () => {
                 type={showPassword ? 'text' : 'password'}
                 className={styles.input}
                 onChange={handleInputChange}
-                placeholder="******"
+                placeholder="admin123 or customer123"
                 value={data.password}
                 required
               />
@@ -158,7 +185,7 @@ const LoginPage = () => {
         </div>
 
         <button type="submit" className={styles.loginButton}>
-          Login
+          Login to Portal
         </button>
 
         <div className={styles.signupPrompt}>
@@ -168,6 +195,11 @@ const LoginPage = () => {
               Sign up here
             </Link>
           </p>
+          <div className="mt-2 text-xs text-gray-300">
+            <p>Demo Credentials:</p>
+            <p>Customer: customer@example.com / customer123</p>
+            <p>Admin: Use your existing admin credentials</p>
+          </div>
         </div>
       </form>
     </div>
