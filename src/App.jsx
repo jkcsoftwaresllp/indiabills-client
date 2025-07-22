@@ -19,12 +19,13 @@ import CommandPalette from './components/core/CommandPallete';
 import { useHotkeys } from 'react-hotkeys-hook';
 import styles from './App.module.css';
 import ReportsLayout from './components/reports/ReportsLayout';
-import Setup from '../src/pages/setup/Setup'; 
-import Login from '../src/pages/user/Login'; 
+import Setup from '../src/pages/setup/Setup';
+import Login from '../src/pages/user/Login';
+import CustomerLogin from '../src/pages/customer/CustomerLogin';
 
 function App() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation(); // Get the current location
   const session = getSession();
 
   const { collapse } = useStore();
@@ -76,6 +77,7 @@ function App() {
   useEffect(() => {
     async function fetchData() {
       if (session === null) {
+        // Always redirect to unified login page
         navigate('/login');
       }
     }
@@ -99,7 +101,12 @@ function App() {
 
   // Determine if we should show the default layout (sidebar, header, etc.)
   const showDefaultLayout =
-    location.pathname !== '/setup' && location.pathname !== '/login';
+    location.pathname !== '/setup' && 
+    location.pathname !== '/login' && 
+    location.pathname !== '/customer/login' &&
+    !location.pathname.startsWith('/customer') &&
+    location.pathname !== '/customer/login' &&
+    !location.pathname.startsWith('/customer');
 
   return (
     <AuthProvider>
@@ -129,7 +136,7 @@ function App() {
               </div>
             </div>
           ) : (
-            // Setup/Login Layout (No Sidebar, Header, etc.)
+            // Setup/Login/Customer Layout (No Sidebar, Header, etc.)
             <main className={styles.mainContent}>
               <ReportsLayout>
                 <Routing />
