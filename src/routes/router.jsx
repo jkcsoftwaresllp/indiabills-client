@@ -24,6 +24,7 @@ import StockIssuesReport from '../pages/reports/StockIssueReport';
 import EditInventory from '../pages/inventory/EditInventory';
 import RevenueReport from '../pages/reports/RevenueReport';
 import PMSReport from '../pages/reports/PMSReport';
+import CustomerRoutes from './customerRoutes'
 
 // SUPPORT
 const Help = lazy(() => import('../pages/support/Help'));
@@ -323,10 +324,6 @@ const Routing = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<Register />} />
             {/* <Route
-              path="/users"
-              element={<ProtectedRoute element={ViewUsers} roles={['admin']} />}
-            /> */}
-            {/* <Route
               path="/users/add"
               element={<ProtectedRoute element={AddUser} roles={['admin']} />}
             /> */}
@@ -603,6 +600,10 @@ const Routing = () => {
                 />
               }
             /> */}
+
+            {/* CUSTOMER PORTAL */}
+            <Route path="/customer/*" element={<CustomerRoutes />} />
+            
           </Routes>
         </Suspense>
       </AnimatePresence>
