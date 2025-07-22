@@ -13,6 +13,7 @@ import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ShopIcon from '@mui/icons-material/Shop';
+import SupportIcon from '@mui/icons-material/Support';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 
@@ -119,6 +120,12 @@ export default [
         label: 'Shop',
         roles: ['admin', 'operator', 'customer'],
       },
+      {
+        to: '/support',
+        icon: <SupportIcon />,
+        label: 'Customer Support',
+        roles: ['customer'],
+      },
     ],
   },
   {
@@ -132,9 +139,9 @@ export default [
       },
       {
         to: '/subscription',
-        icon: <SubscriptionsIcon />, 
+        icon: <SubscriptionsIcon />,
         label: 'Subscription',
-        roles: ['admin'], 
+        roles: ['admin'],
       },
     ],
   },
