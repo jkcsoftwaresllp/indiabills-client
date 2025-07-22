@@ -1,27 +1,27 @@
-import { useEffect, useState } from "react";
-import PrintIcon from "@mui/icons-material/Print";
-import PageAnimate from "../../../components/Animate/PageAnimate";
-import { useStore } from "../../../store/store";
+import { useEffect, useState } from 'react';
+import PrintIcon from '@mui/icons-material/Print';
+import PageAnimate from '../../../components/Animate/PageAnimate';
+import { useStore } from '../../../store/store';
 import {
   fetchProduct,
   getData,
   getStuff,
   placeOrder,
   getRequest,
-} from "../../../network/api";
-import OrderCard from "../../../components/shop/OrderCard";
-import ReceiptIcon from "@mui/icons-material/Receipt";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import ComprehensiveInvoiceTemplate from "../../invoices/templates/Comprehensive"; // Adjust the path as necessary
-import PaymentIcon from "@mui/icons-material/Payment";
-import { useNavigate } from "react-router-dom";
+} from '../../../network/api';
+import OrderCard from '../../../components/shop/OrderCard';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ComprehensiveInvoiceTemplate from '../../invoices/templates/Comprehensive'; // Adjust the path as necessary
+import PaymentIcon from '@mui/icons-material/Payment';
+import { useNavigate } from 'react-router-dom';
 import {
   calculateSubtotal,
   calculateTaxes,
   calculateDiscount,
   calculateTotalAmount,
-} from "./share/calculations";
-import { CustomerSection, OrderDetails } from "./share/ShopSections";
+} from './share/calculations';
+import { CustomerSection, OrderDetails } from './share/ShopSections';
 import {
   Modal,
   Button,
@@ -31,14 +31,16 @@ import {
   InputLabel,
   FormControl,
   Typography,
-} from "@mui/material";
-import MouseHoverPopover from "../../../components/core/Explain";
-import ShortInvoiceTemplate from "../../invoices/templates/Short";
+} from '@mui/material';
+import MouseHoverPopover from '../../../components/core/Explain';
+import ShortInvoiceTemplate from '../../invoices/templates/Short';
+import { useRoutes } from '../../../hooks/useRoutes';
 
 const AdminCheckout = () => {
   const { errorPopup, successPopup, selectedProducts, clearSelectedProducts } =
     useStore();
   const navigate = useNavigate();
+  const { getRoute } = useRoutes();
 
   const [organization, setOrganization] = useState({});
   useEffect(() => {
@@ -47,19 +49,19 @@ const AdminCheckout = () => {
         const data = await getRequest(`/organization`);
         setOrganization(data);
       } catch (error) {
-        console.error("Error fetching organization details:", error);
+        console.error('Error fetching organization details:', error);
       }
     };
 
     fetchOrganization();
   }, []);
 
-  const TemplateType = localStorage.getItem("invoiceTemplate") || "short";
-  const invo = (Number(localStorage.getItem("invoiceCount") || "0000") + 1)
+  const TemplateType = localStorage.getItem('invoiceTemplate') || 'short';
+  const invo = (Number(localStorage.getItem('invoiceCount') || '0000') + 1)
     .toString()
-    .padStart(4, "0");
+    .padStart(4, '0');
 
-  const [initials, setInitials] = useState("");
+  const [initials, setInitials] = useState('');
   const [invoiceData, setInvoiceData] = useState({
     invoiceNumber: invo,
     invoiceDate: new Date(),
@@ -67,35 +69,35 @@ const AdminCheckout = () => {
   });
 
   const [payment, setPayment] = useState({
-    paymentMethod: "cash",
-    upi: "",
-    cardNumber: "",
-    cardHolderName: "",
-    expiryDate: "",
-    cvv: "",
-    cardType: "",
-    bankName: "",
-    paymentStatus: "done",
+    paymentMethod: 'cash',
+    upi: '',
+    cardNumber: '',
+    cardHolderName: '',
+    expiryDate: '',
+    cvv: '',
+    cardType: '',
+    bankName: '',
+    paymentStatus: 'done',
   });
 
   const [orderData, setOrderData] = useState({
     orderDate: new Date(),
-    orderStatus: "pending",
+    orderStatus: 'pending',
     totalAmount: 0,
     taxAmount: 0,
     discountApplied: 0,
     shippingCost: 0,
-    shippingAddress: "",
+    shippingAddress: '',
     shippingDate: new Date(),
-    customerId: "0",
+    customerId: '0',
   });
 
   const [products, setProducts] = useState([]);
-  const [discountType, setDiscountType] = useState("automatic");
+  const [discountType, setDiscountType] = useState('automatic');
   const [manualDiscount, setManualDiscount] = useState(0);
   const [activeDiscounts, setActiveDiscounts] = useState({});
 
-  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState('');
   const [payOffline, setPayOffline] = useState(false);
   const [payMethods, setPayMethods] = useState([]);
 
@@ -107,20 +109,20 @@ const AdminCheckout = () => {
   const [isNewCustomer, setIsNewCustomer] = useState(false);
 
   const [newCustomer, setNewCustomer] = useState({
-    customerName: "",
-    businessName: "",
-    email: "",
-    gender: "",
-    mobile: "",
-    gstin: "",
+    customerName: '',
+    businessName: '',
+    email: '',
+    gender: '',
+    mobile: '',
+    gstin: '',
   });
 
   const [newShipping, setNewShipping] = useState({
-    addressLine: "",
-    city: "",
-    landmark: "",
-    state: "",
-    pinCode: "",
+    addressLine: '',
+    city: '',
+    landmark: '',
+    state: '',
+    pinCode: '',
   });
 
   const [shippings, setShippings] = useState([]);
@@ -138,14 +140,14 @@ const AdminCheckout = () => {
   };
 
   const fetchCustomers = async () => {
-    const data = await getStuff("/customers/options");
+    const data = await getStuff('/customers/options');
     setCustomers(data);
   };
 
   useEffect(() => {
     const fetchFormDetails = async () => {
-      const data = await getData("/settings/payment/methods");
-      const ini = await getData("/settings/initials");
+      const data = await getData('/settings/payment/methods');
+      const ini = await getData('/settings/initials');
       setInitials(ini);
       setPayMethods(data);
     };
@@ -204,7 +206,7 @@ const AdminCheckout = () => {
     setOrderData((prev) => ({
       ...prev,
       shippingAddress: isNewCustomer
-        ? newShipping.addressLine || ""
+        ? newShipping.addressLine || ''
         : newaddress(),
     }));
   }, [selectedShipping, newShipping, isNewCustomer]);
@@ -218,7 +220,7 @@ const AdminCheckout = () => {
   useEffect(() => {
     const filterKeys = new Set(Object.keys(selectedProducts).map(Number));
     const filteredArray = products.filter((product) =>
-      filterKeys.has(Number(product.itemId)),
+      filterKeys.has(Number(product.itemId))
     );
     setProducts(filteredArray);
   }, [selectedProducts]);
@@ -244,7 +246,7 @@ const AdminCheckout = () => {
       selectedProducts,
       discountType,
       manualDiscount,
-      activeDiscounts,
+      activeDiscounts
     );
     const newTotalCost =
       newTotalAmount - newDiscountValue + Number(orderData.shippingCost);
@@ -282,15 +284,15 @@ const AdminCheckout = () => {
         !newShipping.state ||
         !newShipping.pinCode
       ) {
-        errorPopup("Please fill all the fields!");
+        errorPopup('Please fill all the fields!');
         return true;
       }
     } else {
       if (!selectedCustomer || !selectedShipping || !orderData.shippingDate) {
-        errorPopup("Please select a customer!");
+        errorPopup('Please select a customer!');
         return true;
       } else if (!payOffline && !paymentMethod) {
-        errorPopup("Please select a payment method!");
+        errorPopup('Please select a payment method!');
         return true;
       }
     }
@@ -300,7 +302,7 @@ const AdminCheckout = () => {
     const apiData = {
       newCustomer: isNewCustomer ? { ...newCustomer, ...newShipping } : null,
       invoice: invoiceData,
-      orderData: { ...orderData, orderStatus: ship ? "shipped" : "pending" },
+      orderData: { ...orderData, orderStatus: ship ? 'shipped' : 'pending' },
       orderItems: products.map((product) => {
         const selectedProduct = selectedProducts[product.itemId];
         return {
@@ -310,25 +312,25 @@ const AdminCheckout = () => {
           unitMRP: product.unitMRP,
           quantity: selectedProduct.quantity,
           discount:
-            discountType === "manual"
-              ? "0"
-              : product.discountValue?.toString() || "0",
+            discountType === 'manual'
+              ? '0'
+              : product.discountValue?.toString() || '0',
           purchasePrice: product.purchasePrice.toString(),
           salePrice:
             selectedProduct.salePrice === undefined
               ? product.salePrice
               : selectedProduct.salePrice.toString(),
-          cess: product.cess?.toString() || "0",
-          cgst: product.cgst?.toString() || "0",
-          sgst: product.sgst?.toString() || "0",
+          cess: product.cess?.toString() || '0',
+          cgst: product.cgst?.toString() || '0',
+          sgst: product.sgst?.toString() || '0',
         };
       }),
       payment: {
         ...payment,
         paymentDate: new Date(),
-        ...(payment.paymentMethod === "upi" &&
+        ...(payment.paymentMethod === 'upi' &&
           !payment.upi && { upi: undefined }),
-        ...(payment.paymentMethod === "card" &&
+        ...(payment.paymentMethod === 'card' &&
           !payment.cardNumber && {
             cardNumber: undefined,
             cardHolderName: undefined,
@@ -347,9 +349,9 @@ const AdminCheckout = () => {
       return;
     }
 
-    successPopup("Order placed successfully!");
+    successPopup('Order placed successfully!');
     clearSelectedProducts();
-    navigate("/orders");
+    navigate(getRoute('/orders'));
   };
 
   const [open, setOpen] = useState(false);
@@ -376,19 +378,19 @@ const AdminCheckout = () => {
     upi: payment.upi,
     cardNumber: payment.cardNumber,
     cardHolderName: payment.cardHolderName,
-    expiryDate: payment.expiryDate || "",
-    cvv: payment.cvv || "",
-    cardType: payment.cardType || "",
-    bankName: payment.bankName || "",
+    expiryDate: payment.expiryDate || '',
+    cvv: payment.cvv || '',
+    cardType: payment.cardType || '',
+    bankName: payment.bankName || '',
     customerId: Number(orderData.customerId),
     customerName: isNewCustomer
-      ? newCustomer.customerName || ""
-      : selectedCustomer?.name || "",
+      ? newCustomer.customerName || ''
+      : selectedCustomer?.name || '',
     customerAddress: isNewCustomer
       ? `${newShipping.addressLine}, ${newShipping.city}, ${newShipping.state}, ${newShipping.pinCode}`
-      : orderData.shippingAddress || "",
-    mobile: isNewCustomer ? newCustomer.mobile || "" : "",
-    gstin: isNewCustomer ? newCustomer.gstin || "" : "",
+      : orderData.shippingAddress || '',
+    mobile: isNewCustomer ? newCustomer.mobile || '' : '',
+    gstin: isNewCustomer ? newCustomer.gstin || '' : '',
     shippingAddress: orderData.shippingAddress,
     totalAmount: totalCost.toFixed(2),
     taxAmount: taxes.toFixed(2),
@@ -400,7 +402,7 @@ const AdminCheckout = () => {
       const selectedProduct = selectedProducts[product.itemId];
       if (!selectedProduct) {
         console.warn(
-          `Product with ID ${product.itemId} is missing from selectedProducts.`,
+          `Product with ID ${product.itemId} is missing from selectedProducts.`
         );
         return null;
       }
@@ -412,10 +414,10 @@ const AdminCheckout = () => {
         discount: product.discountValue,
         purchasePrice: product.purchasePrice,
         salePrice: product.salePrice,
-        hsn: product.hsn || "",
-        cess: product.cess || "0",
-        cgst: product.cgst || "0",
-        sgst: product.sgst || "0",
+        hsn: product.hsn || '',
+        cess: product.cess || '0',
+        cgst: product.cgst || '0',
+        sgst: product.sgst || '0',
       };
     }),
   };
@@ -439,22 +441,22 @@ const AdminCheckout = () => {
     }));
   };
 
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
 
   return (
     <PageAnimate nostyle>
       <main className="p-6 w-full flex flex-col gap-8 bg-white rounded-xl">
         <section className="p-4 w-full flex items-center justify-between">
-          <button className={""} onClick={() => navigate("/shop")}>
+          <button className={''} onClick={() => navigate(getRoute('/shop') === '/customer/shop' ? '/customer' : '/shop')}>
             <ArrowBackIosNewIcon />
             Back to Shop
           </button>
-          <div className={"flex gap-2 items-center"}>
+          <div className={'flex gap-2 items-center'}>
             <div>
               <MouseHoverPopover
                 triggerElement={
                   <Button
-                    variant={"outlined"}
+                    variant={'outlined'}
                     color="primary"
                     onClick={handleOpen}
                   >
@@ -470,7 +472,7 @@ const AdminCheckout = () => {
                 aria-describedby="invoice-modal-description"
               >
                 <section id="invoice">
-                  {TemplateType === "short" ? (
+                  {TemplateType === 'short' ? (
                     <ShortInvoiceTemplate
                       invoice={invoiceReport}
                       Organization={organization}
@@ -495,8 +497,8 @@ const AdminCheckout = () => {
               onClick={() => setShip(!ship)}
             >
               Instant Ship?
-              <span class={"text-rose-500 font-medium"}>
-                {ship ? "Yes" : "No"}
+              <span class={'text-rose-500 font-medium'}>
+                {ship ? 'Yes' : 'No'}
               </span>
             </div>
           </div>
@@ -511,8 +513,8 @@ const AdminCheckout = () => {
           </section>
         ) : (
           <h1 className="text-slate-500 p-4 idms-control">
-            {" "}
-            Nothing to show :p{" "}
+            {' '}
+            Nothing to show :p{' '}
           </h1>
         )}
 
@@ -591,7 +593,7 @@ const AdminCheckout = () => {
                 </Select>
               </FormControl>
 
-              {selectedPaymentMethod === "upi" && (
+              {selectedPaymentMethod === 'upi' && (
                 <TextField
                   label="UPI ID"
                   variant="outlined"
@@ -604,7 +606,7 @@ const AdminCheckout = () => {
                 />
               )}
 
-              {selectedPaymentMethod === "card" && (
+              {selectedPaymentMethod === 'card' && (
                 <>
                   <TextField
                     label="Card Number"
@@ -674,12 +676,12 @@ const AdminCheckout = () => {
                 </>
               )}
 
-              {(selectedPaymentMethod === "cash" ||
-                selectedPaymentMethod === "credit") && (
+              {(selectedPaymentMethod === 'cash' ||
+                selectedPaymentMethod === 'credit') && (
                 <Typography variant="body1" className="mb-4">
-                  No additional information required for{" "}
+                  No additional information required for{' '}
                   {selectedPaymentMethod.charAt(0).toUpperCase() +
-                    selectedPaymentMethod.slice(1)}{" "}
+                    selectedPaymentMethod.slice(1)}{' '}
                   payments.
                 </Typography>
               )}
@@ -696,14 +698,14 @@ const AdminCheckout = () => {
                   onClick={() => {
                     let hasWarnings = false;
 
-                    if (selectedPaymentMethod === "upi" && !payment.upi) {
+                    if (selectedPaymentMethod === 'upi' && !payment.upi) {
                       errorPopup(
-                        "You selected UPI but didn't provide a UPI ID.",
+                        "You selected UPI but didn't provide a UPI ID."
                       );
                       hasWarnings = true;
                     }
 
-                    if (selectedPaymentMethod === "card") {
+                    if (selectedPaymentMethod === 'card') {
                       const {
                         cardNumber,
                         cardHolderName,
@@ -721,7 +723,7 @@ const AdminCheckout = () => {
                         !bankName
                       ) {
                         errorPopup(
-                          "You selected Card but didn't provide all card details.",
+                          "You selected Card but didn't provide all card details."
                         );
                         hasWarnings = true;
                       }
