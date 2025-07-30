@@ -16,10 +16,11 @@ const Settings = () => {
   useEffect(() => {
     const fetchThemeColors = async () => {
       try {
+        
         const data = await getData("/settings/theme/colors");
         setPrimaryColor(data.primary);
         setAccentColor(data.accent);
-
+        
         document.documentElement.style.setProperty("--color-primary", data.primary);
         document.documentElement.style.setProperty("--color-accent", data.accent);
       } catch (err) {
@@ -27,8 +28,9 @@ const Settings = () => {
         errorPopup("Failed to load theme colors");
       }
     };
-
-    fetchThemeColors();
+    
+    // TODO : Ask backend to implement the API
+    // fetchThemeColors();
   }, []);
 
   const handleColorChange = async () => {

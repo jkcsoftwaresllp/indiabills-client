@@ -170,10 +170,11 @@ const Setup = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const answer = await checkSetup();
-      if (!answer) {
-        navigate("/login");
-      }
+      // TODO : Ask to implelement this API
+      // const answer = await checkSetup();
+      // if (!answer) {
+      //   navigate("/login");
+      // }
     }
     fetchData().then();
   }, [navigate]);
@@ -218,7 +219,7 @@ const Setup = () => {
     if (logo) {
       const ImageData = await renameAndOptimize(
         organization.organizationName,
-        logo,
+        logo
       );
       const response = await uploadImg(ImageData.image, true);
       if (response !== 200) {
@@ -315,7 +316,7 @@ const Setup = () => {
 
   /* ADD WAREHOUSE */
   const [locationFormData, setLocationFormData] = useState(
-    initializeFormData(LocationMetadata),
+    initializeFormData(LocationMetadata)
   );
 
   const submitLocation = () => {

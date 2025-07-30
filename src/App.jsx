@@ -1,27 +1,27 @@
 // App.jsx
-import Sidebar from '../src/layouts/default/Sidebar';
-import Popup from '../src/components/core/Popup';
-import AuditLogTable from '../src/pages/more/audit';
-import { Outlet } from 'react-router-dom';
-import CircularProgress from '@mui/material/CircularProgress';
-import './App.css';
-import Header from './layouts/default/Header';
-import { checkSetup, getData } from './network/api/index';
-import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { getSession } from './utils/cacheHelper';
-import { AuthProvider } from './store/context';
-import { HotKeys } from 'react-hotkeys';
-import Routing from '../src/routes/router';
-import PageAnimate from './components/Animate/PageAnimate';
-import { useStore } from './store/store';
-import CommandPalette from './components/core/CommandPallete';
-import { useHotkeys } from 'react-hotkeys-hook';
-import styles from './App.module.css';
-import ReportsLayout from './components/reports/ReportsLayout';
-import Setup from '../src/pages/setup/Setup';
-import Login from '../src/pages/user/Login';
-import CustomerLogin from '../src/pages/customer/CustomerLogin';
+import Sidebar from "../src/layouts/default/Sidebar";
+import Popup from "../src/components/core/Popup";
+import AuditLogTable from "../src/pages/more/audit";
+import { Outlet } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+import "./App.css";
+import Header from "./layouts/default/Header";
+import { checkSetup, getData } from "./network/api/index";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getSession } from "./utils/cacheHelper";
+import { AuthProvider } from "./store/context";
+import { HotKeys } from "react-hotkeys";
+import Routing from "../src/routes/router";
+import PageAnimate from "./components/Animate/PageAnimate";
+import { useStore } from "./store/store";
+import CommandPalette from "./components/core/CommandPallete";
+import { useHotkeys } from "react-hotkeys-hook";
+import styles from "./App.module.css";
+import ReportsLayout from "./components/reports/ReportsLayout";
+import Setup from "../src/pages/setup/Setup";
+import Login from "../src/pages/user/Login";
+import CustomerLogin from "../src/pages/customer/CustomerLogin";
 
 function App() {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ function App() {
 
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
-  useHotkeys('ctrl+shift+p', (e) => {
+  useHotkeys("ctrl+shift+p", (e) => {
     e.preventDefault();
     setIsCommandPaletteOpen(true);
   });
@@ -44,22 +44,23 @@ function App() {
   useEffect(() => {
     const fetchThemeColors = async () => {
       try {
-        const data = await getData('/settings/theme/colors');
+        const data = await getData("/settings/theme/colors");
         document.documentElement.style.setProperty(
-          '--color-primary',
+          "--color-primary",
           data.primary
         );
         document.documentElement.style.setProperty(
-          '--color-accent',
+          "--color-accent",
           data.accent
         );
       } catch (err) {
-        console.error('Error fetching theme colors:', err);
+        console.error("Error fetching theme colors:", err);
         // Optionally handle the error
       }
     };
 
-    fetchThemeColors();
+    // TODO : Ask backend to implement the API
+    // fetchThemeColors();
   }, []);
 
   useEffect(() => {
@@ -67,10 +68,10 @@ function App() {
       event.preventDefault();
     };
 
-    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener("contextmenu", handleContextMenu);
 
     return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener("contextmenu", handleContextMenu);
     };
   }, []);
 
@@ -78,7 +79,7 @@ function App() {
     async function fetchData() {
       if (session === null) {
         // Always redirect to unified login page
-        navigate('/login');
+        navigate("/login");
       }
     }
 
@@ -86,27 +87,27 @@ function App() {
   }, []);
 
   const keyMap = {
-    SHOW_POPUP: 'ctrl+k',
-    GO_HOME: 'ctrl+h',
+    SHOW_POPUP: "ctrl+k",
+    GO_HOME: "ctrl+h",
   };
 
   const handlers = {
     SHOW_POPUP: () => {
-      console.log('Popup shortcut triggered');
+      console.log("Popup shortcut triggered");
     },
     GO_HOME: () => {
-      navigate('/');
+      navigate("/");
     },
   };
 
   // Determine if we should show the default layout (sidebar, header, etc.)
   const showDefaultLayout =
-    location.pathname !== '/setup' && 
-    location.pathname !== '/login' && 
-    location.pathname !== '/customer/login' &&
-    !location.pathname.startsWith('/customer') &&
-    location.pathname !== '/customer/login' &&
-    !location.pathname.startsWith('/customer');
+    location.pathname !== "/setup" &&
+    location.pathname !== "/login" &&
+    location.pathname !== "/customer/login" &&
+    !location.pathname.startsWith("/customer") &&
+    location.pathname !== "/customer/login" &&
+    !location.pathname.startsWith("/customer");
 
   return (
     <AuthProvider>
@@ -118,7 +119,7 @@ function App() {
               {/* Sidebar */}
               <div
                 className={`${styles.sidebarWrapper} ${
-                  collapse ? styles.collapsed : ''
+                  collapse ? styles.collapsed : ""
                 }`}
               >
                 <Sidebar />
@@ -132,7 +133,8 @@ function App() {
                   </ReportsLayout>
                 </main>
                 <Popup />
-                <AuditLogTable />
+                {/* <AuditLogTable /> */}
+                {/* TODO : Ask backend to implement the pending API */}
               </div>
             </div>
           ) : (
