@@ -62,7 +62,7 @@ const EditBatch = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getRow(`/inventory/edit/${batchId}`);
+      const data = await getRow(`/internal/warehouses/${id}`);
       const batch = data[0];
       setBatchData(batch);
 
@@ -282,7 +282,7 @@ const EditBatch = () => {
 
     console.log(formState);
 
-    const response = await updatePut(`/inventory/edit/${batchId}`, formState);
+    const response = await updatePut(`/internal/warehouses/${id}`, formState);
     if (response !== 200) {
       console.error("Failed to update batch");
       errorPopup("Failed to update the batch");
