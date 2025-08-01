@@ -35,7 +35,7 @@ import {
   Warehouse as WarehouseIcon,
 } from "@mui/icons-material";
 import { NavLink, useNavigate } from "react-router-dom";
-import { getStuff, getCount, deleteRow } from "../../network/api";
+import { getStuff, getCount, deleteRow, getWarehouses } from "../../network/api";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import InventoryTable from "./InventoryTable";
 import Checklist from "../../components/FormComponent/Checklist";
@@ -145,7 +145,7 @@ const ViewInventory = () => {
         const [pData, sData, wData] = await Promise.all([
           getCount("/products/count"),
           getCount("/suppliers/count"),
-          getStuff("/inventory/warehouses"),
+          getWarehouses(),
         ]);
 
         setPCount(pData);
