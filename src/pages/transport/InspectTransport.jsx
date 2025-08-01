@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getRow } from "../../network/api";
+import { getTransportPartnerById } from "../../network/api";
 import InspectData from "../../layouts/form/InspectData";
 import InputBox from "../../components/FormComponent/InputBox";
 import { Box, Typography, CircularProgress } from "@mui/material";
@@ -8,19 +8,19 @@ import { handleFormFieldChange } from "../../utils/FormHelper";
 import PageAnimate from "../../components/Animate/PageAnimate";
 
 const InspectTransport = () => {
-	const { transportId } = useParams();
+	const { id } = useParams();
 	const [data, setData] = useState({});
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const response = await getRow(`/transport/edit/${transportId}`);
+			const response = await getTransportPartnerById(id);
 			setData(response);
 			setLoading(false);
 		};
 
 		fetchData();
-	}, [transportId]);
+	}, [id]);
 
 	const handleChange = handleFormFieldChange(setData);
 
@@ -28,37 +28,32 @@ const InspectTransport = () => {
 		{
 			category: "Basic Information",
 			elements: [
-				<InputBox key="transportId" name="transportId" type="string" value={data.transportId} onChange={handleChange} placeholder="Transport ID" readOnly />,
-				<InputBox key="transportName" name="transportName" type="string" value={data.transportName} onChange={handleChange} placeholder="" required />,
+				<InputBox key="id" name="id" type="string" value={data.id} onChange={handleChange} placeholder="Transport ID" readOnly />,
+				<InputBox key="name" name="name" type="string" value={data.name} onChange={handleChange} placeholder="" required />,
 				<InputBox key="businessName" name="businessName" type="string" value={data.businessName} onChange={handleChange} placeholder="" required />,
-				<InputBox key="vehicleName" name="vehicleName" type="string" value={data.vehicleName} onChange={handleChange} placeholder="" required />,
+				<InputBox key="contactPerson" name="contactPerson" type="string" value={data.contactPerson} onChange={handleChange} placeholder="" required />,
 				<InputBox key="email" name="email" type="string" value={data.email} onChange={handleChange} placeholder="example@domain.com" required />,
-				<InputBox key="mobileNumber" name="mobileNumber" type="number" value={data.mobileNumber} onChange={handleChange} placeholder="XXXXXX" required />,
-				<InputBox key="alternateMobileNumber" name="alternateMobileNumber" type="number" value={data.alternateMobileNumber} onChange={handleChange} placeholder="XXXXXX" />,
-				<InputBox key="status" name="status" type="string" value={data.status} onChange={handleChange} placeholder="Active/Inactive" required />,
+				<InputBox key="phone" name="phone" type="string" value={data.phone} onChange={handleChange} placeholder="XXXXXX" required />,
+				<InputBox key="alternatePhone" name="alternatePhone" type="string" value={data.alternatePhone} onChange={handleChange} placeholder="XXXXXX" />,
+				<InputBox key="vehicleDetails" name="vehicleDetails" type="string" value={data.vehicleDetails} onChange={handleChange} placeholder="Vehicle Details" required />,
 			],
 		},
 		{
-			category: "Address Details",
+			category: "Address & Rate Details",
 			elements: [
-				<InputBox key="addressLine1" name="addressLine1" type="string" value={data.addressLine1} onChange={handleChange} placeholder="" required />,
-				<InputBox key="addressLine2" name="addressLine2" type="string" value={data.addressLine2} onChange={handleChange} placeholder="" />,
-				<InputBox key="landmark" name="landmark" type="string" value={data.landmark} onChange={handleChange} placeholder="" />,
+				<InputBox key="addressLine" name="addressLine" type="string" value={data.addressLine} onChange={handleChange} placeholder="" required />,
 				<InputBox key="city" name="city" type="string" value={data.city} onChange={handleChange} placeholder="" required />,
-				<InputBox key="district" name="district" type="string" value={data.district} onChange={handleChange} placeholder="" required />,
 				<InputBox key="state" name="state" type="string" value={data.state} onChange={handleChange} placeholder="" required />,
-				<InputBox key="pinCode" name="pinCode" type="number" value={data.pinCode} onChange={handleChange} placeholder="123456" required />,
-				<InputBox key="branchOffice" name="branchOffice" type="string" value={data.branchOffice} onChange={handleChange} placeholder="Office" required />,
+				<InputBox key="pinCode" name="pinCode" type="string" value={data.pinCode} onChange={handleChange} placeholder="123456" required />,
+				<InputBox key="baseRate" name="baseRate" type="number" value={data.baseRate} onChange={handleChange} placeholder="0" required />,
+				<InputBox key="ratePerKm" name="ratePerKm" type="number" value={data.ratePerKm} onChange={handleChange} placeholder="0" required />,
 			],
 		},
 		{
-			category: "Driver Details",
+			category: "Legal Details",
 			elements: [
-				<InputBox key="aadharNumber" name="aadharNumber" type="number" value={data.aadharNumber} onChange={handleChange} placeholder="1234567890" required />,
-				<InputBox key="panNumber" name="panNumber" type="number" value={data.panNumber} onChange={handleChange} placeholder="1234567890" required />,
-				<InputBox key="driverName" name="driverName" type="string" value={data.driverName} onChange={handleChange} placeholder="Name" required />,
-				<InputBox key="driverMobileNumber" name="driverMobileNumber" type="number" value={data.driverMobileNumber} onChange={handleChange} placeholder="1234567890" required />,
-				<InputBox key="driverAlternateNumber" name="driverAlternateNumber" type="number" value={data.driverAlternateNumber} onChange={handleChange} placeholder="1234567890" />,
+				<InputBox key="gstNumber" name="gstNumber" type="string" value={data.gstNumber} onChange={handleChange} placeholder="GST Number" required />,
+				<InputBox key="panNumber" name="panNumber" type="string" value={data.panNumber} onChange={handleChange} placeholder="PAN Number" required />,
 			],
 		},
 	];
@@ -75,9 +70,9 @@ const InspectTransport = () => {
 		<PageAnimate>
 			<Box sx={{ p: 3 }}>
 				<Typography variant="h4" gutterBottom>
-					#{transportId}
+					#{id}
 				</Typography>
-				<InspectData data={data} metadata={metadata} title={"transport"} id={transportId} />
+				<InspectData data={data} metadata={metadata} title={"transport"} id={id} />
 			</Box>
 		</PageAnimate>
 	);
