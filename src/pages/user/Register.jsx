@@ -74,24 +74,25 @@ const Register = () => {
     }
 
     try {
-    //   const response = await addRow('/v1/organization/register', {
-    //     firstName: data.firstName,
-    //     lastName: data.lastName,
-    //     email: data.email,
-    //     password: data.password,
-    //     phone: data.phone,
-    //   });
+      const response = await addRow('/external/org/owner/signup', {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+        phone: data.phone,
+      });
     console.log('Start submitting the request' )
-        const response = await axios.post('http://localhost:8000/api/v1/organization/register/', {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            password: data.password,
-            phone: data.phone,
-        });
-        console.log('response received')
+        // const response = await axios.post('http://localhost:8000/api/v1/organization/register/', {
+        // const response = await axios.post('https://api.indiabills.in/v1/external/org/owner/signup', {
+        //     firstName: data.firstName,
+        //     lastName: data.lastName,
+        //     email: data.email,
+        //     password: data.password,
+        //     phone: data.phone,
+        // });
+    console.log('response received', response)
 
-      if (response === 200) {
+      if (response === 201) {
         successPopup('Registration successful! Please login with your credentials.');
         navigate('/login');
       } else {
