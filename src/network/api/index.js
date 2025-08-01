@@ -1,4 +1,6 @@
 import serverInstance from "./api-config";
+import { getWarehouses, createWarehouse, updateWarehouse, deleteWarehouse, getWarehouseById } from './warehouseApi';
+import { getTransportPartners, createTransportPartner, updateTransportPartner, deleteTransportPartner, getTransportPartnerById } from './transportApi';
 
 async function getStuff(path) {
   try {
@@ -185,7 +187,7 @@ export async function getInvoiceCount() {
 
 async function apiLogin(payload) {
   try {
-    return await serverInstance.post("/api/v1/auth/login", payload);
+    return await serverInstance.post("/auth/login", payload);
   } catch (e) {
     console.error(`Failed to login server:`, e.response);
     return e.response;
@@ -273,5 +275,16 @@ export {
   updateStuff,
   deleteStuff,
   postData,
+  // Warehouse APIs
+  getWarehouses,
+  createWarehouse,
+  updateWarehouse,
+  deleteWarehouse,
+  getWarehouseById,
+  // Transport APIs
+  getTransportPartners,
+  createTransportPartner,
+  updateTransportPartner,
+  deleteTransportPartner,
+  getTransportPartnerById,
 };
-
