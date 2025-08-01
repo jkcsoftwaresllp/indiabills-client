@@ -17,7 +17,7 @@ export const getBaseURL = () => {
     // console.log("baseURL",baseURL);
 
     if (port === "4173") {
-      return "http://localhost:8000/api/v1";
+      return "http://localhost:8000/v1";
     }
 
     // Append the API path
@@ -25,7 +25,7 @@ export const getBaseURL = () => {
 
     return baseURL;
   } else {
-    return url_maybe + "/api/v1";
+    return url_maybe + "/v1";
   }
 };
 
