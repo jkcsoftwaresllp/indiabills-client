@@ -6,7 +6,7 @@ import InputBox from "../../components/FormComponent/InputBox";
 import Dropdown from "../../components/FormComponent/Dropdown";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { addRow } from "../../network/api";
+import { createTransportPartner } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Timeline from "../../components/FormComponent/Timeline";
@@ -17,7 +17,24 @@ const AddTransport = () => {
 	const { successPopup, errorPopup } = useStore();
 	const navigate = useNavigate();
 
-	const [formData, setFormData] = useState(initializeFormData(TransportMetadata));
+	const [formData, setFormData] = useState({
+		name: '',
+		businessName: '',
+		contactPerson: '',
+		email: '',
+		phone: '',
+		alternatePhone: '',
+		addressLine: '',
+		city: '',
+		state: '',
+		pinCode: '',
+		gstNumber: '',
+		panNumber: '',
+		vehicleDetails: '',
+		baseRate: 0,
+		ratePerKm: 0,
+		isActive: true
+	});
 	const [page, setPage] = useState(1);
 
 	const backPage = useCallback(() => {
@@ -41,7 +58,7 @@ const AddTransport = () => {
 	};
 
 	const submit = async () => {
-		addRow("/transport/add", formData).then((status) => {
+		createTransportPartner(formData).then((status) => {
 			if (status === 201 || status === 200) {
 				successPopup("Transport registered successfully!");
 				navigate('/transport');
@@ -52,6 +69,7 @@ const AddTransport = () => {
 	};
 
 	const steps = ["Basic Info", "Address Details", "Driver Details"];
+	// const steps = ["Basic Info", "Address & Rates", "Legal Details"];
 
 	return (
 		<PageAnimate>
@@ -71,7 +89,7 @@ const AddTransport = () => {
 						<main>
 							{page === 1 && <BasicPage formData={formData} setFormData={setFormData} handleChange={handleChange} />}
 							{page === 2 && <AddressPage formData={formData} setFormData={setFormData} handleChange={handleChange} />}
-							{page === 3 && <DriverPage formData={formData} setFormData={setFormData} handleChange={handleChange} />}
+							{page === 3 && <LegalPage formData={formData} setFormData={setFormData} handleChange={handleChange} />}
 						</main>
 
 						<div className={"p-2 flex flex-col gap-4"}>
@@ -93,13 +111,13 @@ const BasicPage = React.memo(({ formData, handleChange }) => {
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="transportName" type="string" label="Transport Name" placeholder={"__________"} value={formData.transportName} onChange={handleChange} />
+					<InputBox name="name" type="string" label="Transport Name" placeholder={"__________"} value={formData.name} onChange={handleChange} />
 					<InputBox name="businessName" type="string" label="Business Name" placeholder={"__________"} value={formData.businessName} onChange={handleChange} />
-					<InputBox name="vehicleName" type="string" label="Vehicle Name" placeholder={"__________"} value={formData.vehicleName} onChange={handleChange} />
+					<InputBox name="contactPerson" type="string" label="Contact Person" placeholder={"__________"} value={formData.contactPerson} onChange={handleChange} />
 					<InputBox name="email" type="string" label="Email" placeholder={"example@domain.com"} value={formData.email} onChange={handleChange} />
-					<InputBox name="mobileNumber" type="number" label="Mobile Number" placeholder={"XXXXXX"} value={formData.mobileNumber} onChange={handleChange} />
-					<InputBox name="alternateMobileNumber" type="number" label="Alternate Mobile Number" placeholder={"XXXXXX"} value={formData.alternateMobileNumber} onChange={handleChange} />
-					<InputBox name="status" type="string" label="Status" placeholder={"Active/Inactive"} value={formData.status} onChange={handleChange} />
+					<InputBox name="phone" type="string" label="Phone" placeholder={"XXXXXX"} value={formData.phone} onChange={handleChange} />
+					<InputBox name="alternatePhone" type="string" label="Alternate Phone" placeholder={"XXXXXX"} value={formData.alternatePhone} onChange={handleChange} />
+					<InputBox name="vehicleDetails" type="string" label="Vehicle Details" placeholder={"Vehicle information"} value={formData.vehicleDetails} onChange={handleChange} />
 				</main>
 			</div>
 		</MultiPageAnimate>
@@ -113,14 +131,12 @@ const AddressPage = React.memo(({ formData, handleChange, setFormData }) => {
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="addressLine1" type="string" label="Address Line 1" placeholder={"__________"} value={formData.addressLine1} onChange={handleChange} />
-					<InputBox name="addressLine2" type="string" label="Address Line 2" placeholder={"__________"} value={formData.addressLine2} onChange={handleChange} />
-					<InputBox name="landmark" type="string" label="Landmark" placeholder={"__________"} value={formData.landmark} onChange={handleChange} />
+					<InputBox name="addressLine" type="string" label="Address Line" placeholder={"__________"} value={formData.addressLine} onChange={handleChange} />
 					<InputBox name="city" type="string" label="City" placeholder={"__________"} value={formData.city} onChange={handleChange} />
-					<InputBox name="district" type="string" label="District" placeholder={"__________"} value={formData.district} onChange={handleChange} />
 					<Dropdown name={"state"} label="State" options={getOption("state")} selectedData={formData.state} setValue={setFormData} />
-					<InputBox name="pinCode" type="number" label="Pin Code" placeholder={"123456"} value={formData.pinCode} onChange={handleChange} />
-					<InputBox name="branchOffice" type="string" label="Branch Office" placeholder={"Office"} value={formData.branchOffice} onChange={handleChange} />
+					<InputBox name="pinCode" type="string" label="Pin Code" placeholder={"123456"} value={formData.pinCode} onChange={handleChange} />
+					<InputBox name="baseRate" type="number" label="Base Rate" placeholder={"0"} value={formData.baseRate} onChange={handleChange} />
+					<InputBox name="ratePerKm" type="number" label="Rate Per KM" placeholder={"0"} value={formData.ratePerKm} onChange={handleChange} />
 				</main>
 			</div>
 		</MultiPageAnimate>
@@ -129,20 +145,17 @@ const AddressPage = React.memo(({ formData, handleChange, setFormData }) => {
 
 AddressPage.displayName = 'AddressPage';
 
-const DriverPage = React.memo(({ formData, handleChange }) => {
+const LegalPage = React.memo(({ formData, handleChange }) => {
 	return (
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="aadharNumber" type="number" label="Aadhar Number" placeholder={"1234567890"} value={formData.aadharNumber} onChange={handleChange} />
-					<InputBox name="panNumber" type="number" label="Pan Number" placeholder={"1234567890"} value={formData.panNumber} onChange={handleChange} />
-					<InputBox name="driverName" type="string" label="Driver Name" placeholder={"Name"} value={formData.driverName} onChange={handleChange} />
-					<InputBox name="driverMobileNumber" type="number" label="Driver Mobile Number" placeholder={"1234567890"} value={formData.driverMobileNumber} onChange={handleChange} />
-					<InputBox name="driverAlternateNumber" type="number" label="Driver Alternate Number" placeholder={"1234567890"} value={formData.driverAlternateNumber} onChange={handleChange} />
+					<InputBox name="gstNumber" type="string" label="GST Number" placeholder={"GST Number"} value={formData.gstNumber} onChange={handleChange} />
+					<InputBox name="panNumber" type="string" label="PAN Number" placeholder={"PAN Number"} value={formData.panNumber} onChange={handleChange} />
 				</main>
 			</div>
 		</MultiPageAnimate>
 	);
 });
 
-DriverPage.displayName = 'DriverPage';
+LegalPage.displayName = 'LegalPage';
