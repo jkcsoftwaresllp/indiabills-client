@@ -19,7 +19,7 @@ import {
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useEffect, useState } from "react";
-import { getStuff, addRow } from "../../network/api";
+import { getStuff, addRow, getWarehouses } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -45,7 +45,7 @@ const AddInventory = () => {
 
   const [selectedLocation, setSelectedLocation] = useState(null);
   const fetchLocations = async () => {
-    const data = await getStuff("/inventory/warehouses");
+    const data = await getWarehouses();
     setLocations(data);
   };
 
