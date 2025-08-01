@@ -82,6 +82,23 @@ const LoginPage = () => {
       navigate('/customer');
       return;
     }
+
+    // Check for hardcoded operator credentials
+    if (data.email === 'operator@example.com' && data.password === 'operator123') {
+      const operatorPayload = {
+        id: 998,
+        name: 'Jane Operator',
+        role: 'operator',
+        avatar: 'default.webp',
+        token: 'hardcoded-operator-token',
+      };
+
+      login(operatorPayload);
+      successPopup('Welcome to Operator Portal!');
+      navigate('/operator');
+      return;
+    }
+
     try {
       const response = await apiLogin({
         email: data.email,
@@ -117,6 +134,8 @@ const LoginPage = () => {
       // Redirect based on user role
       if (payload.role === 'customer') {
         navigate('/customer');
+      } else if (payload.role === 'operator') {
+        navigate('/operator');
       } else {
         navigate('/');
       }
@@ -151,7 +170,7 @@ const LoginPage = () => {
               type="email"
               className={styles.input}
               onChange={handleInputChange}
-              placeholder="admin@example.com or customer@example.com"
+              placeholder="admin123, operator123, or customer123"
               value={data.email}
               required
             />
@@ -197,6 +216,7 @@ const LoginPage = () => {
           </p>
           <div className="mt-2 text-xs text-gray-300">
             <p>Demo Credentials:</p>
+            <p>Operator: operator@example.com / operator123</p>
             <p>Customer: customer@example.com / customer123</p>
             <p>Admin: Use your existing admin credentials</p>
           </div>
