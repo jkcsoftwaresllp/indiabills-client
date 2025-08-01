@@ -17,6 +17,7 @@ import StartSetup from "../pages/setup/Setup";
 import SetupPage from "../pages/setup/SetupPage";
 
 import CustomerRoutes from "./customerRoutes";
+import OperatorRoutes from './operatorRoutes'
 
 const Routing = () => {
   const location = useLocation();
@@ -43,6 +44,9 @@ const Routing = () => {
 
             {/* CUSTOMER PORTAL */}
             <Route path="/customer/*" element={<CustomerRoutes />} />
+
+            {/* OPERATOR PORTAL */}
+            <Route path="/operator/*" element={<OperatorRoutes />} />
 
             <Route path="*" element={<>404 Route Not Found</>} />
           </Routes>
