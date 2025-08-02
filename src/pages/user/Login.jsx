@@ -37,6 +37,8 @@ const LoginPage = () => {
       // Redirect based on existing session role
       if (session.role === 'customer') {
         navigate('/customer');
+      } else if (session.role === 'operator') {
+        navigate('/operator');
       } else {
         navigate('/');
       }
@@ -67,7 +69,7 @@ const LoginPage = () => {
       return;
     }
 
-    // Check for hardcoded customer credentials first
+    // Check for hardcoded customer credentials
     if (data.email === 'customer@example.com' && data.password === 'customer123') {
       const customerPayload = {
         id: 999,
@@ -99,6 +101,23 @@ const LoginPage = () => {
       return;
     }
 
+    // Check for hardcoded admin credentials
+    if (data.email === 'admin@example.com' && data.password === 'admin123') {
+      const adminPayload = {
+        id: 997,
+        name: 'Admin Master',
+        role: 'admin',
+        avatar: 'default.webp',
+        token: 'hardcoded-admin-token',
+      };
+
+      login(adminPayload);
+      successPopup('Welcome Admin!');
+      navigate('/');
+      return;
+    }
+
+    // Fallback to API login
     try {
       const response = await apiLogin({
         email: data.email,
@@ -130,7 +149,7 @@ const LoginPage = () => {
 
       login(payload);
       successPopup('Welcome back!');
-      
+
       // Redirect based on user role
       if (payload.role === 'customer') {
         navigate('/customer');
@@ -216,9 +235,9 @@ const LoginPage = () => {
           </p>
           <div className="mt-2 text-xs text-gray-300">
             <p>Demo Credentials:</p>
+            <p>Admin: admin@example.com / admin123</p>
             <p>Operator: operator@example.com / operator123</p>
             <p>Customer: customer@example.com / customer123</p>
-            <p>Admin: Use your existing admin credentials</p>
           </div>
         </div>
       </form>

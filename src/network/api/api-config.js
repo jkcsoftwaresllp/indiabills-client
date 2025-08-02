@@ -21,7 +21,7 @@ export const getBaseURL = () => {
     }
 
     // Append the API path
-    baseURL += "/api/v1";
+    baseURL += "/v1";
 
     return baseURL;
   } else {
