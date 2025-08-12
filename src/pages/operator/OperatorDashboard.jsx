@@ -23,6 +23,27 @@ const OperatorDashboard = () => {
       color: 'bg-blue-500'
     },
     {
+      title: 'Stock Movements',
+      description: 'Track all inventory movements and transactions',
+      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/inventory/movements',
+      color: 'bg-cyan-500'
+    },
+    {
+      title: 'Stock Levels',
+      description: 'Monitor current stock levels across warehouses',
+      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/inventory/stock',
+      color: 'bg-teal-500'
+    },
+    {
+      title: 'Reconciliations',
+      description: 'Perform and manage inventory reconciliations',
+      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/inventory/reconciliations',
+      color: 'bg-emerald-500'
+    },
+    {
       title: 'Items Catalog',
       description: 'Add, edit, and manage product items',
       icon: <ItemsIcon sx={{ fontSize: 48 }} />,
