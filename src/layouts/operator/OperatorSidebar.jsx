@@ -7,59 +7,93 @@ import { fetchLogo } from '../../network/api';
 import { getBaseURL } from '../../network/api/api-config';
 import { useAuth } from '../../hooks/useAuth';
 import styles from '../default/Sidebar.module.css';
+import {
+  FaHome,
+  FaBox,
+  FaExchangeAlt,
+  FaChartBar,
+  FaSearch,
+  FaTag,
+  FaIndustry,
+  FaGift,
+  FaUsers,
+  FaTruck,
+  FaQuestionCircle,
+  FaTachometerAlt,
+  FaCog,
+  FaTools,
+} from 'react-icons/fa';
 
 const operatorButtons = [
   {
     group: 'Dashboard',
+    icon: <FaTachometerAlt />,
     items: [
       {
         to: '/operator',
-        icon: '🏠',
+        icon: <FaHome />,
         label: 'Dashboard',
       },
     ],
   },
   {
     group: 'Operations',
+    icon: <FaCog />,
     items: [
       {
         to: '/operator/inventory',
-        icon: '📦',
+        icon: <FaBox />,
         label: 'Inventory',
       },
       {
+        to: '/operator/inventory/movements',
+        icon: <FaExchangeAlt />,
+        label: 'Stock Movements',
+      },
+      {
+        to: '/operator/inventory/stock',
+        icon: <FaChartBar />,
+        label: 'Stock Levels',
+      },
+      {
+        to: '/operator/inventory/reconciliations',
+        icon: <FaSearch />,
+        label: 'Reconciliations',
+      },
+      {
         to: '/operator/products',
-        icon: '🏷️',
+        icon: <FaTag />,
         label: 'Items',
       },
       {
         to: '/operator/suppliers',
-        icon: '🏭',
+        icon: <FaIndustry />,
         label: 'Suppliers',
       },
       {
         to: '/operator/offers',
-        icon: '🎁',
+        icon: <FaGift />,
         label: 'Offers',
       },
       {
         to: '/operator/customers',
-        icon: '👥',
+        icon: <FaUsers />,
         label: 'Customers',
       },
       {
         to: '/operator/transport',
-        icon: '🚛',
+        icon: <FaTruck />,
         label: 'Transport',
       },
     ],
   },
   {
     group: 'Support',
+    icon: <FaTools />,
     items: [
       {
         to: '/operator/help',
-        icon: '❓',
+        icon: <FaQuestionCircle />,
         label: 'Help',
       },
     ],
@@ -147,9 +181,7 @@ const OperatorSidebar = () => {
               className={styles.groupTitle}
               onClick={() => toggleGroup(group.group)}
             >
-              <span className={styles.groupIcon}>
-                {group.group === 'Dashboard' ? '📊' : group.group === 'Operations' ? '⚙️' : '🛠️'}
-              </span>
+              <span className={styles.groupIcon}>{group.icon}</span>
               {group.group}
             </button>
             {expandedGroup === group.group && (
