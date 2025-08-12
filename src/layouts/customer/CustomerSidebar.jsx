@@ -7,39 +7,50 @@ import { fetchLogo } from '../../network/api';
 import { getBaseURL } from '../../network/api/api-config';
 import { useAuth } from '../../hooks/useAuth';
 import styles from '../default/Sidebar.module.css';
+import {
+  FaHome,
+  FaBox,
+  FaFileInvoice,
+  FaUser,
+  FaHeadset,
+  FaTachometerAlt,
+  FaCog,
+} from 'react-icons/fa';
 
 const customerButtons = [
   {
     group: 'Dashboard',
+    icon: <FaTachometerAlt />,
     items: [
       {
         to: '/customer',
-        icon: '🏠',
+        icon: <FaHome />,
         label: 'Dashboard',
       },
       {
         to: '/customer/orders',
-        icon: '📦',
+        icon: <FaBox />,
         label: 'My Orders',
       },
       {
         to: '/customer/invoices',
-        icon: '🧾',
+        icon: <FaFileInvoice />,
         label: 'My Invoices',
       },
     ],
   },
   {
     group: 'Account',
+    icon: <FaCog />,
     items: [
       {
         to: '/customer/profile',
-        icon: '👤',
+        icon: <FaUser />,
         label: 'Profile',
       },
       {
         to: '/customer/support',
-        icon: '🎧',
+        icon: <FaHeadset />,
         label: 'Support',
       },
     ],
@@ -47,7 +58,7 @@ const customerButtons = [
 ];
 
 const CustomerSidebar = () => {
-  const { collapse, setCollapse, Organization, setOrganization } = useStore();
+  const { collapse, Organization, setOrganization } = useStore();
   const session = getSession();
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -127,9 +138,7 @@ const CustomerSidebar = () => {
               className={styles.groupTitle}
               onClick={() => toggleGroup(group.group)}
             >
-              <span className={styles.groupIcon}>
-                {group.group === 'Dashboard' ? '📊' : '⚙️'}
-              </span>
+              <span className={styles.groupIcon}>{group.icon}</span>
               {group.group}
             </button>
             {expandedGroup === group.group && (
