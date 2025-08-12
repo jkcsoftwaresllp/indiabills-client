@@ -9,16 +9,28 @@ import { getBaseURL } from "../../network/api/api-config";
 import { useAuth } from "../../hooks/useAuth";
 import styles from "./Sidebar.module.css";
 
+// React Icons
+import { FiBarChart2,
+  FiBriefcase,
+  FiSettings,
+  FiShoppingCart,
+  FiTool } from "react-icons/fi";
+
 const groupIcons = {
-  Dashboard: "\u{1F4CA}",
+  // Dashboard: "\u{1F4CA}",
   // Dashboard: "\u2302",   // House icon
-  Management: "\u{1F4BC}",
+  Dashboard: <FiBarChart2 />,
+  // Management: "\u{1F4BC}",
   // Management: "\u2699",  // Gear icon
-  Operations: "\u{1F6E0}",
+  Management: <FiBriefcase />,
+  // Operations: "\u{1F6E0}",
   // Operations: "\u2692", // Hammer and Pick
-  Shop: "\u{1F6D2}",
+  Operations: <FiTool />,
+  // Shop: "\u{1F6D2}",
   // Shop: "\u26D1",       // Shopping Cart
-  "Setup Dashboard": "\u{1F9F0}", // Toolbox
+  Shop: <FiShoppingCart />,
+  // "Setup Dashboard": "\u{1F9F0}", // Toolbox
+  "Setup Dashboard": <FiSettings />,
 };
 
 const Sidebar = () => {
@@ -103,6 +115,7 @@ const Sidebar = () => {
         <h1 className={styles.orgName}>{Organization.name}</h1>
       </div>
 
+      {/* Navigation */}
       <nav className={styles.nav}>
         {filteredGroups.map((group) => (
           <div key={group.group} className={styles.group}>
@@ -110,7 +123,9 @@ const Sidebar = () => {
               className={styles.groupTitle}
               onClick={() => toggleGroup(group.group)}
             >
-              <span className={styles.groupIcon}>{groupIcons[group.group]}</span>
+              <span className={styles.groupIcon}>
+                {groupIcons[group.group] || <FiSettings />}
+              </span>
               {group.group}
             </button>
             {expandedGroup === group.group && (
@@ -118,7 +133,9 @@ const Sidebar = () => {
                 {group.items.map((button) => (
                   <li key={button.label}>
                     <button
-                      className={`${styles.navItem} ${selectedPath === button.to ? styles.active : ""}`}
+                      className={`${styles.navItem} ${
+                        selectedPath === button.to ? styles.active : ""
+                      }`}
                       onClick={() => handleItemClick(button.to)}
                     >
                       <span className={styles.icon}>{button.icon}</span>
@@ -152,13 +169,22 @@ const Sidebar = () => {
                 Audit
               </button>
             )}
-            <button className={styles.menuItem} onClick={() => window.location.reload()}>
+            <button
+              className={styles.menuItem}
+              onClick={() => window.location.reload()}
+            >
               Refresh
             </button>
-            <button className={styles.menuItem} onClick={() => navigate("/help")}>
+            <button
+              className={styles.menuItem}
+              onClick={() => navigate("/help")}
+            >
               Get Help
             </button>
-            <button className={styles.menuItem} onClick={() => navigate("/settings")}>
+            <button
+              className={styles.menuItem}
+              onClick={() => navigate("/settings")}
+            >
               Settings
             </button>
             <button className={styles.menuItem} onClick={handleLogout}>
