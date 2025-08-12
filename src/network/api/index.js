@@ -1,6 +1,9 @@
 import serverInstance from "./api-config";
 import { getWarehouses, createWarehouse, updateWarehouse, deleteWarehouse, getWarehouseById } from './warehouseApi';
 import { getTransportPartners, createTransportPartner, updateTransportPartner, deleteTransportPartner, getTransportPartnerById } from './transportApi';
+import { getInventoryMovements, getInventoryMovementById, createInventoryMovement } from './inventoryMovementsApi';
+import { getInventoryStock, getInventoryStockById } from './inventoryStockApi';
+import { getReconciliations, getReconciliationById, createReconciliation, getReconciliationDetails, addReconciliationDetails, updateReconciliationStatus } from './reconciliationsApi';
 
 async function getStuff(path) {
   try {
@@ -251,7 +254,7 @@ async function fetchLogo() {
     return response.data;
   } catch (e) {
     console.error(`Failed to fetch the logo:`, e.response);
-    return "";
+    return '';
   }
 }
 
@@ -287,4 +290,18 @@ export {
   updateTransportPartner,
   deleteTransportPartner,
   getTransportPartnerById,
+  // Inventory Movement APIs
+  getInventoryMovements,
+  getInventoryMovementById,
+  createInventoryMovement,
+  // Inventory Stock APIs
+  getInventoryStock,
+  getInventoryStockById,
+  // Reconciliation APIs
+  getReconciliations,
+  getReconciliationById,
+  createReconciliation,
+  getReconciliationDetails,
+  addReconciliationDetails,
+  updateReconciliationStatus,
 };
