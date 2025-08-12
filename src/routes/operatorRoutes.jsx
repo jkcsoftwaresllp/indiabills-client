@@ -10,6 +10,11 @@ const OperatorDashboard = lazy(() => import('../pages/operator/OperatorDashboard
 const ViewInventory = lazy(() => import('../pages/inventory/ViewInventory'));
 const AddInventory = lazy(() => import('../pages/inventory/AddInventory'));
 const EditInventory = lazy(() => import('../pages/inventory/EditInventory'));
+const ViewInventoryMovements = lazy(() => import('../pages/inventory/ViewInventoryMovements'));
+const ViewInventoryStock = lazy(() => import('../pages/inventory/ViewInventoryStock'));
+const ViewReconciliations = lazy(() => import('../pages/inventory/ViewReconciliations'));
+const AddReconciliation = lazy(() => import('../pages/inventory/AddReconciliation'));
+const InspectReconciliation = lazy(() => import('../pages/inventory/InspectReconciliation'));
 
 const ViewProducts = lazy(() => import('../pages/products/ViewProducts'));
 const AddProducts = lazy(() => import('../pages/products/AddProducts'));
@@ -45,6 +50,11 @@ const OperatorRoutes = () => {
           <Route path="inventory" element={<ViewInventory />} />
           <Route path="inventory/add" element={<AddInventory />} />
           <Route path="inventory/:batchId" element={<EditInventory />} />
+          <Route path="inventory/movements" element={<ViewInventoryMovements />} />
+          <Route path="inventory/stock" element={<ViewInventoryStock />} />
+          <Route path="inventory/reconciliations" element={<ViewReconciliations />} />
+          <Route path="inventory/reconciliations/add" element={<AddReconciliation />} />
+          <Route path="inventory/reconciliations/:id" element={<InspectReconciliation />} />
           
           {/* Products Routes */}
           <Route path="products" element={<ViewProducts />} />
