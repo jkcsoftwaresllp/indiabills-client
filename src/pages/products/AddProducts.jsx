@@ -18,11 +18,10 @@ import {
   FormControl,
   FormLabel,
 } from "@mui/material";
-import { addRow } from "../../network/api";
+import { createProduct } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Timeline from "../../components/FormComponent/Timeline";
-import zIndex from "@mui/material/styles/zIndex";
 import { TextInput } from "../../components/FormComponent/TextInput";
 import { BigTextInput } from "../../components/FormComponent/BigTextInput";
 import { DropdownInput } from "../../components/FormComponent/DropdownInput";
@@ -63,20 +62,27 @@ const AddProducts = () => {
       return;
     }
 
-    const finalData = {
-      ...formData,
-      variants: formData.variants?.filter(
-        (variant) => variant.key.trim() !== ""
-      ),
+    // Map form data to new API structure
+    const apiData = {
+      name: formData.itemName,
+      description: formData.description,
+      manufacturer: formData.manufacturer,
+      brand: formData.brand || formData.manufacturer,
+      barcode: formData.upc,
+      dimensions: formData.dimensions,
+      weight: formData.weight,
+      unitOfMeasure: formData.unitOfMeasure || 'piece',
+      purchasePrice: formData.purchaseRate || formData.purchasePrice,
+      salePrice: formData.salePrice,
+      unitMrp: formData.unitMRP,
+      reorderLevel: formData.reorderLevel,
+      maxStockLevel: formData.maxStockLevel || formData.reorderLevel * 10,
+      categoryId: 1, // Default category, should be selected from dropdown
+      isActive: true,
     };
 
-    delete finalData.purchasePriceWithoutTax;
-
-    addRow("/products/add", {
-      ...finalData,
-      purchasePrice: finalData.purchaseRate,
-    }).then((status) => {
-      if (status === 201) {
+    createProduct(apiData).then((status) => {
+      if (status === 201 || status === 200) {
         successPopup("Item added successfully");
         navigate("/products");
       } else {
@@ -84,6 +90,13 @@ const AddProducts = () => {
       }
     });
   }, [formData, invalidForm, errorPopup, successPopup, navigate]);
+
+    const finalData = {
+      ...formData,
+      variants: formData.variants?.filter(
+        (variant) => variant.key.trim() !== ""
+      ),
+    };
 
   const handleVariantChange =
     (index, field) =>
@@ -110,56 +123,56 @@ const AddProducts = () => {
   const steps = ["Basic", "Inventory", "Variants"];
 
   const calculatePurchaseRate = (purchasePriceWithoutTax, taxRate) => {
-    return purchasePriceWithoutTax * (1 + taxRate / 100);
-  };
+  return purchasePriceWithoutTax * (1 + taxRate / 100);
+};
 
-  const calculatePurchasePriceWithoutTax = (purchaseRate, taxRate) => {
-    return purchaseRate / (1 + taxRate / 100);
-  };
+const calculatePurchasePriceWithoutTax = (purchaseRate, taxRate) => {
+  return purchaseRate / (1 + taxRate / 100);
+};
 
-  const handleRateTypeChange = (event) => {
-    setRateType(event.target.value);
-    setFormData((prevState) => ({
-      ...prevState,
-      purchasePriceWithoutTax: 0,
-      purchaseRate: 0,
-    }));
-  };
+const handleRateTypeChange = (event) => {
+  setRateType(event.target.value);
+  setFormData((prevState) => ({
+    ...prevState,
+    purchasePriceWithoutTax: 0,
+    purchaseRate: 0,
+  }));
+};
 
-  useEffect(() => {
-    const totalTax =
-      (formData.cgst || 0) + (formData.sgst || 0) + (formData.cess || 0);
+useEffect(() => {
+  const totalTax =
+   (formData.cgst || 0) + (formData.sgst || 0) + (formData.cess || 0);
 
-    switch (rateType) {
-      case "purchasePriceWithoutTax":
-        setFormData((prevState) => ({
-          ...prevState,
-          purchaseRate: calculatePurchaseRate(
-            prevState.purchasePriceWithoutTax || 0,
-            totalTax
+  switch (rateType) {
+    case "purchasePriceWithoutTax":
+      setFormData((prevState) => ({
+        ...prevState,
+        purchaseRate: calculatePurchaseRate(
+          prevState.purchasePriceWithoutTax || 0,
+           totalTax
           ),
-        }));
-        break;
-      case "purchaseRate":
-        setFormData((prevState) => ({
-          ...prevState,
-          purchasePriceWithoutTax: calculatePurchasePriceWithoutTax(
-            prevState.purchaseRate || 0,
-            totalTax
+      }));
+      break;
+    case "purchaseRate":
+      setFormData((prevState) => ({
+        ...prevState,
+        purchasePriceWithoutTax: calculatePurchasePriceWithoutTax(
+          prevState.purchaseRate || 0,
+           totalTax
           ),
-        }));
-        break;
-      default:
-        break;
-    }
-  }, [
-    formData.cgst,
-    formData.sgst,
-    formData.cess,
-    rateType,
-    formData.purchasePriceWithoutTax,
-    formData.purchaseRate,
-  ]);
+      }));
+      break;
+    default:
+      break;
+  }
+}, [
+  formData.cgst,
+  formData.sgst,
+  formData.cess,
+  rateType,
+  formData.purchasePriceWithoutTax,
+  formData.purchaseRate,
+]);
 
   return (
     <PageAnimate>
@@ -339,7 +352,7 @@ const BasicPage = React.memo(({ formData, handleChange }) => {
 BasicPage.displayName = "BasicPage";
 
 const InventoryPage = React.memo(
-  ({ formData, handleChange, rateType, handleRateTypeChange }) => {
+  ({ formData, setFormData, handleChange, rateType, handleRateTypeChange }) => {
     return (
       <MultiPageAnimate>
         <div className="p-8 flex flex-col items-center gap-8 idms-bg">
@@ -353,13 +366,11 @@ const InventoryPage = React.memo(
               onChange={(e) => handleChange?.(e)}
             />
             <InputBox
-              name={"packSize"}
+              name={"maxStockLevel"}
               type="number"
-              label="Pack size"
-              placeholder={"1"}
-              max={5}
-              maxLength={5}
-              value={formData?.packSize}
+              label="Max Stock Level"
+              placeholder={"100"}
+              value={formData?.maxStockLevel}
               onChange={(e) => handleChange?.(e)}
             />
           </div>
@@ -420,14 +431,14 @@ const InventoryPage = React.memo(
               onChange={handleRateTypeChange}
             >
               <FormControlLabel
-                value="purchasePriceWithoutTax"
-                control={<Radio />}
-                label="Without Tax"
+               value="purchasePriceWithoutTax"
+               control={<Radio />}
+               label="Without Tax"
               />
               <FormControlLabel
-                value="purchaseRate"
-                control={<Radio />}
-                label="With Tax"
+              value="purchaseRate"
+              control={<Radio />}
+              label="With Tax"
               />
             </RadioGroup>
           </FormControl>
@@ -470,22 +481,22 @@ const InventoryPage = React.memo(
               </p>
             </>
           )}
-
+          
           <div className="flex justify-between gap-4 w-full">
             <InputBox
-              name="loadingPrice"
+              name="purchasePrice"
               type="number"
-              label="Loading Price"
+              label="Purchase Price"
               placeholder={"₹"}
-              value={formData?.loadingPrice}
+              value={formData?.purchasePrice}
               onChange={(e) => handleChange?.(e)}
             />
             <InputBox
-              name="unloadingPrice"
-              type="number"
-              label="Unloading Price"
-              placeholder={"₹"}
-              value={formData?.unloadingPrice}
+              name="unitOfMeasure"
+              type="string"
+              label="Unit of Measure"
+              placeholder={"piece, kg, liter"}
+              value={formData?.unitOfMeasure}
               onChange={(e) => handleChange?.(e)}
             />
           </div>
