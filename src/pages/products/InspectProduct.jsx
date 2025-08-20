@@ -1,9 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getRow, getData } from "../../network/api";
+import { getProductById } from "../../network/api";
 import InspectData from "../../layouts/form/InspectData";
 import InputBox from "../../components/FormComponent/InputBox";
-import Dropdown from "../../components/FormComponent/Dropdown";
 import {
   Box,
   Typography,
@@ -17,43 +16,36 @@ import {
 import { handleFormFieldChange } from "../../utils/FormHelper";
 
 const InspectProduct = () => {
-  const { itemId } = useParams();
+  const { id } = useParams();
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
   const [rateType, setRateType] = useState("purchasePrice");
 
   useEffect(() => {
     const fetchData = async () => {
-      let fetchedData;
-      
       try {
-        const response = await getData(`/ops/sales/portal/customer/products/${itemId}`);
-        if (response.success) {
-          fetchedData = response.data;
-        } else {
-          throw new Error('New API failed');
-        }
+        const response = await getProductById(id);
+
+        const totalTax =
+          (Number(response.cgst) || 0) +
+          (Number(response.sgst) || 0) +
+          (Number(response.cess) || 0);
+
+        response.purchasePriceWithoutTax = calculatePurchasePriceWithoutTax(
+          response.purchasePrice,
+          totalTax
+        );
+
+        setData(response);
       } catch (error) {
-        console.error('Error with new API, falling back to old API:', error);
+        console.error("Error fetching product:", error);
+      } finally {
+        setLoading(false);
       }
-
-      const totalTax =
-        (Number(fetchedData.cgst) || 0) +
-        (Number(fetchedData.sgst) || 0) +
-        (Number(fetchedData.cess) || 0);
-
-      fetchedData.purchasePriceWithoutTax = calculatePurchasePriceWithoutTax(
-        fetchedData.purchasePrice,
-        totalTax
-      );
-
-      setData(fetchedData);
     };
 
-    fetchData().then(() => {
-      setLoading(false);
-    });
-  }, [itemId]);
+    fetchData();
+  }, [id]);
 
   const handleChange = handleFormFieldChange(setData);
 
@@ -68,12 +60,12 @@ const InspectProduct = () => {
   };
 
   const calculatePurchasePriceWithoutTax = (purchasePrice, taxRate) => {
-    return parseFloat(
-      (purchasePrice / (1 + taxRate / 100)).toFixed(3)
-    );
+    return parseFloat((purchasePrice / (1 + taxRate / 100)).toFixed(3));
   };
 
   useEffect(() => {
+    if (!data) return;
+
     const totalTax =
       (Number(data.cgst) || 0) +
       (Number(data.sgst) || 0) +
@@ -115,13 +107,12 @@ const InspectProduct = () => {
       category: "Basic Information",
       elements: [
         <InputBox
-          key="itemName"
-          name="itemName"
+          key="name"
+          name="name"
           type="text"
           label="Item Name"
-          value={data.itemName}
+          value={data.name}
           onChange={handleChange}
-          placeholder=""
         />,
         <InputBox
           key="description"
@@ -130,25 +121,14 @@ const InspectProduct = () => {
           label="Description"
           value={data.description}
           onChange={handleChange}
-          placeholder=""
         />,
-        <Dropdown
-          key="category"
-          name="category"
-          label="Category"
-          options={[
-            "electronics",
-            "gadgets",
-            "sports",
-            "home decorations",
-            "toys",
-            "clothing",
-            "accessories",
-            "gaming",
-            "food",
-          ]}
-          selectedData={data}
-          setValue={setData}
+        <InputBox
+          key="categoryID"
+          name="categoryID"
+          type="number"
+          label="Category ID"
+          value={data.categoryID}
+          onChange={handleChange}
         />,
         <InputBox
           optional
@@ -158,34 +138,22 @@ const InspectProduct = () => {
           label="Manufacturer"
           value={data.manufacturer}
           onChange={handleChange}
-          placeholder=""
         />,
         <InputBox
-          key="marketer"
-          name="marketer"
+          key="brand"
+          name="brand"
           type="text"
-          label="Marketer"
-          value={data.marketer}
+          label="Brand"
+          value={data.brand}
           onChange={handleChange}
-          placeholder=""
         />,
         <InputBox
-          key="upc"
-          name="upc"
+          key="barcode"
+          name="barcode"
           type="text"
-          label="UPC"
-          value={data.upc}
+          label="Barcode"
+          value={data.barcode}
           onChange={handleChange}
-          placeholder=""
-        />,
-        <InputBox
-          key="hsn"
-          name="hsn"
-          type="text"
-          label="HSN"
-          value={data.hsn}
-          onChange={handleChange}
-          placeholder=""
         />,
       ],
     },
@@ -193,13 +161,12 @@ const InspectProduct = () => {
       category: "Pricing Information",
       elements: [
         <InputBox
-          key="packSize"
-          name="packSize"
-          type="number"
-          label="Pack Size"
-          value={data.packSize}
+          key="unitOfMeasure"
+          name="unitOfMeasure"
+          type="string"
+          label="Unit of Measure"
+          value={data.unitOfMeasure}
           onChange={handleChange}
-          placeholder=""
         />,
         <InputBox
           key="unitMRP"
@@ -208,7 +175,6 @@ const InspectProduct = () => {
           label="Unit MRP"
           value={data.unitMRP}
           onChange={handleChange}
-          placeholder=""
         />,
         <InputBox
           key="salePrice"
@@ -217,7 +183,6 @@ const InspectProduct = () => {
           label="Sale Price"
           value={data.salePrice}
           onChange={handleChange}
-          placeholder=""
         />,
         <FormControl component="fieldset" key="rateType">
           <FormLabel component="legend">Enter Rate Type</FormLabel>
@@ -248,7 +213,6 @@ const InspectProduct = () => {
             label="Purchase Price (without taxes)"
             value={data.purchasePriceWithoutTax}
             onChange={handleChange}
-            placeholder=""
           />
         ) : (
           <InputBox
@@ -258,34 +222,7 @@ const InspectProduct = () => {
             label="Purchase Rate (with taxes)"
             value={data.purchasePrice}
             onChange={handleChange}
-            placeholder=""
           />
-        ),
-        rateType === "purchasePriceWithoutTax" ? (
-          <>
-            <p>
-              Purchase Rate:{" "}
-              {data.purchasePrice !== undefined
-                ? Number(data.purchasePrice).toFixed(2)
-                : ""}
-            </p>
-            <p>
-              Purchase Price Without Tax:{" "}
-              {data.purchasePriceWithoutTax.toFixed(2)}
-            </p>
-          </>
-        ) : (
-          <>
-            <p>
-              Purchase Price Without Tax:{" "}
-              {data.purchasePriceWithoutTax
-                ? data.purchasePriceWithoutTax.toFixed(2)
-                : ""}
-            </p>
-            <p>
-              Purchase Rate: {Number(data.purchasePrice).toFixed(2)}
-            </p>
-          </>
         ),
       ],
     },
@@ -299,7 +236,6 @@ const InspectProduct = () => {
           label="CGST (%)"
           value={data.cgst}
           onChange={handleChange}
-          placeholder=""
         />,
         <InputBox
           key="sgst"
@@ -308,7 +244,6 @@ const InspectProduct = () => {
           label="SGST (%)"
           value={data.sgst}
           onChange={handleChange}
-          placeholder=""
         />,
         <InputBox
           key="cess"
@@ -317,7 +252,6 @@ const InspectProduct = () => {
           label="CESS (%)"
           value={data.cess}
           onChange={handleChange}
-          placeholder=""
         />,
       ],
     },
@@ -331,7 +265,14 @@ const InspectProduct = () => {
           label="Dimensions"
           value={data.dimensions}
           onChange={handleChange}
-          placeholder=""
+        />,
+        <InputBox
+          key="maxStockLevel"
+          name="maxStockLevel"
+          type="number"
+          label="Max Stock Level"
+          value={data.maxStockLevel}
+          onChange={handleChange}
         />,
         <InputBox
           key="weight"
@@ -340,7 +281,6 @@ const InspectProduct = () => {
           label="Weight"
           value={data.weight}
           onChange={handleChange}
-          placeholder=""
         />,
         <InputBox
           key="reorderLevel"
@@ -349,25 +289,6 @@ const InspectProduct = () => {
           label="Reorder Level"
           value={data.reorderLevel}
           onChange={handleChange}
-          placeholder=""
-        />,
-        <InputBox
-          key="loadingPrice"
-          name="loadingPrice"
-          type="number"
-          label="Loading Price"
-          value={data.loadingPrice}
-          onChange={handleChange}
-          placeholder=""
-        />,
-        <InputBox
-          key="unloadingPrice"
-          name="unloadingPrice"
-          type="number"
-          label="Unloading Price"
-          value={data.unloadingPrice}
-          onChange={handleChange}
-          placeholder=""
         />,
       ],
     },
@@ -390,14 +311,9 @@ const InspectProduct = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>
-        #{itemId}
+        #{id}
       </Typography>
-      <InspectData
-        data={data}
-        metadata={metadata}
-        title={"products"}
-        id={itemId}
-      />
+      <InspectData data={data} metadata={metadata} title={"products"} id={id} />
     </Box>
   );
 };
