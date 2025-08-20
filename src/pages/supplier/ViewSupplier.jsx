@@ -1,7 +1,7 @@
 import React from "react";
 import ViewData from "../../layouts/form/ViewData";
 import Rating from '@mui/material/Rating';
-import { deleteRow } from "../../network/api";
+import { getSuppliers, deleteSupplier } from "../../network/api";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../store/store";
 
@@ -19,30 +19,35 @@ const RatingCellRenderer = (params) => {
 };
 
 const colDefs = [
-  { field: "supplierId", headerName: "ID", width: 50, cellRenderer: (params) => (<p><span className="text-blue-950">#</span><span className="font-medium">{params.value}</span></p>) },
-  { field: "supplierName", headerName: "Name", filter: true, editable: true, cellStyle: { textTransform: 'capitalize' } },
-  { field: "ratings", headerName: "Ratings", editable: true, cellRenderer: RatingCellRenderer },
+  { field: "id", headerName: "ID", width: 50, cellRenderer: (params) => (<p><span className="text-blue-950">#</span><span className="font-medium">{params.value}</span></p>) },
+  { field: "name", headerName: "Name", filter: true, editable: true, cellStyle: { textTransform: 'capitalize' } },
+  { field: "rating", headerName: "Rating", editable: true, cellRenderer: RatingCellRenderer },
   { field: "businessName", headerName: "Business", editable: true, cellStyle: { textTransform: 'capitalize' } },
-  { field: "mobileNumber", headerName: "Mobile", editable: true },
-  { field: "alternateMobileNumber", headerName: "Alternate Mobile", editable: true },
+  { field: "contactPerson", headerName: "Contact Person", editable: true, cellStyle: { textTransform: 'capitalize' } },
+  { field: "phone", headerName: "Phone", editable: true },
+  { field: "alternatePhone", headerName: "Alternate Phone", editable: true },
   { field: "email", headerName: "Email" },
-  { field: "addressLine1", headerName: "Address Line 1" },
-  { field: "addressLine2", headerName: "Address Line 2" },
+  { field: "addressLine", headerName: "Address" },
   { field: "city", headerName: "City" },
   { field: "state", headerName: "State" },
   { field: "pinCode", headerName: "Pin Code" },
-  { field: "beneficiaryName", headerName: "Beneficiary Name", cellStyle: { textTransform: 'capitalize' } },
-  { field: "accountNumber", headerName: "Account Number" },
-  { field: "ifscCode", headerName: "IFSC Code" },
-  { field: "virtualPaymentAddress", headerName: "Virtual Payment Address" },
+  { field: "gstin", headerName: "GSTIN" },
+  { field: "bankAccountNumber", headerName: "Account Number" },
+  { field: "ifsccode", headerName: "IFSC Code" },
+  { field: "upiid", headerName: "UPI ID" },
+  { field: "creditLimit", headerName: "Credit Limit", cellClassRules: { money: (p) => p.value } },
+  { field: "paymentTerms", headerName: "Payment Terms" },
   { field: "remarks", headerName: "Remarks", editable: true },
-  { field: "dateAdded", headerName: "Date Added" },
-  { field: "addedBy", headerName: "Added By" },
-  { field: "lastEditedDate", headerName: "Last Edited Date" },
-  { field: "lastEditedBy", headerName: "Last Edited By" },
+  { field: "isActive", headerName: "Status", cellRenderer: (params) => (
+    <span className={`py-1 px-3 rounded-full text-xs ${params.value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+      {params.value ? 'Active' : 'Inactive'}
+    </span>
+  )},
+  { field: "createdAt", headerName: "Created At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
+  { field: "updatedAt", headerName: "Updated At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
 ];
 
-const ViewProducts = () => {
+const ViewSuppliers = () => {
   const navigate = useNavigate();
   const { successPopup, errorPopup, refreshTableSetId } = useStore();
 
@@ -50,17 +55,17 @@ const ViewProducts = () => {
     {
       label: "Inspect",
       onClick: (data) => {
-        console.log(`Inspecting ${data?.supplierId}`);
-        navigate(`/suppliers/${data?.supplierId}`);
+        console.log(`Inspecting ${data?.id}`);
+        navigate(`/suppliers/${data?.id}`);
       },
     },
     {
       label: "Delete",
       onClick: (data) => {
-        deleteRow(`suppliers/soft/${data?.supplierId}`).then((response) => {
+        deleteSupplier(data?.id).then((response) => {
           if (response === 200) {
             successPopup("Deleted successfully");
-            refreshTableSetId(data?.supplierId);
+            refreshTableSetId(data?.id);
             navigate("/suppliers");
           } else {
             errorPopup("Failed to delete");
@@ -72,8 +77,12 @@ const ViewProducts = () => {
   ];
 
   return (
-    <ViewData menuOptions={menuOptions} title="Suppliers" url="/suppliers" initialColDefs={colDefs} />
+    <ViewData 
+      menuOptions={menuOptions} 
+      title="Suppliers" 
+      customDataFetcher={getSuppliers}
+      initialColDefs={colDefs} 
+    />
   );
 };
 
-export default ViewProducts;
