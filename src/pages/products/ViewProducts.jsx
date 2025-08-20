@@ -2,9 +2,8 @@ import React from "react";
 import { useState, useEffect } from "react";
 import ViewData from "../../layouts/form/ViewData";
 import { useNavigate } from "react-router-dom";
-import { deleteRow, getData, addRow } from "../../network/api";
+import { getProducts, deleteProduct, getData, addRow } from "../../network/api";
 import { useStore } from "../../store/store";
-import serverInstance from "../../network/api/api-config";
 import { IconButton, Tooltip } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 
@@ -55,21 +54,7 @@ const WishlistButton = ({ productId, isInWishlist, onToggle }) => {
 
 const colDefs = [
   {
-    field: "wishlist",
-    headerName: "Wishlist",
-    width: 100,
-    cellRenderer: (params) => (
-      <WishlistButton
-        productId={params.data.itemId}
-        isInWishlist={params.data.isInWishlist || false}
-        onToggle={params.context.onWishlistToggle}
-      />
-    ),
-    sortable: false,
-    filter: false,
-  },
-  {
-    field: "itemId",
+    field: "id",
     headerName: "ID",
     width: 50,
     cellRenderer: (params) => (
@@ -80,7 +65,7 @@ const colDefs = [
     ),
   },
   {
-    field: "itemName",
+    field: "name",
     headerName: "Item",
     width: 270,
     filter: true,
@@ -94,29 +79,18 @@ const colDefs = [
     cellStyle: { textTransform: "capitalize" },
   },
   {
-    field: "category",
+    field: "categoryID",
     headerName: "Category",
     editable: true,
-    cellEditor: "agSelectCellEditor",
-    cellEditorParams: {
-      values: [
-        "Electronics",
-        "Gadgets",
-        "Sports",
-        "Home Decorations",
-        "Toys",
-        "Clothing",
-        "Accessories",
-        "Gaming",
-        "Food",
-      ],
-    },
-    cellStyle: { textTransform: "capitalize" },
   },
   {
-    field: "currentQuantity",
-    headerName: "Current Quantity",
-    cellRenderer: (params) => <p>{params.value ? params.value : "0"}</p>,
+    field: "barcode",
+    headerName: "Barcode",
+  },
+  {
+    field: "brand",
+    headerName: "Brand",
+    cellStyle: { textTransform: "capitalize" },
   },
   { field: "dimensions", headerName: "Dimensions" },
   { field: "weight", headerName: "Weight (g)" },
@@ -131,30 +105,25 @@ const colDefs = [
     cellClassRules: { money: (p) => p.value },
   },
   {
-    field: "purchasePrice",
+    field: "purchasePrice", 
     headerName: "Purchase Price",
     cellClassRules: { money: (p) => p.value },
   },
   {
-    field: "unitMRP",
+    field: "unitMRP", 
     headerName: "Unit MRP",
     cellClassRules: { money: (p) => p.value },
   },
   { field: "reorderLevel", headerName: "Reorder Level", editable: true },
-  { field: "loadingPrice", headerName: "Loading Price", editable: true },
-  { field: "unloadingPrice", headerName: "Unloading Price" },
-  { field: "marketer", headerName: "Marketer" },
-  { field: "ongoingOffer", headerName: "Ongoing Offer" },
-  { field: "cgst", headerName: "CGST", editable: true },
-  { field: "sgst", headerName: "SGST", editable: true },
-  { field: "cess", headerName: "CESS", editable: true },
-  { field: "upc", headerName: "UPC" },
-  { field: "hsn", headerName: "HSN" },
-  { field: "packSize", headerName: "Pack Size", editable: true },
-  { field: "dateAdded", headerName: "Date Added" },
-  { field: "addedBy", headerName: "Added By" },
-  { field: "lastEditedDate", headerName: "Last Edited Date" },
-  { field: "lastEditedBy", headerName: "Last Edited By" },
+  { field: "maxStockLevel", headerName: "Max Stock Level", editable: true },
+  { field: "unitOfMeasure", headerName: "Unit of Measure" },
+  { field: "isActive", headerName: "Status", cellRenderer: (params) => (
+    <span className={`py-1 px-3 rounded-full text-xs ${params.value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+      {params.value ? 'Active' : 'Inactive'}
+    </span>
+  )},
+  { field: "createdAt", headerName: "Created At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
+  { field: "updatedAt", headerName: "Updated At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
 ];
 
 const ViewProducts = () => {
@@ -216,192 +185,15 @@ const ViewProducts = () => {
         sgst: 9,
         cess: 0,
         upc: "123456789012",
-        hsn: "85183000",
-        packSize: 1,
-        dateAdded: "2024-01-15",
-        addedBy: "Admin",
-        lastEditedDate: "2024-01-20",
-        lastEditedBy: "Admin",
-        isInWishlist: false
-      },
-      {
-        itemId: 2,
-        itemName: "Gaming Mouse",
-        description: "Ergonomic gaming mouse with RGB lighting",
-        category: "Electronics",
-        currentQuantity: 50,
-        dimensions: "12x7x4 cm",
-        weight: 120,
-        manufacturer: "GameTech",
-        salePrice: 1499,
-        purchasePrice: 1000,
-        unitMRP: 1799,
-        reorderLevel: 15,
-        loadingPrice: 25,
-        unloadingPrice: 15,
-        marketer: "GameTech Solutions",
-        ongoingOffer: null,
-        cgst: 9,
-        sgst: 9,
-        cess: 0,
-        upc: "123456789013",
-        hsn: "84716070",
-        packSize: 1,
-        dateAdded: "2024-01-10",
-        addedBy: "Admin",
-        lastEditedDate: "2024-01-18",
-        lastEditedBy: "Operator",
-        isInWishlist: true
-      },
-      {
-        itemId: 3,
-        itemName: "Organic Green Tea",
-        description: "Premium organic green tea leaves",
-        category: "Food",
-        currentQuantity: 100,
-        dimensions: "15x10x5 cm",
-        weight: 200,
-        manufacturer: "TeaGarden Co.",
-        salePrice: 299,
-        purchasePrice: 200,
-        unitMRP: 349,
-        reorderLevel: 20,
-        loadingPrice: 10,
-        unloadingPrice: 5,
-        marketer: "TeaGarden India",
-        ongoingOffer: "Buy 2 Get 1 Free",
-        cgst: 2.5,
-        sgst: 2.5,
-        cess: 0,
-        upc: "123456789014",
-        hsn: "09021000",
-        packSize: 1,
-        dateAdded: "2024-01-05",
-        addedBy: "Admin",
-        lastEditedDate: "2024-01-12",
-        lastEditedBy: "Admin",
-        isInWishlist: false
-      },
-      {
-        itemId: 4,
-        itemName: "Cotton T-Shirt",
-        description: "100% cotton comfortable t-shirt",
-        category: "Clothing",
-        currentQuantity: 75,
-        dimensions: "30x25x2 cm",
-        weight: 180,
-        manufacturer: "FashionHub",
-        salePrice: 599,
-        purchasePrice: 400,
-        unitMRP: 799,
-        reorderLevel: 25,
-        loadingPrice: 20,
-        unloadingPrice: 10,
-        marketer: "FashionHub Retail",
-        ongoingOffer: null,
-        cgst: 6,
-        sgst: 6,
-        cess: 0,
-        upc: "123456789015",
-        hsn: "61091000",
-        packSize: 1,
-        dateAdded: "2024-01-08",
-        addedBy: "Operator",
-        lastEditedDate: "2024-01-16",
-        lastEditedBy: "Operator",
-        isInWishlist: true
-      },
-      {
-        itemId: 5,
-        itemName: "Smartphone Case",
-        description: "Protective case for smartphones",
-        category: "Accessories",
-        currentQuantity: 200,
-        dimensions: "16x8x1 cm",
-        weight: 50,
-        manufacturer: "ProtectTech",
-        salePrice: 199,
-        purchasePrice: 120,
-        unitMRP: 249,
-        reorderLevel: 30,
-        loadingPrice: 5,
-        unloadingPrice: 3,
-        marketer: "ProtectTech India",
-        ongoingOffer: "20% Off",
-        cgst: 9,
-        sgst: 9,
-        cess: 0,
-        upc: "123456789016",
-        hsn: "39269099",
-        packSize: 1,
-        dateAdded: "2024-01-12",
-        addedBy: "Admin",
-        lastEditedDate: "2024-01-19",
-        lastEditedBy: "Admin",
-        isInWishlist: false
       }
-    ];
-
-    return demoData;
-  //   try {
-  //     const response = await getData('/ops/sales/portal/customer/products');
-  //     if (response.success) {
-  //       // Add wishlist status to each product
-  //       const productsWithWishlist = response.data.map(product => ({
-  //         ...product,
-  //         isInWishlist: wishlistItems.has(product.itemId)
-  //       }));
-  //       return productsWithWishlist;
-  //     } else {
-  //       throw new Error('API failed');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //     try {
-  //     } catch (fallbackError) {
-  //       console.error('APIs failed, using demo data:', fallbackError);
-  //       return demoData.map(product => ({
-  //         ...product,
-  //         isInWishlist: wishlistItems.has(product.itemId)
-  //       }));
-  //     }
-  //   }
-  };
-
-  const menuOptions = [
-    {
-      label: "Inspect",
-      onClick: (data) => {
-        console.log(`Inspecting ${data?.itemId}`);
-        navigate(`/products/${data?.itemId}`);
-      },
-    },
-    {
-      label: "Delete",
-      onClick: (data) => {
-        deleteRow(`products/soft/${data?.itemId}`).then((response) => {
-          if (response === 200) {
-            successPopup("Deleted successfully");
-            refreshTableSetId(data?.itemId);
-            navigate("/products");
-          } else {
-            errorPopup("Failed to delete");
-            console.error("Failed to delete");
-          }
-        });
-      },
-    },
-  ];
-
+    ]
+  }
   return (
     <ViewData
       menuOptions={menuOptions}
       title="Items"
-      customDataFetcher={customDataFetcher}
+      customDataFetcher={getProducts}
       initialColDefs={colDefs}
-      context={{
-        onWishlistToggle: handleWishlistToggle
-      }}
     />
   );
 };
