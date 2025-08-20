@@ -4,6 +4,9 @@ import { getTransportPartners, createTransportPartner, updateTransportPartner, d
 import { getInventoryMovements, getInventoryMovementById, createInventoryMovement } from './inventoryMovementsApi';
 import { getInventoryStock, getInventoryStockById } from './inventoryStockApi';
 import { getReconciliations, getReconciliationById, createReconciliation, getReconciliationDetails, addReconciliationDetails, updateReconciliationStatus } from './reconciliationsApi';
+import { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier } from './suppliersApi';
+import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from './productsApi';
+import { getOffers, getOfferById, createOffer, updateOffer, deleteOffer } from './offersApi';
 
 async function getStuff(path) {
   try {
@@ -304,4 +307,22 @@ export {
   getReconciliationDetails,
   addReconciliationDetails,
   updateReconciliationStatus,
+  // Supplier APIs
+  getSuppliers,
+  getSupplierById,
+  createSupplier,
+  updateSupplier,
+  deleteSupplier,
+  // Product APIs
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  // Offer APIs
+  getOffers,
+  getOfferById,
+  createOffer,
+  updateOffer,
+  deleteOffer,
 };
