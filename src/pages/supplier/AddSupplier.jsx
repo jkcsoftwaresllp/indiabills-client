@@ -6,18 +6,37 @@ import InputBox from "../../components/FormComponent/InputBox";
 import Dropdown from "../../components/FormComponent/Dropdown";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { addRow } from "../../network/api";
+import { createSupplier } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Timeline from "../../components/FormComponent/Timeline";
-import { SupplierMetadata } from "../../definitions/Metadata";
-import { getOption, initializeFormData } from "../../utils/FormHelper";
+import { getOption } from "../../utils/FormHelper";
 
 const AddSuppliers = () => {
 	const { successPopup, errorPopup } = useStore();
 	const navigate = useNavigate();
 
-	const [formData, setFormData] = useState(initializeFormData(SupplierMetadata));
+	const [formData, setFormData] = useState({
+		name: '',
+		businessName: '',
+		contactPerson: '',
+		email: '',
+		phone: '',
+		alternatePhone: '',
+		addressLine: '',
+		city: '',
+		state: '',
+		pinCode: '',
+		gstin: '',
+		bankAccountNumber: '',
+		ifscCode: '',
+		upiId: '',
+		creditLimit: 0,
+		paymentTerms: '',
+		rating: 5,
+		remarks: '',
+		isActive: true
+	});
 	const [page, setPage] = useState(1);
 
 	const backPage = useCallback(() => {
@@ -41,7 +60,7 @@ const AddSuppliers = () => {
 	};
 
 	const submit = async () => {
-		addRow("/suppliers/add", formData).then((status) => {
+		createSupplier(formData).then((status) => {
 			if (status === 201 || status === 200) {
 				successPopup("Supplier registered successfully!");
 				navigate('/suppliers');
@@ -51,7 +70,7 @@ const AddSuppliers = () => {
 		});
 	};
 
-	const steps = ["Basic Info", "Address Details", "Other Details"];
+	const steps = ["Basic Info", "Address & Financial", "Payment Details"];
 
 	return (
 		<PageAnimate>
@@ -70,8 +89,8 @@ const AddSuppliers = () => {
 					<div className={"h-full w-full flex justify-center"}>
 						<main>
 							{page === 1 && <BasicPage formData={formData} setFormData={setFormData} handleChange={handleChange} />}
-							{page === 2 && <AddressPage formData={formData} setFormData={setFormData} handleChange={handleChange} />}
-							{page === 3 && <OtherPage formData={formData} setFormData={setFormData} handleChange={handleChange} />}
+							{page === 2 && <AddressFinancialPage formData={formData} setFormData={setFormData} handleChange={handleChange} />}
+							{page === 3 && <PaymentPage formData={formData} setFormData={setFormData} handleChange={handleChange} />}
 						</main>
 
 						<div className={"p-2 flex flex-col gap-4"}>
@@ -93,11 +112,12 @@ const BasicPage = React.memo(({ formData, handleChange }) => {
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="supplierName" type="string" label="Supplier Name" placeholder={"__________"} value={formData.supplierName} onChange={handleChange} />
+					<InputBox name="name" type="string" label="Supplier Name" placeholder={"__________"} value={formData.name} onChange={handleChange} />
 					<InputBox name="businessName" type="string" label="Business Name" placeholder={"__________"} value={formData.businessName} onChange={handleChange} />
+					<InputBox name="contactPerson" type="string" label="Contact Person" placeholder={"__________"} value={formData.contactPerson} onChange={handleChange} />
 					<InputBox name="email" type="string" label="Email" placeholder={"example@domain.com"} value={formData.email} onChange={handleChange} />
-					<InputBox name="mobileNumber" type="number" label="Mobile Number" placeholder={"XXXXXX"} value={formData.mobileNumber} onChange={handleChange} />
-					<InputBox name="alternateMobileNumber" type="number" label="Alternate Mobile Number" placeholder={"XXXXXX"} value={formData.alternateMobileNumber} onChange={handleChange} />
+					<InputBox name="phone" type="string" label="Phone" placeholder={"XXXXXX"} value={formData.phone} onChange={handleChange} />
+					<InputBox name="alternatePhone" type="string" label="Alternate Phone" placeholder={"XXXXXX"} value={formData.alternatePhone} onChange={handleChange} />
 				</main>
 			</div>
 		</MultiPageAnimate>
@@ -106,33 +126,18 @@ const BasicPage = React.memo(({ formData, handleChange }) => {
 
 BasicPage.displayName = 'BasicPage';
 
-const AddressPage = React.memo(({ formData, handleChange, setFormData }) => {
+const AddressFinancialPage = React.memo(({ formData, handleChange, setFormData }) => {
 	return (
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="addressLine1" type="string" label="Address Line 1" placeholder={"__________"} value={formData.addressLine1} onChange={handleChange} />
-					<InputBox name="addressLine2" type="string" label="Address Line 2" placeholder={"__________"} value={formData.addressLine2} onChange={handleChange} />
+					<InputBox name="addressLine" type="string" label="Address Line" placeholder={"__________"} value={formData.addressLine} onChange={handleChange} />
 					<InputBox name="city" type="string" label="City" placeholder={"__________"} value={formData.city} onChange={handleChange} />
 					<Dropdown name={"state"} label="State" options={getOption("state")} selectedData={formData} setValue={setFormData} />
 					<InputBox name="pinCode" type="number" label="Pin Code" placeholder={"123456"} value={formData.pinCode} onChange={handleChange}/>
-				</main>
-			</div>
-		</MultiPageAnimate>
-	);
-});
-
-AddressPage.displayName = 'AddressPage';
-
-const OtherPage = React.memo(({ formData, handleChange }) => {
-	return (
-		<MultiPageAnimate>
-			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
-				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="beneficiaryName" type="string" label="Beneficiary Name" placeholder={"__________"} value={formData.beneficiaryName} onChange={handleChange} />
-					<InputBox name="accountNumber" type="number" label="Account Number" placeholder={"__________"} value={formData.accountNumber} onChange={handleChange} />
-					<InputBox name="ifscCode" type="string" label="IFSC Code" placeholder={"__________"} value={formData.ifscCode} onChange={handleChange} />
-					<InputBox name="virtualPaymentAddress" type="string" label="Virtual Payment Address" placeholder={"__________"} value={formData.virtualPaymentAddress} onChange={handleChange} />
+					<InputBox name="gstin" type="string" label="GSTIN" placeholder={"__________"} value={formData.gstin} onChange={handleChange} />
+					<InputBox name="creditLimit" type="number" label="Credit Limit" placeholder={"0"} value={formData.creditLimit} onChange={handleChange} />
+					<InputBox name="paymentTerms" type="string" label="Payment Terms" placeholder={"Net 30"} value={formData.paymentTerms} onChange={handleChange} />
 					<InputBox name="remarks" type="string" label="Remarks" placeholder={"__________"} value={formData.remarks} onChange={handleChange} />
 				</main>
 			</div>
@@ -140,4 +145,20 @@ const OtherPage = React.memo(({ formData, handleChange }) => {
 	);
 });
 
-OtherPage.displayName = 'OtherPage';
+AddressFinancialPage.displayName = 'AddressFinancialPage';
+
+const PaymentPage = React.memo(({ formData, handleChange }) => {
+	return (
+		<MultiPageAnimate>
+			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
+				<main className="grid grid-cols-2 gap-6">
+					<InputBox name="bankAccountNumber" type="string" label="Bank Account Number" placeholder={"__________"} value={formData.bankAccountNumber} onChange={handleChange} />
+					<InputBox name="ifscCode" type="string" label="IFSC Code" placeholder={"__________"} value={formData.ifscCode} onChange={handleChange} />
+					<InputBox name="upiId" type="string" label="UPI ID" placeholder={"supplier@upi"} value={formData.upiId} onChange={handleChange} />
+					<InputBox name="rating" type="number" label="Rating (1-5)" placeholder={"5"} value={formData.rating} onChange={handleChange} inputProps={{ min: 1, max: 5 }} />
+				</main>
+			</div>
+		</MultiPageAnimate>
+	);
+});
+
