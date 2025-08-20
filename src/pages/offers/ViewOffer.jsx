@@ -2,7 +2,7 @@ import React from "react";
 import ViewData from "../../layouts/form/ViewData";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../store/store";
-import { deleteRow } from "../../network/api";
+import { getOffers, deleteOffer } from "../../network/api";
 
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
@@ -15,23 +15,26 @@ const formatDate = (dateString) => {
 };
 
 const colDefs = [
-  { field: "offerId", headerName: "ID", width: 50, cellRenderer: (params) => (<p><span className="text-blue-950">#</span><span className="font-medium">{params.value}</span></p>) },
-  { field: "offerName", headerName: "Offer Name", filter: true, editable: true, cellStyle: { textTransform: 'capitalize' } },
+  { field: "id", headerName: "ID", width: 50, cellRenderer: (params) => (<p><span className="text-blue-950">#</span><span className="font-medium">{params.value}</span></p>) },
+  { field: "name", headerName: "Offer Name", filter: true, editable: true, cellStyle: { textTransform: 'capitalize' } },
   { field: "description", headerName: "Description", cellStyle: { textTransform: 'capitalize' } },
+  { field: "offerType", headerName: "Offer Type", cellStyle: { textTransform: 'capitalize' } },
+  { field: "discountType", headerName: "Discount Type", cellStyle: { textTransform: 'capitalize' } },
+  { field: "discountValue", headerName: "Discount Value" },
+  { field: "maxDiscountAmount", headerName: "Max Discount Amount", cellClassRules: { money: (p) => p.value } },
+  { field: "minOrderAmount", headerName: "Min Order Amount", cellClassRules: { money: (p) => p.value } },
   { field: "startDate", headerName: "Start Date", valueFormatter: (p) => formatDate(p.value) },
   { field: "endDate", headerName: "End Date", valueFormatter: (p) => formatDate(p.value) },
-  { field: "discount", headerName: "Discount" },
-  { field: "maximumDiscount", headerName: "Maximum Discount" },
-  { field: "minimumPurchase", headerName: "Minimum Purchase" },
-  { field: "offerApplicabilityFrequency", headerName: "Offer Applicability Frequency" },
-  { field: "status", headerName: "Status" },
-  { field: "dateAdded", headerName: "Date Added" },
-  { field: "addedBy", headerName: "Added By" },
-  { field: "lastEditedDate", headerName: "Last Edited Date" },
-  { field: "lastEditedBy", headerName: "Last Edited By" },
+  { field: "isActive", headerName: "Status", cellRenderer: (params) => (
+    <span className={`py-1 px-3 rounded-full text-xs ${params.value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+      {params.value ? 'Active' : 'Inactive'}
+    </span>
+  )},
+  { field: "createdAt", headerName: "Created At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
+  { field: "updatedAt", headerName: "Updated At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
 ];
 
-const ViewProducts = () => {
+const ViewOffers = () => {
   const navigate = useNavigate();
   const { successPopup, errorPopup, refreshTableSetId } = useStore();
 
@@ -39,17 +42,17 @@ const ViewProducts = () => {
     {
       label: "Inspect",
       onClick: (data) => {
-        console.log(`Inspecting ${data?.offerId}`);
-        navigate(`/offers/${data?.offerId}`);
+        console.log(`Inspecting ${data?.id}`);
+        navigate(`/offers/${data?.id}`);
       },
     },
     {
       label: "Delete",
       onClick: (data) => {
-        deleteRow(`offers/delete/${data?.offerId}`).then((response) => {
+        deleteOffer(data?.id).then((response) => {
           if (response === 200) {
             successPopup("Deleted successfully");
-            refreshTableSetId(data?.offerId);
+            refreshTableSetId(data?.id);
             navigate("/offers");
           } else {
             errorPopup("Failed to delete");
@@ -61,8 +64,12 @@ const ViewProducts = () => {
   ];
 
   return (
-    <ViewData menuOptions={menuOptions} title="Offers" url="/offers" initialColDefs={colDefs} />
+    <ViewData 
+      menuOptions={menuOptions} 
+      title="Offers" 
+      customDataFetcher={getOffers}
+      initialColDefs={colDefs} 
+    />
   );
 };
 
-export default ViewProducts;
