@@ -2,13 +2,13 @@ import React from "react";
 import ViewData from "../../layouts/form/ViewData";
 import { Avatar } from "@mui/material";
 import { getBaseURL } from "../../network/api/api-config";
-import { deleteRow } from "../../network/api";
+import { getCustomers, deleteCustomer } from "../../network/api";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../store/store";
 
 const colDefs = [
   {
-    field: "customerId",
+    field: "id",
     headerName: "ID",
     width: 50,
     cellRenderer: (params) => (
@@ -19,7 +19,7 @@ const colDefs = [
     ),
   },
   {
-    field: "customerName",
+    field: "name",
     headerName: "Customer",
     filter: true,
     editable: true,
@@ -34,7 +34,7 @@ const colDefs = [
           alt={params.data.addedBy}
           sx={{ width: 28, height: 28 }}
         />
-        <span style={{ marginLeft: 8 }}>{params.data.customerName}</span>
+        <span style={{ marginLeft: 8 }}>{params.data.name}</span>
       </div>
     ),
   },
@@ -50,33 +50,41 @@ const colDefs = [
     field: "gender",
     headerName: "Gender",
     editable: true,
-    cellEditor: "agSelectCellEditor",
-    cellEditorParams: { values: ["Male", "Female", "Other"] },
+    cellStyle: { textTransform: 'capitalize' },
   },
-  { field: "mobile", headerName: "Mobile", editable: true },
+  { field: "phone", headerName: "Phone", editable: true },
   {
-    field: "alternateMobileNumber",
-    headerName: "Alternate Mobile Number",
+    field: "alternatePhone",
+    headerName: "Alternate Phone",
     editable: true,
     valueFormatter: (params) => (params.value ? params.value : "N/A"),
   },
-  { field: "gstin", headerName: "GSTIN", editable: true },
-  { field: "fssai", headerName: "FSSAI", editable: true },
-  { field: "registrationNumber", headerName: "Registration Number", editable: true },
+  { field: "gstin", headerName: "GSTIN" },
+  { field: "fssaiNumber", headerName: "FSSAI Number" },
+  { field: "panNumber", headerName: "PAN Number" },
   { field: "aadharNumber", headerName: "Aadhar Number", editable: true },
-  { field: "panNumber", headerName: "PAN Number", editable: true },
-  { field: "otherDocuments", headerName: "Other Documents", editable: true },
+  { field: "customerType", headerName: "Customer Type", cellStyle: { textTransform: 'capitalize' } },
+  { field: "creditLimit", headerName: "Credit Limit", cellClassRules: { money: (p) => p.value } },
+  { field: "outstandingBalance", headerName: "Outstanding Balance", cellClassRules: { money: (p) => p.value } },
+  { field: "loyaltyPoints", headerName: "Loyalty Points" },
+  { field: "isBlacklisted", headerName: "Blacklisted", cellRenderer: (params) => (
+    <span className={`py-1 px-3 rounded-full text-xs ${params.value ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+      {params.value ? 'Yes' : 'No'}
+    </span>
+  )},
+  { field: "blacklistReason", headerName: "Blacklist Reason" },
   {
-    field: "status",
+    field: "isActive",
     headerName: "Status",
-    editable: true,
-    cellEditor: "agSelectCellEditor",
-    cellEditorParams: { values: ["Active", "Inactive"] },
+    cellRenderer: (params) => (
+      <span className={`py-1 px-3 rounded-full text-xs ${params.value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+        {params.value ? 'Active' : 'Inactive'}
+      </span>
+    )
   },
-  { field: "dateAdded", headerName: "Date Added" },
-  { field: "addedBy", headerName: "Added By" },
-  { field: "lastEditedDate", headerName: "Last Edited Date" },
-  { field: "lastEditedBy", headerName: "Last Edited By" },
+  { field: "dateOfBirth", headerName: "Date of Birth", valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : 'N/A' },
+  { field: "createdAt", headerName: "Created At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
+  { field: "updatedAt", headerName: "Updated At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
 ];
 
 const ViewCustomers = () => {
@@ -87,17 +95,17 @@ const ViewCustomers = () => {
     {
       label: "Inspect",
       onClick: (data) => {
-        console.log(`Inspecting ${data?.customerId}`);
-        navigate(`/customers/${data?.customerId}`);
+        console.log(`Inspecting ${data?.id}`);
+        navigate(`/customers/${data?.id}`);
       },
     },
     {
       label: "Delete",
       onClick: (data) => {
-        deleteRow(`customers/soft/${data?.customerId}`).then((response) => {
+        deleteCustomer(data?.id).then((response) => {
           if (response === 200) {
             successPopup("Deleted successfully");
-            refreshTableSetId(data?.customerId);
+            refreshTableSetId(data?.id);
             navigate("/customers");
           } else {
             errorPopup("Failed to delete");
@@ -112,7 +120,7 @@ const ViewCustomers = () => {
     <ViewData
       menuOptions={menuOptions}
       title="Customers"
-      url="/customers"
+      customDataFetcher={getCustomers}
       initialColDefs={colDefs}
     />
   );

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getRow, updatePut, getData } from "../../network/api";
+import { getCustomerById, updateCustomer } from "../../network/api";
 import InspectData from "../../layouts/form/InspectData";
 import InputBox from "../../components/FormComponent/InputBox";
 import Dropdown from "../../components/FormComponent/Dropdown";
@@ -16,16 +16,8 @@ const EditCustomer = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const response = await getData(`/ops/sales/portal/customer/profile`);
-                if (response.success) {
-                    setData(response.data);
-                } else {
-                    throw new Error('New API failed');
-                }
-            } catch (error) {
-                console.error('Error with new API, falling back to old API:', error);
-            }
+            const response = await getCustomerById(customerId);
+            setData(response);
             setLoading(false);
         };
 
@@ -35,24 +27,13 @@ const EditCustomer = () => {
     const handleChange = handleFormFieldChange(setData);
 
     const handleSave = async (updatedData) => {
-        try {
-            const response = await updatePut(`/ops/sales/portal/customer/profile`, updatedData);
-            if (response === 200) {
-                successPopup('Profile updated successfully');
-                return true;
-            } else {
-                throw new Error('New API failed');
-            }
-        } catch (error) {
-            console.error('Error with new API, falling back to old API:', error);
-            // Fallback to old API
-            if (await updatePut(`/customers/edit/${customerId}`, updatedData) === 200) {
-                successPopup('Profile updated successfully');
-                return true;
-            } else {
-                errorPopup('Failed to update profile');
-                return false;
-            }
+        const response = await updateCustomer(customerId, updatedData);
+        if (response === 200) {
+            successPopup('Customer updated successfully');
+            return true;
+        } else {
+            errorPopup('Failed to update customer');
+            return false;
         }
     };
 
@@ -60,11 +41,13 @@ const EditCustomer = () => {
         {
             category: "Basic Information",
             elements: [
-                <InputBox key="name" name="name" type="string" label="Full Name" value={data.name || data.customerName} onChange={handleChange} placeholder="" />,
+                <InputBox key="name" name="name" type="string" label="Full Name" value={data.name} onChange={handleChange} placeholder="" />,
                 <InputBox key="email" name="email" type="string" value={data.email} onChange={handleChange} placeholder="" />,
-                <InputBox key="phone" name="phone" type="string" value={data.phone || data.mobile} onChange={handleChange} placeholder="" />,
+                <InputBox key="phone" name="phone" type="string" value={data.phone} onChange={handleChange} placeholder="" />,
                 <InputBox key="dateOfBirth" name="dateOfBirth" type="date" label="Date of Birth" value={data.dateOfBirth} onChange={handleChange} placeholder="" />,
-                <Dropdown key="gender" name="gender" label="Gender" options={["male", "female", "other", "prefer_not_to_say"]} selectedData={data.gender} setValue={setData} />,
+                <Dropdown key="gender" name="gender" label="Gender" options={["male", "female", "other", "prefer_not_to_say"]} selectedData={data} setValue={setData} />,
+                <InputBox key="businessName" name="businessName" type="string" label="Business Name" value={data.businessName} onChange={handleChange} placeholder="" />,
+                <Dropdown key="customerType" name="customerType" label="Customer Type" options={["individual", "business", "enterprise"]} selectedData={data} setValue={setData} />,
             ],
         },
     ];

@@ -34,7 +34,7 @@ import {
   PrecisionManufacturing as PrecisionManufacturingIcon,
   Warehouse as WarehouseIcon,
 } from "@mui/icons-material";
-import { NavLink, useNavigate } from "react-router-dom";
+  getStuff, getCount, deleteRow, getWarehouses, getBatches, deleteBatch
 import { getStuff, getCount, deleteRow, getWarehouses } from "../../network/api";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import InventoryTable from "./InventoryTable";
@@ -169,7 +169,7 @@ const ViewInventory = () => {
 
   const fetchProducts = async (locationID) => {
     try {
-      const productsData = await getStuff(`/inventory/warehouses/batches/${locationID}`);
+      const productsData = await getBatches({ warehouseId: locationID });
       const sortedProducts = productsData.sort((a, b) => {
         const dateA = new Date(a.entryDate).getTime();
         const dateB = new Date(b.entryDate).getTime();
@@ -224,11 +224,11 @@ const ViewInventory = () => {
     {
       label: "Delete",
       onClick: (data) => {
-        deleteRow(`inventory/delete/${data?.batchId}`).then((response) => {
+        deleteBatch(data?.id).then((response) => {
           if (response === 200) {
             successPopup("Deleted successfully");
 
-            setEntries((prev) => (prev.filter((row) => row.batchId !== data?.batchId)));
+            setEntries((prev) => (prev.filter((row) => row.id !== data?.id)));
 
             navigate("/inventory", { replace: true });
           } else {

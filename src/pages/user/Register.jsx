@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useStore } from '../../store/store';
-import { addRow } from '../../network/api';
+import { ownerSignup } from '../../network/api';
 import logo from '../../assets/IndiaBills_logo.png';
 import bg from '../../assets/bglogo.png';
 import styles from './Register.module.css';
-import axios from 'axios';
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,9 +23,9 @@ const Register = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setData(prev => ({
+    setData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -74,38 +73,32 @@ const Register = () => {
     }
 
     try {
-      const response = await addRow('/external/org/owner/signup', {
+      const response = await ownerSignup({
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
         password: data.password,
-        phone: data.phone,
+        phone: data.phone
       });
-    console.log('Start submitting the request' )
-        // const response = await axios.post('http://localhost:8000/api/v1/organization/register/', {
-        // const response = await axios.post('https://api.indiabills.in/v1/external/org/owner/signup', {
-        //     firstName: data.firstName,
-        //     lastName: data.lastName,
-        //     email: data.email,
-        //     password: data.password,
-        //     phone: data.phone,
-        // });
-    console.log('response received', response)
 
-      if (response === 201) {
-        successPopup('Registration successful! Please login with your credentials.');
+      if (response === 200 || response === 201) {
+        successPopup(
+          'Registration successful! Please login with your credentials.'
+        );
         navigate('/login');
       } else {
         errorPopup('Registration failed. Please try again.');
       }
     } catch (error) {
       console.error('Registration error:', error);
-      errorPopup('Registration failed. Please check your connection and try again.');
+      errorPopup(
+        'Registration failed. Please check your connection and try again.'
+      );
     }
   };
 
   return (
-    <div 
+    <div
       className={styles.container}
       style={{
         backgroundImage: `url(${bg})`,
@@ -115,7 +108,9 @@ const Register = () => {
         <div className={styles.header}>
           <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
           <h2 className={styles.title}>Create Your Account</h2>
-          <p className={styles.subtitle}>Join IndiaBills to manage your business efficiently</p>
+          <p className={styles.subtitle}>
+            Join IndiaBills to manage your business efficiently
+          </p>
         </div>
 
         <div className={styles.formFields}>

@@ -20,6 +20,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useEffect, useState } from "react";
 import { getStuff, addRow, getWarehouses } from "../../network/api";
+import { createBatch } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -60,13 +61,22 @@ const AddInventory = () => {
   const [stockIssues, setStockIssues] = useState([]);
 
   const handleSubmit = async () => {
-    formData.subBatches = selectedProducts;
-    formData.supplierId = selectedSupplier?.id.toString();
-    formData.warehouseId = selectedLocation?.id.toString();
-    formData.batchPrice = totalPrice;
-    formData.entryDate = new Date(formData.entryDate).toISOString();
+    // Create batch data for new API
+    const batchData = {
+      productId: selectedProducts[0]?.itemId || 0, // Assuming single product per batch for now
+      supplierId: selectedSupplier?.id || 0,
+      batchCode: formData.batchNumber,
+      purchaseDate: formData.entryDate,
+      expiryDate: selectedProducts[0]?.expiryDate || null,
+      quantity: selectedProducts.reduce((total, product) => total + product.quantity, 0),
+      remainingQuantity: selectedProducts.reduce((total, product) => total + product.quantity, 0),
+      unitCost: totalPrice / selectedProducts.reduce((total, product) => total + product.quantity, 0),
+      warehouseId: selectedLocation?.id || 0,
+      remarks: formData.remarks || '',
+      isActive: true
+    };
 
-    const response = await addRow("/inventory/entry", { formData, stockIssues });
+    const response = await createBatch(batchData);
 
     if (response !== 201) {
       if (response === 400) {
