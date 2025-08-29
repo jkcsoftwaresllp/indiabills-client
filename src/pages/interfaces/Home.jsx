@@ -8,9 +8,10 @@ import DashboardDelivery from "./DeliveryInterface/HomeDelivery";
 const Home = () => {
   const { user } = useAuth();
 
-  //   switch (user?.role) {
-  switch ("TODO") {
+  switch (user?.role) {
     case "admin":
+      return <HomeAdmin />;
+    case "systems":
       return <HomeAdmin />;
     case "operator":
       return <DashboardOperator />;

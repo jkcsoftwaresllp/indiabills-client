@@ -46,6 +46,13 @@ serverInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    // Log the outgoing request method and URL
+    console.log(
+      `Outgoing request: ${config.method?.toUpperCase()} ${config.baseURL}${
+        config.url
+      }`
+    );
+
     return config;
   },
 

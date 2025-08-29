@@ -10,11 +10,13 @@ import { useAuth } from "../../hooks/useAuth";
 import styles from "./Sidebar.module.css";
 
 // React Icons
-import { FiBarChart2,
+import {
+  FiBarChart2,
   FiBriefcase,
   FiSettings,
   FiShoppingCart,
-  FiTool } from "react-icons/fi";
+  FiTool,
+} from "react-icons/fi";
 
 const groupIcons = {
   // Dashboard: "\u{1F4CA}",
@@ -34,7 +36,8 @@ const groupIcons = {
 };
 
 const Sidebar = () => {
-  const { collapse, setCollapse, openAudit, Organization, setOrganization } = useStore();
+  const { collapse, setCollapse, openAudit, Organization, setOrganization } =
+    useStore();
   const session = getSession();
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -61,6 +64,7 @@ const Sidebar = () => {
   }
 
   const userRole = session.role;
+
   const filteredGroups = buttons
     .map((group) => ({
       ...group,

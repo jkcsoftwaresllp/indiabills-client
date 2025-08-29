@@ -196,7 +196,7 @@ export async function getInvoiceCount() {
 
 async function apiLogin(payload) {
   try {
-    return await serverInstance.post("/auth/login", payload);
+    return await serverInstance.post("/login", payload);
   } catch (e) {
     console.error(`Failed to login server:`, e.response);
     return e.response;

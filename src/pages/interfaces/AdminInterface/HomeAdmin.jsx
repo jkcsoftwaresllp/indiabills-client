@@ -3,6 +3,10 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { getStuff } from "../../../network/api";
 
 const HomeAdmin = () => {
+  return <div>TODO : Dashboard need to implement</div>;
+};
+
+const HomeAdmin1 = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [fiscalData, setFiscalData] = useState(null);
   const [topProductSales, setTopProductSales] = useState([]);
