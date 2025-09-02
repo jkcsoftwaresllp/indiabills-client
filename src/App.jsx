@@ -102,10 +102,10 @@ function App() {
 
   // Determine if we should show the default layout (sidebar, header, etc.)
   const showDefaultLayout =
-    location.pathname !== "/setup" && 
-    location.pathname !== "/login" && 
-    !location.pathname.startsWith('/customer') &&
-    !location.pathname.startsWith('/operator');
+    location.pathname !== "/setup" &&
+    location.pathname !== "/login" &&
+    !location.pathname.startsWith("/customer") &&
+    !location.pathname.startsWith("/operator");
 
   return (
     <AuthProvider>

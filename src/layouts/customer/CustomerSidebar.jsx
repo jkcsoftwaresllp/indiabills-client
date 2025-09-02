@@ -73,10 +73,10 @@ const CustomerSidebar = () => {
       !logoFetched &&
       (!Organization.logo || Organization.logo === '')
     ) {
-      fetchLogo().then((res) => {
-        setOrganization({ ...res, fiscalStart: res.fiscalStart?.split('T')[0] });
-        setLogoFetched(true);
-      });
+      // fetchLogo().then((res) => {
+      //   setOrganization({ ...res, fiscalStart: res.fiscalStart?.split('T')[0] });
+      //   setLogoFetched(true);
+      // });
     }
   }, [session, Organization, setOrganization, logoFetched]);
 
