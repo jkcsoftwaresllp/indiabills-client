@@ -1,245 +1,145 @@
-import React, { useState, useEffect } from 'react';
-import { getSession } from '../../utils/cacheHelper';
-import { useStore } from '../../store/store';
-import logo from '../../assets/IndiaBills_logo.png';
-import { useNavigate } from 'react-router-dom';
-import { fetchLogo } from '../../network/api';
-import { getBaseURL } from '../../network/api/api-config';
+import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import styles from '../default/Sidebar.module.css';
-import {
-  FaHome,
-  FaBox,
-  FaExchangeAlt,
-  FaChartBar,
-  FaSearch,
-  FaTag,
-  FaIndustry,
-  FaGift,
-  FaUsers,
-  FaTruck,
-  FaQuestionCircle,
-  FaTachometerAlt,
-  FaCog,
-  FaTools,
-} from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { 
+  Inventory2Rounded as InventoryIcon,
+  Category as ItemsIcon,
+  PrecisionManufacturing as SuppliersIcon,
+  LocalOffer as OffersIcon,
+  SupervisedUserCircle as CustomersIcon,
+  LocalShipping as TransportIcon
+} from '@mui/icons-material';
 
-const operatorButtons = [
-  {
-    group: 'Dashboard',
-    icon: <FaTachometerAlt />,
-    items: [
-      {
-        to: '/operator',
-        icon: <FaHome />,
-        label: 'Dashboard',
-      },
-    ],
-  },
-  {
-    group: 'Operations',
-    icon: <FaCog />,
-    items: [
-      {
-        to: '/operator/inventory',
-        icon: <FaBox />,
-        label: 'Inventory',
-      },
-      {
-        to: '/operator/inventory/movements',
-        icon: <FaExchangeAlt />,
-        label: 'Stock Movements',
-      },
-      {
-        to: '/operator/inventory/stock',
-        icon: <FaChartBar />,
-        label: 'Stock Levels',
-      },
-      {
-        to: '/operator/inventory/reconciliations',
-        icon: <FaSearch />,
-        label: 'Reconciliations',
-      },
-      {
-        to: '/operator/products',
-        icon: <FaTag />,
-        label: 'Items',
-      },
-      {
-        to: '/operator/suppliers',
-        icon: <FaIndustry />,
-        label: 'Suppliers',
-      },
-      {
-        to: '/operator/offers',
-        icon: <FaGift />,
-        label: 'Offers',
-      },
-      {
-        to: '/operator/customers',
-        icon: <FaUsers />,
-        label: 'Customers',
-      },
-      {
-        to: '/operator/transport',
-        icon: <FaTruck />,
-        label: 'Transport',
-      },
-    ],
-  },
-  {
-    group: 'Support',
-    icon: <FaTools />,
-    items: [
-      {
-        to: '/operator/help',
-        icon: <FaQuestionCircle />,
-        label: 'Help',
-      },
-    ],
-  },
-];
-
-const OperatorSidebar = () => {
-  const { collapse, setCollapse, Organization, setOrganization } = useStore();
-  const session = getSession();
+const OperatorDashboard = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const { logout } = useAuth();
-  const [selectedPath, setSelectedPath] = useState(null);
-  const [logoFetched, setLogoFetched] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const [expandedGroup, setExpandedGroup] = useState('Dashboard');
 
-  useEffect(() => {
-    if (
-      session !== null &&
-      !logoFetched &&
-      (!Organization.logo || Organization.logo === '')
-    ) {
-      fetchLogo().then((res) => {
-        setOrganization({ ...res, fiscalStart: res.fiscalStart?.split('T')[0] });
-        setLogoFetched(true);
-      });
+  const operatorRoutes = [
+    {
+      title: 'Inventory Management',
+      description: 'Manage stock levels, batches, and warehouse operations',
+      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/inventory',
+      color: 'bg-blue-500'
+    },
+    {
+      title: 'Stock Movements',
+      description: 'Track all inventory movements and transactions',
+      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/inventory/movements',
+      color: 'bg-cyan-500'
+    },
+    {
+      title: 'Stock Levels',
+      description: 'Monitor current stock levels across warehouses',
+      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/inventory/stock',
+      color: 'bg-teal-500'
+    },
+    {
+      title: 'Reconciliations',
+      description: 'Perform and manage inventory reconciliations',
+      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/inventory/reconciliations',
+      color: 'bg-emerald-500'
+    },
+    {
+      title: 'Warehouses',
+      description: 'Manage warehouse locations and capacity',
+      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/warehouses',
+      color: 'bg-gray-500'
+    },
+    {
+      title: 'Items Catalog',
+      description: 'Add, edit, and manage product items',
+      icon: <ItemsIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/products',
+      color: 'bg-green-500'
+    },
+    {
+      title: 'Suppliers',
+      description: 'Manage supplier information and relationships',
+      icon: <SuppliersIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/suppliers',
+      color: 'bg-purple-500'
+    },
+    {
+      title: 'Offers & Promotions',
+      description: 'Create and manage promotional offers',
+      icon: <OffersIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/offers',
+      color: 'bg-orange-500'
+    },
+    {
+      title: 'Customer Management',
+      description: 'View and manage customer information',
+      icon: <CustomersIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/customers',
+      color: 'bg-indigo-500'
+    },
+    {
+      title: 'Transport & Logistics',
+      description: 'Manage transportation and delivery services',
+      icon: <TransportIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/transport',
+      color: 'bg-red-500'
     }
-  }, [session, Organization, setOrganization, logoFetched]);
+  ];
 
-  if (session === null) {
-    return null;
-  }
-
-  const handleItemClick = (path) => {
+  const handleNavigate = (path) => {
     navigate(path);
-    setSelectedPath(path);
-  };
-
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
-
-  const handleViewOrganization = () => {
-    navigate('/operator');
-  };
-
-  const toggleUserMenu = () => {
-    setShowUserMenu(!showUserMenu);
-  };
-
-  const toggleGroup = (groupName) => {
-    if (expandedGroup === groupName) {
-      setExpandedGroup(null);
-    } else {
-      setExpandedGroup(groupName);
-    }
   };
 
   return (
-    <div className={`${styles.sidebar} ${collapse ? styles.collapsed : ''}`}>
-      <div className={styles.logoContainer}>
-        {Organization.logo ? (
-          <img
-            src={`${getBaseURL()}/${Organization.logo}`}
-            onClick={handleViewOrganization}
-            alt="Logo"
-            className={styles.logo}
-          />
-        ) : (
-          <img
-            src={logo}
-            onClick={handleViewOrganization}
-            alt="Logo"
-            className={styles.logo}
-          />
-        )}
-        <h1 className={styles.orgName}>Operator Portal</h1>
+    <div className="w-full p-6">
+      <div className="mb-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          Welcome, {user?.name}!
+        </h1>
+        <p className="text-gray-600 text-lg">
+          Operator Dashboard - Manage operations efficiently
+        </p>
       </div>
 
-      <nav className={styles.nav}>
-        {operatorButtons.map((group) => (
-          <div key={group.group} className={styles.group}>
-            <button
-              className={styles.groupTitle}
-              onClick={() => toggleGroup(group.group)}
-            >
-              <span className={styles.groupIcon}>{group.icon}</span>
-              {group.group}
-            </button>
-            {expandedGroup === group.group && (
-              <ul>
-                {group.items.map((button) => (
-                  <li key={button.label}>
-                    <button
-                      className={`${styles.navItem} ${
-                        selectedPath === button.to ? styles.active : ''
-                      }`}
-                      onClick={() => handleItemClick(button.to)}
-                    >
-                      <span className={styles.icon}>{button.icon}</span>
-                      {button.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {operatorRoutes.map((route, index) => (
+          <div
+            key={index}
+            onClick={() => handleNavigate(route.path)}
+            className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 border border-gray-200"
+          >
+            <div className="p-6">
+              <div className={`${route.color} text-white rounded-full w-16 h-16 flex items-center justify-center mb-4 mx-auto`}>
+                {route.icon}
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800 text-center mb-2">
+                {route.title}
+              </h3>
+              <p className="text-gray-600 text-center text-sm leading-relaxed">
+                {route.description}
+              </p>
+            </div>
+            <div className="px-6 pb-6">
+              <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                Access Module
+              </button>
+            </div>
           </div>
         ))}
-      </nav>
+      </div>
 
-      <div className={styles.userSection}>
-        <div className={styles.userInfo} onClick={toggleUserMenu}>
-          <img
-            src={`${getBaseURL()}/${session.avatar}`}
-            alt="User Avatar"
-            className={styles.avatar}
-          />
-          <div className={styles.userDetails}>
-            <p className={styles.userName}>{session.name}</p>
-            <p className={styles.userRole}>{session.role}</p>
-          </div>
-        </div>
-
-        {showUserMenu && (
-          <div className={styles.userMenu}>
-            <button
-              className={styles.menuItem}
-              onClick={() => window.location.reload()}
-            >
-              Refresh
-            </button>
-            <button
-              className={styles.menuItem}
-              onClick={() => navigate('/operator/help')}
-            >
-              Get Help
-            </button>
-            <button className={styles.menuItem} onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
-        )}
+      <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <h4 className="text-lg font-semibold text-yellow-800 mb-2">Quick Tips</h4>
+        <ul className="text-yellow-700 text-sm space-y-1">
+          <li>• Use the inventory module to track stock levels and manage batches</li>
+          <li>• Add new products through the items catalog</li>
+          <li>• Keep supplier information updated for smooth operations</li>
+          <li>• Create promotional offers to boost sales</li>
+        </ul>
       </div>
     </div>
   );
 };
 
-export default OperatorSidebar;
+export default OperatorDashboard;

@@ -36,6 +36,7 @@ import {
 } from "@mui/icons-material";
   getStuff, getCount, deleteRow, getWarehouses, getBatches, deleteBatch
 import { getStuff, getCount, deleteRow, getWarehouses } from "../../network/api";
+import { getBatches, deleteBatch } from "../../network/api";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import InventoryTable from "./InventoryTable";
 import Checklist from "../../components/FormComponent/Checklist";
@@ -169,7 +170,7 @@ const ViewInventory = () => {
 
   const fetchProducts = async (locationID) => {
     try {
-      const productsData = await getBatches({ warehouseId: locationID });
+      const productsData = await getBatches();
       const sortedProducts = productsData.sort((a, b) => {
         const dateA = new Date(a.entryDate).getTime();
         const dateB = new Date(b.entryDate).getTime();

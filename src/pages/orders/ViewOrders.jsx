@@ -297,49 +297,14 @@ const safeParse = (jsonString) => {
   }
 };
 
-// 🧪 MOCK DATA
-// const mockOrders = [
-//   {
-//     orderId: 101,
-//     invoiceNumber: 'INV-2023-0001',
-//     customerName: 'John Doe',
-//     orderDate: '2025-07-15T10:30:00Z',
-//     totalAmount: '2500',
-//     orderStatus: 'pending',
-//     paymentStatus: 'pending',
-//     items: [
-//       {
-//         name: 'Wireless Mouse',
-//         quantity: 2,
-//         price: 500,
-//         variants: JSON.stringify({ color: 'Black' })
-//       },
-//       {
-//         name: 'Keyboard',
-//         quantity: 1,
-//         price: 1500,
-//         variants: JSON.stringify({ layout: 'QWERTY' })
-//       }
-//     ]
-//   },
-//   {
-//     orderId: 102,
-//     invoiceNumber: 'INV-2023-0002',
-//     customerName: 'Jane Smith',
-//     orderDate: '2025-07-16T15:45:00Z',
-//     totalAmount: '1200',
-//     orderStatus: 'fulfilled',
-//     paymentStatus: 'paid',
-//     items: [
-//       {
-//         name: 'USB-C Cable',
-//         quantity: 3,
-//         price: 400,
-//         variants: JSON.stringify({ length: '1m' })
-//       }
-//     ]
-//   }
-// ];
+// Get orders from localStorage or API
+const getOrdersData = () => {
+  const storedOrders = localStorage.getItem('customerOrders');
+  if (storedOrders) {
+    return JSON.parse(storedOrders);
+  }
+  return [];
+};
 
 const ViewOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -353,9 +318,10 @@ const ViewOrders = () => {
   const { successPopup, errorPopup } = useStore();
 
   useEffect(() => {
-    // Simulate loading mock data
+    // Load orders from localStorage or API
     const timeout = setTimeout(() => {
-      const parsed = mockOrders.map(order => ({
+      const ordersData = getOrdersData();
+      const parsed = ordersData.map(order => ({
         ...order,
         items: order.items.map(item => ({
           ...item,
@@ -371,7 +337,7 @@ const ViewOrders = () => {
       setTimelineCollapsed(initialTimelineCollapsed);
 
       setLoading(false);
-    }, 800); // simulate 800ms loading delay
+    }, 300);
 
     return () => clearTimeout(timeout);
   }, []);

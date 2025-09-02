@@ -351,6 +351,32 @@ const AdminCheckout = () => {
 
     successPopup('Order placed successfully!');
     clearSelectedProducts();
+    
+    // Store order in localStorage for customer portal
+    const newOrder = {
+      orderId: Date.now(),
+      invoiceNumber: invoiceData.invoiceNumber,
+      customerName: isNewCustomer ? newCustomer.customerName : selectedCustomer?.name,
+      orderDate: new Date().toISOString(),
+      totalAmount: totalCost.toString(),
+      orderStatus: ship ? 'shipped' : 'pending',
+      paymentStatus: 'paid',
+      items: products.map(product => {
+        const selectedProduct = selectedProducts[product.itemId];
+        return {
+          orderItemId: Date.now() + Math.random(),
+          itemId: product.itemId,
+          itemName: product.itemName,
+          quantity: selectedProduct.quantity,
+          salePrice: selectedProduct.salePrice || product.salePrice,
+          variants: JSON.stringify(selectedProduct.variants || {})
+        };
+      })
+    };
+    
+    const existingOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
+    localStorage.setItem('customerOrders', JSON.stringify([newOrder, ...existingOrders]));
+    
     navigate(getRoute('/orders'));
   };
 

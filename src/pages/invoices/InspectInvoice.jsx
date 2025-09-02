@@ -144,76 +144,41 @@ const ViewInvoices = () => {
     }
   ];
 
-  const mockData = [
-    // {
-    //   invoiceId: 1,
-    //   invoiceNumber: 'INV001',
-    //   invoiceDate: '2025-07-15',
-    //   orderId: 'ORD123',
-    //   dueDate: '2025-07-20',
-    //   paymentId: 'PAY456',
-    //   paymentDate: '2025-07-16',
-    //   status: 'Paid',
-    //   dateAdded: '2025-07-15',
-    //   updatedAt: '2025-07-16',
-    //   paymentMode: 'Online',
-    //   onlineMethod: 'UPI',
-    //   upi: 'customer@upi',
-    //   cardNumber: '**** **** **** 1234',
-    //   cardHolderName: 'John Doe',
-    //   expiryDate: '2025-12-31',
-    //   cvv: '***',
-    //   cardType: 'Visa',
-    //   bankName: 'SBI',
-    //   paymentStatus: 'Success',
-    //   customerId: 'CUST001',
-    //   orderDate: '2025-07-14',
-    //   orderStatus: 'Shipped',
-    //   shippingAddress: '123 Street, City',
-    //   totalAmount: 1200,
-    //   taxAmount: 100,
-    //   discountApplied: 50,
-    //   shippingCost: 30,
-    //   shippingDate: '2025-07-17',
-    //   placedByUserId: 'USR009',
-    //   customerName: 'John Doe',
-    //   items: 'Product A, Product B',
-    // },
-    // {
-    //   invoiceId: 2,
-    //   invoiceNumber: 'INV002',
-    //   invoiceDate: '2025-07-10',
-    //   orderId: 'ORD124',
-    //   dueDate: '2025-07-15',
-    //   paymentId: 'PAY789',
-    //   paymentDate: '2025-07-11',
-    //   status: 'Pending',
-    //   dateAdded: '2025-07-10',
-    //   updatedAt: '2025-07-11',
-    //   paymentMode: 'Card',
-    //   onlineMethod: 'Net Banking',
-    //   upi: '',
-    //   cardNumber: '**** **** **** 5678',
-    //   cardHolderName: 'Alice Smith',
-    //   expiryDate: '2026-01-31',
-    //   cvv: '***',
-    //   cardType: 'MasterCard',
-    //   bankName: 'HDFC',
-    //   paymentStatus: 'Pending',
-    //   customerId: 'CUST002',
-    //   orderDate: '2025-07-09',
-    //   orderStatus: 'Processing',
-    //   shippingAddress: '456 Avenue, City',
-    //   totalAmount: 2500,
-    //   taxAmount: 200,
-    //   discountApplied: 0,
-    //   shippingCost: 40,
-    //   shippingDate: '',
-    //   placedByUserId: 'USR010',
-    //   customerName: 'Alice Smith',
-    //   items: 'Product C',
-    // }
-  ];
+  // Get invoices from localStorage
+  const getInvoicesData = () => {
+    const storedOrders = localStorage.getItem('customerOrders');
+    if (storedOrders) {
+      const orders = JSON.parse(storedOrders);
+      return orders.map((order, index) => ({
+        invoiceId: order.orderId,
+        invoiceNumber: order.invoiceNumber,
+        invoiceDate: order.orderDate,
+        orderId: order.orderId,
+        dueDate: order.orderDate,
+        paymentId: `PAY${order.orderId}`,
+        paymentDate: order.orderDate,
+        status: order.paymentStatus === 'paid' ? 'Paid' : 'Pending',
+        dateAdded: order.orderDate,
+        updatedAt: order.orderDate,
+        paymentMode: 'Online',
+        onlineMethod: 'UPI',
+        paymentStatus: order.paymentStatus === 'paid' ? 'Success' : 'Pending',
+        customerId: `CUST${order.orderId}`,
+        orderDate: order.orderDate,
+        orderStatus: order.orderStatus,
+        shippingAddress: '123 Street, City',
+        totalAmount: parseFloat(order.totalAmount),
+        taxAmount: parseFloat(order.totalAmount) * 0.18,
+        discountApplied: 0,
+        shippingCost: 30,
+        customerName: order.customerName,
+        items: order.items.map(item => item.itemName).join(', '),
+      }));
+    }
+    return [];
+  };
+
+  const mockData = getInvoicesData();
 
   return (
     <ViewData
