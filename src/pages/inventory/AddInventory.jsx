@@ -61,17 +61,28 @@ const AddInventory = () => {
   const [stockIssues, setStockIssues] = useState([]);
 
   const handleSubmit = async () => {
+    if (!selectedLocation || !selectedSupplier || selectedProducts.length === 0) {
+      errorPopup("Please select warehouse, supplier, and add products!");
+      return;
+    }
+
+    if (!formData.batchNumber || !formData.entryDate) {
+      errorPopup("Please fill in batch number and entry date!");
+      return;
+    }
+
     // Create batch data for new API
+    const totalQuantity = selectedProducts.reduce((total, product) => total + Number(product.quantity), 0);
     const batchData = {
-      productId: selectedProducts[0]?.itemId || 0, // Assuming single product per batch for now
-      supplierId: selectedSupplier?.id || 0,
+      productId: Number(selectedProducts[0]?.itemId) || 0,
+      supplierId: Number(selectedSupplier?.id) || 0,
       batchCode: formData.batchNumber,
       purchaseDate: formData.entryDate,
       expiryDate: selectedProducts[0]?.expiryDate || null,
-      quantity: selectedProducts.reduce((total, product) => total + product.quantity, 0),
-      remainingQuantity: selectedProducts.reduce((total, product) => total + product.quantity, 0),
-      unitCost: totalPrice / selectedProducts.reduce((total, product) => total + product.quantity, 0),
-      warehouseId: selectedLocation?.id || 0,
+      quantity: totalQuantity,
+      remainingQuantity: totalQuantity,
+      unitCost: totalPrice / totalQuantity,
+      warehouseId: Number(selectedLocation?.id) || 0,
       remarks: formData.remarks || '',
       isActive: true
     };

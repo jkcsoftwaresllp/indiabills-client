@@ -7,6 +7,8 @@ import SpinnerFullPage from '../pages/more/spinner';
 const CustomerDashboard = lazy(() => import('../pages/customer/CustomerDashboard'));
 const CustomerOrders = lazy(() => import('../pages/customer/CustomerOrders'));
 const CustomerInvoices = lazy(() => import('../pages/customer/CustomerInvoices'));
+const CustomerProfile = lazy(() => import('../pages/customer/CustomerProfile'));
+const CustomerSupport = lazy(() => import('../pages/customer/CustomerSupport'));
 
 // Reused components
 const InspectOrder = lazy(() => import('../pages/orders/InspectOrder'));
@@ -24,6 +26,8 @@ const CustomerRoutes = () => {
           <Route path="orders/:orderId" element={<InspectOrder />} />
           <Route path="invoices" element={<CustomerInvoices />} />
           <Route path="invoice/:orderId" element={<OrderInvoice />} />
+          <Route path="profile" element={<CustomerProfile />} />
+          <Route path="support" element={<CustomerSupport />} />
           <Route path="cart" element={<PlaceOrder />} />
           <Route path="payment/:randomLink" element={<PaymentGateway />} />
         </Route>

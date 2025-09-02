@@ -172,30 +172,30 @@ import { useRoutes } from '../../hooks/useRoutes';
 const getData = async (endpoint) => {
   if (endpoint === "/shop/products") {
     return [
-      {
-        id: 1,
-        itemName: "Wireless Headphones",
-        price: 1999,
-        description: "High-quality over-ear wireless headphones.",
-        imageUrl:
-          "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
-      },
-      {
-        id: 2,
-        itemName: "Smart Watch",
-        price: 2999,
-        description: "Track your fitness and get notifications on the go.",
-        imageUrl:
-          "https://images.unsplash.com/photo-1516573982172-c5b7f43a4a16?auto=format&fit=crop&w=800",
-      },
-      {
-        id: 3,
-        itemName: "Gaming Keyboard",
-        price: 1499,
-        description: "RGB mechanical keyboard with fast switches.",
-        imageUrl:
-          "https://images.unsplash.com/photo-1587202372775-98973b6ba519?auto=format&fit=crop&w=800",
-      },
+      // {
+      //   id: 1,
+      //   itemName: "Wireless Headphones",
+      //   price: 1999,
+      //   description: "High-quality over-ear wireless headphones.",
+      //   imageUrl:
+      //     "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
+      // },
+      // {
+      //   id: 2,
+      //   itemName: "Smart Watch",
+      //   price: 2999,
+      //   description: "Track your fitness and get notifications on the go.",
+      //   imageUrl:
+      //     "https://images.unsplash.com/photo-1516573982172-c5b7f43a4a16?auto=format&fit=crop&w=800",
+      // },
+      // {
+      //   id: 3,
+      //   itemName: "Gaming Keyboard",
+      //   price: 1499,
+      //   description: "RGB mechanical keyboard with fast switches.",
+      //   imageUrl:
+      //     "https://images.unsplash.com/photo-1587202372775-98973b6ba519?auto=format&fit=crop&w=800",
+      // },
     ];
   } else if (endpoint === "channel/announcements/shop") {
     return [

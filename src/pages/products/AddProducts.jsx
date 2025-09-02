@@ -36,6 +36,7 @@ const AddProducts = () => {
   const [page, setPage] = useState(1);
   const [rateType, setRateType] = useState("purchasePriceWithoutTax"); // Toggle between 'purchasePriceWithoutTax' and 'purchaseRate'
 
+
   const backPage = useCallback(() => {
     if (page > 1) {
       setPage(page - 1);
@@ -57,8 +58,9 @@ const AddProducts = () => {
   };
 
   const submit = useCallback(() => {
-    if (invalidForm) {
-      errorPopup("Invalid Form!");
+    // Validate required fields
+    if (!formData.itemName || !formData.salePrice || !formData.purchasePrice) {
+      errorPopup("Please fill in all required fields!");
       return;
     }
 
@@ -289,6 +291,7 @@ const BasicPage = React.memo(({ formData, handleChange }) => {
               name={"category"}
               value={formData?.category}
               onChange={handleChange}
+              required
               options={[
                 "Electronics",
                 "Sports",
@@ -390,7 +393,8 @@ const InventoryPage = React.memo(
               placeholder={"₹"}
               value={formData?.salePrice}
               onChange={(e) => handleChange?.(e)}
-            />
+              required
+              />
           </div>
           <div className="flex justify-between w-full gap-4">
             <InputBox
@@ -490,6 +494,7 @@ const InventoryPage = React.memo(
               placeholder={"₹"}
               value={formData?.purchasePrice}
               onChange={(e) => handleChange?.(e)}
+              required
             />
             <InputBox
               name="unitOfMeasure"

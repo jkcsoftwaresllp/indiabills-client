@@ -7,50 +7,44 @@ import { fetchLogo } from '../../network/api';
 import { getBaseURL } from '../../network/api/api-config';
 import { useAuth } from '../../hooks/useAuth';
 import styles from '../default/Sidebar.module.css';
-import {
-  FaHome,
-  FaBox,
-  FaFileInvoice,
-  FaUser,
-  FaHeadset,
-  FaTachometerAlt,
-  FaCog,
-} from 'react-icons/fa';
 
 const customerButtons = [
   {
     group: 'Dashboard',
-    icon: <FaTachometerAlt />,
     items: [
       {
         to: '/customer',
-        icon: <FaHome />,
+        icon: '🏠',
         label: 'Dashboard',
       },
       {
         to: '/customer/orders',
-        icon: <FaBox />,
+        icon: '📦',
         label: 'My Orders',
       },
       {
         to: '/customer/invoices',
-        icon: <FaFileInvoice />,
+        icon: '🧾',
         label: 'My Invoices',
+      },
+      {
+        to: '/customer/cart',
+        icon: '🛒',
+        label: 'Shopping Cart',
       },
     ],
   },
   {
     group: 'Account',
-    icon: <FaCog />,
     items: [
       {
         to: '/customer/profile',
-        icon: <FaUser />,
+        icon: '👤',
         label: 'Profile',
       },
       {
         to: '/customer/support',
-        icon: <FaHeadset />,
+        icon: '🎧',
         label: 'Support',
       },
     ],
@@ -58,7 +52,7 @@ const customerButtons = [
 ];
 
 const CustomerSidebar = () => {
-  const { collapse, Organization, setOrganization } = useStore();
+  const { collapse, setCollapse, Organization, setOrganization } = useStore();
   const session = getSession();
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -138,7 +132,9 @@ const CustomerSidebar = () => {
               className={styles.groupTitle}
               onClick={() => toggleGroup(group.group)}
             >
-              <span className={styles.groupIcon}>{group.icon}</span>
+              <span className={styles.groupIcon}>
+                {group.group === 'Dashboard' ? '📊' : '⚙️'}
+              </span>
               {group.group}
             </button>
             {expandedGroup === group.group && (
