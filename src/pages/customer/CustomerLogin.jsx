@@ -6,15 +6,7 @@ import logo from '../../assets/IndiaBills_logo.png';
 import bg from '../../assets/bglogo.png';
 import styles from '../user/Login.module.css';
 
-const quotes = [
-  'Welcome to your personal shopping experience.',
-  'Discover amazing products tailored just for you.',
-  'Your satisfaction is our priority.',
-  'Shop with confidence and convenience.',
-];
-
 const CustomerLogin = () => {
-  const [quote, setQuote] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({
     email: '',
@@ -30,11 +22,11 @@ const CustomerLogin = () => {
       const session = JSON.parse(localStorage.getItem('session'));
       if (session.role === 'customer') {
         navigate('/customer');
-        return;
+      } else {
+        navigate('/login');
       }
+      return;
     }
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-    setQuote(randomQuote);
   }, [navigate]);
 
   const handleInputChange = (e) => {
@@ -57,27 +49,23 @@ const CustomerLogin = () => {
       return;
     }
 
-    try {
-      // Hardcoded customer for now - will be replaced with API call later
-      if (data.email === 'customer@example.com' && data.password === 'customer123') {
-        const payload = {
-          id: 999,
-          name: 'John Customer',
-          role: 'customer',
-          avatar: 'default.webp',
-          token: 'hardcoded-customer-token',
-        };
+    // Hardcoded customer credentials
+    if (data.email === 'customer@example.com' && data.password === 'customer123') {
+      const customerPayload = {
+        id: 999,
+        name: 'John Customer',
+        role: 'customer',
+        avatar: 'default.webp',
+        token: 'hardcoded-customer-token',
+      };
 
-        login(payload);
-        successPopup('Welcome to your portal!');
-        navigate('/customer');
-      } else {
-        errorPopup('Invalid customer credentials');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      errorPopup('Login failed. Please try again.');
+      login(customerPayload);
+      successPopup('Welcome to your portal!');
+      navigate('/customer');
+      return;
     }
+
+    errorPopup('Invalid customer credentials');
   };
 
   return (
@@ -91,7 +79,7 @@ const CustomerLogin = () => {
         <div className={styles.header}>
           <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
           <h2 className="text-white text-xl font-semibold mb-2">Customer Portal</h2>
-          <p className={styles.quote}>{quote}</p>
+          <p className={styles.quote}>Welcome to your personal shopping experience</p>
         </div>
 
         <div className={styles.formFields}>
@@ -139,16 +127,21 @@ const CustomerLogin = () => {
         </div>
 
         <button type="submit" className={styles.loginButton}>
-          Login to Portal
+          Login to Customer Portal
         </button>
 
         <div className={styles.signupPrompt}>
           <p className={styles.signupText}>
-            Need admin access?{' '}
+            Need business access?{' '}
             <Link to="/login" className={styles.signupLink}>
               Admin Login
             </Link>
           </p>
+          <div className="mt-2 text-xs text-gray-300">
+            <p>Demo Credentials:</p>
+            <p>Email: customer@example.com</p>
+            <p>Password: customer123</p>
+          </div>
         </div>
       </form>
     </div>
