@@ -9,7 +9,13 @@ import { getOption } from "../../../utils/FormHelper";
 import styles from "./BrandingSetup.module.css";
 
 const BrandingSetup = memo(
-  ({ setPage, setLogo, organization, setOrganization }) => {
+  ({
+    setPage,
+    setLogo,
+    organization,
+    setOrganization,
+    navigation = "one-page",
+  }) => {
     const handleChange = (e) => {
       const { name, value, type } = e.target;
       setOrganization((prevState) => ({
@@ -90,7 +96,7 @@ const BrandingSetup = memo(
               data={organization}
             />
           </div>
-          <div className={styles.inputRow}>
+          {/* <div className={styles.inputRow}>
             <InputBox
               name={"bankBranch"}
               type="string"
@@ -123,7 +129,7 @@ const BrandingSetup = memo(
               value={organization?.upi}
               onChange={(e) => handleChange?.(e)}
             />
-          </div>
+          </div> */}
           <div className={styles.inputRow}>
             <div className={styles.dropdownContainer}>
               <Dropdown
@@ -152,11 +158,11 @@ const BrandingSetup = memo(
         big={true}
         heading="Setup your [Organization]."
         main={main}
-        navigation="both"
+        navigation={navigation}
         setPage={setPage}
       />
     );
-  },
+  }
 );
 
 BrandingSetup.displayName = "BrandingSetup";
