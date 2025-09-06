@@ -2,7 +2,7 @@ import React from "react";
 import ViewData from "../../layouts/form/ViewData";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../store/store";
-import { deleteTransportPartner } from "../../network/api";
+import { getTransportPartners, deleteTransportPartner } from "../../network/api";
 
 const colDefs = [
   { field: "id", headerName: "ID", width: 50, cellRenderer: (params) => (<p><span className="text-blue-950">#</span><span className="font-medium">{params.value}</span></p>) },
@@ -17,8 +17,8 @@ const colDefs = [
   { field: "city", headerName: "City", editable: true, cellStyle: { textTransform: 'capitalize' } },
   { field: "state", headerName: "State", editable: true, cellStyle: { textTransform: 'capitalize' } },
   { field: "pinCode", headerName: "Pin Code", editable: true },
-  { field: "gstNumber", headerName: "GST Number" },
-  { field: "panNumber", headerName: "PAN Number" },
+  { field: "gstnumber", headerName: "GST Number" },
+  { field: "pannumber", headerName: "PAN Number" },
   { field: "baseRate", headerName: "Base Rate", cellClassRules: { money: (p) => p.value } },
   { field: "ratePerKm", headerName: "Rate Per KM", cellClassRules: { money: (p) => p.value } },
   { field: "isActive", headerName: "Status", cellRenderer: (params) => (
@@ -38,8 +38,12 @@ const ViewTransport = () => {
     {
       label: "Inspect",
       onClick: (data) => {
-        console.log(`Inspecting ${data?.id}`);
-        navigate(`/transport/${data?.id}`);
+        const currentPath = window.location.pathname;
+        if (currentPath.startsWith('/operator/')) {
+          navigate(`/operator/transport/${data?.id}`);
+        } else {
+          navigate(`/transport/${data?.id}`);
+        }
       },
     },
     {
@@ -49,10 +53,8 @@ const ViewTransport = () => {
           if (response === 200) {
             successPopup("Deleted successfully");
             refreshTableSetId(data?.id);
-            navigate("/transport");
           } else {
             errorPopup("Failed to delete");
-            console.error("Failed to delete");
           }
         });
       },
@@ -63,6 +65,7 @@ const ViewTransport = () => {
     <ViewData 
       menuOptions={menuOptions} 
       title="Transport Partners" 
+      url="/transport"
       customDataFetcher={getTransportPartners}
       initialColDefs={colDefs} 
     />

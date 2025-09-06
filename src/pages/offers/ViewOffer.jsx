@@ -42,8 +42,12 @@ const ViewOffers = () => {
     {
       label: "Inspect",
       onClick: (data) => {
-        console.log(`Inspecting ${data?.id}`);
-        navigate(`/offers/${data?.id}`);
+        const currentPath = window.location.pathname;
+        if (currentPath.startsWith('/operator/')) {
+          navigate(`/operator/offers/${data?.id}`);
+        } else {
+          navigate(`/offers/${data?.id}`);
+        }
       },
     },
     {
@@ -53,10 +57,8 @@ const ViewOffers = () => {
           if (response === 200) {
             successPopup("Deleted successfully");
             refreshTableSetId(data?.id);
-            navigate("/offers");
           } else {
             errorPopup("Failed to delete");
-            console.error("Failed to delete");
           }
         });
       }
@@ -67,9 +69,11 @@ const ViewOffers = () => {
     <ViewData 
       menuOptions={menuOptions} 
       title="Offers" 
+      url="/offers"
       customDataFetcher={getOffers}
       initialColDefs={colDefs} 
     />
   );
 };
 
+export default ViewOffers;

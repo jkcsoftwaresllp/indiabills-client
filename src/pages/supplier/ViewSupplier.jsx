@@ -55,8 +55,12 @@ const ViewSuppliers = () => {
     {
       label: "Inspect",
       onClick: (data) => {
-        console.log(`Inspecting ${data?.id}`);
-        navigate(`/suppliers/${data?.id}`);
+        const currentPath = window.location.pathname;
+        if (currentPath.startsWith('/operator/')) {
+          navigate(`/operator/suppliers/${data?.id}`);
+        } else {
+          navigate(`/suppliers/${data?.id}`);
+        }
       },
     },
     {
@@ -66,10 +70,8 @@ const ViewSuppliers = () => {
           if (response === 200) {
             successPopup("Deleted successfully");
             refreshTableSetId(data?.id);
-            navigate("/suppliers");
           } else {
             errorPopup("Failed to delete");
-            console.error("Failed to delete");
           }
         });
       },
@@ -80,9 +82,11 @@ const ViewSuppliers = () => {
     <ViewData 
       menuOptions={menuOptions} 
       title="Suppliers" 
+      url="/suppliers"
       customDataFetcher={getSuppliers}
       initialColDefs={colDefs} 
     />
   );
 };
 
+export default ViewSuppliers;
