@@ -257,7 +257,7 @@ const ViewData = ({
   menuOptions,
   dateRange,
   customDataFetcher,
-  mockData // ✅ NEW PROP ADDED
+  mockData
 }) => {
   const navigate = useNavigate();
   const { refreshTableId, Organization } = useStore();
@@ -373,7 +373,12 @@ const ViewData = ({
     if (title === "Batches") {
       navigate("/inventory/add");
     } else {
-      navigate(`${url}/add`);
+      const currentPath = window.location.pathname;
+      if (currentPath.startsWith('/operator/')) {
+        navigate(`${currentPath}/add`);
+      } else {
+        navigate(`/${title.toLowerCase()}/add`);
+      }
     }
   };
 

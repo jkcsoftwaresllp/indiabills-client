@@ -1,22 +1,28 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 export const useStore = create((set) => ({
-  session: { id: 0, name: "", role: "none" },
+  session: { id: 0, name: '', role: 'none' },
   Popup: {
-    message: "Product added successfully",
-    variant: "success",
+    message: 'Product added successfully',
+    variant: 'success',
     active: false,
   },
   viewEntries: false,
-  viewData: "table",
-  prefs: { viewData: "table" },
+  viewData: 'table',
+  prefs: { viewData: 'table' },
   collapse: false,
   selectedProduct: null,
   showAudit: false,
   selectedProducts: {},
-  Organization: { logo: "", name: "", fiscalStart: "", initials: "" },
+  Organization: { logo: '', name: '', fiscalStart: '', initials: '' },
   refreshTableId: null,
-  fiscalStart: "",
+  fiscalStart: '',
+  customerData: {
+    orders: [],
+    invoices: [],
+    wishlist: [],
+    profile: null
+  },
 
   setFiscalStart: (date) => set(() => ({ fiscalStart: date })),
   setOrganization: (org) => set(() => ({ Organization: org })),
@@ -28,11 +34,11 @@ export const useStore = create((set) => ({
   setPopup: (popup) => set(() => ({ Popup: popup })),
   successPopup: (message) =>
     set(() => ({
-      Popup: { message: message, variant: "success", active: true },
+      Popup: { message: message, variant: 'success', active: true },
     })),
   errorPopup: (message) =>
     set(() => ({
-      Popup: { message: message, variant: "error", active: true },
+      Popup: { message: message, variant: 'error', active: true },
     })),
 
   selectProduct: (product, variants) =>
@@ -92,5 +98,21 @@ export const useStore = create((set) => ({
     }),
 
   refreshTableSetId: (id) => set(() => ({ refreshTableId: id })),
-}));
 
+  // Customer data management
+  updateCustomerOrders: (orders) => set((state) => ({
+    customerData: { ...state.customerData, orders }
+  })),
+  
+  updateCustomerInvoices: (invoices) => set((state) => ({
+    customerData: { ...state.customerData, invoices }
+  })),
+  
+  updateCustomerWishlist: (wishlist) => set((state) => ({
+    customerData: { ...state.customerData, wishlist }
+  })),
+  
+  updateCustomerProfile: (profile) => set((state) => ({
+    customerData: { ...state.customerData, profile }
+  })),
+}));

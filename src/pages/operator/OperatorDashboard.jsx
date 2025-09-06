@@ -44,6 +44,13 @@ const OperatorDashboard = () => {
       color: 'bg-emerald-500'
     },
     {
+      title: 'Warehouses',
+      description: 'Manage warehouse locations and capacity',
+      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      path: '/operator/warehouses',
+      color: 'bg-gray-500'
+    },
+    {
       title: 'Items Catalog',
       description: 'Add, edit, and manage product items',
       icon: <ItemsIcon sx={{ fontSize: 48 }} />,

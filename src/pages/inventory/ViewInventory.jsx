@@ -35,13 +35,15 @@ import {
   Warehouse as WarehouseIcon,
 } from "@mui/icons-material";
   getStuff, getCount, deleteRow, getWarehouses, getBatches, deleteBatch
-import { getStuff, getCount, deleteRow, getWarehouses } from "../../network/api";
+import { getStuff, getCount, deleteRow } from "../../network/api";
+import { getWarehouses, getBatches, deleteBatch } from "../../network/api";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import InventoryTable from "./InventoryTable";
 import Checklist from "../../components/FormComponent/Checklist";
 import { CustomPaper, CustomPopper, formatToIndianCurrency } from "../../utils/FormHelper";
 import MouseHoverPopover from "../../components/core/Explain";
 import { useStore } from "../../store/store";
+import { useNavigate } from "react-router-dom";
 
 const ViewInventory = () => {
   const navigate = useNavigate();
@@ -58,15 +60,25 @@ const ViewInventory = () => {
   };
 
   const add = () => {
-    navigate("/inventory/add");
+    const currentPath = window.location.pathname;
+    if (currentPath.startsWith('/operator/')) {
+      navigate("/operator/inventory/add");
+    } else {
+      navigate("/inventory/add");
+    }
   };
 
   const manageWarehouse = () => {
-    navigate("/inventory/warehouses");
+    const currentPath = window.location.pathname;
+    if (currentPath.startsWith('/operator/')) {
+      navigate("/operator/warehouses");
+    } else {
+      navigate("/warehouses");
+    }
   };
 
   const transferBatch = () => {
-    alert('open modal (work in progress)');
+    alert('Transfer batch feature (work in progress)');
   };
 
   const [warehouses, setWarehouses] = useState([]);
@@ -155,6 +167,7 @@ const ViewInventory = () => {
         if (wData.length === 1) {
           setSelectedWarehouse(wData[0]);
           fetchProducts(wData[0].id);
+          fetchBatches();
         }
 
         setLoading(false);
@@ -169,7 +182,7 @@ const ViewInventory = () => {
 
   const fetchProducts = async (locationID) => {
     try {
-      const productsData = await getBatches({ warehouseId: locationID });
+      const productsData = await getBatches();
       const sortedProducts = productsData.sort((a, b) => {
         const dateA = new Date(a.entryDate).getTime();
         const dateB = new Date(b.entryDate).getTime();
@@ -218,7 +231,12 @@ const ViewInventory = () => {
     {
       label: "Inspect",
       onClick: (data) => {
-        navigate(`/inventory/${data?.batchId}`);
+        const currentPath = window.location.pathname;
+        if (currentPath.startsWith('/operator/')) {
+          navigate(`/operator/inventory/${data?.id}`);
+        } else {
+          navigate(`/inventory/${data?.id}`);
+        }
       },
     },
     {
@@ -345,28 +363,28 @@ const ViewInventory = () => {
           ) : (
             <Grid container justifyContent="center" alignItems="center" style={{ minHeight: "60vh" }}>
               {!proceed ? (
-                <Grid item>
-                  <Grid container direction="column" alignItems="center" spacing={2}>
-                    <Grid item>
-                      <PrecisionManufacturingIcon sx={{ fontSize: 100, color: 'error.main' }} />
-                    </Grid>
-                    <Grid item>
-                      <Typography variant="h5">
-                        Inventory is <span style={{ color: '#f44336' }}>empty</span>.
-                      </Typography>
-                    </Grid>
-                    {proceed && (
-                      <Grid item>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          startIcon={<AddCircleRounded />}
-                          component={NavLink}
-                          to="/inventory/add"
-                        >
-                          Generate an Entry Bill
-                        </Button>
-                      </Grid>
+              <Grid item>
+                <Grid container direction="column" alignItems="center" spacing={2}>
+                  <Grid item>
+                    <PrecisionManufacturingIcon sx={{ fontSize: 100, color: 'error.main' }} />
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="h5">
+                      Inventory is <span style={{ color: '#f44336' }}>empty</span>.
+                    </Typography>
+                  </Grid>
+                  {proceed && (
+                  <Grid item>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<AddCircleRounded />}
+                      component={NavLink}
+                      to="/inventory/add"
+                    >
+                      Generate an Entry Bill
+                    </Button>
+                  </Grid>
                     )}
                     {!proceed && (
                       <Grid item>
@@ -394,9 +412,9 @@ const ViewInventory = () => {
                       <Typography variant="h5" align="center">
                         Select a <span style={{ color: '#f44336' }}>warehouse</span> from above.
                       </Typography>
-                    </Grid>
                   </Grid>
                 </Grid>
+              </Grid>
               )}
             </Grid>
           )

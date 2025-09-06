@@ -6,7 +6,8 @@ import {
   ShoppingCart as CartIcon,
   Receipt as InvoiceIcon,
   LocalShipping as OrderIcon,
-  AccountCircle as ProfileIcon
+  AccountCircle as ProfileIcon,
+  Favorite as WishlistIcon
 } from '@mui/icons-material';
 
 const CustomerDashboard = () => {
@@ -36,6 +37,13 @@ const CustomerDashboard = () => {
       color: 'bg-orange-500'
     },
     {
+      title: 'My Wishlist',
+      description: 'Saved items for later',
+      icon: <WishlistIcon sx={{ fontSize: 32 }} />,
+      path: '/customer/wishlist',
+      color: 'bg-pink-500'
+    },
+    {
       title: 'My Profile',
       description: 'Manage account settings',
       icon: <ProfileIcon sx={{ fontSize: 32 }} />,
@@ -58,7 +66,7 @@ const CustomerDashboard = () => {
       {/* Quick Actions */}
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {quickActions.map((action, index) => (
             <div
               key={index}

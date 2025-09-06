@@ -32,6 +32,11 @@ const customerButtons = [
         icon: '🛒',
         label: 'Shopping Cart',
       },
+      {
+        to: '/customer/wishlist',
+        icon: '💝',
+        label: 'Wishlist',
+      },
     ],
   },
   {

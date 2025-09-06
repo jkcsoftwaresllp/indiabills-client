@@ -171,32 +171,33 @@ import { useRoutes } from '../../hooks/useRoutes';
 // 👇 Mocked getData function with demo products and announcement
 const getData = async (endpoint) => {
   if (endpoint === "/shop/products") {
-    return [
-      // {
-      //   id: 1,
-      //   itemName: "Wireless Headphones",
-      //   price: 1999,
-      //   description: "High-quality over-ear wireless headphones.",
-      //   imageUrl:
-      //     "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
-      // },
-      // {
-      //   id: 2,
-      //   itemName: "Smart Watch",
-      //   price: 2999,
-      //   description: "Track your fitness and get notifications on the go.",
-      //   imageUrl:
-      //     "https://images.unsplash.com/photo-1516573982172-c5b7f43a4a16?auto=format&fit=crop&w=800",
-      // },
-      // {
-      //   id: 3,
-      //   itemName: "Gaming Keyboard",
-      //   price: 1499,
-      //   description: "RGB mechanical keyboard with fast switches.",
-      //   imageUrl:
-      //     "https://images.unsplash.com/photo-1587202372775-98973b6ba519?auto=format&fit=crop&w=800",
-      // },
-    ];
+    // Get products from the actual products API
+    try {
+      const { getProducts } = await import('../../network/api');
+      const products = await getProducts();
+      return products.map(product => ({
+        id: product.id,
+        itemId: product.id,
+        itemName: product.name,
+        price: product.salePrice,
+        salePrice: product.salePrice,
+        description: product.description,
+        manufacturer: product.manufacturer,
+        currentQuantity: 100, // Mock quantity for now
+        imageUrl: "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
+        cgst: 9,
+        sgst: 9,
+        cess: 0,
+        hsn: product.barcode || '',
+        unitMRP: product.unitMRP,
+        dimensions: product.dimensions,
+        weight: product.weight,
+        reorderLevel: product.reorderLevel
+      }));
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      return [];
+    }
   } else if (endpoint === "channel/announcements/shop") {
     return [
       {

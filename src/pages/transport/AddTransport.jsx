@@ -10,7 +10,7 @@ import { createTransportPartner } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Timeline from "../../components/FormComponent/Timeline";
-import { TransportMetadata } from "../../definitions/Metadata";
+// import { TransportMetadata } from "../../definitions/Metadata";
 import { getOption, initializeFormData } from "../../utils/FormHelper";
 
 const AddTransport = () => {

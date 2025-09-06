@@ -13,6 +13,30 @@ import Tooltip from '@mui/material/Tooltip';
 import { Chip, Divider, Typography, Card, CardContent } from '@mui/material';
 import { useRoutes } from '../../hooks/useRoutes';
 
+// Wishlist management
+const getWishlist = () => {
+  const wishlist = localStorage.getItem('customerWishlist');
+  return wishlist ? JSON.parse(wishlist) : [];
+};
+
+const saveWishlist = (wishlist) => {
+  localStorage.setItem('customerWishlist', JSON.stringify(wishlist));
+};
+
+const addToWishlist = (productId) => {
+  const wishlist = getWishlist();
+  if (!wishlist.includes(productId)) {
+    wishlist.push(productId);
+    saveWishlist(wishlist);
+  }
+};
+
+const removeFromWishlist = (productId) => {
+  const wishlist = getWishlist();
+  const updatedWishlist = wishlist.filter(id => id !== productId);
+  saveWishlist(updatedWishlist);
+};
+
 const ProductCard = ({ product }) => {
   const { selectedProducts, selectProduct, removeSelectedProduct } = useStore();
   const { getRoute } = useRoutes();
@@ -26,6 +50,12 @@ const ProductCard = ({ product }) => {
   const [selectedVariants, setSelectedVariants] = useState({});
   const [isInCart, setIsInCart] = useState(false);
   const [error, setError] = useState('');
+  const [isInWishlist, setIsInWishlist] = useState(false);
+
+  useEffect(() => {
+    const wishlist = getWishlist();
+    setIsInWishlist(wishlist.includes(product.itemId || product.id));
+  }, [product.itemId, product.id]);
 
   useEffect(() => {
     setIsInCart(!!selectedProducts[product.itemId]);
@@ -88,6 +118,17 @@ const ProductCard = ({ product }) => {
     setQuantity(1);
     setSelectedVariants({});
     setError('');
+  };
+
+  const handleWishlistToggle = () => {
+    const productId = product.itemId || product.id;
+    if (isInWishlist) {
+      removeFromWishlist(productId);
+      setIsInWishlist(false);
+    } else {
+      addToWishlist(productId);
+      setIsInWishlist(true);
+    }
   };
 
   const getTax = () => {
@@ -212,6 +253,14 @@ const ProductCard = ({ product }) => {
             fullWidth
           >
             {isInCart ? 'Update Cart' : 'Add to Cart'}
+          </Button>
+          <Button
+            variant="outlined"
+            color={isInWishlist ? 'error' : 'secondary'}
+            onClick={handleWishlistToggle}
+            fullWidth
+          >
+            {isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
           </Button>
           {isInCart && (
             <Button
