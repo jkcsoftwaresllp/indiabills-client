@@ -99,16 +99,26 @@ const LoginPage = () => {
         token: session.token,
       };
 
-      login(payload);
-      successPopup("Welcome back!");
-
-      // Redirect based on user role
-      if (payload.role === "customer") {
-        navigate("/customer");
-      } else if (payload.role === "operator") {
-        navigate("/operator");
+      // Store temporary session for organization selection
+      localStorage.setItem('tempUserSession', JSON.stringify(payload));
+      
+      // Check if user has multiple organizations
+      // TODO: Replace with actual API call
+      const hasMultipleOrgs = true; // Mock - should come from API
+      
+      if (hasMultipleOrgs && payload.role !== "customer") {
+        // Redirect to organization selector for admin/operator
+        navigate("/organization-selector");
       } else {
-        navigate("/");
+        // Direct login for customers or single organization users
+        login(payload);
+        successPopup("Welcome back!");
+        
+        if (payload.role === "customer") {
+          navigate("/customer");
+        } else {
+          navigate("/");
+        }
       }
     } catch (error) {
       console.error("Login error:", error);

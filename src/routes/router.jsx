@@ -26,6 +26,8 @@ import RevenueReport from '../pages/reports/RevenueReport';
 import PMSReport from '../pages/reports/PMSReport';
 import CustomerRoutes from './customerRoutes'
 import OperatorRoutes from './operatorRoutes'
+import OrganizationSelector from '../pages/user/OrganizationSelector';
+import CreateOrganization from '../pages/organization/CreateOrganization';
 
 // SUPPORT
 const Help = lazy(() => import('../pages/support/Help'));
@@ -121,6 +123,8 @@ const Routing = () => {
             {/* HOME */}
             <Route path="/" element={<Home />} />
             <Route path="/channel" element={<OrganizationChannel />} />
+            <Route path="/organization-selector" element={<OrganizationSelector />} />
+            <Route path="/organization/create" element={<CreateOrganization />} />
 
             {/* SETUP */}
             <Route path="/setup" element={<StartSetup />} />
@@ -606,7 +610,7 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            />
+              />
 
             {/* CUSTOMER PORTAL */}
             <Route path="/customer/*" element={<CustomerRoutes />} />

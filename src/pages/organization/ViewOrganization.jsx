@@ -1,29 +1,84 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getData } from '../../network/api';
+import { getOrganization } from '../../network/api';
 import { differenceInYears, differenceInMonths, differenceInDays } from 'date-fns';
 import PageAnimate from '../../components/Animate/PageAnimate';
 import { getBaseURL } from '../../network/api/api-config';
+import { useStore } from '../../store/store';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  Button,
+  Chip,
+  Box,
+  CircularProgress
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import BusinessIcon from '@mui/icons-material/Business';
+import EmailIcon from '@mui/icons-material/Email';
+import PhoneIcon from '@mui/icons-material/Phone';
+import LanguageIcon from '@mui/icons-material/Language';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 const ViewOrganization = () => {
   const [organization, setOrganization] = useState(null);
-
+  const [loading, setLoading] = useState(true);
+  const { errorPopup } = useStore();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrganization = async () => {
-      const response = await getData('/organization'); // Replace with actual API endpoint
-      setOrganization(response);
+      try {
+        const response = await getOrganization();
+        if (response) {
+          setOrganization(response);
+        } else {
+          errorPopup('Failed to load organization details');
+        }
+      } catch (error) {
+        console.error('Error fetching organization:', error);
+        errorPopup('Failed to load organization details');
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchOrganization();
-  }, []);
+  }, [errorPopup]);
 
-  if (!organization) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  if (loading) {
+    return (
+      <PageAnimate>
+        <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
+          <CircularProgress />
+        </Box>
+      </PageAnimate>
+    );
   }
 
-  const dateAdded = new Date(organization.dateAdded);
+  if (!organization) {
+    return (
+      <PageAnimate>
+        <Box p={4} textAlign="center">
+          <Typography variant="h6" color="error">
+            Organization details not found
+          </Typography>
+          <Button 
+            variant="contained" 
+            onClick={() => navigate('/organization/edit')}
+            sx={{ mt: 2 }}
+          >
+            Setup Organization
+          </Button>
+        </Box>
+      </PageAnimate>
+    );
+  }
+
+  const dateAdded = organization.createdAt ? new Date(organization.createdAt) : new Date();
   const now = new Date();
   const years = differenceInYears(now, dateAdded);
   const months = differenceInMonths(now, dateAdded) % 12;
@@ -35,62 +90,217 @@ const ViewOrganization = () => {
     } else if (months > 0) {
       return `Thank you for being with us for ${months} months!`;
     } else {
-      return "This is just the beginning of our partnership!";
+      return "Welcome to IndiaBills! This is just the beginning of our partnership!";
     }
   };
 
   return (
-    <PageAnimate nostyle={true}>
-      <div className="flex justify-center mt-6">
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded"
-          onClick={() => navigate('/organization/edit')}
-        >
-          Edit Organization
-        </button>
-      </div>
-      <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
-        <div className="flex flex-col items-center">
-          {organization.logo && (
-            <img
-              src={`${getBaseURL()}/${organization.logo}`}
-              alt={`${organization.organizationName} logo`}
-              className="w-32 h-32 mb-4"
-            />
-          )}
-          <h1 className="text-3xl font-bold mb-2 text-center">{organization.organizationName}</h1>
-          <p className="text-center text-gray-600 mb-6">{getThankYouMessage()}</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="w-full">
-            <p className="mb-4">
-              <strong>Type:</strong> {organization.organizationType}
-            </p>
-            <p className="mb-4">
-              <strong>Industry:</strong> {organization.industry}
-            </p>
-            <p className="mb-4">
-              <strong>Phone:</strong> {organization.phone}
-            </p>
-            <p className="mb-4">
-              <strong>Email:</strong> {organization.email}
-            </p>
-            <p className="mb-4">
-              <strong>Website:</strong>{' '}
-              <a
-                href={organization.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500"
-              >
-                {organization.website}
-              </a>
-            </p>
-            <p className="mb-4">
-              <strong>Address:</strong> {organization.addressLine}
-            </p>
+    <PageAnimate>
+      <div className="w-full p-6">
+        <div className="mb-6 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">Organization Details</h1>
+              <p className="text-gray-600">{getThankYouMessage()}</p>
+            </div>
+            <Button
+              variant="contained"
+              startIcon={<EditIcon />}
+              onClick={() => navigate('/organization/edit')}
+            >
+              Edit Organization
+            </Button>
           </div>
         </div>
+
+        <Grid container spacing={4}>
+          {/* Organization Header */}
+          <Grid item xs={12}>
+            <Card>
+              <CardContent>
+                <div className="flex items-center gap-6">
+                  {organization.logoUrl && (
+                    <img
+                      src={organization.logoUrl}
+                      alt={`${organization.name} logo`}
+                      className="w-24 h-24 rounded-lg object-cover"
+                    />
+                  )}
+                  <div>
+                    <Typography variant="h4" className="font-bold mb-2">
+                      {organization.name}
+                    </Typography>
+                    {organization.businessName && (
+                      <Typography variant="h6" color="textSecondary" className="mb-2">
+                        {organization.businessName}
+                      </Typography>
+                    )}
+                    {organization.tagline && (
+                      <Typography variant="body1" className="italic text-gray-600">
+                        "{organization.tagline}"
+                      </Typography>
+                    )}
+                    <div className="flex gap-2 mt-2">
+                      <Chip 
+                        label={organization.isActive ? 'Active' : 'Inactive'} 
+                        color={organization.isActive ? 'success' : 'error'}
+                      />
+                      {organization.domain && (
+                        <Chip label={`${organization.subdomain}.${organization.domain}`} variant="outlined" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+                {organization.about && (
+                  <Typography variant="body1" className="mt-4 p-4 bg-gray-50 rounded-lg">
+                    {organization.about}
+                  </Typography>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Contact Information */}
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom className="flex items-center gap-2">
+                  <BusinessIcon />
+                  Contact Information
+                </Typography>
+                <div className="space-y-3">
+                  {organization.email && (
+                    <div className="flex items-center gap-3">
+                      <EmailIcon color="primary" />
+                      <div>
+                        <Typography variant="body2" color="textSecondary">Email</Typography>
+                        <Typography variant="body1">{organization.email}</Typography>
+                      </div>
+                    </div>
+                  )}
+                  {organization.phone && (
+                    <div className="flex items-center gap-3">
+                      <PhoneIcon color="primary" />
+                      <div>
+                        <Typography variant="body2" color="textSecondary">Phone</Typography>
+                        <Typography variant="body1">{organization.phone}</Typography>
+                      </div>
+                    </div>
+                  )}
+                  {organization.website && (
+                    <div className="flex items-center gap-3">
+                      <LanguageIcon color="primary" />
+                      <div>
+                        <Typography variant="body2" color="textSecondary">Website</Typography>
+                        <Typography variant="body1">
+                          <a 
+                            href={organization.website} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline"
+                          >
+                            {organization.website}
+                          </a>
+                        </Typography>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Address Information */}
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom className="flex items-center gap-2">
+                  <LocationOnIcon />
+                  Address Information
+                </Typography>
+                <div className="space-y-2">
+                  {organization.addressLine && (
+                    <Typography variant="body1">{organization.addressLine}</Typography>
+                  )}
+                  {organization.city && (
+                    <Typography variant="body1">{organization.city}</Typography>
+                  )}
+                  {organization.state && (
+                    <Typography variant="body1">{organization.state}</Typography>
+                  )}
+                  {organization.country && (
+                    <Typography variant="body1">{organization.country}</Typography>
+                  )}
+                  {organization.pinCode && (
+                    <Typography variant="body1">PIN: {organization.pinCode}</Typography>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Brand Settings */}
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>Brand Settings</Typography>
+                <div className="space-y-3">
+                  {organization.brandPrimaryColor && (
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-8 h-8 rounded-full border"
+                        style={{ backgroundColor: organization.brandPrimaryColor }}
+                      ></div>
+                      <div>
+                        <Typography variant="body2" color="textSecondary">Primary Color</Typography>
+                        <Typography variant="body1">{organization.brandPrimaryColor}</Typography>
+                      </div>
+                    </div>
+                  )}
+                  {organization.brandAccentColor && (
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-8 h-8 rounded-full border"
+                        style={{ backgroundColor: organization.brandAccentColor }}
+                      ></div>
+                      <div>
+                        <Typography variant="body2" color="textSecondary">Accent Color</Typography>
+                        <Typography variant="body1">{organization.brandAccentColor}</Typography>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* System Information */}
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>System Information</Typography>
+                <div className="space-y-2">
+                  <div>
+                    <Typography variant="body2" color="textSecondary">Organization ID</Typography>
+                    <Typography variant="body1">#{organization.id}</Typography>
+                  </div>
+                  <div>
+                    <Typography variant="body2" color="textSecondary">Created At</Typography>
+                    <Typography variant="body1">
+                      {new Date(organization.createdAt).toLocaleDateString()}
+                    </Typography>
+                  </div>
+                  <div>
+                    <Typography variant="body2" color="textSecondary">Last Updated</Typography>
+                    <Typography variant="body1">
+                      {new Date(organization.updatedAt).toLocaleDateString()}
+                    </Typography>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
       </div>
     </PageAnimate>
   );

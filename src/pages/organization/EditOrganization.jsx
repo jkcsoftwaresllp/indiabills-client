@@ -1,208 +1,372 @@
 import React, { useState, useEffect } from "react";
-import InputBox from "../../components/FormComponent/InputBox";
-import Dropdown from "../../components/FormComponent/Dropdown";
-import MobileField from "../../components/FormComponent/MobileField";
-import ImageUpload from "../../components/FormComponent/ImageUpload";
-import { getData, updateRow } from "../../network/api";
 import { useNavigate } from "react-router-dom";
-import { getOption } from "../../utils/FormHelper";
+import { getOrganization, updateOrganization } from "../../network/api";
 import { useStore } from "../../store/store";
+import PageAnimate from "../../components/Animate/PageAnimate";
+import {
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  Box,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
+} from '@mui/material';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import SaveIcon from '@mui/icons-material/Save';
+import { getOption } from "../../utils/FormHelper";
 
 const EditOrganization = () => {
   const [organization, setOrganization] = useState(null);
-  const [logo, setLogo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
-
   const { errorPopup, successPopup } = useStore();
 
   useEffect(() => {
     const fetchOrganization = async () => {
-      const response = await getData("/organization");
-      setOrganization(response);
+      try {
+        const response = await getOrganization();
+        if (response) {
+          setOrganization(response);
+        } else {
+          // Initialize with empty organization for new setup
+          setOrganization({
+            name: '',
+            businessName: '',
+            about: '',
+            tagline: '',
+            domain: '',
+            subdomain: '',
+            logoUrl: '',
+            phone: '',
+            email: '',
+            website: '',
+            addressLine: '',
+            city: '',
+            state: '',
+            country: 'India',
+            pinCode: '',
+            brandPrimaryColor: '#1e2938',
+            brandAccentColor: '#c42032'
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching organization:', error);
+        errorPopup('Failed to load organization details');
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchOrganization();
-  }, []);
+  }, [errorPopup]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // For date fields, ensure proper format
-    if (e.target.type === "date") {
-      setOrganization((prev) =>
-        prev
-          ? {
-              ...prev,
-              [name]: new Date(value).toISOString(),
-            }
-          : null
-      );
-    } else {
-      setOrganization((prev) => (prev ? { ...prev, [name]: value } : null));
-    }
+    setOrganization(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const handleSubmit = async () => {
-    if (organization) {
-      const response = await updateRow("/organization/update", organization);
-      if (response !== 200) {
-        errorPopup("Error updating organization");
-        return;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+
+    try {
+      const response = await updateOrganization(organization);
+      if (response === 200) {
+        successPopup("Organization updated successfully!");
+        navigate("/organization");
+      } else {
+        errorPopup("Failed to update organization");
       }
-      successPopup("Organization updated successfully");
-      navigate("/organization");
+    } catch (error) {
+      console.error('Error updating organization:', error);
+      errorPopup("Failed to update organization");
+    } finally {
+      setSaving(false);
     }
   };
 
-  if (!organization) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <PageAnimate>
+        <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
+          <CircularProgress />
+        </Box>
+      </PageAnimate>
+    );
   }
 
   return (
-    <div className="p-8">
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-col items-center gap-6">
-          <div className="flex w-full gap-4">
-            <InputBox
-              name="organizationName"
-              type="string"
-              label="Organization Name"
-              placeholder=""
-              value={organization.organizationName}
-              onChange={handleChange}
-            />
-            <div className="flex w-full gap-4 items-center">
-              <ImageUpload
-                placeholder="Upload Logo ⤴ | 24 x 24"
-                setImage={setLogo}
-              />
-            </div>
-            <InputBox
-              name="gstin"
-              type="string"
-              label="GSTIN"
-              placeholder=""
-              value={organization.gstin}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="flex w-full gap-4">
-            <InputBox
-              multiline
-              maxRows={3}
-              name="about"
-              type="string"
-              label="About"
-              placeholder=""
-              value={organization.about}
-              onChange={handleChange}
-            />
-            <InputBox
-              name="tagline"
-              type="string"
-              label="Motto"
-              placeholder="Your tagline for your brand"
-              value={organization.tagline}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="flex w-full gap-4">
-            <InputBox
-              name="email"
-              type="string"
-              label="Email"
-              placeholder="example@domain"
-              value={organization.email}
-              onChange={handleChange}
-            />
-            <InputBox
-              startText="https://www."
-              name="website"
-              type="string"
-              label="Website"
-              placeholder="yourorganization.com"
-              value={organization.website}
-              onChange={handleChange}
-            />
-            <MobileField
-              label="Mobile"
-              name="phone"
-              setData={setOrganization}
-              data={organization}
-            />
-          </div>
-          <div className="flex w-full gap-4">
-            <InputBox
-              name="bankBranch"
-              type="string"
-              label="Branch"
-              placeholder=""
-              value={organization.bankBranch}
-              onChange={handleChange}
-            />
-            <InputBox
-              name="accountNumber"
-              type="string"
-              label="A/C No."
-              placeholder="xxxxxx"
-              value={organization.accountNumber}
-              onChange={handleChange}
-            />
-            <InputBox
-              name="ifscCode"
-              type="string"
-              label="IFSC Code"
-              placeholder="xxxxxx"
-              value={organization.ifscCode}
-              onChange={handleChange}
-            />
-            <InputBox
-              name="upi"
-              type="string"
-              label="UPI ID"
-              placeholder="xxxxx@upi"
-              value={organization.upi}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="flex w-full gap-4">
-            <div className="w-4/12">
-              <Dropdown
-                name="state"
-                label="State"
-                options={getOption("state")}
-                selectedData={organization}
-                setValue={setOrganization}
-              />
-            </div>
-            <InputBox
-              name="addressLine"
-              type="string"
-              label="Address Line"
-              placeholder="Office building, Street Name, District"
-              value={organization.addressLine}
-              onChange={handleChange}
-            />
-            <InputBox
-              name="fiscalStart"
-              type="date"
-              label="Fiscal Year (Starting)"
-              value={
-                organization.fiscalStart
-                  ? organization.fiscalStart.split("T")[0]
-                  : ""
-              }
-              onChange={handleChange}
-            />
-          </div>
-          <button
-            className="px-4 py-2 bg-green-500 text-white rounded mt-4"
-            onClick={handleSubmit}
+    <PageAnimate>
+      <div className="w-full p-6">
+        <div className="mb-6 flex items-center gap-4">
+          <button 
+            className="flex items-center" 
+            onClick={() => navigate(-1)}
           >
-            Save Changes
+            <ArrowBackIosNewIcon /> Go back
           </button>
+          <h1 className="text-3xl font-bold text-gray-800">Edit Organization</h1>
         </div>
+
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={4}>
+            {/* Basic Information */}
+            <Grid item xs={12}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>Basic Information</Typography>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Organization Name"
+                        name="name"
+                        value={organization.name || ''}
+                        onChange={handleChange}
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Business Name"
+                        name="businessName"
+                        value={organization.businessName || ''}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="About"
+                        name="about"
+                        value={organization.about || ''}
+                        onChange={handleChange}
+                        multiline
+                        rows={3}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Tagline"
+                        name="tagline"
+                        value={organization.tagline || ''}
+                        onChange={handleChange}
+                        placeholder="Your organization's motto"
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Logo URL"
+                        name="logoUrl"
+                        value={organization.logoUrl || ''}
+                        onChange={handleChange}
+                        placeholder="https://example.com/logo.png"
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Contact Information */}
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>Contact Information</Typography>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Email"
+                        name="email"
+                        type="email"
+                        value={organization.email || ''}
+                        onChange={handleChange}
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Phone"
+                        name="phone"
+                        value={organization.phone || ''}
+                        onChange={handleChange}
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Website"
+                        name="website"
+                        value={organization.website || ''}
+                        onChange={handleChange}
+                        placeholder="https://yourcompany.com"
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Address Information */}
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>Address Information</Typography>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Address Line"
+                        name="addressLine"
+                        value={organization.addressLine || ''}
+                        onChange={handleChange}
+                        multiline
+                        rows={2}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="City"
+                        name="city"
+                        value={organization.city || ''}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <FormControl fullWidth>
+                        <InputLabel>State</InputLabel>
+                        <Select
+                          name="state"
+                          value={organization.state || ''}
+                          onChange={handleChange}
+                        >
+                          {getOption("state").map((state) => (
+                            <MenuItem key={state} value={state}>
+                              {state}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Country"
+                        name="country"
+                        value={organization.country || 'India'}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="PIN Code"
+                        name="pinCode"
+                        value={organization.pinCode || ''}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Domain Settings */}
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>Domain Settings</Typography>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Domain"
+                        name="domain"
+                        value={organization.domain || ''}
+                        onChange={handleChange}
+                        placeholder="yourcompany.com"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Subdomain"
+                        name="subdomain"
+                        value={organization.subdomain || ''}
+                        onChange={handleChange}
+                        placeholder="yourcompany"
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Brand Colors */}
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>Brand Colors</Typography>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Primary Color"
+                        name="brandPrimaryColor"
+                        type="color"
+                        value={organization.brandPrimaryColor || '#1e2938'}
+                        onChange={handleChange}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Accent Color"
+                        name="brandAccentColor"
+                        type="color"
+                        value={organization.brandAccentColor || '#c42032'}
+                        onChange={handleChange}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+
+          <Box mt={4} display="flex" justifyContent="center">
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              startIcon={<SaveIcon />}
+              disabled={saving}
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </Box>
+        </form>
       </div>
-    </div>
+    </PageAnimate>
   );
 };
 
