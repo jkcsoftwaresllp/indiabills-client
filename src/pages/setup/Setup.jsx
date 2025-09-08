@@ -214,9 +214,69 @@ const Setup = () => {
     // bankBranch: "",
   });
 
+  const [errors, setErrors] = useState({});
+
+  /* VALIDATION FUNCTION */
+  const validateOrganization = () => {
+    let newErrors = {};
+
+    if (!organization.organizationName.trim()) {
+      newErrors.organizationName = "Organization name is required";
+    }
+
+    if (!organization.about.trim()) {
+      newErrors.about = "About section is required";
+    }
+
+    // if (organization.gstin && !/^[0-9A-Z]{15}$/.test(organization.gstin)) {
+    //   newErrors.gstin = "Invalid GSTIN (must be 15 alphanumeric characters)";
+    // }
+
+    if (!organization.phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    } else if (!/^\d{10}$/.test(organization.phone)) {
+      newErrors.phone = "Phone number must be 10 digits";
+    }
+
+    if (!organization.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(organization.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (
+      organization.website &&
+      !/^https?:\/\/[^\s$.?#].[^\s]*$/.test(organization.website)
+    ) {
+      newErrors.website = "Invalid website URL";
+    }
+
+    if (!organization.addressLine.trim()) {
+      newErrors.addressLine = "Address is required";
+    }
+
+    if (!organization.state.trim()) {
+      newErrors.state = "State is required";
+    }
+
+    if (!logo) {
+      newErrors.logo = "Logo file is required";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   const submitOrganization = async () => {
     /* UPLOAD IMAGE */
     let workaround = "";
+
+    if (!validateOrganization()) {
+      console.error("Validation failed:", errors);
+      return;
+    }
+
     if (logo) {
       const ImageData = await renameAndOptimize(
         organization.organizationName,
@@ -227,23 +287,23 @@ const Setup = () => {
         console.error("Failed to upload the image");
         return;
       }
-      workaround = ImageData.name;
+      workaround = response.logoUrl;
     }
 
-    const extractInitials = (name) => {
-      const words = name.trim().split(/\s+/);
-      if (words.length > 1) {
-        return words.map((word) => word[0].toUpperCase()).join("");
-      } else {
-        return name.substring(0, 2).toUpperCase();
-      }
-    };
+    // const extractInitials = (name) => {
+    //   const words = name.trim().split(/\s+/);
+    //   if (words.length > 1) {
+    //     return words.map((word) => word[0].toUpperCase()).join("");
+    //   } else {
+    //     return name.substring(0, 2).toUpperCase();
+    //   }
+    // };
 
-    quickAdd("/organization/add", {
+    quickAdd("/org", {
       ...organization,
       ["logo"]: workaround,
     }).then((res) => {
-      if (res.status !== 200) {
+      if (res.status !== 201) {
         errorPopup("Couldn't add organization");
         return;
       } else {

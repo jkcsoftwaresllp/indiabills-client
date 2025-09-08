@@ -207,7 +207,7 @@ async function uploadImg(image, root) {
   const formData = new FormData();
   formData.append("image", image);
 
-  const PATH = root === true ? "/auth/upload/" : "/users/upload/";
+  const PATH = root === true ? "/upload/org-logo" : "/users/upload/";
 
   // Fire-and-forget the request
   serverInstance
