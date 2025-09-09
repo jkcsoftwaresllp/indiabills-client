@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const getBaseURL = () => {
+export const _getBaseURL = () => {
   const url_maybe = process.env.REACT_APP_SERVER_URL;
 
   if (url_maybe === "PROD") {
@@ -17,16 +17,24 @@ export const getBaseURL = () => {
     // console.log("baseURL",baseURL);
 
     if (port === "4173") {
-      return "http://localhost:8000/v1";
+      return "http://localhost:7980/";
     }
 
     // Append the API path
-    baseURL += "/v1";
+    baseURL;
 
     return baseURL;
   } else {
-    return url_maybe + "/v1";
+    return url_maybe;
   }
+};
+
+export const getBaseURL = () => {
+  return `${_getBaseURL()}/v1`;
+};
+
+export const getSocketBaseURL = () => {
+  return `${_getBaseURL()}`;
 };
 
 // Create an Axios instance

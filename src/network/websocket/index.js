@@ -1,7 +1,10 @@
 import { io } from "socket.io-client";
-import { getBaseURL } from "../api/api-config";
+import { getBaseURL, getSocketBaseURL } from "../api/api-config";
 
-export const socket = io(getBaseURL(), {
-    autoConnect: true,
-    reconnection: true,
+console.log("WebSocket URL:", getSocketBaseURL());
+
+export const socket = io(getSocketBaseURL(), {
+  autoConnect: true,
+  reconnection: true,
+  transports: ["websocket"],
 });

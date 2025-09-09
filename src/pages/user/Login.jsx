@@ -100,12 +100,12 @@ const LoginPage = () => {
       };
 
       // Store temporary session for organization selection
-      localStorage.setItem('tempUserSession', JSON.stringify(payload));
-      
+      localStorage.setItem("tempUserSession", JSON.stringify(payload));
+
       // Check if user has multiple organizations
       // TODO: Replace with actual API call
       const hasMultipleOrgs = true; // Mock - should come from API
-      
+
       if (hasMultipleOrgs && payload.role !== "customer") {
         // Redirect to organization selector for admin/operator
         navigate("/organization-selector");
@@ -113,7 +113,7 @@ const LoginPage = () => {
         // Direct login for customers or single organization users
         login(payload);
         successPopup("Welcome back!");
-        
+
         if (payload.role === "customer") {
           navigate("/customer");
         } else {
@@ -136,9 +136,7 @@ const LoginPage = () => {
       <form onSubmit={handleLogin} className={styles.loginForm}>
         <div className={styles.header}>
           <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
-          <h2 className="text-white text-xl font-semibold mb-2">
-            Login Portal
-          </h2>
+          <h2 className={styles.loginPotalTitle}>Login Portal</h2>
           <p className={styles.quote}>{quote}</p>
         </div>
 

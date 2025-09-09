@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useStore } from '../../store/store';
-import { ownerSignup } from '../../network/api';
-import logo from '../../assets/IndiaBills_logo.png';
-import bg from '../../assets/bglogo.png';
-import styles from './Register.module.css';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useStore } from "../../store/store";
+import { ownerSignup } from "../../network/api";
+import logo from "../../assets/IndiaBills_logo.png";
+import bg from "../../assets/bglogo.png";
+import styles from "./Register.module.css";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [data, setData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    phone: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone: "",
   });
 
   const { successPopup, errorPopup } = useStore();
@@ -39,27 +39,27 @@ const Register = () => {
 
   const validateForm = () => {
     if (!data.firstName.trim()) {
-      errorPopup('First name is required');
+      errorPopup("First name is required");
       return false;
     }
     if (!data.lastName.trim()) {
-      errorPopup('Last name is required');
+      errorPopup("Last name is required");
       return false;
     }
     if (!data.email.trim()) {
-      errorPopup('Email is required');
+      errorPopup("Email is required");
       return false;
     }
     if (!data.password) {
-      errorPopup('Password is required');
+      errorPopup("Password is required");
       return false;
     }
     if (data.password !== data.confirmPassword) {
-      errorPopup('Passwords do not match');
+      errorPopup("Passwords do not match");
       return false;
     }
     if (!data.phone.trim()) {
-      errorPopup('Phone number is required');
+      errorPopup("Phone number is required");
       return false;
     }
     return true;
@@ -78,21 +78,21 @@ const Register = () => {
         lastName: data.lastName,
         email: data.email,
         password: data.password,
-        phone: data.phone
+        phone: data.phone,
       });
 
       if (response === 200 || response === 201) {
         successPopup(
-          'Registration successful! Please login with your credentials.'
+          "Registration successful! Please login with your credentials."
         );
-        navigate('/login');
+        navigate("/login");
       } else {
-        errorPopup('Registration failed. Please try again.');
+        errorPopup("Registration failed. Please try again.");
       }
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error("Registration error:", error);
       errorPopup(
-        'Registration failed. Please check your connection and try again.'
+        "Registration failed. Please check your connection and try again."
       );
     }
   };
@@ -114,38 +114,36 @@ const Register = () => {
         </div>
 
         <div className={styles.formFields}>
-          <div className={styles.nameRow}>
-            <div className={styles.inputGroup}>
-              <label htmlFor="firstName" className={styles.label}>
-                First Name
-              </label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                className={styles.input}
-                onChange={handleInputChange}
-                placeholder="John"
-                value={data.firstName}
-                required
-              />
-            </div>
+          <div className={styles.inputGroup}>
+            <label htmlFor="firstName" className={styles.label}>
+              First Name
+            </label>
+            <input
+              id="firstName"
+              name="firstName"
+              type="text"
+              className={styles.input}
+              onChange={handleInputChange}
+              placeholder="John"
+              value={data.firstName}
+              required
+            />
+          </div>
 
-            <div className={styles.inputGroup}>
-              <label htmlFor="lastName" className={styles.label}>
-                Last Name
-              </label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                className={styles.input}
-                onChange={handleInputChange}
-                placeholder="Doe"
-                value={data.lastName}
-                required
-              />
-            </div>
+          <div className={styles.inputGroup}>
+            <label htmlFor="lastName" className={styles.label}>
+              Last Name
+            </label>
+            <input
+              id="lastName"
+              name="lastName"
+              type="text"
+              className={styles.input}
+              onChange={handleInputChange}
+              placeholder="Doe"
+              value={data.lastName}
+              required
+            />
           </div>
 
           <div className={styles.inputGroup}>
@@ -188,7 +186,7 @@ const Register = () => {
               <input
                 id="password"
                 name="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 className={styles.input}
                 onChange={handleInputChange}
                 placeholder="Create a strong password"
@@ -201,7 +199,7 @@ const Register = () => {
                 onClick={togglePasswordVisibility}
                 aria-label="Toggle password visibility"
               >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
+                {showPassword ? "👁️" : "👁️‍🗨️"}
               </button>
             </div>
           </div>
@@ -214,7 +212,7 @@ const Register = () => {
               <input
                 id="confirmPassword"
                 name="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
+                type={showConfirmPassword ? "text" : "password"}
                 className={styles.input}
                 onChange={handleInputChange}
                 placeholder="Confirm your password"
@@ -227,7 +225,7 @@ const Register = () => {
                 onClick={toggleConfirmPasswordVisibility}
                 aria-label="Toggle confirm password visibility"
               >
-                {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
               </button>
             </div>
           </div>
@@ -239,7 +237,7 @@ const Register = () => {
 
         <div className={styles.loginPrompt}>
           <p className={styles.loginText}>
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link to="/login" className={styles.loginLink}>
               Login here
             </Link>
