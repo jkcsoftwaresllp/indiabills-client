@@ -99,23 +99,23 @@ const LoginPage = () => {
         token: session.token,
       };
 
-      // Store temporary session for organization selection
       localStorage.setItem("tempUserSession", JSON.stringify(payload));
 
-      // Check if user has multiple organizations
       // TODO: Replace with actual API call
       const hasMultipleOrgs = true; // Mock - should come from API
 
-      if (hasMultipleOrgs && payload.role !== "customer") {
+      if (hasMultipleOrgs && payload.role !== "customer" && payload.role !== "operator") {
         // Redirect to organization selector for admin/operator
         navigate("/organization-selector");
       } else {
-        // Direct login for customers or single organization users
         login(payload);
         successPopup("Welcome back!");
 
         if (payload.role === "customer") {
           navigate("/customer");
+        } 
+        else if (payload.role === "operator") {
+        navigate("/operator");
         } else {
           navigate("/");
         }
