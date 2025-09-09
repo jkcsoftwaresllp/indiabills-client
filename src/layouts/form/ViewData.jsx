@@ -374,9 +374,14 @@ const ViewData = ({
       navigate("/inventory/add");
     } else {
       const currentPath = window.location.pathname;
+      console.log('Current Path:', currentPath);
       if (currentPath.startsWith('/operator/')) {
         navigate(`${currentPath}/add`);
-      } else {
+      } 
+      else if (currentPath.startsWith('/products')) {
+        navigate(`${currentPath}/add`);
+      } 
+      else {
         navigate(`/${title.toLowerCase()}/add`);
       }
     }
