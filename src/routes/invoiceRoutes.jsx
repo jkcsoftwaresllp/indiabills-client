@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
 
 const Invoices = lazy(() => import('../pages/invoices/InspectInvoice'));
@@ -8,9 +8,9 @@ const InvoicePage = lazy(() => import('../pages/invoices/OrderInvoice'));
 
 const InvoiceRoutes = () => {
   return (
-    <>
+    <Routes>
       <Route
-        path="/invoices"
+        path="invoices"
         element={
           <ProtectedRoute
             element={Invoices}
@@ -19,7 +19,7 @@ const InvoiceRoutes = () => {
         }
       />
       <Route
-        path="/invoices/edit/:invoiceId"
+        path="invoices/edit/:invoiceId"
         element={
           <ProtectedRoute
             element={EditInvoice}
@@ -28,7 +28,7 @@ const InvoiceRoutes = () => {
         }
       />
       <Route
-        path="/invoice/:orderId"
+        path="invoice/:orderId"
         element={
           <ProtectedRoute
             element={InvoicePage}
@@ -36,7 +36,7 @@ const InvoiceRoutes = () => {
           />
         }
       />
-    </>
+    </Routes>
   );
 };
 

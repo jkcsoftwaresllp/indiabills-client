@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
 import StockIssuesReport from '../pages/reports/StockIssueReport';
 import RevenueReport from '../pages/reports/RevenueReport';
@@ -18,9 +18,9 @@ const AuditLogTable = lazy(() => import('../pages/audit/ViewAudit'));
 
 const ReportRoutes = () => {
   return (
-    <>
+    <Routes>
       <Route
-        path="/reports"
+        path="reports"
         element={
           <ProtectedRoute
             element={ViewReports}
@@ -29,7 +29,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="/reports/stocklevel"
+        path="reports/stocklevel"
         element={
           <ProtectedRoute
             element={StockLevelReport}
@@ -38,7 +38,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="/reports/supplierperformance"
+        path="reports/supplierperformance"
         element={
           <ProtectedRoute
             element={SupplierPerformance}
@@ -47,7 +47,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="/reports/salessummary"
+        path="reports/salessummary"
         element={
           <ProtectedRoute
             element={SalesSummary}
@@ -56,7 +56,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="/reports/invoice"
+        path="reports/invoice"
         element={
           <ProtectedRoute
             element={Invoice}
@@ -65,7 +65,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="/reports/customerpurchase"
+        path="reports/customerpurchase"
         element={
           <ProtectedRoute
             element={CustomerPurchaseReport}
@@ -74,7 +74,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="/reports/credits"
+        path="reports/credits"
         element={
           <ProtectedRoute
             element={CreditReport}
@@ -83,7 +83,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="/reports/hsn"
+        path="reports/hsn"
         element={
           <ProtectedRoute
             element={HSNReport}
@@ -92,7 +92,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="/reports/stockissue"
+        path="reports/stockissue"
         element={
           <ProtectedRoute
             element={StockIssuesReport}
@@ -101,7 +101,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="/reports/expenses"
+        path="reports/expenses"
         element={
           <ProtectedRoute
             element={ExpenseReport}
@@ -110,7 +110,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="/reports/revenue"
+        path="reports/revenue"
         element={
           <ProtectedRoute
             element={RevenueReport}
@@ -119,7 +119,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="/reports/pms"
+        path="reports/pms"
         element={
           <ProtectedRoute
             element={PMSReport}
@@ -128,7 +128,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="/audit/log"
+        path="audit/log"
         element={
           <ProtectedRoute
             element={AuditLogTable}
@@ -136,7 +136,7 @@ const ReportRoutes = () => {
           />
         }
       />
-    </>
+    </Routes>
   );
 };
 

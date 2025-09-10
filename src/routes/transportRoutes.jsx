@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
 
 const TransportList = lazy(() => import('../pages/transport/ViewTransport'));
@@ -8,9 +8,9 @@ const InspectTransport = lazy(() => import('../pages/transport/InspectTransport'
 
 const TransportRoutes = () => {
   return (
-    <>
+    <Routes>
       <Route
-        path="/transport"
+        path="transport"
         element={
           <ProtectedRoute
             element={TransportList}
@@ -19,7 +19,7 @@ const TransportRoutes = () => {
         }
       />
       <Route
-        path="/transport/add"
+        path="transport/add"
         element={
           <ProtectedRoute
             element={AddTransport}
@@ -28,7 +28,7 @@ const TransportRoutes = () => {
         }
       />
       <Route
-        path="/transport/:transportId"
+        path="transport/:transportId"
         element={
           <ProtectedRoute
             element={InspectTransport}
@@ -36,7 +36,7 @@ const TransportRoutes = () => {
           />
         }
       />
-    </>
+    </Routes>
   );
 };
 

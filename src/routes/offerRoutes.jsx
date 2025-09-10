@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
 
 const OfferList = lazy(() => import('../pages/offers/ViewOffer'));
@@ -8,9 +8,9 @@ const InspectOffer = lazy(() => import('../pages/offers/InspectOffer'));
 
 const OfferRoutes = () => {
   return (
-    <>
+    <Routes>
       <Route
-        path="/offers"
+        path="offers"
         element={
           <ProtectedRoute
             element={OfferList}
@@ -19,7 +19,7 @@ const OfferRoutes = () => {
         }
       />
       <Route
-        path="/offers/add"
+        path="offers/add"
         element={
           <ProtectedRoute
             element={AddOffer}
@@ -28,7 +28,7 @@ const OfferRoutes = () => {
         }
       />
       <Route
-        path="/offers/:offerId"
+        path="offers/:offerId"
         element={
           <ProtectedRoute
             element={InspectOffer}
@@ -36,7 +36,7 @@ const OfferRoutes = () => {
           />
         }
       />
-    </>
+    </Routes>
   );
 };
 

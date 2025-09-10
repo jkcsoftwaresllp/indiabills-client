@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
 
 const ViewUsers = lazy(() => import('../pages/user/ViewUser'));
@@ -8,20 +8,20 @@ const InspectUser = lazy(() => import('../pages/user/InspectUser'));
 
 const UserRoutes = () => {
   return (
-    <>
+    <Routes>
       <Route
-        path="/users"
+        path="users"
         element={<ProtectedRoute element={ViewUsers} roles={['admin']} />}
       />
       <Route
-        path="/users/add"
+        path="users/add"
         element={<ProtectedRoute element={AddUser} roles={['admin']} />}
       />
       <Route
-        path="/users/:userID"
+        path="users/:userID"
         element={<ProtectedRoute element={InspectUser} roles={['admin']} />}
       />
-    </>
+    </Routes>
   );
 };
 

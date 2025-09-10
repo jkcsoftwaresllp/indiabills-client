@@ -37,50 +37,50 @@ const Routing = () => {
             <Route path="/" element={<Home />} />
             
             {/* Authentication Routes */}
-            <AuthRoutes />
+            <Route path="/*" element={<><AuthRoutes /></>} />
             
             {/* Setup Routes */}
-            <SetupRoutes />
+            <Route path="/*" element={<SetupRoutes />} />
             
             {/* Product Routes */}
-            <ProductRoutes />
+            <Route path="/*" element={<ProductRoutes />} />
             
             {/* Customer Management Routes */}
-            <CustomerManagementRoutes />
+            <Route path="/*" element={<CustomerManagementRoutes />} />
             
             {/* Transport Routes */}
-            <TransportRoutes />
+            <Route path="/*" element={<TransportRoutes />} />
             
             {/* Offer Routes */}
-            <OfferRoutes />
+            <Route path="/*" element={<OfferRoutes />} />
             
             {/* User Routes */}
-            <UserRoutes />
+            <Route path="/*" element={<UserRoutes />} />
             
             {/* Organization Routes */}
-            <OrganizationRoutes />
+            <Route path="/*" element={<OrganizationRoutes />} />
             
             {/* Supplier Routes */}
-            <SupplierRoutes />
+            <Route path="/*" element={<SupplierRoutes />} />
             
             {/* Inventory Routes */}
-            <InventoryRoutes />
+            <Route path="/*" element={<InventoryRoutes />} />
             
             {/* Invoice Routes */}
-            <InvoiceRoutes />
+            <Route path="/*" element={<InvoiceRoutes />} />
             
             {/* Order Routes */}
-            <OrderRoutes />
+            <Route path="/*" element={<OrderRoutes />} />
             
             {/* Report Routes */}
-            <ReportRoutes />
+            <Route path="/*" element={<ReportRoutes />} />
 
             {/* CUSTOMER PORTAL */}
             <Route path="/customer/*" element={<CustomerRoutes />} />
 
             {/* OPERATOR PORTAL */}
             <Route path="/operator/*" element={<OperatorRoutes />} />
-            
+
           </Routes>
         </Suspense>
       </AnimatePresence>

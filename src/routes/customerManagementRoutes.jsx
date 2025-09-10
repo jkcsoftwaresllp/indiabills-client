@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
 import EditCustomer from '../pages/customers/EditCustomer';
 import AddCustomerAddress from '../pages/customers/AddCustomerAddress';
@@ -11,9 +11,9 @@ const InspectCustomer = lazy(() => import('../pages/customers/InspectCustomer'))
 
 const CustomerManagementRoutes = () => {
   return (
-    <>
+    <Routes>
       <Route
-        path="/customers"
+        path="customers"
         element={
           <ProtectedRoute
             element={CustomerList}
@@ -22,7 +22,7 @@ const CustomerManagementRoutes = () => {
         }
       />
       <Route
-        path="/customers/add"
+        path="customers/add"
         element={
           <ProtectedRoute
             element={AddCustomers}
@@ -31,7 +31,7 @@ const CustomerManagementRoutes = () => {
         }
       />
       <Route
-        path="/customers/address/add/:customerId"
+        path="customers/address/add/:customerId"
         element={
           <ProtectedRoute
             element={AddCustomerAddress}
@@ -40,7 +40,7 @@ const CustomerManagementRoutes = () => {
         }
       />
       <Route
-        path="/customers/:customerId"
+        path="customers/:customerId"
         element={
           <ProtectedRoute
             element={InspectCustomer}
@@ -49,7 +49,7 @@ const CustomerManagementRoutes = () => {
         }
       />
       <Route
-        path="/customers/edit/:customerId"
+        path="customers/edit/:customerId"
         element={
           <ProtectedRoute
             element={EditCustomer}
@@ -58,7 +58,7 @@ const CustomerManagementRoutes = () => {
         }
       />
       <Route
-        path="/customers/address/:addressId"
+        path="customers/address/:addressId"
         element={
           <ProtectedRoute
             element={EditCustomerAddress}
@@ -66,7 +66,7 @@ const CustomerManagementRoutes = () => {
           />
         }
       />
-    </>
+    </Routes>
   );
 };
 

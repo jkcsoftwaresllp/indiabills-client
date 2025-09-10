@@ -6,12 +6,12 @@ import { Routes, Route } from 'react-router-dom';
 
 const AuthRoutes = () => {
   return (
-    <>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/organization-selector" element={<OrganizationSelector />} />
-      <Route path="/organization/create" element={<CreateOrganization />} />
-    </>
+    <Routes>
+      <Route path="login" element={<LoginPage />} />
+      <Route path="register" element={<Register />} />
+      <Route path="organization-selector" element={<OrganizationSelector />} />
+      <Route path="organization/create" element={<CreateOrganization />} />
+    </Routes>
   );
 };
 

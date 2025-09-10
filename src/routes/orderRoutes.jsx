@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
 import InspectOrder from '../pages/orders/InspectOrder';
 
@@ -10,9 +10,9 @@ const PaymentGateway = lazy(() => import('../pages/shop/PaymentGateway'));
 
 const OrderRoutes = () => {
   return (
-    <>
+    <Routes>
       <Route
-        path="/shop"
+        path="shop"
         element={
           <ProtectedRoute
             element={Shop}
@@ -21,7 +21,7 @@ const OrderRoutes = () => {
         }
       />
       <Route
-        path="/orders"
+        path="orders"
         element={
           <ProtectedRoute
             element={ViewOrders}
@@ -30,7 +30,7 @@ const OrderRoutes = () => {
         }
       />
       <Route
-        path="/orders/:orderId"
+        path="orders/:orderId"
         element={
           <ProtectedRoute
             element={InspectOrder}
@@ -39,7 +39,7 @@ const OrderRoutes = () => {
         }
       />
       <Route
-        path="/cart"
+        path="cart"
         element={
           <ProtectedRoute
             element={PlaceOrder}
@@ -48,7 +48,7 @@ const OrderRoutes = () => {
         }
       />
       <Route
-        path="/shop/payment/:randomLink"
+        path="shop/payment/:randomLink"
         element={
           <ProtectedRoute
             element={PaymentGateway}
@@ -56,7 +56,7 @@ const OrderRoutes = () => {
           />
         }
       />
-    </>
+    </Routes>
   );
 };
 

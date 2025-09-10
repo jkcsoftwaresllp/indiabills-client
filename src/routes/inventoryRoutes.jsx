@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
 import EditInventory from '../pages/inventory/EditInventory';
 
@@ -8,9 +8,9 @@ const AddInventory = lazy(() => import('../pages/inventory/AddInventory'));
 
 const InventoryRoutes = () => {
   return (
-    <>
+    <Routes>
       <Route
-        path="/inventory"
+        path="inventory"
         element={
           <ProtectedRoute
             element={ViewInventory}
@@ -19,7 +19,7 @@ const InventoryRoutes = () => {
         }
       />
       <Route
-        path="/inventory/add"
+        path="inventory/add"
         element={
           <ProtectedRoute
             element={AddInventory}
@@ -28,7 +28,7 @@ const InventoryRoutes = () => {
         }
       />
       <Route
-        path="/inventory/:batchId"
+        path="inventory/:batchId"
         element={
           <ProtectedRoute
             element={EditInventory}
@@ -36,7 +36,7 @@ const InventoryRoutes = () => {
           />
         }
       />
-    </>
+    </Routes>
   );
 };
 
