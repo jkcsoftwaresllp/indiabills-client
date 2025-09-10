@@ -25,6 +25,9 @@ import EditInventory from '../pages/inventory/EditInventory';
 import RevenueReport from '../pages/reports/RevenueReport';
 import PMSReport from '../pages/reports/PMSReport';
 import CustomerRoutes from './customerRoutes'
+import OperatorRoutes from './operatorRoutes'
+import OrganizationSelector from '../pages/user/OrganizationSelector';
+import CreateOrganization from '../pages/organization/CreateOrganization';
 
 // SUPPORT
 const Help = lazy(() => import('../pages/support/Help'));
@@ -120,6 +123,8 @@ const Routing = () => {
             {/* HOME */}
             <Route path="/" element={<Home />} />
             <Route path="/channel" element={<OrganizationChannel />} />
+            <Route path="/organization-selector" element={<OrganizationSelector />} />
+            <Route path="/organization/create" element={<CreateOrganization />} />
 
             {/* SETUP */}
             <Route path="/setup" element={<StartSetup />} />
@@ -178,7 +183,7 @@ const Routing = () => {
             /> */}
 
             {/* PRODUCTS */}
-            {/* <Route
+            <Route
               path="/products"
               element={
                 <ProtectedRoute
@@ -186,8 +191,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/products/add"
               element={
                 <ProtectedRoute
@@ -195,8 +200,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/products/:itemId"
               element={
                 <ProtectedRoute
@@ -204,10 +209,10 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
+            />
 
             {/* CUSTOMER */}
-            {/* <Route
+            <Route
               path="/customers"
               element={
                 <ProtectedRoute
@@ -215,8 +220,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/customers/add"
               element={
                 <ProtectedRoute
@@ -224,8 +229,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/customers/address/add/:customerId"
               element={
                 <ProtectedRoute
@@ -233,8 +238,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/customers/:customerId"
               element={
                 <ProtectedRoute
@@ -242,8 +247,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/customers/edit/:customerId"
               element={
                 <ProtectedRoute
@@ -251,8 +256,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/customers/address/:addressId"
               element={
                 <ProtectedRoute
@@ -260,10 +265,10 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
+            />
 
             {/* TRANSPORT */}
-            {/* <Route
+            <Route
               path="/transport"
               element={
                 <ProtectedRoute
@@ -271,8 +276,8 @@ const Routing = () => {
                   roles={['admin', 'operators', 'delivery']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/transport/add"
               element={
                 <ProtectedRoute
@@ -280,8 +285,8 @@ const Routing = () => {
                   roles={['admin', 'operators', 'delivery']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/transport/:transportId"
               element={
                 <ProtectedRoute
@@ -289,10 +294,10 @@ const Routing = () => {
                   roles={['admin', 'operators', 'Delivery']}
                 />
               }
-            /> */}
+            />
 
             {/* OFFERS */}
-            {/* <Route
+            <Route
               path="/offers"
               element={
                 <ProtectedRoute
@@ -300,8 +305,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/offers/add"
               element={
                 <ProtectedRoute
@@ -309,8 +314,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/offers/:offerId"
               element={
                 <ProtectedRoute
@@ -318,38 +323,44 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
+            />
 
             {/* USER */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<Register />} />
-            {/* <Route
+            <Route
+              path="/users"
+              element={
+                <ProtectedRoute element={ViewUsers} roles={['admin']} />
+              }
+            />
+            <Route
               path="/users/add"
               element={<ProtectedRoute element={AddUser} roles={['admin']} />}
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/users/:userID"
               element={
                 <ProtectedRoute element={InspectUser} roles={['admin']} />
               }
-            /> */}
+            />
 
             {/* Organization */}
-            {/* <Route
+            <Route
               path="/organization"
               element={
                 <ProtectedRoute element={ViewOrganization} roles={['admin']} />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/organization/edit"
               element={
                 <ProtectedRoute element={EditOrganization} roles={['admin']} />
               }
-            /> */}
+            />
 
             {/* SUPPLIERS */}
-            {/* <Route
+            <Route
               path="/suppliers"
               element={
                 <ProtectedRoute
@@ -357,8 +368,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/suppliers/add"
               element={
                 <ProtectedRoute
@@ -366,8 +377,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/suppliers/:supplierId"
               element={
                 <ProtectedRoute
@@ -375,10 +386,10 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
+            />
 
             {/* INVENTORY */}
-            {/* <Route
+            <Route
               path="/inventory"
               element={
                 <ProtectedRoute
@@ -386,8 +397,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/inventory/add"
               element={
                 <ProtectedRoute
@@ -395,8 +406,8 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/inventory/:batchId"
               element={
                 <ProtectedRoute
@@ -404,10 +415,10 @@ const Routing = () => {
                   roles={['admin', 'operators']}
                 />
               }
-            /> */}
+            />
 
             {/* INVOICES */}
-            {/* <Route
+            <Route
               path="/invoices"
               element={
                 <ProtectedRoute
@@ -415,8 +426,8 @@ const Routing = () => {
                   roles={['admin', 'operators', 'customer']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/invoices/edit/:invoiceId"
               element={
                 <ProtectedRoute
@@ -424,8 +435,8 @@ const Routing = () => {
                   roles={['admin', 'operators', 'customer']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/invoice/:orderId"
               element={
                 <ProtectedRoute
@@ -433,10 +444,10 @@ const Routing = () => {
                   roles={['admin', 'operators', 'customer']}
                 />
               }
-            /> */}
+            />
 
             {/* ORDER */}
-            {/* <Route
+            <Route
               path="/shop"
               element={
                 <ProtectedRoute
@@ -444,8 +455,8 @@ const Routing = () => {
                   roles={['admin', 'operators', 'customer']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/orders"
               element={
                 <ProtectedRoute
@@ -453,8 +464,8 @@ const Routing = () => {
                   roles={['admin', 'operators', 'delivery']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/orders/:orderId"
               element={
                 <ProtectedRoute
@@ -462,8 +473,8 @@ const Routing = () => {
                   roles={['admin', 'operators', 'customer']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/cart"
               element={
                 <ProtectedRoute
@@ -471,8 +482,8 @@ const Routing = () => {
                   roles={['admin', 'operators', 'customer']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/shop/payment/:randomLink"
               element={
                 <ProtectedRoute
@@ -480,10 +491,10 @@ const Routing = () => {
                   roles={['admin', 'operators', 'customer']}
                 />
               }
-            /> */}
+            />
 
             {/* Reports */}
-            {/* <Route
+            <Route
               path="/reports"
               element={
                 <ProtectedRoute
@@ -491,8 +502,8 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/reports/stocklevel"
               element={
                 <ProtectedRoute
@@ -500,8 +511,8 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/reports/supplierperformance"
               element={
                 <ProtectedRoute
@@ -509,8 +520,8 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/reports/salessummary"
               element={
                 <ProtectedRoute
@@ -518,8 +529,8 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/reports/invoice"
               element={
                 <ProtectedRoute
@@ -527,8 +538,8 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/reports/customerpurchase"
               element={
                 <ProtectedRoute
@@ -536,8 +547,8 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/reports/credits"
               element={
                 <ProtectedRoute
@@ -545,8 +556,8 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/reports/hsn"
               element={
                 <ProtectedRoute
@@ -554,8 +565,8 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/reports/stockissue"
               element={
                 <ProtectedRoute
@@ -563,8 +574,8 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/reports/expenses"
               element={
                 <ProtectedRoute
@@ -572,8 +583,8 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/reports/revenue"
               element={
                 <ProtectedRoute
@@ -581,8 +592,8 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/reports/pms"
               element={
                 <ProtectedRoute
@@ -590,8 +601,8 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
-            {/* <Route
+            />
+            <Route
               path="/audit/log"
               element={
                 <ProtectedRoute
@@ -599,10 +610,13 @@ const Routing = () => {
                   roles={['admin', 'reporter']}
                 />
               }
-            /> */}
+              />
 
             {/* CUSTOMER PORTAL */}
             <Route path="/customer/*" element={<CustomerRoutes />} />
+            
+            {/* OPERATOR PORTAL */}
+            <Route path="/operator/*" element={<OperatorRoutes />} />
             
           </Routes>
         </Suspense>
