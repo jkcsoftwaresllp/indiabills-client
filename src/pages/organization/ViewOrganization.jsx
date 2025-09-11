@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getOrganization } from '../../network/api';
+import { getOrganizationById } from '../../network/api';
+import { getOrganizationContext } from '../../utils/authHelper';
 import { differenceInYears, differenceInMonths, differenceInDays } from 'date-fns';
 import PageAnimate from '../../components/Animate/PageAnimate';
-import { getBaseURL } from '../../network/api/api-config';
 import { useStore } from '../../store/store';
 import {
   Card,
@@ -13,7 +13,8 @@ import {
   Button,
   Chip,
   Box,
-  CircularProgress
+  CircularProgress,
+  Avatar
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -21,20 +22,29 @@ import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LanguageIcon from '@mui/icons-material/Language';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import PaletteIcon from '@mui/icons-material/Palette';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 const ViewOrganization = () => {
   const [organization, setOrganization] = useState(null);
   const [loading, setLoading] = useState(true);
   const { errorPopup } = useStore();
   const navigate = useNavigate();
+  const orgContext = getOrganizationContext();
 
   useEffect(() => {
     const fetchOrganization = async () => {
       try {
-        const response = await getOrganization();
-        if (response) {
-          setOrganization(response);
+        if (!orgContext?.id) {
+          errorPopup('No organization context found');
+          navigate('/organization-selector');
+          return;
+        }
+
+        const response = await getOrganizationById(orgContext.id);
+        
+        if (response.status === 200 && response.data) {
+          setOrganization(response.data);
         } else {
           errorPopup('Failed to load organization details');
         }
@@ -47,7 +57,7 @@ const ViewOrganization = () => {
     };
 
     fetchOrganization();
-  }, [errorPopup]);
+  }, [errorPopup, navigate, orgContext]);
 
   if (loading) {
     return (
@@ -94,6 +104,16 @@ const ViewOrganization = () => {
     }
   };
 
+  const getSubscriptionStatusColor = (status) => {
+    switch (status) {
+      case 'active': return 'success';
+      case 'trial': return 'warning';
+      case 'expired': return 'error';
+      case 'cancelled': return 'error';
+      default: return 'default';
+    }
+  };
+
   return (
     <PageAnimate>
       <div className="w-full p-6">
@@ -119,14 +139,14 @@ const ViewOrganization = () => {
             <Card>
               <CardContent>
                 <div className="flex items-center gap-6">
-                  {organization.logoUrl && (
-                    <img
-                      src={organization.logoUrl}
-                      alt={`${organization.name} logo`}
-                      className="w-24 h-24 rounded-lg object-cover"
-                    />
-                  )}
-                  <div>
+                  <Avatar
+                    src={organization.logoUrl}
+                    alt={`${organization.name} logo`}
+                    sx={{ width: 96, height: 96 }}
+                  >
+                    <BusinessIcon sx={{ fontSize: 48 }} />
+                  </Avatar>
+                  <div className="flex-1">
                     <Typography variant="h4" className="font-bold mb-2">
                       {organization.name}
                     </Typography>
@@ -136,17 +156,31 @@ const ViewOrganization = () => {
                       </Typography>
                     )}
                     {organization.tagline && (
-                      <Typography variant="body1" className="italic text-gray-600">
+                      <Typography variant="body1" className="italic text-gray-600 mb-2">
                         "{organization.tagline}"
                       </Typography>
                     )}
-                    <div className="flex gap-2 mt-2">
+                    <div className="flex gap-2 flex-wrap">
                       <Chip 
                         label={organization.isActive ? 'Active' : 'Inactive'} 
                         color={organization.isActive ? 'success' : 'error'}
                       />
+                      <Chip 
+                        label={organization.subscriptionStatus || 'trial'} 
+                        color={getSubscriptionStatusColor(organization.subscriptionStatus)}
+                        className="capitalize"
+                      />
                       {organization.domain && (
-                        <Chip label={`${organization.subdomain}.${organization.domain}`} variant="outlined" />
+                        <Chip 
+                          label={`${organization.subdomain}.${organization.domain}`} 
+                          variant="outlined" 
+                        />
+                      )}
+                      {organization.maxUsers && (
+                        <Chip 
+                          label={`Max Users: ${organization.maxUsers}`} 
+                          variant="outlined" 
+                        />
                       )}
                     </div>
                   </div>
@@ -205,6 +239,15 @@ const ViewOrganization = () => {
                       </div>
                     </div>
                   )}
+                  {organization.gstin && (
+                    <div className="flex items-center gap-3">
+                      <BusinessIcon color="primary" />
+                      <div>
+                        <Typography variant="body2" color="textSecondary">GSTIN</Typography>
+                        <Typography variant="body1">{organization.gstin}</Typography>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -234,6 +277,49 @@ const ViewOrganization = () => {
                   {organization.pinCode && (
                     <Typography variant="body1">PIN: {organization.pinCode}</Typography>
                   )}
+                  {organization.timezone && (
+                    <Typography variant="body1">Timezone: {organization.timezone}</Typography>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Subscription Information */}
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>Subscription Details</Typography>
+                <div className="space-y-3">
+                  <div>
+                    <Typography variant="body2" color="textSecondary">Plan</Typography>
+                    <Typography variant="body1" className="capitalize">
+                      {organization.subscriptionPlan || 'Trial'}
+                    </Typography>
+                  </div>
+                  <div>
+                    <Typography variant="body2" color="textSecondary">Status</Typography>
+                    <Chip 
+                      label={organization.subscriptionStatus || 'trial'} 
+                      color={getSubscriptionStatusColor(organization.subscriptionStatus)}
+                      size="small"
+                      className="capitalize"
+                    />
+                  </div>
+                  {organization.trialEndsAt && (
+                    <div>
+                      <Typography variant="body2" color="textSecondary">Trial Ends</Typography>
+                      <Typography variant="body1">
+                        {new Date(organization.trialEndsAt).toLocaleDateString()}
+                      </Typography>
+                    </div>
+                  )}
+                  {organization.maxUsers && (
+                    <div>
+                      <Typography variant="body2" color="textSecondary">User Limit</Typography>
+                      <Typography variant="body1">{organization.maxUsers} users</Typography>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -243,7 +329,10 @@ const ViewOrganization = () => {
           <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
-                <Typography variant="h6" gutterBottom>Brand Settings</Typography>
+                <Typography variant="h6" gutterBottom className="flex items-center gap-2">
+                  <PaletteIcon />
+                  Brand Settings
+                </Typography>
                 <div className="space-y-3">
                   {organization.brandPrimaryColor && (
                     <div className="flex items-center gap-3">
@@ -275,28 +364,35 @@ const ViewOrganization = () => {
           </Grid>
 
           {/* System Information */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12}>
             <Card>
               <CardContent>
-                <Typography variant="h6" gutterBottom>System Information</Typography>
-                <div className="space-y-2">
-                  <div>
+                <Typography variant="h6" gutterBottom className="flex items-center gap-2">
+                  <CalendarTodayIcon />
+                  System Information
+                </Typography>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={3}>
                     <Typography variant="body2" color="textSecondary">Organization ID</Typography>
                     <Typography variant="body1">#{organization.id}</Typography>
-                  </div>
-                  <div>
+                  </Grid>
+                  <Grid item xs={12} md={3}>
                     <Typography variant="body2" color="textSecondary">Created At</Typography>
                     <Typography variant="body1">
                       {new Date(organization.createdAt).toLocaleDateString()}
                     </Typography>
-                  </div>
-                  <div>
+                  </Grid>
+                  <Grid item xs={12} md={3}>
                     <Typography variant="body2" color="textSecondary">Last Updated</Typography>
                     <Typography variant="body1">
                       {new Date(organization.updatedAt).toLocaleDateString()}
                     </Typography>
-                  </div>
-                </div>
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <Typography variant="body2" color="textSecondary">Created By</Typography>
+                    <Typography variant="body1">{organization.createdBy || 'System'}</Typography>
+                  </Grid>
+                </Grid>
               </CardContent>
             </Card>
           </Grid>

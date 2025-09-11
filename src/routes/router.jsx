@@ -23,6 +23,7 @@ import OrderRoutes from './orderRoutes';
 import ReportRoutes from './reportRoutes';
 import CustomerRoutes from './customerRoutes';
 import OperatorRoutes from './operatorRoutes';
+import OrganizationSetup from '../pages/organization/OrganizationSetup';
 
 const Routing = () => {
   const location = useLocation();
@@ -40,40 +41,42 @@ const Routing = () => {
             <Route path="/*" element={<><AuthRoutes /></>} />
             
             {/* Setup Routes */}
-            <Route path="/*" element={<SetupRoutes />} />
+            <Route path="/setup/*" element={<SetupRoutes />} />
             
             {/* Product Routes */}
-            <Route path="/*" element={<ProductRoutes />} />
+            <Route path="/products/*" element={<ProductRoutes />} />
             
             {/* Customer Management Routes */}
-            <Route path="/*" element={<CustomerManagementRoutes />} />
+            <Route path="/customers/*" element={<CustomerManagementRoutes />} />
             
             {/* Transport Routes */}
-            <Route path="/*" element={<TransportRoutes />} />
+            <Route path="/transport/*" element={<TransportRoutes />} />
             
             {/* Offer Routes */}
-            <Route path="/*" element={<OfferRoutes />} />
+            <Route path="/offers/*" element={<OfferRoutes />} />
             
             {/* User Routes */}
-            <Route path="/*" element={<UserRoutes />} />
+            <Route path="/users/*" element={<UserRoutes />} />
             
             {/* Organization Routes */}
-            <Route path="/*" element={<OrganizationRoutes />} />
+            <Route path="/organization/*" element={<OrganizationRoutes />} />
             
             {/* Supplier Routes */}
-            <Route path="/*" element={<SupplierRoutes />} />
+            <Route path="/suppliers/*" element={<SupplierRoutes />} />
             
             {/* Inventory Routes */}
-            <Route path="/*" element={<InventoryRoutes />} />
+            <Route path="/inventory/*" element={<InventoryRoutes />} />
             
             {/* Invoice Routes */}
-            <Route path="/*" element={<InvoiceRoutes />} />
+            <Route path="/invoices/*" element={<InvoiceRoutes />} />
             
             {/* Order Routes */}
             <Route path="/*" element={<OrderRoutes />} />
             
             {/* Report Routes */}
-            <Route path="/*" element={<ReportRoutes />} />
+            <Route path="/reports/*" element={<ReportRoutes />} />
+
+            <Route path="organization/setup" element={<OrganizationSetup />} />
 
             {/* CUSTOMER PORTAL */}
             <Route path="/customer/*" element={<CustomerRoutes />} />

@@ -10,7 +10,7 @@ const TransportRoutes = () => {
   return (
     <Routes>
       <Route
-        path="transport"
+        index
         element={
           <ProtectedRoute
             element={TransportList}
@@ -19,7 +19,7 @@ const TransportRoutes = () => {
         }
       />
       <Route
-        path="transport/add"
+        path="add"
         element={
           <ProtectedRoute
             element={AddTransport}
@@ -28,7 +28,7 @@ const TransportRoutes = () => {
         }
       />
       <Route
-        path="transport/:transportId"
+        path=":transportId"
         element={
           <ProtectedRoute
             element={InspectTransport}

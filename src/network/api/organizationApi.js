@@ -4,32 +4,84 @@ import serverInstance from './api-config';
 export async function ownerSignup(signupData) {
   try {
     const response = await serverInstance.post('/external/org/owner/signup', signupData);
-    return response.status;
+    return {
+      status: response.status,
+      data: response.data
+    };
   } catch (error) {
     console.error('Failed to signup owner:', error.response);
-    return error.response?.status || 500;
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Signup failed' }
+    };
   }
 }
 
-// Create organization
+// Create organization (for users with no org)
+export async function createFirstTimeOrganization(orgData) {
+  try {
+    const response = await serverInstance.post('/without-org/internal/org/create-first-time', orgData);
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Failed to create first-time organization:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Organization creation failed' }
+    };
+  }
+}
+
+// Create organization (for existing users)
 export async function createOrganization(orgData) {
   try {
     const response = await serverInstance.post('/internal/org/create', orgData);
-    return response.status;
+    return {
+      status: response.status,
+      data: response.data
+    };
   } catch (error) {
     console.error('Failed to create organization:', error.response);
-    return error.response?.status || 500;
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Organization creation failed' }
+    };
   }
 }
 
-// Get organization details
-export async function getOrganization() {
+// Get organization details by ID
+export async function getOrganizationById(id) {
   try {
-    const response = await serverInstance.get('/internal/org');
-    return response.data;
+    const response = await serverInstance.get(`/internal/org/${id}`);
+    return {
+      status: response.status,
+      data: response.data
+    };
   } catch (error) {
     console.error('Failed to fetch organization:', error.response);
-    return null;
+    return {
+      status: error.response?.status || 500,
+      data: null
+    };
+  }
+}
+
+// Get current organization details
+export async function getOrganization() {
+  try {
+    const response = await serverInstance.get('/internal/org/current');
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Failed to fetch current organization:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: null
+    };
   }
 }
 
@@ -37,9 +89,15 @@ export async function getOrganization() {
 export async function updateOrganization(orgData) {
   try {
     const response = await serverInstance.put('/internal/org', orgData);
-    return response.status;
+    return {
+      status: response.status,
+      data: response.data
+    };
   } catch (error) {
     console.error('Failed to update organization:', error.response);
-    return error.response?.status || 500;
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Update failed' }
+    };
   }
 }

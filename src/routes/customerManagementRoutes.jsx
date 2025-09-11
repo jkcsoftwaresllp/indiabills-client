@@ -13,7 +13,7 @@ const CustomerManagementRoutes = () => {
   return (
     <Routes>
       <Route
-        path="customers"
+        index
         element={
           <ProtectedRoute
             element={CustomerList}
@@ -22,7 +22,7 @@ const CustomerManagementRoutes = () => {
         }
       />
       <Route
-        path="customers/add"
+        path="add"
         element={
           <ProtectedRoute
             element={AddCustomers}
@@ -31,7 +31,7 @@ const CustomerManagementRoutes = () => {
         }
       />
       <Route
-        path="customers/address/add/:customerId"
+        path="address/add/:customerId"
         element={
           <ProtectedRoute
             element={AddCustomerAddress}
@@ -40,7 +40,7 @@ const CustomerManagementRoutes = () => {
         }
       />
       <Route
-        path="customers/:customerId"
+        path=":customerId"
         element={
           <ProtectedRoute
             element={InspectCustomer}
@@ -49,7 +49,7 @@ const CustomerManagementRoutes = () => {
         }
       />
       <Route
-        path="customers/edit/:customerId"
+        path="edit/:customerId"
         element={
           <ProtectedRoute
             element={EditCustomer}
@@ -58,7 +58,7 @@ const CustomerManagementRoutes = () => {
         }
       />
       <Route
-        path="customers/address/:addressId"
+        path="address/:addressId"
         element={
           <ProtectedRoute
             element={EditCustomerAddress}

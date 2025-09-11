@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { apiLogin } from "../../network/api";
+import { login } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useAuth } from "../../hooks/useAuth";
+import { setSession, setTempSession, needsOrganizationSetup, hasMultipleOrganizations } from "../../utils/authHelper";
 import logo from "../../assets/IndiaBills_logo.png";
 import bg from "../../assets/bglogo.png";
 import styles from "./Login.module.css";
@@ -13,15 +14,16 @@ const quotes = [
   "Don't let yesterday take up too much of today.",
   "You learn more from failure than from success. Don't let it stop you. Failure builds character.",
   "It's not whether you get knocked down, it's whether you get up.",
-  "Welcome to your personal shopping experience.",
-  "Discover amazing products tailored just for you.",
-  "Your satisfaction is our priority.",
-  "Shop with confidence and convenience.",
+  "Welcome to your business management platform.",
+  "Streamline your operations with IndiaBills.",
+  "Your business success starts here.",
+  "Efficient management, better results.",
 ];
 
 const LoginPage = () => {
   const [quote, setQuote] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -29,24 +31,26 @@ const LoginPage = () => {
 
   const { successPopup, errorPopup } = useStore();
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login: authLogin } = useAuth();
 
   useEffect(() => {
-    if (localStorage.getItem("session")) {
-      const session = JSON.parse(localStorage.getItem("session"));
-      // Redirect based on existing session role
-      if (session.role === "customer") {
+    // Check if user is already logged in
+    const session = localStorage.getItem("session");
+    if (session) {
+      const sessionData = JSON.parse(session);
+      if (sessionData.role === "customer") {
         navigate("/customer");
-      } else if (session.role === "operator") {
+      } else if (sessionData.role === "operator") {
         navigate("/operator");
       } else {
         navigate("/");
       }
       return;
-    } else {
-      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-      setQuote(randomQuote);
     }
+
+    // Set random quote
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    setQuote(randomQuote);
   }, [navigate]);
 
   const handleInputChange = (e) => {
@@ -65,64 +69,93 @@ const LoginPage = () => {
     e.preventDefault();
 
     if (!data.email || !data.password) {
-      errorPopup("Don't leave the credentials empty!");
+      errorPopup("Please enter both email and password!");
       return;
     }
 
-    // Fallback to API login
+    setLoading(true);
+
     try {
-      const response = await apiLogin({
+      const response = await login({
         email: data.email,
         password: data.password,
       });
 
       if (response.status !== 200) {
         switch (response.status) {
+          case 401:
+            errorPopup("Invalid email or password");
+            break;
           case 404:
-            errorPopup("User or password incorrect");
-            return;
+            errorPopup("User not found");
+            break;
           case 500:
-            errorPopup("Something went wrong");
-            return;
+            errorPopup("Server error. Please try again later.");
+            break;
           default:
-            errorPopup("Login failed");
-            return;
+            errorPopup("Login failed. Please try again.");
+            break;
         }
+        return;
       }
 
-      const session = response.data;
-      const payload = {
-        id: session.user.id,
-        name: session.user.name,
-        role: session.user.role?.toLowerCase(),
-        avatar: session?.avatar,
-        token: session.token,
-      };
+      const { token, user, caseType } = response.data;
 
-      localStorage.setItem("tempUserSession", JSON.stringify(payload));
+      // Store token for API requests
+      localStorage.setItem('token', token);
 
-      // TODO: Replace with actual API call
-      const hasMultipleOrgs = true; // Mock - should come from API
+      // Handle different organization cases
+      switch (caseType) {
+        case 'NO_ORG':
+          // User has no organizations - redirect to setup
+          setTempSession({ token, user });
+          successPopup("Welcome! Let's set up your first organization.");
+          navigate("/organization/setup");
+          break;
 
-      if (hasMultipleOrgs && payload.role !== "customer" && payload.role !== "operator") {
-        // Redirect to organization selector for admin/operator
-        navigate("/organization-selector");
-      } else {
-        login(payload);
-        successPopup("Welcome back!");
+        case 'SINGLE_ORG':
+          // User has one organization - direct login
+          const singleOrgSession = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            username: user.username,
+            role: user.activeOrg.role.toLowerCase(),
+            token: token,
+            organizationId: user.activeOrg.orgId,
+            orgs: user.orgs
+          };
+          
+          setSession(singleOrgSession);
+          authLogin(singleOrgSession);
+          successPopup(`Welcome back, ${user.name}!`);
+          
+          // Redirect based on role
+          if (singleOrgSession.role === "customer") {
+            navigate("/customer");
+          } else if (singleOrgSession.role === "operator") {
+            navigate("/operator");
+          } else {
+            navigate("/");
+          }
+          break;
 
-        if (payload.role === "customer") {
-          navigate("/customer");
-        } 
-        else if (payload.role === "operator") {
-        navigate("/operator");
-        } else {
-          navigate("/");
-        }
+        case 'MULTI_ORG':
+          // User has multiple organizations - show selector
+          setTempSession({ token, user });
+          successPopup("Please select an organization to continue.");
+          navigate("/organization-selector");
+          break;
+
+        default:
+          errorPopup("Unexpected login response. Please try again.");
+          break;
       }
     } catch (error) {
       console.error("Login error:", error);
-      errorPopup("Login failed. Please try again.");
+      errorPopup("Login failed. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -136,7 +169,9 @@ const LoginPage = () => {
       <form onSubmit={handleLogin} className={styles.loginForm}>
         <div className={styles.header}>
           <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
-          <h2 className={styles.loginPotalTitle}>Login Portal</h2>
+          <h2 className="text-white text-xl font-semibold mb-2">
+            Login Portal
+          </h2>
           <p className={styles.quote}>{quote}</p>
         </div>
 
@@ -151,9 +186,10 @@ const LoginPage = () => {
               type="email"
               className={styles.input}
               onChange={handleInputChange}
-              placeholder="admin123, operator123, or customer123"
+              placeholder="Enter your email"
               value={data.email}
               required
+              disabled={loading}
             />
           </div>
 
@@ -168,15 +204,17 @@ const LoginPage = () => {
                 type={showPassword ? "text" : "password"}
                 className={styles.input}
                 onChange={handleInputChange}
-                placeholder="admin123 or customer123"
+                placeholder="Enter your password"
                 value={data.password}
                 required
+                disabled={loading}
               />
               <button
                 type="button"
                 className={styles.passwordToggle}
                 onClick={togglePasswordVisibility}
                 aria-label="Toggle password visibility"
+                disabled={loading}
               >
                 {showPassword ? "👁️" : "👁️‍🗨️"}
               </button>
@@ -184,8 +222,12 @@ const LoginPage = () => {
           </div>
         </div>
 
-        <button type="submit" className={styles.loginButton}>
-          Login to Portal
+        <button 
+          type="submit" 
+          className={styles.loginButton}
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Login to Portal"}
         </button>
 
         <div className={styles.signupPrompt}>

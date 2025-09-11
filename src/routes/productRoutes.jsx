@@ -10,7 +10,7 @@ const ProductRoutes = () => {
   return (
     <>
       <Route
-        path="/products"
+        index
         element={
           <ProtectedRoute
             element={ProductList}
@@ -19,7 +19,7 @@ const ProductRoutes = () => {
         }
       />
       <Route
-        path="/products/add"
+        path="add"
         element={
           <ProtectedRoute
             element={AddProducts}
@@ -28,7 +28,7 @@ const ProductRoutes = () => {
         }
       />
       <Route
-        path="/products/:itemId"
+        path=":itemId"
         element={
           <ProtectedRoute
             element={InspectProduct}

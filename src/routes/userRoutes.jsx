@@ -10,15 +10,15 @@ const UserRoutes = () => {
   return (
     <Routes>
       <Route
-        path="users"
+        index
         element={<ProtectedRoute element={ViewUsers} roles={['admin']} />}
       />
       <Route
-        path="users/add"
+        path="add"
         element={<ProtectedRoute element={AddUser} roles={['admin']} />}
       />
       <Route
-        path="users/:userID"
+        path=":userID"
         element={<ProtectedRoute element={InspectUser} roles={['admin']} />}
       />
     </Routes>

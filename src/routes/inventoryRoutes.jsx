@@ -10,7 +10,7 @@ const InventoryRoutes = () => {
   return (
     <Routes>
       <Route
-        path="inventory"
+        index
         element={
           <ProtectedRoute
             element={ViewInventory}
@@ -19,7 +19,7 @@ const InventoryRoutes = () => {
         }
       />
       <Route
-        path="inventory/add"
+        path="add"
         element={
           <ProtectedRoute
             element={AddInventory}
@@ -28,7 +28,7 @@ const InventoryRoutes = () => {
         }
       />
       <Route
-        path="inventory/:batchId"
+        path=":batchId"
         element={
           <ProtectedRoute
             element={EditInventory}

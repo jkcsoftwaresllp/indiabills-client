@@ -10,6 +10,7 @@ import { ownerSignup, createOrganization, getOrganization, updateOrganization } 
 import { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier } from './suppliersApi';
 import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from './productsApi';
 import { getOffers, getOfferById, createOffer, updateOffer, deleteOffer } from './offersApi';
+import { login, switchOrganization, logout, getUserOrganizations } from './authApi';
 
 async function getStuff(path) {
   try {
@@ -345,4 +346,9 @@ export {
   createOffer,
   updateOffer,
   deleteOffer,
+  // Auth APIs
+  login,
+  switchOrganization,
+  logout,
+  getUserOrganizations,
 };

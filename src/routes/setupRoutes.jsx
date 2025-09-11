@@ -8,8 +8,8 @@ import OrganizationChannel from '../pages/organization/OrganizationChannel';
 const SetupRoutes = () => {
   return (
     <Routes>
-      <Route path="setup" element={<StartSetup />} />
-      <Route path="channel" element={<OrganizationChannel />} />
+      <Route index element={<StartSetup />} />
+      <Route path="/channel" element={<OrganizationChannel />} />
       <Route
         path="setup-page"
         element={<ProtectedRoute element={SetupPage} roles={['admin']} />}

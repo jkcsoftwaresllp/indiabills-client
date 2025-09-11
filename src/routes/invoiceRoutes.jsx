@@ -10,7 +10,7 @@ const InvoiceRoutes = () => {
   return (
     <Routes>
       <Route
-        path="invoices"
+        index
         element={
           <ProtectedRoute
             element={Invoices}
@@ -19,7 +19,7 @@ const InvoiceRoutes = () => {
         }
       />
       <Route
-        path="invoices/edit/:invoiceId"
+        path="edit/:invoiceId"
         element={
           <ProtectedRoute
             element={EditInvoice}
@@ -28,7 +28,7 @@ const InvoiceRoutes = () => {
         }
       />
       <Route
-        path="invoice/:orderId"
+        path=":orderId"
         element={
           <ProtectedRoute
             element={InvoicePage}

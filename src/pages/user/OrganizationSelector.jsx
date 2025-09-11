@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useStore } from '../../store/store';
+import { switchOrganization, getUserOrganizations } from '../../network/api';
+import { getTempSession, setSession, clearTempSession, setOrganizationContext } from '../../utils/authHelper';
 import logo from '../../assets/IndiaBills_logo.png';
 import bg from '../../assets/bglogo.png';
 import styles from './Login.module.css';
@@ -13,14 +15,17 @@ import {
   Grid,
   Avatar,
   Chip,
-  Box
+  Box,
+  CircularProgress
 } from '@mui/material';
 import BusinessIcon from '@mui/icons-material/Business';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import AddIcon from '@mui/icons-material/Add';
 
 const OrganizationSelector = () => {
   const [organizations, setOrganizations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [switching, setSwitching] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
   const { successPopup, errorPopup } = useStore();
@@ -28,80 +33,104 @@ const OrganizationSelector = () => {
   useEffect(() => {
     const fetchUserOrganizations = async () => {
       try {
-        // TODO: Replace with actual API call
-        // const response = await getUserOrganizations();
+        const tempSession = getTempSession();
+        if (!tempSession) {
+          errorPopup('Session expired. Please login again.');
+          navigate('/login');
+          return;
+        }
+
+        const response = await getUserOrganizations();
         
-        // Mock data for now
-        const mockOrganizations = [
-          {
-            id: 1,
-            name: 'Acme Corporation',
-            businessName: 'Acme Business Group',
-            logoUrl: 'https://via.placeholder.com/100',
-            domain: 'acme.com',
-            subdomain: 'acme',
-            role: 'admin',
-            isActive: true,
-            lastAccessed: '2025-01-15T10:30:00Z'
-          },
-          {
-            id: 2,
-            name: 'Tech Solutions Ltd',
-            businessName: 'Tech Solutions Private Limited',
-            logoUrl: 'https://via.placeholder.com/100',
-            domain: 'techsolutions.com',
-            subdomain: 'tech',
-            role: 'operator',
-            isActive: true,
-            lastAccessed: '2025-01-10T15:20:00Z'
-          }
-        ];
-        
-        setOrganizations(mockOrganizations);
+        if (response.status === 200) {
+          setOrganizations(response.data);
+        } else {
+          errorPopup('Failed to load organizations');
+          navigate('/login');
+        }
       } catch (error) {
         console.error('Error fetching organizations:', error);
         errorPopup('Failed to load organizations');
+        navigate('/login');
       } finally {
         setLoading(false);
       }
     };
 
     fetchUserOrganizations();
-  }, [errorPopup]);
+  }, [errorPopup, navigate]);
 
   const handleOrganizationSelect = async (org) => {
+    setSwitching(true);
     try {
-      // TODO: Replace with actual API call to set organization context
-      // const response = await setOrganizationContext(org.id);
+      const tempSession = getTempSession();
+      if (!tempSession) {
+        errorPopup('Session expired. Please login again.');
+        navigate('/login');
+        return;
+      }
+
+      const response = await switchOrganization(org.id);
       
-      // Mock successful organization selection
-      const userSession = JSON.parse(localStorage.getItem('tempUserSession'));
-      const payload = {
-        ...userSession,
-        organizationId: org.id,
-        organizationName: org.name,
-        role: org.role
-      };
+      if (response.status === 200) {
+        const { token, activeOrg } = response.data;
+        
+        // Create final session
+        const finalSession = {
+          id: tempSession.user.id,
+          name: tempSession.user.name,
+          email: tempSession.user.email,
+          username: tempSession.user.username,
+          role: activeOrg.role.toLowerCase(),
+          token: token,
+          organizationId: activeOrg.orgId,
+          orgs: tempSession.user.orgs
+        };
 
-      login(payload);
-      successPopup(`Welcome to ${org.name}!`);
+        // Set organization context
+        setOrganizationContext({
+          id: org.id,
+          name: org.name,
+          domain: org.domain,
+          subdomain: org.subdomain,
+          logoUrl: org.logoUrl,
+          role: activeOrg.role.toLowerCase()
+        });
 
-      // Redirect based on role
-      if (org.role === 'admin') {
-        navigate('/');
-      } else if (org.role === 'operator') {
-        navigate('/operator');
+        setSession(finalSession);
+        login(finalSession);
+        clearTempSession();
+        
+        successPopup(`Welcome to ${org.name}!`);
+
+        // Redirect based on role
+        if (activeOrg.role.toLowerCase() === 'admin') {
+          navigate('/');
+        } else if (activeOrg.role.toLowerCase() === 'operator') {
+          navigate('/operator');
+        } else if (activeOrg.role.toLowerCase() === 'customer') {
+          navigate('/customer');
+        } else {
+          navigate('/');
+        }
       } else {
-        navigate('/');
+        errorPopup('Failed to switch organization');
       }
     } catch (error) {
       console.error('Error selecting organization:', error);
       errorPopup('Failed to access organization');
+    } finally {
+      setSwitching(false);
     }
   };
 
   const handleCreateNewOrganization = () => {
     navigate('/organization/create');
+  };
+
+  const handleBackToLogin = () => {
+    clearTempSession();
+    navigate('/login');
   };
 
   if (loading) {
@@ -110,7 +139,8 @@ const OrganizationSelector = () => {
         <div className={styles.loginForm}>
           <div className={styles.header}>
             <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
-            <Typography variant="h5" className="text-white">Loading...</Typography>
+            <CircularProgress sx={{ color: 'white' }} />
+            <Typography variant="h6" className="text-white">Loading organizations...</Typography>
           </div>
         </div>
       </div>
@@ -119,7 +149,7 @@ const OrganizationSelector = () => {
 
   return (
     <div className={styles.container} style={{ backgroundImage: `url(${bg})` }}>
-      <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-lg shadow-xl p-8 w-full max-w-4xl">
+      <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-lg shadow-xl p-8 w-full max-w-5xl max-h-[90vh] overflow-y-auto">
         <div className="text-center mb-8">
           <img src={logo} alt="IndiaBills Logo" className="w-32 mx-auto mb-4" />
           <Typography variant="h4" className="font-bold text-gray-800 mb-2">
@@ -133,10 +163,11 @@ const OrganizationSelector = () => {
         {organizations.length > 0 ? (
           <Grid container spacing={3}>
             {organizations.map((org) => (
-              <Grid item xs={12} md={6} key={org.id}>
+              <Grid item xs={12} md={6} lg={4} key={org.id}>
                 <Card 
                   className="cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-                  onClick={() => handleOrganizationSelect(org)}
+                  onClick={() => !switching && handleOrganizationSelect(org)}
+                  sx={{ opacity: switching ? 0.7 : 1 }}
                 >
                   <CardContent>
                     <div className="flex items-center gap-4 mb-4">
@@ -152,7 +183,7 @@ const OrganizationSelector = () => {
                           {org.name}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                          {org.businessName}
+                          {org.domain ? `${org.subdomain}.${org.domain}` : org.subdomain}
                         </Typography>
                         <div className="flex gap-2 mt-2">
                           <Chip 
@@ -162,8 +193,8 @@ const OrganizationSelector = () => {
                             className="capitalize"
                           />
                           <Chip 
-                            label={org.isActive ? 'Active' : 'Inactive'} 
-                            color={org.isActive ? 'success' : 'error'}
+                            label={org.subscriptionStatus || 'active'} 
+                            color={org.subscriptionStatus === 'active' ? 'success' : 'warning'}
                             size="small"
                           />
                         </div>
@@ -172,8 +203,10 @@ const OrganizationSelector = () => {
                     </div>
                     
                     <div className="text-sm text-gray-600">
-                      <p><strong>Domain:</strong> {org.subdomain}.{org.domain}</p>
-                      <p><strong>Last Accessed:</strong> {new Date(org.lastAccessed).toLocaleDateString()}</p>
+                      <p><strong>Status:</strong> {org.isActive ? 'Active' : 'Inactive'}</p>
+                      {org.subscriptionStatus && (
+                        <p><strong>Subscription:</strong> {org.subscriptionStatus}</p>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -196,17 +229,27 @@ const OrganizationSelector = () => {
           <Button
             variant="outlined"
             onClick={handleCreateNewOrganization}
-            startIcon={<BusinessIcon />}
+            startIcon={<AddIcon />}
+            disabled={switching}
           >
             Create New Organization
           </Button>
           <Button
             variant="text"
-            onClick={() => navigate('/login')}
+            onClick={handleBackToLogin}
+            disabled={switching}
           >
             Back to Login
           </Button>
         </Box>
+
+        {switching && (
+          <Box mt={2} display="flex" justifyContent="center">
+            <Typography variant="body2" color="textSecondary">
+              Switching organization...
+            </Typography>
+          </Box>
+        )}
       </div>
     </div>
   );

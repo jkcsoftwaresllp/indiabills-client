@@ -10,7 +10,7 @@ const SupplierRoutes = () => {
   return (
     <Routes>
       <Route
-        path="suppliers"
+        index
         element={
           <ProtectedRoute
             element={ViewSuppliers}
@@ -19,7 +19,7 @@ const SupplierRoutes = () => {
         }
       />
       <Route
-        path="suppliers/add"
+        path="add"
         element={
           <ProtectedRoute
             element={AddSuppliers}
@@ -28,7 +28,7 @@ const SupplierRoutes = () => {
         }
       />
       <Route
-        path="suppliers/:supplierId"
+        path=":supplierId"
         element={
           <ProtectedRoute
             element={InspectSupplier}

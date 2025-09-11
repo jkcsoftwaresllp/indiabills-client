@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createOrganization } from '../../network/api';
-import { getTempSession, validateOrganizationData } from '../../utils/authHelper';
+import { createFirstTimeOrganization } from '../../network/api/organizationApi';
 import { useStore } from '../../store/store';
+import { getTempSession, clearTempSession, validateOrganizationData } from '../../utils/authHelper';
 import PageAnimate from '../../components/Animate/PageAnimate';
 import logo from '../../assets/IndiaBills_logo.png';
 import bg from '../../assets/bglogo.png';
@@ -24,13 +24,12 @@ import {
   StepLabel,
   CircularProgress
 } from '@mui/material';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { getOption } from '../../utils/FormHelper';
 
-const CreateOrganization = () => {
+const OrganizationSetup = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -85,10 +84,15 @@ const CreateOrganization = () => {
   };
 
   const handleNext = () => {
-    if (activeStep === 0 && !formData.name) {
-      setErrors({ name: 'Organization name is required' });
-      return;
+    const validation = validateOrganizationData(formData);
+    if (activeStep === 0) {
+      // Validate basic info
+      if (!formData.name) {
+        setErrors({ name: 'Organization name is required' });
+        return;
+      }
     }
+    
     setActiveStep(prev => prev + 1);
   };
 
@@ -107,11 +111,12 @@ const CreateOrganization = () => {
 
     setLoading(true);
     try {
-      const response = await createOrganization(formData);
+      const response = await createFirstTimeOrganization(formData);
       
       if (response.status === 200 || response.status === 201) {
-        successPopup('Organization created successfully!');
-        navigate('/organization-selector');
+        successPopup('Organization created successfully! Please login again.');
+        clearTempSession();
+        navigate('/login');
       } else {
         errorPopup(response.data?.message || 'Failed to create organization');
       }
@@ -341,10 +346,10 @@ const CreateOrganization = () => {
         <div className="text-center mb-8">
           <img src={logo} alt="IndiaBills Logo" className="w-32 mx-auto mb-4" />
           <Typography variant="h4" className="font-bold text-gray-800 mb-2">
-            Create New Organization
+            Set Up Your Organization
           </Typography>
           <Typography variant="body1" color="textSecondary">
-            Set up a new organization for your business
+            Let's create your first organization to get started
           </Typography>
         </div>
 
@@ -367,11 +372,10 @@ const CreateOrganization = () => {
 
         <Box mt={4} display="flex" justifyContent="space-between">
           <Button
-            onClick={() => navigate('/organization-selector')}
-            startIcon={<ArrowBackIosNewIcon />}
+            onClick={handleBackToLogin}
             disabled={loading}
           >
-            Back to Organizations
+            Back to Login
           </Button>
           
           <div className="flex gap-2">
@@ -411,4 +415,4 @@ const CreateOrganization = () => {
   );
 };
 
-export default CreateOrganization;
+export default OrganizationSetup;

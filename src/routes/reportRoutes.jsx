@@ -20,7 +20,7 @@ const ReportRoutes = () => {
   return (
     <Routes>
       <Route
-        path="reports"
+        index
         element={
           <ProtectedRoute
             element={ViewReports}
@@ -29,7 +29,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="reports/stocklevel"
+        path="stocklevel"
         element={
           <ProtectedRoute
             element={StockLevelReport}
@@ -38,7 +38,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="reports/supplierperformance"
+        path="supplierperformance"
         element={
           <ProtectedRoute
             element={SupplierPerformance}
@@ -47,7 +47,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="reports/salessummary"
+        path="salessummary"
         element={
           <ProtectedRoute
             element={SalesSummary}
@@ -56,7 +56,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="reports/invoice"
+        path="invoice"
         element={
           <ProtectedRoute
             element={Invoice}
@@ -65,7 +65,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="reports/customerpurchase"
+        path="customerpurchase"
         element={
           <ProtectedRoute
             element={CustomerPurchaseReport}
@@ -74,7 +74,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="reports/credits"
+        path="credits"
         element={
           <ProtectedRoute
             element={CreditReport}
@@ -83,7 +83,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="reports/hsn"
+        path="hsn"
         element={
           <ProtectedRoute
             element={HSNReport}
@@ -92,7 +92,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="reports/stockissue"
+        path="stockissue"
         element={
           <ProtectedRoute
             element={StockIssuesReport}
@@ -101,7 +101,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="reports/expenses"
+        path="expenses"
         element={
           <ProtectedRoute
             element={ExpenseReport}
@@ -110,7 +110,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="reports/revenue"
+        path="revenue"
         element={
           <ProtectedRoute
             element={RevenueReport}
@@ -119,7 +119,7 @@ const ReportRoutes = () => {
         }
       />
       <Route
-        path="reports/pms"
+        path="pms"
         element={
           <ProtectedRoute
             element={PMSReport}

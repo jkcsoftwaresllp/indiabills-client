@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getOrganization, updateOrganization } from "../../network/api";
+import { getOrganizationById, updateOrganization } from "../../network/api";
+import { getOrganizationContext, validateOrganizationData } from "../../utils/authHelper";
 import { useStore } from "../../store/store";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import {
@@ -25,36 +26,26 @@ const EditOrganization = () => {
   const [organization, setOrganization] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const { errorPopup, successPopup } = useStore();
+  const orgContext = getOrganizationContext();
 
   useEffect(() => {
     const fetchOrganization = async () => {
       try {
-        const response = await getOrganization();
-        if (response) {
-          setOrganization(response);
+        if (!orgContext?.id) {
+          errorPopup('No organization context found');
+          navigate('/organization-selector');
+          return;
+        }
+
+        const response = await getOrganizationById(orgContext.id);
+        
+        if (response.status === 200 && response.data) {
+          setOrganization(response.data);
         } else {
-          // Initialize with empty organization for new setup
-          setOrganization({
-            name: '',
-            businessName: '',
-            about: '',
-            tagline: '',
-            domain: '',
-            subdomain: '',
-            logoUrl: '',
-            phone: '',
-            email: '',
-            website: '',
-            addressLine: '',
-            city: '',
-            state: '',
-            country: 'India',
-            pinCode: '',
-            brandPrimaryColor: '#1e2938',
-            brandAccentColor: '#c42032'
-          });
+          errorPopup('Failed to load organization details');
         }
       } catch (error) {
         console.error('Error fetching organization:', error);
@@ -65,7 +56,7 @@ const EditOrganization = () => {
     };
 
     fetchOrganization();
-  }, [errorPopup]);
+  }, [errorPopup, navigate, orgContext]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,19 +64,36 @@ const EditOrganization = () => {
       ...prev,
       [name]: value
     }));
+    
+    // Clear error for this field
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const validation = validateOrganizationData(organization);
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+      errorPopup('Please fix the validation errors');
+      return;
+    }
+
     setSaving(true);
 
     try {
       const response = await updateOrganization(organization);
-      if (response === 200) {
+      
+      if (response.status === 200) {
         successPopup("Organization updated successfully!");
         navigate("/organization");
       } else {
-        errorPopup("Failed to update organization");
+        errorPopup(response.data?.message || "Failed to update organization");
       }
     } catch (error) {
       console.error('Error updating organization:', error);
@@ -100,6 +108,18 @@ const EditOrganization = () => {
       <PageAnimate>
         <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
           <CircularProgress />
+        </Box>
+      </PageAnimate>
+    );
+  }
+
+  if (!organization) {
+    return (
+      <PageAnimate>
+        <Box p={4} textAlign="center">
+          <Typography variant="h6" color="error">
+            Organization not found
+          </Typography>
         </Box>
       </PageAnimate>
     );
@@ -134,6 +154,8 @@ const EditOrganization = () => {
                         value={organization.name || ''}
                         onChange={handleChange}
                         required
+                        error={!!errors.name}
+                        helperText={errors.name}
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -169,11 +191,11 @@ const EditOrganization = () => {
                     <Grid item xs={12} md={6}>
                       <TextField
                         fullWidth
-                        label="Logo URL"
-                        name="logoUrl"
-                        value={organization.logoUrl || ''}
+                        label="GSTIN"
+                        name="gstin"
+                        value={organization.gstin || ''}
                         onChange={handleChange}
-                        placeholder="https://example.com/logo.png"
+                        placeholder="GST Identification Number"
                       />
                     </Grid>
                   </Grid>
@@ -195,7 +217,8 @@ const EditOrganization = () => {
                         type="email"
                         value={organization.email || ''}
                         onChange={handleChange}
-                        required
+                        error={!!errors.email}
+                        helperText={errors.email}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -205,7 +228,9 @@ const EditOrganization = () => {
                         name="phone"
                         value={organization.phone || ''}
                         onChange={handleChange}
-                        required
+                        placeholder="+91-9876543210"
+                        error={!!errors.phone}
+                        helperText={errors.phone}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -216,6 +241,8 @@ const EditOrganization = () => {
                         value={organization.website || ''}
                         onChange={handleChange}
                         placeholder="https://yourcompany.com"
+                        error={!!errors.website}
+                        helperText={errors.website}
                       />
                     </Grid>
                   </Grid>
@@ -266,13 +293,17 @@ const EditOrganization = () => {
                       </FormControl>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                      <TextField
-                        fullWidth
-                        label="Country"
-                        name="country"
-                        value={organization.country || 'India'}
-                        onChange={handleChange}
-                      />
+                      <FormControl fullWidth>
+                        <InputLabel>Country</InputLabel>
+                        <Select
+                          name="country"
+                          value={organization.country || 'India'}
+                          onChange={handleChange}
+                        >
+                          <MenuItem value="India">India</MenuItem>
+                          <MenuItem value="Other">Other</MenuItem>
+                        </Select>
+                      </FormControl>
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <TextField
@@ -281,6 +312,8 @@ const EditOrganization = () => {
                         name="pinCode"
                         value={organization.pinCode || ''}
                         onChange={handleChange}
+                        error={!!errors.pinCode}
+                        helperText={errors.pinCode}
                       />
                     </Grid>
                   </Grid>
@@ -302,6 +335,8 @@ const EditOrganization = () => {
                         value={organization.domain || ''}
                         onChange={handleChange}
                         placeholder="yourcompany.com"
+                        error={!!errors.domain}
+                        helperText={errors.domain}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -312,6 +347,20 @@ const EditOrganization = () => {
                         value={organization.subdomain || ''}
                         onChange={handleChange}
                         placeholder="yourcompany"
+                        error={!!errors.subdomain}
+                        helperText={errors.subdomain}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Logo URL"
+                        name="logoUrl"
+                        value={organization.logoUrl || ''}
+                        onChange={handleChange}
+                        placeholder="https://example.com/logo.png"
+                        error={!!errors.logoUrl}
+                        helperText={errors.logoUrl}
                       />
                     </Grid>
                   </Grid>
@@ -334,6 +383,8 @@ const EditOrganization = () => {
                         value={organization.brandPrimaryColor || '#1e2938'}
                         onChange={handleChange}
                         InputLabelProps={{ shrink: true }}
+                        error={!!errors.brandPrimaryColor}
+                        helperText={errors.brandPrimaryColor}
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -345,6 +396,8 @@ const EditOrganization = () => {
                         value={organization.brandAccentColor || '#c42032'}
                         onChange={handleChange}
                         InputLabelProps={{ shrink: true }}
+                        error={!!errors.brandAccentColor}
+                        helperText={errors.brandAccentColor}
                       />
                     </Grid>
                   </Grid>
@@ -358,7 +411,7 @@ const EditOrganization = () => {
               type="submit"
               variant="contained"
               size="large"
-              startIcon={<SaveIcon />}
+              startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
               disabled={saving}
             >
               {saving ? 'Saving...' : 'Save Changes'}

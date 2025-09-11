@@ -9,13 +9,13 @@ const OrganizationRoutes = () => {
   return (
     <Routes>
       <Route
-        path="organization"
+        index
         element={
           <ProtectedRoute element={ViewOrganization} roles={['admin']} />
         }
       />
       <Route
-        path="organization/edit"
+        path="edit"
         element={
           <ProtectedRoute element={EditOrganization} roles={['admin']} />
         }

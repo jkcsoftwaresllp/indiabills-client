@@ -10,7 +10,7 @@ const OfferRoutes = () => {
   return (
     <Routes>
       <Route
-        path="offers"
+        index
         element={
           <ProtectedRoute
             element={OfferList}
@@ -19,7 +19,7 @@ const OfferRoutes = () => {
         }
       />
       <Route
-        path="offers/add"
+        path="add"
         element={
           <ProtectedRoute
             element={AddOffer}
@@ -28,7 +28,7 @@ const OfferRoutes = () => {
         }
       />
       <Route
-        path="offers/:offerId"
+        path=":offerId"
         element={
           <ProtectedRoute
             element={InspectOffer}

@@ -1,4 +1,13 @@
 import serverInstance from "../network/api/api-config";
+import { getSessions as getAuthSession, getOrganizationContext as getOrgContext } from './authHelper';
+
+export const getSessions = () => {
+  return getAuthSession();
+};
+
+export const getOrganizationContext = () => {
+  return getOrgContext();
+};
 
 /*--------SESSION----------*/
 
