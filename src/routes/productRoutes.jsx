@@ -7,37 +7,38 @@ const AddProducts = lazy(() => import('../pages/products/AddProducts'));
 const InspectProduct = lazy(() => import('../pages/products/InspectProduct'));
 
 const ProductRoutes = () => {
-  return (
-    <>
-      <Route
-        index
-        element={
-          <ProtectedRoute
-            element={ProductList}
-            roles={['admin', 'operators']}
-          />
-        }
-      />
-      <Route
-        path="add"
-        element={
-          <ProtectedRoute
-            element={AddProducts}
-            roles={['admin', 'operators']}
-          />
-        }
-      />
-      <Route
-        path=":itemId"
-        element={
-          <ProtectedRoute
-            element={InspectProduct}
-            roles={['admin', 'operators']}
-          />
-        }
-      />
-    </>
-  );
+  return [
+    <Route
+      key="products"
+      path="/products"
+      element={
+        <ProtectedRoute
+          element={ProductList}
+          roles={['admin', 'operators']}
+        />
+      }
+    />,
+    <Route
+      key="products-add"
+      path="/products/add"
+      element={
+        <ProtectedRoute
+          element={AddProducts}
+          roles={['admin', 'operators']}
+        />
+      }
+    />,
+    <Route
+      key="products-inspect"
+      path="/products/:itemId"
+      element={
+        <ProtectedRoute
+          element={InspectProduct}
+          roles={['admin', 'operators']}
+        />
+      }
+    />
+  ];
 };
 
 export default ProductRoutes;

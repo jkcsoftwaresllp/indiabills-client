@@ -4,9 +4,6 @@ import { AnimatePresence } from 'framer-motion';
 import { AuthProvider } from '../store/context';
 import SpinnerFullPage from '../pages/more/spinner';
 
-// Main Dashboard
-import Home from '../pages/interfaces/Home';
-
 // Route Components
 import AuthRoutes from './authRoutes';
 import SetupRoutes from './setupRoutes';
@@ -20,10 +17,14 @@ import SupplierRoutes from './supplierRoutes';
 import InventoryRoutes from './inventoryRoutes';
 import InvoiceRoutes from './invoiceRoutes';
 import OrderRoutes from './orderRoutes';
+import ShopRoutes from './shopRoutes';
 import ReportRoutes from './reportRoutes';
+import AuditRoutes from './auditRoutes';
 import CustomerRoutes from './customerRoutes';
 import OperatorRoutes from './operatorRoutes';
-import OrganizationSetup from '../pages/organization/OrganizationSetup';
+
+// DASHBOARD
+import Home from '../pages/interfaces/Home';
 
 const Routing = () => {
   const location = useLocation();
@@ -37,53 +38,56 @@ const Routing = () => {
             {/* HOME */}
             <Route path="/" element={<Home />} />
             
-            {/* Authentication Routes */}
-            <Route path="/*" element={<><AuthRoutes /></>} />
+            {/* AUTH ROUTES */}
+            {AuthRoutes()}
             
-            {/* Setup Routes */}
-            <Route path="/setup/*" element={<SetupRoutes />} />
+            {/* SETUP ROUTES */}
+            {SetupRoutes()}
             
-            {/* Product Routes */}
-            <Route path="/products/*" element={<ProductRoutes />} />
+            {/* PRODUCT ROUTES */}
+            {ProductRoutes()}
             
-            {/* Customer Management Routes */}
-            <Route path="/customers/*" element={<CustomerManagementRoutes />} />
+            {/* CUSTOMER MANAGEMENT ROUTES */}
+            {CustomerManagementRoutes()}
             
-            {/* Transport Routes */}
-            <Route path="/transport/*" element={<TransportRoutes />} />
+            {/* TRANSPORT ROUTES */}
+            {TransportRoutes()}
             
-            {/* Offer Routes */}
-            <Route path="/offers/*" element={<OfferRoutes />} />
+            {/* OFFER ROUTES */}
+            {OfferRoutes()}
             
-            {/* User Routes */}
-            <Route path="/users/*" element={<UserRoutes />} />
+            {/* USER ROUTES */}
+            {UserRoutes()}
             
-            {/* Organization Routes */}
-            <Route path="/organization/*" element={<OrganizationRoutes />} />
+            {/* ORGANIZATION ROUTES */}
+            {OrganizationRoutes()}
             
-            {/* Supplier Routes */}
-            <Route path="/suppliers/*" element={<SupplierRoutes />} />
+            {/* SUPPLIER ROUTES */}
+            {SupplierRoutes()}
             
-            {/* Inventory Routes */}
-            <Route path="/inventory/*" element={<InventoryRoutes />} />
+            {/* INVENTORY ROUTES */}
+            {InventoryRoutes()}
             
-            {/* Invoice Routes */}
-            <Route path="/invoices/*" element={<InvoiceRoutes />} />
+            {/* INVOICE ROUTES */}
+            {InvoiceRoutes()}
             
-            {/* Order Routes */}
-            <Route path="/*" element={<OrderRoutes />} />
+            {/* ORDER ROUTES */}
+            {OrderRoutes()}
             
-            {/* Report Routes */}
-            <Route path="/reports/*" element={<ReportRoutes />} />
-
-            <Route path="organization/setup" element={<OrganizationSetup />} />
+            {/* SHOP ROUTES */}
+            {ShopRoutes()}
+            
+            {/* REPORT ROUTES */}
+            {ReportRoutes()}
+            
+            {/* AUDIT ROUTES */}
+            {AuditRoutes()}
 
             {/* CUSTOMER PORTAL */}
             <Route path="/customer/*" element={<CustomerRoutes />} />
-
+            
             {/* OPERATOR PORTAL */}
             <Route path="/operator/*" element={<OperatorRoutes />} />
-
           </Routes>
         </Suspense>
       </AnimatePresence>

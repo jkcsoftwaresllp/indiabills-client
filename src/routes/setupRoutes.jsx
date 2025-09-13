@@ -1,21 +1,24 @@
-import { lazy } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
 import StartSetup from '../pages/setup/Setup';
 import SetupPage from '../pages/setup/SetupPage';
-import OrganizationChannel from '../pages/organization/OrganizationChannel';
+import OrganizationSetup from '../pages/organization/OrganizationSetup';
 
 const SetupRoutes = () => {
-  return (
-    <Routes>
-      <Route index element={<StartSetup />} />
-      <Route path="/channel" element={<OrganizationChannel />} />
-      <Route
-        path="setup-page"
-        element={<ProtectedRoute element={SetupPage} roles={['admin']} />}
-      />
-    </Routes>
-  );
+  return [
+    <Route key="setup" path="/setup" element={<StartSetup />} />,
+    <Route 
+      key="setup-page"
+      path="/setup-page" 
+      element={
+        <ProtectedRoute
+          element={SetupPage}
+          roles={['admin']}
+        />
+      } 
+    />,
+    <Route key="organization-setup" path="/organization/setup" element={<OrganizationSetup />} />
+  ];
 };
 
 export default SetupRoutes;

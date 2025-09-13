@@ -2,38 +2,38 @@ import { lazy } from 'react';
 import { Route } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
 
-const Invoices = lazy(() => import('../pages/invoices/InspectInvoice'));
-const InvoicePage = lazy(() => import('../pages/invoices/OrderInvoice'));
-const EditInvoice = lazy(() => import('../pages/invoices/EditInvoice'));
+const PaymentGateway = lazy(() => import('../pages/shop/PaymentGateway'));
+const PlaceOrder = lazy(() => import('../pages/shop/PlaceOrder'));
+const Shop = lazy(() => import('../pages/shop/Shop'));
 
-const InvoiceRoutes = () => {
+const ShopRoutes = () => {
   return [
     <Route
-      key="invoices"
-      path="/invoices"
+      key="shop"
+      path="/shop"
       element={
         <ProtectedRoute
-          element={Invoices}
+          element={Shop}
           roles={['admin', 'operators', 'customer']}
         />
       }
     />,
     <Route
-      key="invoices-edit"
-      path="/invoices/edit/:invoiceId"
+      key="cart"
+      path="/cart"
       element={
         <ProtectedRoute
-          element={EditInvoice}
+          element={PlaceOrder}
           roles={['admin', 'operators', 'customer']}
         />
       }
     />,
     <Route
-      key="invoice"
-      path="/invoice/:orderId"
+      key="payment"
+      path="/shop/payment/:randomLink"
       element={
         <ProtectedRoute
-          element={InvoicePage}
+          element={PaymentGateway}
           roles={['admin', 'operators', 'customer']}
         />
       }
@@ -41,4 +41,4 @@ const InvoiceRoutes = () => {
   ];
 };
 
-export default InvoiceRoutes;
+export default ShopRoutes;
