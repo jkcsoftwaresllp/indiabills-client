@@ -111,12 +111,12 @@ const BasicPage = React.memo(({ formData, handleChange }) => {
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="name" type="string" label="Transport Name" placeholder={"__________"} value={formData.name} onChange={handleChange} />
-					<InputBox name="businessName" type="string" label="Business Name" placeholder={"__________"} value={formData.businessName} onChange={handleChange} />
-					<InputBox name="contactPerson" type="string" label="Contact Person" placeholder={"__________"} value={formData.contactPerson} onChange={handleChange} />
-					<InputBox name="email" type="string" label="Email" placeholder={"example@domain.com"} value={formData.email} onChange={handleChange} />
-					<InputBox name="phone" type="string" label="Phone" placeholder={"XXXXXX"} value={formData.phone} onChange={handleChange} />
-					<InputBox name="alternatePhone" type="string" label="Alternate Phone" placeholder={"XXXXXX"} value={formData.alternatePhone} onChange={handleChange} />
+					<InputBox name="name" type="string" label="Transport Name" placeholder={"Transport Name"} value={formData.name} onChange={handleChange} />
+					<InputBox name="businessName" type="string" label="Business Name" placeholder={"Business Name"} value={formData.businessName} onChange={handleChange} />
+					<InputBox name="contactPerson" type="string" label="Contact Person" placeholder={"Contact Person"} value={formData.contactPerson} onChange={handleChange} />
+					<InputBox name="email" type="string" label="Email" placeholder={"Email"} value={formData.email} onChange={handleChange} />
+					<InputBox name="phone" type="string" label="Phone" placeholder={"Phone"} value={formData.phone} onChange={handleChange} />
+					<InputBox name="alternatePhone" type="string" label="Alternate Phone" placeholder={"Alternate Phone"} value={formData.alternatePhone} onChange={handleChange} />
 					<InputBox name="vehicleDetails" type="string" label="Vehicle Details" placeholder={"Vehicle information"} value={formData.vehicleDetails} onChange={handleChange} />
 				</main>
 			</div>
@@ -131,8 +131,8 @@ const AddressPage = React.memo(({ formData, handleChange, setFormData }) => {
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="addressLine" type="string" label="Address Line" placeholder={"__________"} value={formData.addressLine} onChange={handleChange} />
-					<InputBox name="city" type="string" label="City" placeholder={"__________"} value={formData.city} onChange={handleChange} />
+					<InputBox name="addressLine" type="string" label="Address Line" placeholder={"Address Line"} value={formData.addressLine} onChange={handleChange} />
+					<InputBox name="city" type="string" label="City" placeholder={"City"} value={formData.city} onChange={handleChange} />
 					<Dropdown name={"state"} label="State" options={getOption("state")} selectedData={formData.state} setValue={setFormData} />
 					<InputBox name="pinCode" type="string" label="Pin Code" placeholder={"123456"} value={formData.pinCode} onChange={handleChange} />
 					<InputBox name="baseRate" type="number" label="Base Rate" placeholder={"0"} value={formData.baseRate} onChange={handleChange} />

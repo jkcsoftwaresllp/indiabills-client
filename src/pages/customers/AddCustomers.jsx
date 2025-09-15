@@ -193,7 +193,7 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage })
             name="password"
             type="password"
             label="Password"
-            placeholder={"*********"}
+            placeholder={"Password"}
             value={formData.password}
             onChange={handleChange}
           />
@@ -214,7 +214,7 @@ const BusinessPage = React.memo(({ formData, handleChange }) => {
             name="businessName"
             type="string"
             label="Business Name"
-            placeholder={"__________"}
+            placeholder={"Business Name"}
             value={formData.businessName}
             onChange={handleChange}
           />
@@ -222,7 +222,7 @@ const BusinessPage = React.memo(({ formData, handleChange }) => {
             name="gstin"
             type="text"
             label="GSTIN"
-            placeholder={"__________"}
+            placeholder={"GSTIN"}
             value={formData.gstin}
             onChange={handleChange}
           />
@@ -230,7 +230,7 @@ const BusinessPage = React.memo(({ formData, handleChange }) => {
             name="fssai"
             type="text"
             label="FSSAI"
-            placeholder={"__________"}
+            placeholder={"FSSAI"}
             value={formData.fssai}
             onChange={handleChange}
           />
@@ -238,7 +238,7 @@ const BusinessPage = React.memo(({ formData, handleChange }) => {
             name="registrationNumber"
             type="text"
             label="Registration Number"
-            placeholder={"__________"}
+            placeholder={"Registration Number"}
             value={formData.registrationNumber}
             onChange={handleChange}
           />
@@ -246,7 +246,7 @@ const BusinessPage = React.memo(({ formData, handleChange }) => {
             name="aadharNumber"
             type="text"
             label="Aadhar Number"
-            placeholder={"__________"}
+            placeholder={"Aadhar Number"}
             value={formData.aadharNumber}
             onChange={handleChange}
           />
@@ -254,7 +254,7 @@ const BusinessPage = React.memo(({ formData, handleChange }) => {
             name="panNumber"
             type="text"
             label="PAN Number"
-            placeholder={"__________"}
+            placeholder={"PAN Number"}
             value={formData.panNumber}
             onChange={handleChange}
           />

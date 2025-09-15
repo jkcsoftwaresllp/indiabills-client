@@ -112,9 +112,9 @@ const BasicPage = React.memo(({ formData, handleChange }) => {
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="name" type="string" label="Supplier Name" placeholder={"__________"} value={formData.name} onChange={handleChange} />
-					<InputBox name="businessName" type="string" label="Business Name" placeholder={"__________"} value={formData.businessName} onChange={handleChange} />
-					<InputBox name="contactPerson" type="string" label="Contact Person" placeholder={"__________"} value={formData.contactPerson} onChange={handleChange} />
+					<InputBox name="name" type="string" label="Supplier Name" placeholder={"Supplier Name"} value={formData.name} onChange={handleChange} />
+					<InputBox name="businessName" type="string" label="Business Name" placeholder={"Business Name"} value={formData.businessName} onChange={handleChange} />
+					<InputBox name="contactPerson" type="string" label="Contact Person" placeholder={"Contact Person"} value={formData.contactPerson} onChange={handleChange} />
 					<InputBox name="email" type="string" label="Email" placeholder={"example@domain.com"} value={formData.email} onChange={handleChange} />
 					<InputBox name="phone" type="string" label="Phone" placeholder={"XXXXXX"} value={formData.phone} onChange={handleChange} />
 					<InputBox name="alternatePhone" type="string" label="Alternate Phone" placeholder={"XXXXXX"} value={formData.alternatePhone} onChange={handleChange} />
@@ -131,14 +131,14 @@ const AddressFinancialPage = React.memo(({ formData, handleChange, setFormData }
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="addressLine" type="string" label="Address Line" placeholder={"__________"} value={formData.addressLine} onChange={handleChange} />
-					<InputBox name="city" type="string" label="City" placeholder={"__________"} value={formData.city} onChange={handleChange} />
+					<InputBox name="addressLine" type="string" label="Address Line" placeholder={"Address Line"} value={formData.addressLine} onChange={handleChange} />
+					<InputBox name="city" type="string" label="City" placeholder={"City"} value={formData.city} onChange={handleChange} />
 					<Dropdown name={"state"} label="State" options={getOption("state")} selectedData={formData} setValue={setFormData} />
-					<InputBox name="pinCode" type="number" label="Pin Code" placeholder={"123456"} value={formData.pinCode} onChange={handleChange}/>
-					<InputBox name="gstin" type="string" label="GSTIN" placeholder={"__________"} value={formData.gstin} onChange={handleChange} />
+					<InputBox name="pinCode" type="number" label="Pin Code" placeholder={"Pin Code"} value={formData.pinCode} onChange={handleChange}/>
+					<InputBox name="gstin" type="string" label="GSTIN" placeholder={"GSTIN"} value={formData.gstin} onChange={handleChange} />
 					<InputBox name="creditLimit" type="number" label="Credit Limit" placeholder={"0"} value={formData.creditLimit} onChange={handleChange} />
 					<InputBox name="paymentTerms" type="string" label="Payment Terms" placeholder={"Net 30"} value={formData.paymentTerms} onChange={handleChange} />
-					<InputBox name="remarks" type="string" label="Remarks" placeholder={"__________"} value={formData.remarks} onChange={handleChange} />
+					<InputBox name="remarks" type="string" label="Remarks" placeholder={"Remarks"} value={formData.remarks} onChange={handleChange} />
 				</main>
 			</div>
 		</MultiPageAnimate>
@@ -152,9 +152,9 @@ const PaymentPage = React.memo(({ formData, handleChange }) => {
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="bankAccountNumber" type="string" label="Bank Account Number" placeholder={"__________"} value={formData.bankAccountNumber} onChange={handleChange} />
-					<InputBox name="ifscCode" type="string" label="IFSC Code" placeholder={"__________"} value={formData.ifscCode} onChange={handleChange} />
-					<InputBox name="upiId" type="string" label="UPI ID" placeholder={"supplier@upi"} value={formData.upiId} onChange={handleChange} />
+					<InputBox name="bankAccountNumber" type="string" label="Bank Account Number" placeholder={"Bank Account Number"} value={formData.bankAccountNumber} onChange={handleChange} />
+					<InputBox name="ifscCode" type="string" label="IFSC Code" placeholder={"IFSC Code"} value={formData.ifscCode} onChange={handleChange} />
+					<InputBox name="upiId" type="string" label="UPI ID" placeholder={"UPI ID"} value={formData.upiId} onChange={handleChange} />
 					<InputBox name="rating" type="number" label="Rating (1-5)" placeholder={"5"} value={formData.rating} onChange={handleChange} inputProps={{ min: 1, max: 5 }} />
 				</main>
 			</div>

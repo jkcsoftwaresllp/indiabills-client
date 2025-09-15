@@ -10,7 +10,7 @@ import { addRow, uploadImg } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Timeline from "../../components/FormComponent/Timeline";
-import { UserMetadata } from "../../definitions/Metadata";
+import { UserMetadata } from "../../definitions/metadata";
 import { getOption, initializeFormData, renameAndOptimize } from "../../utils/FormHelper";
 import ImageUpload from "../../components/FormComponent/ImageUpload";
 
@@ -111,8 +111,8 @@ const BasicPage = React.memo(({ formData, handleChange, setImage }) => {
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="flex flex-col gap-6">
-					<InputBox name="userName" type="string" label="User Name" placeholder={"__________"} value={formData.userName} onChange={handleChange} />
-					<InputBox name="password" type="password" label="Password" placeholder={"*********"} value={formData.password} onChange={handleChange} />
+					<InputBox name="userName" type="string" label="User Name" placeholder={"User Name"} value={formData.userName} onChange={handleChange} />
+					<InputBox name="password" type="password" label="Password" placeholder={"Password"} value={formData.password} onChange={handleChange} />
 					<ImageUpload setImage={setImage} />
 				</main>
 			</div>
