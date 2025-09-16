@@ -1,29 +1,98 @@
-import React from "react";
-import ReadMoreIcon from '@mui/icons-material/ReadMore';
-import Avatar from "@mui/material/Avatar";
-import { useNavigate } from "react-router-dom";
-import { getBaseURL } from "../../network/api/api-config";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Card,
+  CardContent,
+  Avatar,
+  Typography,
+  Chip,
+  IconButton
+} from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
-const UserCard = ({ id, avatar, email, name }) => {
+const UserCard = ({ 
+  id, 
+  avatar, 
+  name, 
+  email, 
+  username, 
+  role, 
+  jobTitle, 
+  department 
+}) => {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const handleViewUser = () => {
+    navigate(`/users/${id}`);
+  };
 
-    return (
-        <div className={"p-4 w-[10rem] flex flex-col gap-4 items-center shadow-md bg-white rounded-lg bg-opacity-80"}>
-            <Avatar sizes="big" sx={{ width: 56, height: 56 }} alt={name} src={`${getBaseURL()}/${avatar}`}/>
+  const getRoleColor = (role) => {
+    switch (role?.toLowerCase()) {
+      case 'admin': return 'error';
+      case 'manager': return 'warning';
+      case 'operator': return 'info';
+      case 'customer': return 'success';
+      default: return 'default';
+    }
+  };
 
-            <div className={"flex flex-col items-center"}>
-                <h1 className={"capitalize font-semibold text-center"}>{name}</h1>
-                <h2 className={"lowercase text-sm text-gray-500"}>{email}</h2>
-            </div>
-
-            <button onClick={() => navigate(`/users/${id}`)} className={"p-2 bg-primary text-slate-300 rounded-xl w-full hover:bg-accent hover:brightness-150 transition-all duration-300 ease-out"}>
-                <ReadMoreIcon />
-            </button>
-
+  return (
+    <Card className="w-64 hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+      <CardContent className="text-center p-4">
+        <div className="relative">
+          <Avatar
+            src={avatar}
+            alt={name}
+            sx={{ width: 80, height: 80, mx: 'auto', mb: 2 }}
+          />
+          <IconButton
+            className="absolute top-0 right-0"
+            onClick={handleViewUser}
+            size="small"
+            sx={{ 
+              backgroundColor: 'rgba(0,0,0,0.1)', 
+              '&:hover': { backgroundColor: 'rgba(0,0,0,0.2)' } 
+            }}
+          >
+            <VisibilityIcon fontSize="small" />
+          </IconButton>
         </div>
-    )
-
-}
+        
+        <Typography variant="h6" className="font-bold mb-1 truncate">
+          {name}
+        </Typography>
+        
+        {username && (
+          <Typography variant="body2" color="textSecondary" className="mb-2">
+            @{username}
+          </Typography>
+        )}
+        
+        <Typography variant="body2" color="textSecondary" className="mb-2 truncate">
+          {email}
+        </Typography>
+        
+        <Chip 
+          label={role} 
+          color={getRoleColor(role)} 
+          size="small" 
+          className="capitalize mb-2"
+        />
+        
+        {jobTitle && (
+          <Typography variant="caption" display="block" color="textSecondary">
+            {jobTitle}
+          </Typography>
+        )}
+        
+        {department && (
+          <Typography variant="caption" display="block" color="textSecondary">
+            {department}
+          </Typography>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
 
 export default UserCard;

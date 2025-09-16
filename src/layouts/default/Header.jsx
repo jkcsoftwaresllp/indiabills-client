@@ -16,7 +16,12 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  Chip,
+  CircularProgress
 } from '@mui/material';
 import ExpandIcon from '@mui/icons-material/Expand';
 import DvrIcon from '@mui/icons-material/Dvr';
@@ -33,6 +38,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { logout, switchOrganization, getUserOrganizations } from '../../network/api';
 import { useNavigate } from 'react-router-dom';
 import DivAnimate from '../../components/Animate/DivAnimate';
+import logo from '../../assets/IndiaBills_logo.png';
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -177,7 +183,7 @@ const Header = () => {
               >
                 <Avatar
                   alt={session.name}
-                  src={session.avatar ? `${process.env.REACT_APP_SERVER_URL}/${session.avatar}` : undefined}
+                  src={session.avatar_url}
                 />
                 {!isMobile && (
                   <Box sx={{ ml: 2 }}>

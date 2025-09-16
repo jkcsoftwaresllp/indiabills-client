@@ -11,6 +11,7 @@ import { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSu
 import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from './productsApi';
 import { getOffers, getOfferById, createOffer, updateOffer, deleteOffer } from './offersApi';
 import { login, switchOrganization, logout, getUserOrganizations } from './authApi';
+import { getUsers, getUserById, getUserByUsername, getUsersByRole, createUser, updateUser, deleteUser } from './userApi';
 
 async function getStuff(path) {
   try {
@@ -351,4 +352,12 @@ export {
   switchOrganization,
   logout,
   getUserOrganizations,
+  // User APIs
+  getUsers,
+  getUserById,
+  getUserByUsername,
+  getUsersByRole,
+  createUser,
+  updateUser,
+  deleteUser,
 };
