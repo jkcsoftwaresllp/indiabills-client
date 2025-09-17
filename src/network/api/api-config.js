@@ -46,8 +46,19 @@ const serverInstance = axios.create({
 serverInstance.interceptors.request.use(
   (config) => {
     // Get the token from local storage or any other storage mechanism
+    let token = null;
+    
+    // First try to get token from session
     const session = localStorage.getItem("session");
-    const token = session ? JSON.parse(session).token : null;
+    if (session) {
+      token = JSON.parse(session).token;
+    } else {
+      // If no session, try temp session for organization setup
+      const tempSession = localStorage.getItem("tempUserSession");
+      if (tempSession) {
+        token = JSON.parse(tempSession).token;
+      }
+    }
 
     // If the token exists, add it to the headers
     if (token) {

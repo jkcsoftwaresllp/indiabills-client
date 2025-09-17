@@ -73,7 +73,7 @@ const OrganizationSelector = () => {
       const response = await switchOrganization(org.id);
       
       if (response.status === 200) {
-        const { token, activeOrg } = response.data;
+        const { token, activeOrg, message } = response.data;
         
         // Create final session
         const finalSession = {
@@ -187,7 +187,7 @@ const OrganizationSelector = () => {
                         </Typography>
                         <div className="flex gap-2 mt-2">
                           <Chip 
-                            label={org.role} 
+                            label={org.role || 'member'} 
                             color="primary" 
                             size="small"
                             className="capitalize"
@@ -207,6 +207,7 @@ const OrganizationSelector = () => {
                       {org.subscriptionStatus && (
                         <p><strong>Subscription:</strong> {org.subscriptionStatus}</p>
                       )}
+                      <p><strong>Role:</strong> {org.role || 'Member'}</p>
                     </div>
                   </CardContent>
                 </Card>

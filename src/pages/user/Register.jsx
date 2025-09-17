@@ -8,13 +8,13 @@ import styles from "./Register.module.css";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showrepassword, setShowrepassword] = useState(false);
   const [data, setData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    repassword: "",
     phone: "",
   });
 
@@ -33,8 +33,8 @@ const Register = () => {
     setShowPassword(!showPassword);
   };
 
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
+  const togglerepasswordVisibility = () => {
+    setShowrepassword(!showrepassword);
   };
 
   const validateForm = () => {
@@ -54,7 +54,7 @@ const Register = () => {
       errorPopup("Password is required");
       return false;
     }
-    if (data.password !== data.confirmPassword) {
+    if (data.password !== data.repassword) {
       errorPopup("Passwords do not match");
       return false;
     }
@@ -78,10 +78,11 @@ const Register = () => {
         lastName: data.lastName,
         email: data.email,
         password: data.password,
+        repassword: data.repassword,
         phone: data.phone,
       });
 
-      if (response === 200 || response === 201) {
+      if (response.status === 200 || response.status === 201) {
         successPopup(
           "Registration successful! Please login with your credentials."
         );
@@ -91,9 +92,7 @@ const Register = () => {
       }
     } catch (error) {
       console.error("Registration error:", error);
-      errorPopup(
-        "Registration failed. Please check your connection and try again."
-      );
+      errorPopup(response.data?.message || "Registration failed. Please try again.");
     }
   };
 
@@ -205,27 +204,27 @@ const Register = () => {
           </div>
 
           <div className={styles.inputGroup}>
-            <label htmlFor="confirmPassword" className={styles.label}>
+            <label htmlFor="repassword" className={styles.label}>
               Confirm Password
             </label>
             <div className={styles.passwordContainer}>
               <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
+                id="repassword"
+                name="repassword"
+                type={showrepassword ? "text" : "password"}
                 className={styles.input}
                 onChange={handleInputChange}
                 placeholder="Confirm your password"
-                value={data.confirmPassword}
+                value={data.repassword}
                 required
               />
               <button
                 type="button"
                 className={styles.passwordToggle}
-                onClick={toggleConfirmPasswordVisibility}
+                onClick={togglerepasswordVisibility}
                 aria-label="Toggle confirm password visibility"
               >
-                {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                {showrepassword ? "👁️" : "👁️‍🗨️"}
               </button>
             </div>
           </div>

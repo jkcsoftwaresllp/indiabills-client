@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { login } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useAuth } from "../../hooks/useAuth";
-import { setSession, setTempSession, needsOrganizationSetup, hasMultipleOrganizations } from "../../utils/authHelper";
+import { setSession, setTempSession, setOrganizationContext } from "../../utils/authHelper";
 import logo from "../../assets/IndiaBills_logo.png";
 import bg from "../../assets/bglogo.png";
 import styles from "./Login.module.css";
@@ -127,6 +127,11 @@ const LoginPage = () => {
           };
           
           setSession(singleOrgSession);
+          setOrganizationContext({
+            id: user.activeOrg?.orgId,
+            name: user.orgs?.[0]?.name || 'Organization',
+            role: user.activeOrg?.role?.toLowerCase() || 'customer'
+          });
           authLogin(singleOrgSession);
           successPopup(`Welcome back, ${user.name}!`);
           

@@ -6,7 +6,7 @@ import { getInventoryStock, getInventoryStockById } from './inventoryStockApi';
 import { getReconciliations, getReconciliationById, createReconciliation, getReconciliationDetails, addReconciliationDetails, updateReconciliationStatus } from './reconciliationsApi';
 import { getBatches, getBatchById, createBatch, updateBatch, deleteBatch } from './batchesApi';
 import { getCustomers, getCustomerById, createCustomer, updateCustomer, deleteCustomer } from './customersApi';
-import { ownerSignup, createOrganization, getOrganization, updateOrganization } from './organizationApi';
+import { ownerSignup, createOrganization, getOrganization, updateOrganization, getOrganizationById } from './organizationApi';
 import { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier } from './suppliersApi';
 import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from './productsApi';
 import { getOffers, getOfferById, createOffer, updateOffer, deleteOffer } from './offersApi';
