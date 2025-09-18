@@ -1,7 +1,7 @@
 import { Route } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
 import StartSetup from '../pages/setup/Setup';
-import SetupPage from '../pages/setup/SetupPage';
+import SetupPage from '../pages/orgSetup/SetupPage';
 import OrganizationSetup from '../pages/organization/OrganizationSetup';
 
 const SetupRoutes = () => {

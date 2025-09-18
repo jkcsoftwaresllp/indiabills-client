@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getOrganizationById, updateOrganization } from "../../network/api";
+import { updateOrganization } from "../../network/api";
 import { getOrganizationContext, validateOrganizationData } from "../../utils/authHelper";
 import { useStore } from "../../store/store";
 import PageAnimate from "../../components/Animate/PageAnimate";
@@ -21,6 +21,7 @@ import {
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import SaveIcon from '@mui/icons-material/Save';
 import { getOption } from "../../utils/FormHelper";
+import { getOrganizationById } from "../../network/api/organizationApi";
 
 const EditOrganization = () => {
   const [organization, setOrganization] = useState(null);
