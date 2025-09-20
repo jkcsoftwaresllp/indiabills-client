@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getOrganizationById } from '../../network/api';
 import { getOrganizationContext } from '../../utils/authHelper';
 import { differenceInYears, differenceInMonths, differenceInDays } from 'date-fns';
 import PageAnimate from '../../components/Animate/PageAnimate';
@@ -24,6 +23,7 @@ import LanguageIcon from '@mui/icons-material/Language';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PaletteIcon from '@mui/icons-material/Palette';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { getOrganizationById } from '../../network/api/organizationApi';
 
 const ViewOrganization = () => {
   const [organization, setOrganization] = useState(null);
