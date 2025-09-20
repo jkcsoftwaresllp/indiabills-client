@@ -18,9 +18,13 @@ export async function ownerSignup(signupData) {
 }
 
 // Create organization (for users with no org)
-export async function createFirstTimeOrganization(orgData) {
+export async function createFirstTimeOrganization(orgData, token) {
   try {
-    const response = await serverInstance.post('/without-org/internal/org/create-first-time', orgData);
+    const response = await serverInstance.post('/internal/org/create-first-time', orgData, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     return {
       status: response.status,
       data: response.data

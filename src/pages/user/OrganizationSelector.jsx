@@ -6,18 +6,8 @@ import { switchOrganization, getUserOrganizations } from '../../network/api';
 import { getTempSession, setSession, clearTempSession, setOrganizationContext } from '../../utils/authHelper';
 import logo from '../../assets/IndiaBills_logo.png';
 import bg from '../../assets/bglogo.png';
-import styles from './Login.module.css';
-import {
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Grid,
-  Avatar,
-  Chip,
-  Box,
-  CircularProgress
-} from '@mui/material';
+import styles from './OrganizationSelector.module.css';
+import { Card, CardContent, Typography, Button, Grid, Avatar, Chip, Box, CircularProgress } from '@mui/material';
 import BusinessIcon from '@mui/icons-material/Business';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AddIcon from '@mui/icons-material/Add';
@@ -39,9 +29,7 @@ const OrganizationSelector = () => {
           navigate('/login');
           return;
         }
-
         const response = await getUserOrganizations();
-        
         if (response.status === 200) {
           setOrganizations(response.data);
         } else {
@@ -49,14 +37,12 @@ const OrganizationSelector = () => {
           navigate('/login');
         }
       } catch (error) {
-        console.error('Error fetching organizations:', error);
         errorPopup('Failed to load organizations');
         navigate('/login');
       } finally {
         setLoading(false);
       }
     };
-
     fetchUserOrganizations();
   }, [errorPopup, navigate]);
 
@@ -69,13 +55,9 @@ const OrganizationSelector = () => {
         navigate('/login');
         return;
       }
-
       const response = await switchOrganization(org.id);
-      
       if (response.status === 200) {
         const { token, activeOrg } = response.data;
-        
-        // Create final session
         const finalSession = {
           id: tempSession.user.id,
           name: tempSession.user.name,
@@ -84,10 +66,8 @@ const OrganizationSelector = () => {
           role: activeOrg.role.toLowerCase(),
           token: token,
           organizationId: activeOrg.orgId,
-          orgs: tempSession.user.orgs
+          orgs: tempSession.user.orgs,
         };
-
-        // Set organization context
         setOrganizationContext({
           id: org.id,
           name: org.name,
@@ -96,14 +76,10 @@ const OrganizationSelector = () => {
           logoUrl: org.logoUrl,
           role: activeOrg.role.toLowerCase()
         });
-
         setSession(finalSession);
         login(finalSession);
         clearTempSession();
-        
         successPopup(`Welcome to ${org.name}!`);
-
-        // Redirect based on role
         if (activeOrg.role.toLowerCase() === 'admin') {
           navigate('/');
         } else if (activeOrg.role.toLowerCase() === 'operator') {
@@ -116,8 +92,7 @@ const OrganizationSelector = () => {
       } else {
         errorPopup('Failed to switch organization');
       }
-    } catch (error) {
-      console.error('Error selecting organization:', error);
+    } catch {
       errorPopup('Failed to access organization');
     } finally {
       setSwitching(false);
@@ -133,80 +108,73 @@ const OrganizationSelector = () => {
     navigate('/login');
   };
 
+  // Loading state
   if (loading) {
     return (
-      <div className={styles.container} style={{ backgroundImage: `url(${bg})` }}>
-        <div className={styles.loginForm}>
-          <div className={styles.header}>
-            <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
-            <CircularProgress sx={{ color: 'white' }} />
-            <Typography variant="h6" className="text-white">Loading organizations...</Typography>
-          </div>
+      <div className={styles.backdrop}>
+        <div className={styles.centerForm}>
+          <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
+          <CircularProgress className={styles.progress} />
+          <Typography variant="h6" className={styles.loadingText}>
+            Loading organizations...
+          </Typography>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.container} style={{ backgroundImage: `url(${bg})` }}>
-      <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-lg shadow-xl p-8 w-full max-w-5xl max-h-[90vh] overflow-y-auto">
-        <div className="text-center mb-8">
-          <img src={logo} alt="IndiaBills Logo" className="w-32 mx-auto mb-4" />
-          <Typography variant="h4" className="font-bold text-gray-800 mb-2">
+    <div className={styles.backdrop}>
+      <div className={styles.centerForm}>
+        <div className={styles.header}>
+          <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
+          <Typography variant="h4" className={styles.title}>
             Select Organization
           </Typography>
-          <Typography variant="body1" color="textSecondary">
+          <Typography variant="body1" className={styles.subtitle}>
             Choose the organization you want to access
           </Typography>
         </div>
-
         {organizations.length > 0 ? (
-          <Grid container spacing={3}>
+          <Grid container spacing={3} className={styles.gridArea}>
             {organizations.map((org) => (
               <Grid item xs={12} md={6} lg={4} key={org.id}>
-                <Card 
-                  className="cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                <Card
+                  className={styles.card}
                   onClick={() => !switching && handleOrganizationSelect(org)}
                   sx={{ opacity: switching ? 0.7 : 1 }}
+                  elevation={3}
                 >
                   <CardContent>
-                    <div className="flex items-center gap-4 mb-4">
-                      <Avatar
-                        src={org.logoUrl}
+                    <div className={styles.cardHeader}>
+                      <Avatar src={org.logoUrl}
                         alt={org.name}
                         sx={{ width: 60, height: 60 }}
+                        className={styles.avatar}
                       >
                         <BusinessIcon />
                       </Avatar>
-                      <div className="flex-1">
-                        <Typography variant="h6" className="font-bold">
+                      <div className={styles.infoArea}>
+                        <Typography variant="h6" className={styles.orgName}>
                           {org.name}
                         </Typography>
-                        <Typography variant="body2" color="textSecondary">
+                        <Typography variant="body2" className={styles.orgDomain}>
                           {org.domain ? `${org.subdomain}.${org.domain}` : org.subdomain}
                         </Typography>
-                        <div className="flex gap-2 mt-2">
-                          <Chip 
-                            label={org.role} 
-                            color="primary" 
-                            size="small"
-                            className="capitalize"
-                          />
-                          <Chip 
-                            label={org.subscriptionStatus || 'active'} 
-                            color={org.subscriptionStatus === 'active' ? 'success' : 'warning'}
-                            size="small"
-                          />
+                        <div className={styles.chipArea}>
+                          <Chip label={org.role || 'Member'} color="primary" size="small" className={styles.roleChip} />
+                          <Chip label={org.subscriptionStatus || 'active'}
+                            color={org.subscriptionStatus === 'active' ? 'success' : 'warning'} size="small" />
                         </div>
                       </div>
-                      <ArrowForwardIcon className="text-gray-400" />
+                      <ArrowForwardIcon className={styles.arrowIcon} />
                     </div>
-                    
-                    <div className="text-sm text-gray-600">
+                    <div className={styles.cardMeta}>
                       <p><strong>Status:</strong> {org.isActive ? 'Active' : 'Inactive'}</p>
                       {org.subscriptionStatus && (
                         <p><strong>Subscription:</strong> {org.subscriptionStatus}</p>
                       )}
+                      <p><strong>Role:</strong> {org.role || 'Member'}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -214,23 +182,23 @@ const OrganizationSelector = () => {
             ))}
           </Grid>
         ) : (
-          <div className="text-center py-8">
-            <BusinessIcon sx={{ fontSize: 80, color: 'gray' }} />
-            <Typography variant="h6" color="textSecondary" className="mt-4 mb-2">
+          <div className={styles.emptyState}>
+            <BusinessIcon sx={{ fontSize: 80 }} className={styles.emptyIcon} />
+            <Typography variant="h6" className={styles.emptyTitle}>
               No organizations found
             </Typography>
-            <Typography variant="body1" color="textSecondary" className="mb-4">
+            <Typography variant="body1" className={styles.emptySubtext}>
               You don't have access to any organizations yet.
             </Typography>
           </div>
         )}
-
-        <Box mt={4} display="flex" justifyContent="center" gap={2}>
+        <Box mt={4} className={styles.actionBox}>
           <Button
             variant="outlined"
             onClick={handleCreateNewOrganization}
             startIcon={<AddIcon />}
             disabled={switching}
+            className={styles.actionBtn}
           >
             Create New Organization
           </Button>
@@ -238,14 +206,14 @@ const OrganizationSelector = () => {
             variant="text"
             onClick={handleBackToLogin}
             disabled={switching}
+            className={styles.actionBtn}
           >
             Back to Login
           </Button>
         </Box>
-
         {switching && (
-          <Box mt={2} display="flex" justifyContent="center">
-            <Typography variant="body2" color="textSecondary">
+          <Box mt={2} className={styles.switchingMsg}>
+            <Typography variant="body2">
               Switching organization...
             </Typography>
           </Box>

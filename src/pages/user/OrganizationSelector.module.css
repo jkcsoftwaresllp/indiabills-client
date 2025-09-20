@@ -1,0 +1,160 @@
+.backdrop {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: url('../assets/bglogo.png') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.centerForm {
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(5px);
+  border-radius: 16px;
+  box-shadow: 0 10px 32px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
+  max-width: 1100px;
+  width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem 2.5rem;
+  margin: 0;
+  position: relative;
+}
+
+.logo {
+  width: 80px;
+  margin: 0 auto 16px;
+  display: block;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-weight: 700;
+  color: #232323;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #6c757d;
+}
+
+.gridArea {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;                  
+  margin-bottom: 32px;
+}
+
+.card {
+  cursor: pointer;
+  transition: box-shadow 0.3s, transform 0.2s;
+  border-radius: 14px;
+  min-height: 240px;
+}
+
+.card:hover {
+  box-shadow: 0 6px 24px rgba(30,136,229,0.15), 0 1.5px 3px rgba(0,0,0,0.07);
+  transform: translateY(-3px) scale(1.02);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.avatar {
+  background: #f4f6fa;
+  border: 1px solid #e3e7ee;
+}
+
+.infoArea {
+  flex: 1;
+  min-width: 0;
+}
+
+.orgName {
+  font-weight: 700;
+  color: #232323;
+}
+
+.orgDomain {
+  color: #6c757d;
+}
+
+.chipArea {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.arrowIcon {
+  color: #bdbdbd;
+  font-size: 32px;
+}
+
+.cardMeta {
+  color: #697683;
+  font-size: 15px;
+  margin-top: 12px;
+}
+
+.roleChip {
+  text-transform: capitalize;
+}
+
+.progress {
+  color: #1976d2 !important;
+  margin-bottom: 12px;
+}
+
+.loadingText {
+  color: #232323;
+  margin-top: 10px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 0 20px;
+}
+
+.emptyIcon {
+  color: #bdbdbd;
+  margin-bottom: 18px;
+}
+
+.emptyTitle {
+  color: #232323;
+}
+
+.emptySubtext {
+  color: #6c757d;
+}
+
+.actionBox {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.actionBtn {
+  min-width: 190px;
+}
+
+.switchingMsg {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}

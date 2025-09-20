@@ -54,7 +54,7 @@ export async function logout(mode = 'ALL') {
 // Get user organizations
 export async function getUserOrganizations() {
   try {
-    const response = await serverInstance.get('/internal/org');
+    const response = await serverInstance.get('/organization');
     return {
       status: response.status,
       data: response.data

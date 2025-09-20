@@ -100,6 +100,11 @@ const OrganizationSetup = () => {
     setActiveStep(prev => prev - 1);
   };
 
+  const handleBackToLogin = () => {
+    clearTempSession();
+    navigate('/login');
+  };
+
   const handleSubmit = async () => {
     const validation = validateOrganizationData(formData);
     
@@ -111,7 +116,14 @@ const OrganizationSetup = () => {
 
     setLoading(true);
     try {
-      const response = await createFirstTimeOrganization(formData);
+      const tempSession = getTempSession();
+      if (!tempSession?.token) {
+        errorPopup('Session expired. Please login again.');
+        navigate('/login');
+        return;
+      }
+
+      const response = await createFirstTimeOrganization(formData, tempSession.token);
       
       if (response.status === 200 || response.status === 201) {
         successPopup('Organization created successfully! Please login again.');
