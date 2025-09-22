@@ -1,67 +1,50 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { getSession } from "../../utils/cacheHelper";
 import { useStore } from "../../store/store";
 import logo from "../../assets/IndiaBills_logo.png";
 import { useNavigate } from "react-router-dom";
 import buttons from "./sidebar_buttons";
-import { fetchLogo } from "../../network/api";
+import { fetchLogo, logout } from "../../network/api";
 import { getBaseURL } from "../../network/api/api-config";
 import { useAuth } from "../../hooks/useAuth";
 import styles from "./Sidebar.module.css";
 
-// React Icons
+// MUI
 import {
-  FiBarChart2,
-  FiBriefcase,
-  FiSettings,
-  FiShoppingCart,
-  FiTool,
-} from "react-icons/fi";
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+} from "@mui/material";
+
+// Icons
+import { FiBarChart2, FiBriefcase, FiSettings, FiShoppingCart, FiTool } from "react-icons/fi";
+import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 
 const groupIcons = {
-  // Dashboard: "\u{1F4CA}",
-  // Dashboard: "\u2302",   // House icon
   Dashboard: <FiBarChart2 />,
-  // Management: "\u{1F4BC}",
-  // Management: "\u2699",  // Gear icon
   Management: <FiBriefcase />,
-  // Operations: "\u{1F6E0}",
-  // Operations: "\u2692", // Hammer and Pick
   Operations: <FiTool />,
-  // Shop: "\u{1F6D2}",
-  // Shop: "\u26D1",       // Shopping Cart
   Shop: <FiShoppingCart />,
-  // "Setup Dashboard": "\u{1F9F0}", // Toolbox
   "Setup Dashboard": <FiSettings />,
 };
 
 const Sidebar = () => {
-  const { collapse, setCollapse, openAudit, Organization, setOrganization } =
-    useStore();
+  const { collapse, openAudit, Organization, setOrganization } = useStore();
   const session = getSession();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout: authLogout } = useAuth();
   const [selectedPath, setSelectedPath] = useState(null);
-  const [logoFetched, setLogoFetched] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [expandedGroup, setExpandedGroup] = useState(null);
 
-  // useEffect(() => {
-  //   if (
-  //     session !== null &&
-  //     !logoFetched &&
-  //     (!Organization.logo || Organization.logo === "")
-  //   ) {
-  //     fetchLogo().then((res) => {
-  //       setOrganization({ ...res, fiscalStart: res.fiscalStart.split("T")[0] });
-  //       setLogoFetched(true);
-  //     });
-  //   }
-  // }, [session, Organization, setOrganization, logoFetched]);
+  // NEW: State for Logout Dialog
+  const [logoutDialog, setLogoutDialog] = useState(false);
 
-  if (session === null) {
-    return null;
-  }
+  if (session === null) return null;
 
   const userRole = session.role;
 
@@ -77,9 +60,34 @@ const Sidebar = () => {
     setSelectedPath(path);
   };
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = "/login";
+  // Logout from ALL orgs
+  const handleLogoutAll = async () => {
+    try {
+      const response = await logout("ALL");
+      if (response.status === 200) {
+        authLogout();
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      authLogout();
+      navigate("/login");
+    }
+  };
+
+  // Logout from current org only
+  const handleLogoutOrg = async () => {
+    try {
+      const response = await logout("ORG");
+      if (response.status === 200) {
+        localStorage.removeItem("session");
+        localStorage.removeItem("organizationContext");
+        navigate("/organization-selector");
+      }
+    } catch (error) {
+      console.error("Organization logout error:", error);
+      navigate("/organization-selector");
+    }
   };
 
   const handleViewOrganization = () => {
@@ -91,15 +99,12 @@ const Sidebar = () => {
   };
 
   const toggleGroup = (groupName) => {
-    if (expandedGroup === groupName) {
-      setExpandedGroup(null); // Collapse if already open
-    } else {
-      setExpandedGroup(groupName); // Open the clicked group
-    }
+    setExpandedGroup(expandedGroup === groupName ? null : groupName);
   };
 
   return (
     <div className={`${styles.sidebar} ${collapse ? styles.collapsed : ""}`}>
+      {/* Logo Section */}
       <div className={styles.logoContainer}>
         {Organization.logo ? (
           <img
@@ -153,6 +158,7 @@ const Sidebar = () => {
         ))}
       </nav>
 
+      {/* User Section */}
       <div className={styles.userSection}>
         <div className={styles.userInfo} onClick={toggleUserMenu}>
           <img
@@ -173,30 +179,62 @@ const Sidebar = () => {
                 Audit
               </button>
             )}
-            <button
-              className={styles.menuItem}
-              onClick={() => window.location.reload()}
-            >
+            <button className={styles.menuItem} onClick={() => window.location.reload()}>
               Refresh
             </button>
-            <button
-              className={styles.menuItem}
-              onClick={() => navigate("/help")}
-            >
+            <button className={styles.menuItem} onClick={() => navigate("/help")}>
               Get Help
             </button>
-            <button
-              className={styles.menuItem}
-              onClick={() => navigate("/settings")}
-            >
+            <button className={styles.menuItem} onClick={() => navigate("/settings")}>
               Settings
             </button>
-            <button className={styles.menuItem} onClick={handleLogout}>
+            {/* NEW: Logout triggers dialog */}
+            <button
+              className={styles.menuItem}
+              onClick={() => setLogoutDialog(true)}
+            >
               Logout
             </button>
           </div>
         )}
       </div>
+
+      {/* Logout Options Dialog */}
+      <Dialog
+        open={logoutDialog}
+        onClose={() => setLogoutDialog(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Logout Options</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" gutterBottom>
+            How would you like to logout?
+          </Typography>
+          <div style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <Button
+              variant="outlined"
+              onClick={handleLogoutOrg}
+              startIcon={<SwitchAccountIcon />}
+              fullWidth
+            >
+              Logout from Current Organization
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleLogoutAll}
+              startIcon={<LogoutRoundedIcon />}
+              fullWidth
+            >
+              Logout from All Organizations
+            </Button>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLogoutDialog(false)}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

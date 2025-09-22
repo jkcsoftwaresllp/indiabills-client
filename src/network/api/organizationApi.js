@@ -92,7 +92,7 @@ export async function getOrganization() {
 // Update organization
 export async function updateOrganization(orgData) {
   try {
-    const response = await serverInstance.put('/internal/org', orgData);
+    const response = await serverInstance.patch(`/organization/edit/${orgData.id}`, orgData);
     return {
       status: response.status,
       data: response.data

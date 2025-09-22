@@ -36,7 +36,7 @@ export async function createProduct(productData) {
 // Update product
 export async function updateProduct(id, productData) {
   try {
-    const response = await serverInstance.put(`/internal/products/${id}`, productData);
+    const response = await serverInstance.patch(`/internal/products/${id}`, productData);
     return response.status;
   } catch (error) {
     console.error(`Failed to update product ${id}:`, error.response);

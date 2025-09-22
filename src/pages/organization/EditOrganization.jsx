@@ -88,7 +88,7 @@ const EditOrganization = () => {
     setSaving(true);
 
     try {
-      const response = await updateOrganization(organization);
+      const response = await updateOrganization({ ...organization, id: orgContext.id });
       
       if (response.status === 200) {
         successPopup("Organization updated successfully!");
