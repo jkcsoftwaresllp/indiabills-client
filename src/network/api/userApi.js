@@ -105,7 +105,7 @@ export async function updateUser(id, userData) {
 // Delete user
 export async function deleteUser(id) {
   try {
-    const response = await serverInstance.delete(`/users/${id}`);
+    const response = await serverInstance.delete(`/users/delete/${id}`);
     return {
       status: response.status,
       data: response.data
@@ -115,6 +115,31 @@ export async function deleteUser(id) {
     return {
       status: error.response?.status || 500,
       data: error.response?.data || { message: 'User deletion failed' }
+    };
+  }
+}
+
+// Upload user image
+export async function uploadUserImage(imageFile) {
+  try {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    
+    const response = await serverInstance.post('/users/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Failed to upload user image:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Image upload failed' }
     };
   }
 }

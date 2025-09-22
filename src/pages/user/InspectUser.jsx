@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getUserById, updateUser, deleteUser } from "../../network/api";
+import { getUserById, updateUser, deleteUser, uploadUserImage } from "../../network/api";
 import { useStore } from "../../store/store";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import {
@@ -21,12 +21,14 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  Input
 } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const InspectUser = () => {
     const { userID } = useParams();
@@ -40,6 +42,7 @@ const InspectUser = () => {
     const [deleteDialog, setDeleteDialog] = useState(false);
     const [formData, setFormData] = useState({});
     const [errors, setErrors] = useState({});
+    const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -173,6 +176,44 @@ const InspectUser = () => {
         setDeleteDialog(false);
     };
 
+    const handleImageUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            errorPopup('Please select a valid image file');
+            return;
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            errorPopup('Image size should be less than 5MB');
+            return;
+        }
+
+        setUploading(true);
+        try {
+            const response = await uploadUserImage(file);
+            
+            if (response.status === 200) {
+                const imageUrl = response.data.imageUrl || response.data.url;
+                setFormData(prev => ({
+                    ...prev,
+                    avatar_url: imageUrl
+                }));
+                successPopup('Image uploaded successfully');
+            } else {
+                errorPopup(response.data?.message || 'Failed to upload image');
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            errorPopup('Failed to upload image');
+        } finally {
+            setUploading(false);
+        }
+    };
+
     const handleCancel = () => {
         setFormData(user);
         setEditing(false);
@@ -219,6 +260,28 @@ const InspectUser = () => {
                                     alt={`${user.first_name} ${user.last_name}`}
                                     sx={{ width: 120, height: 120, mx: 'auto', mb: 2 }}
                                 />
+                                {editing && (
+                                    <Box sx={{ textAlign: 'center', mb: 2 }}>
+                                        <Input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            sx={{ display: 'none' }}
+                                            id="avatar-upload"
+                                        />
+                                        <label htmlFor="avatar-upload">
+                                            <Button
+                                                variant="outlined"
+                                                component="span"
+                                                startIcon={uploading ? <CircularProgress size={20} /> : <CloudUploadIcon />}
+                                                disabled={uploading}
+                                                size="small"
+                                            >
+                                                {uploading ? 'Uploading...' : 'Upload Photo'}
+                                            </Button>
+                                        </label>
+                                    </Box>
+                                )}
                                 <Typography variant="h5" className="font-bold mb-2">
                                     {user.first_name} {user.middle_name} {user.last_name}
                                 </Typography>

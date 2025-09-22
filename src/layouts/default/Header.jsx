@@ -44,6 +44,7 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [orgSwitchDialog, setOrgSwitchDialog] = useState(false);
   const [logoutDialog, setLogoutDialog] = useState(false);
+  const [orgSelectorOpen, setOrgSelectorOpen] = useState(false);
   const [organizations, setOrganizations] = useState([]);
   const [switchingOrg, setSwitchingOrg] = useState(false);
   const navigate = useNavigate();
@@ -81,11 +82,13 @@ const Header = () => {
   const handleLogoutOrg = async () => {
     try {
       await logout('ORG');
+      // Clear current session but keep temp session for org selection
       navigate('/organization-selector');
     } catch (error) {
       console.error('Organization logout error:', error);
       navigate('/organization-selector');
     }
+    setLogoutDialog(false);
   };
 
   const handleSwitchOrganization = async () => {
@@ -99,6 +102,22 @@ const Header = () => {
       console.error('Error fetching organizations:', error);
     }
     handleMenuClose();
+  };
+
+  const handleQuickOrgSwitch = async (orgId) => {
+    setSwitchingOrg(true);
+    try {
+      const response = await switchOrganization(orgId);
+      if (response.status === 200) {
+        // Reload the page to refresh with new organization context
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error switching organization:', error);
+    } finally {
+      setSwitchingOrg(false);
+      setOrgSelectorOpen(false);
+    }
   };
 
   const handleOrgSwitch = async (orgId) => {
@@ -186,6 +205,7 @@ const Header = () => {
                   src={session.avatar_url}
                 />
                 {!isMobile && (
+                  <>
                   <Box sx={{ ml: 2 }}>
                     <Typography
                       variant="subtitle1"
@@ -201,6 +221,14 @@ const Header = () => {
                       {session.role}
                     </Typography>
                   </Box>
+                  <MenuItem
+                    sx={{ padding: '.6rem' }}
+                    onClick={() => setOrgSelectorOpen(true)}
+                  >
+                    <SwitchAccountIcon sx={{ mr: 1 }} />
+                    Quick Switch Org
+                  </MenuItem>
+                  </>
                 )}
                 <IconButton onClick={handleMenuClick}>
                   <ArrowDropDownRoundedIcon />
@@ -391,6 +419,72 @@ const Header = () => {
         </DialogActions>
       </Dialog>
 
+      {/* Quick Organization Switch Dialog */}
+      <Dialog
+        open={orgSelectorOpen}
+        onClose={() => !switchingOrg && setOrgSelectorOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Quick Switch Organization</DialogTitle>
+        <DialogContent>
+          <Grid container spacing={2}>
+            {organizations.map((org) => (
+              <Grid item xs={12} key={org.id}>
+                <Card 
+                  className="cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => !switchingOrg && handleQuickOrgSwitch(org.id)}
+                  sx={{ 
+                    opacity: switchingOrg ? 0.7 : 1,
+                    border: orgContext?.id === org.id ? '2px solid #1976d2' : '1px solid #e0e0e0'
+                  }}
+                >
+                  <CardContent sx={{ py: 2 }}>
+                    <div className="flex items-center gap-3">
+                      <Avatar src={org.logoUrl} sx={{ width: 40, height: 40 }}>
+                        <BusinessIcon />
+                      </Avatar>
+                      <div className="flex-1">
+                        <Typography variant="subtitle1" className="font-semibold">
+                          {org.name}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          {org.domain ? `${org.subdomain}.${org.domain}` : org.subdomain}
+                        </Typography>
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <Chip 
+                          label={org.role} 
+                          color="primary" 
+                          size="small"
+                          className="capitalize"
+                        />
+                        {orgContext?.id === org.id && (
+                          <Chip label="Current" color="success" size="small" />
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+          {switchingOrg && (
+            <Box display="flex" justifyContent="center" mt={2}>
+              <CircularProgress size={24} />
+              <Typography variant="body2" sx={{ ml: 1 }}>
+                Switching organization...
+              </Typography>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOrgSelectorOpen(false)} disabled={switchingOrg}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Logout Options Dialog */}
       <Dialog
         open={logoutDialog}
@@ -408,24 +502,22 @@ const Header = () => {
               variant="outlined"
               onClick={() => {
                 handleLogoutOrg();
-                setLogoutDialog(false);
               }}
               startIcon={<SwitchAccountIcon />}
               fullWidth
             >
-              Logout from Current Organization
+              Logout from Current Organization Only
             </Button>
             <Button
               variant="contained"
               color="error"
               onClick={() => {
                 handleLogoutAll();
-                setLogoutDialog(false);
               }}
               startIcon={<LogoutRoundedIcon />}
               fullWidth
             >
-              Logout from All Organizations
+              Logout Completely (All Organizations)
             </Button>
           </Box>
         </DialogContent>

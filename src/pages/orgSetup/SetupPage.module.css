@@ -1,0 +1,332 @@
+.container {
+  width: 100%;
+  padding: 24px;
+}
+
+/* Header Styles */
+.header {
+  margin-bottom: 32px;
+}
+
+.title {
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #6b7280;
+}
+
+/* Section Styles */
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #374151;
+}
+
+/* Current Organization Card */
+.orgCard {
+  margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.currentOrgHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.orgAvatar {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.orgIcon {
+  font-size: 40px;
+}
+
+.orgInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.orgName {
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+.businessName {
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.tagline {
+  font-style: italic;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.chipContainer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.statusChip,
+.domainChip,
+.usersChip {
+  text-transform: capitalize;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.detailItem {
+  padding: 8px 0;
+}
+
+.detailLabel {
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.detailValue {
+  color: #374151;
+  word-break: break-word;
+}
+
+.editButton {
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+
+.aboutSection {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  line-height: 1.6;
+}
+
+/* Other Organizations */
+.otherOrgCard {
+  height: 100%;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.otherOrgCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.otherOrgHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.otherOrgAvatar {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+}
+
+.otherOrgInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.otherOrgName {
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.otherOrgDomain {
+  color: #6b7280;
+}
+
+.otherOrgChips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.roleChip,
+.statusChip {
+  text-transform: capitalize;
+}
+
+.otherOrgStatus {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Create Organization Card */
+.createCard {
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.createCardContent {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.createIcon {
+  font-size: 60px;
+  color: #9ca3af;
+  margin-bottom: 16px;
+}
+
+.createTitle {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.createSubtitle {
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.createButton {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+/* Dialog Styles */
+.dialog {
+  border-radius: 12px;
+}
+
+.dialogTitle {
+  font-weight: 600;
+  padding: 24px 24px 16px;
+  color: #111827;
+}
+
+.dialogContent {
+  margin-top: 8px;
+  padding: 0 24px;
+}
+
+.stepper {
+  margin-bottom: 24px;
+}
+
+.stepTitle {
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #374151;
+}
+
+.dialogActions {
+  padding: 16px 24px 24px;
+  justify-content: space-between;
+}
+
+.dialogButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.cancelButton {
+  color: #6b7280;
+}
+
+.backButton {
+  color: #374151;
+}
+
+.nextButton,
+.createConfirmButton {
+  background-color: #1e40af;
+  color: white;
+  font-weight: 600;
+}
+
+.nextButton:hover,
+.createConfirmButton:hover {
+  background-color: #1e3a8a;
+}
+
+/* Loading State */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .currentOrgHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .editButton {
+    align-self: stretch;
+  }
+  
+  .detailsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dialogContent {
+    padding: 0 16px;
+  }
+  
+  .dialogActions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .dialogButtons {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.75rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1.25rem;
+  }
+  
+  .createCardContent {
+    padding: 32px 16px;
+  }
+  
+  .createIcon {
+    font-size: 48px;
+  }
+}

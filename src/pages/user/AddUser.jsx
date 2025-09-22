@@ -6,10 +6,12 @@ import InputBox from "../../components/FormComponent/InputBox";
 import Dropdown from "../../components/FormComponent/Dropdown";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { createUser } from "../../network/api";
+import { createUser, uploadUserImage } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Timeline from "../../components/FormComponent/Timeline";
+import { Button, Input, CircularProgress } from "@mui/material";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const AddUser = () => {
   const { successPopup, errorPopup } = useStore();
@@ -31,6 +33,7 @@ const AddUser = () => {
   });
   const [page, setPage] = useState(1);
   const [errors, setErrors] = useState({});
+  const [uploading, setUploading] = useState(false);
 
   const backPage = useCallback(() => {
     if (page > 1) {
@@ -105,6 +108,43 @@ const AddUser = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleImageUpload = async (file) => {
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      errorPopup('Please select a valid image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      errorPopup('Image size should be less than 5MB');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const response = await uploadUserImage(file);
+      
+      if (response.status === 200) {
+        const imageUrl = response.data.imageUrl || response.data.url;
+        setFormData(prev => ({
+          ...prev,
+          avatar_url: imageUrl
+        }));
+        successPopup('Image uploaded successfully');
+      } else {
+        errorPopup(response.data?.message || 'Failed to upload image');
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      errorPopup('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const submit = async () => {
     if (!validateForm()) {
       errorPopup("Please fix the validation errors!");
@@ -146,7 +186,7 @@ const AddUser = () => {
           <div className={"h-full w-full flex justify-center"}>
             <main>
               {page === 1 && <BasicPage formData={formData} handleChange={handleChange} errors={errors} />}
-              {page === 2 && <ContactPage formData={formData} handleChange={handleChange} errors={errors} />}
+              {page === 2 && <ContactPage formData={formData} handleChange={handleChange} errors={errors} handleImageUpload={handleImageUpload} uploading={uploading} />}
               {page === 3 && <RolePage formData={formData} setFormData={setFormData} handleChange={handleChange} errors={errors} />}
             </main>
 
@@ -246,7 +286,7 @@ const BasicPage = React.memo(({ formData, handleChange, errors }) => {
 
 BasicPage.displayName = 'BasicPage';
 
-const ContactPage = React.memo(({ formData, handleChange, errors }) => {
+const ContactPage = React.memo(({ formData, handleChange, errors, handleImageUpload, uploading }) => {
   return (
     <MultiPageAnimate>
       <div className="p-8 flex flex-col items-center gap-8 idms-bg">
@@ -284,6 +324,27 @@ const ContactPage = React.memo(({ formData, handleChange, errors }) => {
               onChange={handleChange} 
             />
             {errors.avatar_url && <p className="text-red-500 text-sm mt-1">{errors.avatar_url}</p>}
+          </div>
+          <div className="col-span-2">
+            <label className="label-custom">Upload Avatar</label>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleImageUpload(e.target.files[0])}
+              sx={{ display: 'none' }}
+              id="avatar-upload-add"
+            />
+            <label htmlFor="avatar-upload-add">
+              <Button
+                variant="outlined"
+                component="span"
+                startIcon={uploading ? <CircularProgress size={20} /> : <CloudUploadIcon />}
+                disabled={uploading}
+                fullWidth
+              >
+                {uploading ? 'Uploading...' : 'Upload Avatar Image'}
+              </Button>
+            </label>
           </div>
         </main>
       </div>

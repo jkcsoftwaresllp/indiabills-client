@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getData, postData } from '../../network/api';
+import { getData, postData, deleteUser } from '../../network/api';
 import { useStore } from '../../store/store';
 import {
   TextField,
@@ -75,10 +75,31 @@ const OrganizationChannel = () => {
 
   const fetchAnnouncements = async () => {
     try {
+      // Fetch all announcements
       const data = await getData('/channel/announcements');
       setAnnouncements(data);
     } catch (error) {
       console.error('Error fetching announcements:', error);
+    }
+  };
+
+  const fetchShopAnnouncements = async () => {
+    try {
+      const data = await getData('/channel/announcements/shop');
+      return data;
+    } catch (error) {
+      console.error('Error fetching shop announcements:', error);
+      return [];
+    }
+  };
+
+  const fetchChannelAnnouncements = async () => {
+    try {
+      const data = await getData('/channel/announcements/channel');
+      return data;
+    } catch (error) {
+      console.error('Error fetching channel announcements:', error);
+      return [];
     }
   };
 
@@ -93,7 +114,7 @@ const OrganizationChannel = () => {
 
   const fetchUsers = async () => {
     try {
-      const data = await getData('/users/list');
+      const data = await getData('/users');
       setUsers(data);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -103,7 +124,7 @@ const OrganizationChannel = () => {
   const handleCreateAnnouncement = async () => {
     try {
       const result = await postData('/channel/announcement/create', newAnnouncement);
-      if (result === 200) {
+      if (result === 201) {
         successPopup('Announcement created!');
         setOpenDialog(false);
         fetchAnnouncements();
@@ -118,7 +139,7 @@ const OrganizationChannel = () => {
   const handleCreateNote = async () => {
     try {
       const result = await postData('/channel/note/create', { ...newNote, target });
-      if (result === 200) {
+      if (result === 201) {
         successPopup('Note created successfully');
         setOpenDialog(false);
         fetchNotes();

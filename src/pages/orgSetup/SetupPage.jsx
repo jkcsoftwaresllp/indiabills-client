@@ -428,102 +428,112 @@ const SetupPage = () => {
         </div>
 
         {/* Current Organization */}
-        {currentOrg && (
-          <div className="mb-8">
-            <Typography variant="h5" className="font-semibold mb-4">
-              Current Organization
+{currentOrg && (
+  <div className="mb-8">
+    <Typography variant="h5" className="font-semibold mb-4">
+      Current Organization
+    </Typography>
+    <Card className="shadow-md rounded-2xl">
+      <CardContent>
+        <div className="flex items-center gap-6">
+          <Avatar
+            src={currentOrg.logoUrl}
+            alt={`${currentOrg.name} logo`}
+            sx={{ width: 72, height: 72 }}
+          >
+            <BusinessIcon sx={{ fontSize: 36 }} />
+          </Avatar>
+
+          <div className="flex-1">
+            <Typography variant="h5" className="font-bold">
+              {currentOrg.name}
             </Typography>
-            <Card className="mb-4">
-              <CardContent>
-                <div className="flex items-center gap-6">
-                  <Avatar
-                    src={currentOrg.logoUrl}
-                    alt={`${currentOrg.name} logo`}
-                    sx={{ width: 80, height: 80 }}
-                  >
-                    <BusinessIcon sx={{ fontSize: 40 }} />
-                  </Avatar>
-                  <div className="flex-1">
-                    <Typography variant="h5" className="font-bold mb-2">
-                      {currentOrg.name}
-                    </Typography>
-                    {currentOrg.businessName && (
-                      <Typography variant="h6" color="textSecondary" className="mb-2">
-                        {currentOrg.businessName}
-                      </Typography>
-                    )}
-                    {currentOrg.tagline && (
-                      <Typography variant="body1" className="italic text-gray-600 mb-2">
-                        "{currentOrg.tagline}"
-                      </Typography>
-                    )}
-                    <div className="flex gap-2 flex-wrap mb-3">
-                      <Chip 
-                        label={currentOrg.subscriptionStatus || 'trial'} 
-                        color={getStatusColor(currentOrg.subscriptionStatus)}
-                        className="capitalize"
-                      />
-                      {currentOrg.domain && (
-                        <Chip 
-                          label={`${currentOrg.subdomain}.${currentOrg.domain}`} 
-                          variant="outlined" 
-                        />
-                      )}
-                      {currentOrg.maxUsers && (
-                        <Chip 
-                          label={`Max Users: ${currentOrg.maxUsers}`} 
-                          variant="outlined" 
-                        />
-                      )}
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      {currentOrg.email && (
-                        <div>
-                          <Typography variant="body2" color="textSecondary">Email</Typography>
-                          <Typography variant="body2">{currentOrg.email}</Typography>
-                        </div>
-                      )}
-                      {currentOrg.phone && (
-                        <div>
-                          <Typography variant="body2" color="textSecondary">Phone</Typography>
-                          <Typography variant="body2">{currentOrg.phone}</Typography>
-                        </div>
-                      )}
-                      {currentOrg.addressLine && (
-                        <div>
-                          <Typography variant="body2" color="textSecondary">Address</Typography>
-                          <Typography variant="body2">
-                            {currentOrg.addressLine}, {currentOrg.city}, {currentOrg.state} {currentOrg.pinCode}
-                          </Typography>
-                        </div>
-                      )}
-                      {currentOrg.createdAt && (
-                        <div>
-                          <Typography variant="body2" color="textSecondary">Created</Typography>
-                          <Typography variant="body2">
-                            {new Date(currentOrg.createdAt).toLocaleDateString()}
-                          </Typography>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <Button
-                    variant="outlined"
-                    startIcon={<EditIcon />}
-                    onClick={() => navigate('/organization/edit')}
-                  >
-                    Edit
-                  </Button>
-                </div>
-                {currentOrg.about && (
-                  <Typography variant="body1" className="mt-4 p-4 bg-gray-50 rounded-lg">
-                    {currentOrg.about}
-                  </Typography>
-                )}
-              </CardContent>
-            </Card>
+            {currentOrg.businessName && (
+              <Typography variant="subtitle1" color="textSecondary">
+                {currentOrg.businessName}
+              </Typography>
+            )}
+            {currentOrg.tagline && (
+              <Typography variant="body2" className="italic text-gray-600 mt-1">
+                "{currentOrg.tagline}"
+              </Typography>
+            )}
+
+            <div className="flex gap-2 mt-3">
+              <Chip
+                label={currentOrg.subscriptionStatus || 'trial'}
+                color={getStatusColor(currentOrg.subscriptionStatus)}
+                size="small"
+                className="capitalize"
+              />
+              {currentOrg.domain && (
+                <Chip
+                  label={`${currentOrg.subdomain}.${currentOrg.domain}`}
+                  size="small"
+                  variant="outlined"
+                />
+              )}
+            </div>
           </div>
-        )}
+
+          <Button
+            variant="outlined"
+            startIcon={<EditIcon />}
+            onClick={() => navigate('/organization/edit')}
+          >
+            Edit
+          </Button>
+        </div>
+
+        {/* Collapsible details */}
+        <Box mt={3}>
+          <details className="text-sm">
+            <summary className="cursor-pointer text-primary-600 font-medium">
+              View more details
+            </summary>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 text-gray-700">
+              {currentOrg.email && (
+                <div>
+                  <Typography variant="caption" color="textSecondary">Email</Typography>
+                  <Typography variant="body2">{currentOrg.email}</Typography>
+                </div>
+              )}
+              {currentOrg.phone && (
+                <div>
+                  <Typography variant="caption" color="textSecondary">Phone</Typography>
+                  <Typography variant="body2">{currentOrg.phone}</Typography>
+                </div>
+              )}
+              {currentOrg.addressLine && (
+                <div className="md:col-span-2">
+                  <Typography variant="caption" color="textSecondary">Address</Typography>
+                  <Typography variant="body2">
+                    {currentOrg.addressLine}, {currentOrg.city}, {currentOrg.state} {currentOrg.pinCode}
+                  </Typography>
+                </div>
+              )}
+              {currentOrg.createdAt && (
+                <div>
+                  <Typography variant="caption" color="textSecondary">Created</Typography>
+                  <Typography variant="body2">
+                    {new Date(currentOrg.createdAt).toLocaleDateString()}
+                  </Typography>
+                </div>
+              )}
+              {currentOrg.about && (
+                <div className="md:col-span-2">
+                  <Typography variant="caption" color="textSecondary">About</Typography>
+                  <Typography variant="body2">{currentOrg.about}</Typography>
+                </div>
+              )}
+            </div>
+          </details>
+        </Box>
+      </CardContent>
+    </Card>
+  </div>
+)}
+
 
         {/* Other Organizations */}
         {otherOrgs.length > 0 && (

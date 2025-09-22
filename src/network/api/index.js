@@ -12,6 +12,7 @@ import { getProducts, getProductById, createProduct, updateProduct, deleteProduc
 import { getOffers, getOfferById, createOffer, updateOffer, deleteOffer } from './offersApi';
 import { login, switchOrganization, logout, getUserOrganizations } from './authApi';
 import { getUsers, getUserById, getUserByUsername, getUsersByRole, createUser, updateUser, deleteUser } from './userApi';
+import { uploadUserImage } from './userApi';
 
 async function getStuff(path) {
   try {
@@ -360,4 +361,5 @@ export {
   createUser,
   updateUser,
   deleteUser,
+  uploadUserImage,
 };
