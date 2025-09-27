@@ -233,7 +233,7 @@ const ViewInventory = () => {
   const menuOptions = [
     {
       label: "Inspect",
-      onClick: (data) => {
+      action: (data) => {
         const currentPath = window.location.pathname;
         if (currentPath.startsWith('/operator/')) {
           navigate(`/operator/inventory/${data?.id}`);
@@ -244,16 +244,19 @@ const ViewInventory = () => {
     },
     {
       label: "Delete",
-      onClick: (data) => {
-        deleteBatch(data?.id).then((response) => {
-          if (response.status === 200) {
+      action: async (data) => {
+        try {
+          const response = await deleteBatch(data?.id);
+          if (response === 200) {
             successPopup("Deleted successfully");
             setEntries((prev) => (prev.filter((row) => row.id !== data?.id)));
-            navigate("/inventory", { replace: true });
           } else {
             errorPopup("Failed to delete");
           }
-        });
+        } catch (error) {
+          console.error("Delete failed:", error);
+          errorPopup("Failed to delete");
+        }
       }
     }
   ];
@@ -264,19 +267,23 @@ const ViewInventory = () => {
         <Grid container spacing={4} alignItems="center" justifyContent="space-between" marginY={4}>
           <Grid item xs={12} md={6}>
             <Autocomplete
-  id="warehouse"
-  options={warehouses || []}
-  getOptionLabel={(option) => option?.name || ""}
-  isOptionEqualToValue={(option, value) => option.id === value.id}
-  value={selectedWarehouse}
-  PopperComponent={CustomPopper}
-  PaperComponent={CustomPaper}
-  onChange={(event, newValue) => setSelectedWarehouse(newValue)}
-  sx={{ width: 300 }}
-  renderInput={(params) => (
-    <TextField {...params} label="Select Warehouse" variant="outlined" />
-  )}
-/>
+              id="warehouse"
+              options={warehouses}
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              value={selectedWarehouse}
+              PopperComponent={CustomPopper}
+              PaperComponent={CustomPaper}
+              onChange={(event, newValue) => setSelectedWarehouse(newValue)}
+              sx={{ width: 300 }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Warehouse"
+                  variant="outlined"
+                />
+              )}
+            />
           </Grid>
           <Grid item xs={12} md={6}>
             <Grid container spacing={2} alignItems="center" justifyContent="flex-end">

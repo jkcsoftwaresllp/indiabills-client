@@ -104,11 +104,11 @@ const AddInventory = () => {
 
       const response = await createBatch(batchData);
 
-      if (response.status === 201 || response.status === 200) {
+      if (response === 201 || response === 200) {
         successPopup("Batch added successfully!");
         navigate("/inventory");
       } else {
-        errorPopup(response.data?.message || "Failed to add batch");
+        errorPopup("Failed to add batch");
       }
     } catch (error) {
       console.error('Error creating batch:', error);
@@ -147,30 +147,21 @@ const AddInventory = () => {
     const fetchData = async () => {
       try {
         // Use new APIs
-        const [productsResponse, suppliersResponse] = await Promise.all([
+        const [productsData, suppliersData] = await Promise.all([
           getProducts(),
           getSuppliers()
         ]);
         
-        // if (productsResponse.status === 200) {
-        //   setProducts(productsResponse.data);
-        // }
-        if (productsResponse.status === 200) {
-  setProducts(Array.isArray(productsResponse.data) ? productsResponse.data : []);
-}
-        
-        if (suppliersResponse.status === 200) {
-          setSuppliers(suppliersResponse.data);
-        }
+        setProducts(Array.isArray(productsData) ? productsData : []);
+        setSuppliers(Array.isArray(suppliersData) ? suppliersData : []);
       } catch (error) {
         console.error('Error fetching data:', error);
         // Fallback to old APIs
         try {
           const productsData = await getStuff("/products/options");
           const suppliersData = await getStuff("/suppliers/options");
-          // setProducts(productsData);
           setProducts(Array.isArray(productsData) ? productsData : []);
-          setSuppliers(suppliersData);
+          setSuppliers(Array.isArray(suppliersData) ? suppliersData : []);
         } catch (fallbackError) {
           console.error('Fallback API also failed:', fallbackError);
           errorPopup('Failed to load products and suppliers');

@@ -84,16 +84,10 @@ export async function createBatch(batchData) {
     }
 
     const response = await serverInstance.post('/internal/batches', batchData);
-    return {
-      status: response.status,
-      data: response.data
-    };
+    return response.status;
   } catch (error) {
     console.error('Failed to create batch:', error.response || error);
-    return {
-      status: error.response?.status || 400,
-      data: error.response?.data || { message: error.message || 'Batch creation failed' }
-    };
+    return error.response?.status || 400;
   }
 }
 
@@ -139,16 +133,10 @@ export async function updateBatch(id, batchData) {
     }
 
     const response = await serverInstance.patch(`/internal/batches/${id}`, batchData);
-    return {
-      status: response.status,
-      data: response.data
-    };
+    return response.status;
   } catch (error) {
     console.error(`Failed to update batch ${id}:`, error.response || error);
-    return {
-      status: error.response?.status || 400,
-      data: error.response?.data || { message: error.message || 'Batch update failed' }
-    };
+    return error.response?.status || 400;
   }
 }
 
@@ -156,15 +144,9 @@ export async function updateBatch(id, batchData) {
 export async function deleteBatch(id) {
   try {
     const response = await serverInstance.delete(`/internal/batches/${id}`);
-    return {
-      status: response.status,
-      data: response.data
-    };
+    return response.status;
   } catch (error) {
     console.error(`Failed to delete batch ${id}:`, error.response);
-    return {
-      status: error.response?.status || 500,
-      data: error.response?.data || { message: 'Batch deletion failed' }
-    };
+    return error.response?.status || 500;
   }
 }

@@ -278,11 +278,11 @@ const EditBatch = () => {
 
       const response = await updateBatch(batchId, updateData);
       
-      if (response.status === 200) {
+      if (response === 200) {
         successPopup("Batch updated successfully!");
         navigate("/inventory");
       } else {
-        errorPopup(response.data?.message || "Failed to update batch");
+        errorPopup("Failed to update batch");
       }
     } catch (error) {
       console.error('Error updating batch:', error);

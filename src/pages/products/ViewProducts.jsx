@@ -114,17 +114,15 @@ const ViewProducts = () => {
   }, []);
 
   const fetchWishlist = async () => {
-    try {
-      const response = await getData("/ops/sales/portal/customer/wishlist");
-      if (response.success && response.data) {
-        const wishlistIds = new Set(
-          response.data.map((item) => item.id || item.productId)
-        );
-        setWishlistItems(wishlistIds);
-      }
-    } catch (error) {
-      console.error("Error fetching wishlist:", error);
+    const response = await getProducts();
+    if (response.status === 200 && Array.isArray(response.data)) {
+      return response.data.map((product) => ({
+        ...product,
+        wishlist: wishlistItems.has(product.id),
+        onWishlistToggle: handleWishlistToggle, // pass handler down
+      }));
     }
+    return [];
   };
 
   const handleWishlistToggle = (product) => {

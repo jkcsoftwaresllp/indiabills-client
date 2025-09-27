@@ -43,9 +43,9 @@ const AddWarehouse = () => {
     }
 
     try {
-      const response = await createWarehouse(formData);
+      const status = await createWarehouse(formData);
       
-      if (response.status === 200 || response.status === 201) {
+      if (status === 200 || status === 201) {
         successPopup('Warehouse created successfully!');
         const currentPath = window.location.pathname;
         if (currentPath.startsWith('/operator/')) {
@@ -54,7 +54,7 @@ const AddWarehouse = () => {
           navigate('/warehouses');
         }
       } else {
-        errorPopup(response.data?.message || 'Failed to create warehouse');
+        errorPopup('Failed to create warehouse');
       }
     } catch (error) {
       console.error('Error creating warehouse:', error);

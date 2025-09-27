@@ -59,14 +59,14 @@ const ViewWarehouses = () => {
       label: "Delete",
       action: async (data) => {
         try {
-          const response = await deleteWarehouse(data?.id);
-          if (response.status === 200) {
+          const status = await deleteWarehouse(data?.id);
+          if (status === 200) {
             successPopup("Deleted successfully");
             refreshTableSetId(data?.id);
             // Refresh current page
             window.location.reload();
           } else {
-            errorPopup(response.data?.message || "Failed to delete warehouse");
+            errorPopup("Failed to delete warehouse");
           }
         } catch (error) {
           console.error("Delete failed:", error);

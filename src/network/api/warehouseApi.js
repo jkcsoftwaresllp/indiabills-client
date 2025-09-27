@@ -133,15 +133,9 @@ export async function updateWarehouse(id, warehouseData) {
 export async function deleteWarehouse(id) {
   try {
     const response = await serverInstance.delete(`/internal/warehouses/${id}`);
-    return {
-      status: response.status,
-      data: response.data
-    };
+    return response.status;
   } catch (error) {
     console.error(`Failed to delete warehouse ${id}:`, error.response);
-    return {
-      status: error.response?.status || 500,
-      data: error.response?.data || { message: 'Warehouse deletion failed' }
-    };
+    return error.response?.status || 500;
   }
 }

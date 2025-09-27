@@ -18,9 +18,9 @@ const InspectWarehouse = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getWarehouseById(id);
-        if (response.status === 200) {
-          setData(response.data);
+        const warehouseData = await getWarehouseById(id);
+        if (warehouseData) {
+          setData(warehouseData);
         } else {
           errorPopup('Warehouse not found');
           navigate('/warehouses');
