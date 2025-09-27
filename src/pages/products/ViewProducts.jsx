@@ -77,9 +77,7 @@ const colDefs = [
     cellRenderer: (params) => (
       <span
         className={`py-1 px-3 rounded-full text-xs ${
-          params.value
-            ? "bg-green-100 text-green-800"
-            : "bg-red-100 text-red-800"
+          params.value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
         }`}
       >
         {params.value ? "Active" : "Inactive"}
@@ -92,9 +90,16 @@ const colDefs = [
     valueFormatter: ({ value }) => new Date(value).toLocaleDateString(),
   },
   {
-    field: "updatedAt",
-    headerName: "Updated At",
-    valueFormatter: ({ value }) => new Date(value).toLocaleDateString(),
+    field: "wishlist",
+    headerName: "Wishlist",
+    width: 120,
+    cellRenderer: (params) => (
+      <Tooltip title={params.value ? "Remove from Wishlist" : "Add to Wishlist"}>
+        <IconButton size="small" onClick={() => params.data.onWishlistToggle(params.data)}>
+          {params.value ? <Favorite color="error" /> : <FavoriteBorder />}
+        </IconButton>
+      </Tooltip>
+    ),
   },
 ];
 
@@ -122,13 +127,13 @@ const ViewProducts = () => {
     }
   };
 
-  const handleWishlistToggle = (productId, isInWishlist) => {
+  const handleWishlistToggle = (product) => {
     setWishlistItems((prev) => {
       const newSet = new Set(prev);
-      if (isInWishlist) {
-        newSet.add(productId);
+      if (newSet.has(product.id)) {
+        newSet.delete(product.id);
       } else {
-        newSet.delete(productId);
+        newSet.add(product.id);
       }
       return newSet;
     });
@@ -144,9 +149,13 @@ const ViewProducts = () => {
       label: "Delete",
       action: async (row) => {
         try {
-          await deleteProduct(row.id);
-          successPopup("Product deleted successfully");
-          refreshTableSetId("products"); // refresh data table
+          const response = await deleteProduct(row.id);
+          if (response.status === 200) {
+            successPopup("Product deleted successfully");
+            refreshTableSetId(Date.now()); // refresh table instead of setProducts
+          } else {
+            errorPopup(response.data?.message || "Failed to delete product");
+          }
         } catch (err) {
           console.error("Delete failed:", err);
           errorPopup("Failed to delete product");
@@ -156,16 +165,28 @@ const ViewProducts = () => {
     {
       label: (row) =>
         wishlistItems.has(row.id) ? "Remove from Wishlist" : "Add to Wishlist",
-      action: (row) =>
-        handleWishlistToggle(row.id, !wishlistItems.has(row.id)),
+      action: (row) => handleWishlistToggle(row),
     },
   ];
+
+  // ✅ Custom fetcher that merges wishlist info into product data
+  const fetchProductsWithWishlist = async () => {
+    const response = await getProducts();
+    if (response.status === 200 && Array.isArray(response.data)) {
+      return response.data.map((product) => ({
+        ...product,
+        wishlist: wishlistItems.has(product.id),
+        onWishlistToggle: handleWishlistToggle, // pass handler down
+      }));
+    }
+    return [];
+  };
 
   return (
     <ViewData
       menuOptions={menuOptions}
       title="Items"
-      customDataFetcher={getProducts}
+      customDataFetcher={fetchProductsWithWishlist}
       initialColDefs={colDefs}
     />
   );

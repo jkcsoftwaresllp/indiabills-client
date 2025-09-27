@@ -42,12 +42,22 @@ const AddWarehouse = () => {
       return;
     }
 
-    const response = await createWarehouse(formData);
-    
-    if (response === 200 || response === 201) {
-      successPopup('Warehouse created successfully!');
-      navigate('/operator/warehouses');
-    } else {
+    try {
+      const response = await createWarehouse(formData);
+      
+      if (response.status === 200 || response.status === 201) {
+        successPopup('Warehouse created successfully!');
+        const currentPath = window.location.pathname;
+        if (currentPath.startsWith('/operator/')) {
+          navigate('/operator/warehouses');
+        } else {
+          navigate('/warehouses');
+        }
+      } else {
+        errorPopup(response.data?.message || 'Failed to create warehouse');
+      }
+    } catch (error) {
+      console.error('Error creating warehouse:', error);
       errorPopup('Failed to create warehouse');
     }
   };

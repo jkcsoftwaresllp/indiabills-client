@@ -179,6 +179,11 @@ const Sidebar = () => {
                 Audit
               </button>
             )}
+            {session.role === "admin" && session.orgs && session.orgs.length > 1 && (
+              <button className={styles.menuItem} onClick={() => navigate('/organization-selector')}>
+                Switch Organization
+              </button>
+            )}
             <button className={styles.menuItem} onClick={() => window.location.reload()}>
               Refresh
             </button>

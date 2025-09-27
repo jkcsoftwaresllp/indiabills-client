@@ -25,18 +25,38 @@ const InspectProduct = () => {
     const fetchData = async () => {
       try {
         const response = await getProductById(id);
+        
+        if (response.status !== 200 || !response.data) {
+          console.error("Failed to fetch product:", response);
+          return;
+        }
+        
+        const productData = response.data;
 
+        // Handle tax data from nested taxes object or direct properties
+        const taxes = productData.taxes || {};
         const totalTax =
-          (Number(response.cgst) || 0) +
-          (Number(response.sgst) || 0) +
-          (Number(response.cess) || 0);
+          (Number(taxes.cgst) || Number(productData.cgst) || 0) +
+          (Number(taxes.sgst) || Number(productData.sgst) || 0) +
+          (Number(taxes.cess) || Number(productData.cess) || 0);
 
-        response.purchasePriceWithoutTax = calculatePurchasePriceWithoutTax(
-          response.purchasePrice,
+        // Map API response to component state
+        const mappedData = {
+          ...productData,
+          itemName: productData.name,
+          unitMRP: productData.unitMrp,
+          cgst: taxes.cgst || productData.cgst || 0,
+          sgst: taxes.sgst || productData.sgst || 0,
+          cess: taxes.cess || productData.cess || 0,
+          upc: productData.barcode || productData.upc
+        };
+
+        mappedData.purchasePriceWithoutTax = calculatePurchasePriceWithoutTax(
+          mappedData.purchasePrice,
           totalTax
         );
 
-        setData(response);
+        setData(mappedData);
       } catch (error) {
         console.error("Error fetching product:", error);
       } finally {

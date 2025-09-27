@@ -13,6 +13,8 @@ import { getOffers, getOfferById, createOffer, updateOffer, deleteOffer } from '
 import { login, switchOrganization, logout, getUserOrganizations } from './authApi';
 import { getUsers, getUserById, getUserByUsername, getUsersByRole, createUser, updateUser, deleteUser } from './userApi';
 import { uploadUserImage } from './userApi';
+// import { updateOrganizationById } from './organizationApi';
+import { checkSession } from './authApi';
 
 async function getStuff(path) {
   try {
@@ -330,6 +332,7 @@ export {
   createOrganization,
   getOrganization,
   updateOrganization,
+  // updateOrganizationById,
   // Supplier APIs
   getSuppliers,
   getSupplierById,
@@ -362,4 +365,6 @@ export {
   updateUser,
   deleteUser,
   uploadUserImage,
+  // Session APIs
+  checkSession,
 };

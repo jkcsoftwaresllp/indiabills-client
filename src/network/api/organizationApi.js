@@ -92,7 +92,30 @@ export async function getOrganization() {
 // Update organization
 export async function updateOrganization(orgData) {
   try {
-    const response = await serverInstance.patch(`/organization/edit/${orgData.id}`, orgData);
+    const response = await serverInstance.patch(`/organization/edit/${orgData.id}`, {
+      name: orgData.name,
+      business_name: orgData.businessName,
+      about: orgData.about,
+      tagline: orgData.tagline,
+      domain: orgData.domain,
+      subdomain: orgData.subdomain,
+      logo_url: orgData.logoUrl,
+      timezone: orgData.timezone,
+      gstin: orgData.gstin,
+      phone: orgData.phone,
+      email: orgData.email,
+      website: orgData.website,
+      address_line: orgData.addressLine,
+      city: orgData.city,
+      state: orgData.state,
+      country: orgData.country,
+      pin_code: orgData.pinCode,
+      brand_primary_color: orgData.brandPrimaryColor,
+      brand_accent_color: orgData.brandAccentColor,
+      settings: orgData.settings,
+      is_active: orgData.isActive,
+      updated_by: orgData.updatedBy
+    });
     return {
       status: response.status,
       data: response.data

@@ -59,37 +59,98 @@ const AddProducts = () => {
 
   const submit = useCallback(() => {
     // Validate required fields
-    if (!formData.itemName || !formData.salePrice || !formData.purchasePrice) {
-      errorPopup("Please fill in all required fields!");
+    const requiredFields = ['itemName', 'manufacturer', 'unitMRP', 'purchasePrice', 'salePrice'];
+    const missingFields = requiredFields.filter(field => !formData[field]);
+    
+    if (missingFields.length > 0) {
+      errorPopup(`Please fill in required fields: ${missingFields.join(', ')}`);
       return;
     }
 
-    // Map form data to new API structure
+    // Validation rules
+    const unitMrp = Number(formData.unitMRP);
+    const purchasePrice = Number(formData.purchasePrice);
+    const salePrice = Number(formData.salePrice);
+    const weight = Number(formData.weight);
+    const reorderLevel = Number(formData.reorderLevel);
+    const maxStockLevel = Number(formData.maxStockLevel);
+
+    // Numeric validation
+    if (unitMrp <= 0 || purchasePrice <= 0 || salePrice <= 0) {
+      errorPopup("Unit MRP, Purchase Price, and Sale Price must be positive numbers!");
+      return;
+    }
+
+    if (purchasePrice > unitMrp || salePrice > unitMrp) {
+      errorPopup("Purchase Price and Sale Price cannot exceed Unit MRP!");
+      return;
+    }
+
+    if (weight && weight <= 0) {
+      errorPopup("Weight must be a positive number!");
+      return;
+    }
+
+    if (reorderLevel < 0 || maxStockLevel < 0) {
+      errorPopup("Reorder Level and Max Stock Level must be non-negative!");
+      return;
+    }
+
+    if (maxStockLevel && reorderLevel && maxStockLevel < reorderLevel) {
+      errorPopup("Max Stock Level must be greater than or equal to Reorder Level!");
+      return;
+    }
+
+    // Unit of measure validation
+    const validUnits = ['pieces', 'kg', 'grams', 'liters', 'ml', 'meters', 'cm', 'boxes', 'packs'];
+    if (formData.unitOfMeasure && !validUnits.includes(formData.unitOfMeasure)) {
+      errorPopup(`Unit of Measure must be one of: ${validUnits.join(', ')}`);
+      return;
+    }
+
+    // Barcode validation (if provided)
+    if (formData.upc && !/^[a-zA-Z0-9-]+$/.test(formData.upc)) {
+      errorPopup("Barcode must only contain letters, numbers, and hyphens!");
+      return;
+    }
+
+    // Map form data to API structure
     const apiData = {
       name: formData.itemName,
       description: formData.description,
+      categoryId: formData.categoryId || 1,
       manufacturer: formData.manufacturer,
       brand: formData.brand || formData.manufacturer,
       barcode: formData.upc,
       dimensions: formData.dimensions,
       weight: formData.weight,
-      unitOfMeasure: formData.unitOfMeasure || 'piece',
-      purchasePrice: formData.purchaseRate || formData.purchasePrice,
-      salePrice: formData.salePrice,
       unitMrp: formData.unitMRP,
+      purchasePrice: formData.purchasePrice,
+      salePrice: formData.salePrice,
       reorderLevel: formData.reorderLevel,
-      maxStockLevel: formData.maxStockLevel || formData.reorderLevel * 10,
-      categoryId: 1, // Default category, should be selected from dropdown
       isActive: true,
+      unitOfMeasure: formData.unitOfMeasure || 'pieces',
+      maxStockLevel: formData.maxStockLevel || (formData.reorderLevel * 10),
+      hsn: formData.hsn,
+      upc: formData.upc,
+      taxes: {
+        cgst: formData.cgst || 0,
+        sgst: formData.sgst || 0,
+        cess: formData.cess || 0
+      },
+      variants: formData.variants?.filter(variant => variant.key.trim() !== "") || []
     };
 
-    createProduct(apiData).then((status) => {
-      if (status === 201 || status === 200) {
+    createProduct(apiData).then((response) => {
+      if (response.status === 201 || response.status === 200) {
         successPopup("Item added successfully");
         navigate("/products");
       } else {
-        errorPopup("Failed to add item");
+        errorPopup(response.data?.message || "Failed to add item");
       }
+    }).catch((error) => {
+      console.error('Error creating product:', error);
+      errorPopup("Failed to add item");
     });
   }, [formData, invalidForm, errorPopup, successPopup, navigate]);
 

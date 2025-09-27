@@ -88,7 +88,21 @@ const EditOrganization = () => {
     setSaving(true);
 
     try {
-      const response = await updateOrganization({ ...organization, id: orgContext.id });
+      // Map frontend data to backend API format
+      const updateData = {
+        ...organization,
+        id: orgContext.id,
+        businessName: organization.business_name || organization.businessName,
+        logoUrl: organization.logo_url || organization.logoUrl,
+        addressLine: organization.address_line || organization.addressLine,
+        pinCode: organization.pin_code || organization.pinCode,
+        brandPrimaryColor: organization.brand_primary_color || organization.brandPrimaryColor,
+        brandAccentColor: organization.brand_accent_color || organization.brandAccentColor,
+        isActive: organization.is_active !== undefined ? organization.is_active : organization.isActive,
+        updatedBy: 'admin_user' // This should come from current user session
+      };
+      
+      const response = await updateOrganization(updateData);
       
       if (response.status === 200) {
         successPopup("Organization updated successfully!");

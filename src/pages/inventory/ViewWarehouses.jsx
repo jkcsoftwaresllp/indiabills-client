@@ -45,24 +45,33 @@ const ViewWarehouses = () => {
   const menuOptions = [
     {
       label: "Inspect",
-      onClick: (data) => {
+      action: (data) => {
         console.log(`Inspecting warehouse ${data?.id}`);
-        navigate(`/operator/warehouses/${data?.id}`);
+        const currentPath = window.location.pathname;
+        if (currentPath.startsWith('/operator/')) {
+          navigate(`/operator/warehouses/${data?.id}`);
+        } else {
+          navigate(`/warehouses/${data?.id}`);
+        }
       },
     },
     {
       label: "Delete",
-      onClick: (data) => {
-        deleteWarehouse(data?.id).then((response) => {
-          if (response === 200) {
+      action: async (data) => {
+        try {
+          const response = await deleteWarehouse(data?.id);
+          if (response.status === 200) {
             successPopup("Deleted successfully");
             refreshTableSetId(data?.id);
-            navigate("/operator/warehouses");
+            // Refresh current page
+            window.location.reload();
           } else {
-            errorPopup("Failed to delete");
-            console.error("Failed to delete");
+            errorPopup(response.data?.message || "Failed to delete warehouse");
           }
-        });
+        } catch (error) {
+          console.error("Delete failed:", error);
+          errorPopup("Failed to delete warehouse");
+        }
       },
     },
   ];
@@ -71,7 +80,10 @@ const ViewWarehouses = () => {
     <ViewData 
       menuOptions={menuOptions} 
       title="Warehouses" 
-      customDataFetcher={getWarehouses}
+      customDataFetcher={async () => {
+        const response = await getWarehouses();
+        return response.status === 200 ? response.data : [];
+      }}
       initialColDefs={colDefs}
     />
   );

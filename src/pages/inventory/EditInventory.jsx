@@ -2,7 +2,7 @@ import StockIssuesEditTab from "./StockIssuesEditTab";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import BatchInvoicePreview from "./yeah"; // Import your batch
 import { useNavigate, useParams } from "react-router-dom";
-import { getRequest, getRow, getStuff, updatePut } from "../../network/api";
+import { getRequest, getRow, getStuff, updatePut, getBatchById, updateBatch, getProducts, getSuppliers, getWarehouses } from "../../network/api";
 import { useEffect, useState } from "react";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import BatchItemsEditTab from "./BatchItemsEditTab";
@@ -62,67 +62,48 @@ const EditBatch = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getRow(`/internal/warehouses/${id}`);
-      const batch = data[0];
-      setBatchData(batch);
+      try {
+        const response = await getBatchById(batchId);
+        if (response.status === 200) {
+          const batch = response.data;
+          setBatchData(batch);
 
-      const uniqueItems = batch.subBatch.reduce((acc, item) => {
-        if (!acc.some((i) => i.id === item.itemId)) {
-          acc.push({
-            id: item.itemId,
-            name: item.itemName || "",
+          // Map batch data to form state
+          setFormState({
+            batchNumber: batch.batchCode || "",
+            invoiceNumber: batch.invoiceNumber || "",
+            batchPrice: batch.quantity * batch.unitCost || "",
+            entryDate: batch.purchaseDate ? batch.purchaseDate.substring(0, 10) : "",
+            qualityPass: batch.qualityPass || "ok",
+            status: batch.isActive ? "active" : "inactive",
+            warehouseId: batch.warehouseId || "",
+            supplierId: batch.supplierId || "",
+            subBatch: [{
+              id: generateUniqueId(),
+              subBatchId: batch.id,
+              itemId: batch.productId,
+              itemName: batch.productName || "",
+              quantity: batch.quantity || "",
+              packSize: 1,
+              recordUnitPrice: batch.unitCost || "",
+              discount: 0,
+              discountType: "percentage",
+              manufactureDate: batch.manufactureDate ? batch.manufactureDate.substring(0, 10) : "",
+              expiryDate: batch.expiryDate ? batch.expiryDate.substring(0, 10) : "",
+            }],
+            stockIssues: [],
           });
+        } else {
+          errorPopup('Batch not found');
+          navigate('/inventory');
         }
-        return acc;
-      }, []);
-      setItemsInBatch(uniqueItems);
-
-      const stockIssuesWithItemId =
-        batch.stockIssues?.map((issue) => {
-          const matchingItem = uniqueItems.find(
-            (item) => item.name === issue.itemName
-          );
-          return {
-            id: generateUniqueId(),
-            stockIssueId: issue.stockIssueId,
-            itemId: matchingItem?.id || "",
-            itemName: issue.itemName || "",
-            reason: issue.reason,
-            faultyQuantity: issue.faultyQuantity || "",
-            remarks: issue.remarks || "",
-            dateAdded: issue.dateAdded ? issue.dateAdded.substring(0, 10) : "",
-            addedBy: issue.addedBy || "",
-          };
-        }) || [];
-
-      setFormState({
-        batchNumber: batch.batchNumber || "",
-        invoiceNumber: batch.invoiceNumber || "",
-        batchPrice: batch.batchPrice || "",
-        entryDate: batch.entryDate ? batch.entryDate.substring(0, 10) : "",
-        qualityPass: batch.qualityPass || "",
-        status: batch.status || "",
-        warehouseId: batch.warehouseId || "",
-        supplierId: batch.supplierId || "",
-        subBatch:
-          batch.subBatch.map((item) => ({
-            id: generateUniqueId(),
-            subBatchId: item.subBatchId,
-            itemId: item.itemId,
-            itemName: item.itemName || "",
-            quantity: item.quantity || "",
-            packSize: item.packSize || "",
-            recordUnitPrice: item.recordUnitPrice || "",
-            discount: item.discount || "",
-            discountType: item.discountType || "",
-            manufactureDate: item.manufactureDate
-              ? item.manufactureDate.substring(0, 10)
-              : "",
-            expiryDate: item.expiryDate ? item.expiryDate.substring(0, 10) : "",
-          })) || [],
-        stockIssues: stockIssuesWithItemId,
-      });
+      } catch (error) {
+        console.error('Error fetching batch:', error);
+        errorPopup('Failed to load batch data');
+        navigate('/inventory');
+      }
     };
+
     fetchData();
   }, [batchId]);
 
@@ -280,16 +261,33 @@ const EditBatch = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(formState);
+    try {
+      // Map form state back to API format
+      const updateData = {
+        batchCode: formState.batchNumber,
+        purchaseDate: formState.entryDate,
+        quantity: Number(formState.subBatch[0]?.quantity),
+        remainingQuantity: Number(formState.subBatch[0]?.quantity), // Assuming no consumption yet
+        unitCost: Number(formState.subBatch[0]?.recordUnitPrice),
+        warehouseId: Number(formState.warehouseId),
+        supplierId: Number(formState.supplierId),
+        expiryDate: formState.subBatch[0]?.expiryDate || null,
+        remarks: formState.remarks || '',
+        isActive: formState.status === "active"
+      };
 
-    const response = await updatePut(`/internal/warehouses/${id}`, formState);
-    if (response !== 200) {
-      console.error("Failed to update batch");
+      const response = await updateBatch(batchId, updateData);
+      
+      if (response.status === 200) {
+        successPopup("Batch updated successfully!");
+        navigate("/inventory");
+      } else {
+        errorPopup(response.data?.message || "Failed to update batch");
+      }
+    } catch (error) {
+      console.error('Error updating batch:', error);
       errorPopup("Failed to update the batch");
-      return;
     }
-    successPopup("Batch Updated!");
-    navigate("/inventory");
   };
 
   const [itemsList, setItemsList] = useState([]);
@@ -298,12 +296,36 @@ const EditBatch = () => {
 
   useEffect(() => {
     const fetchOptions = async () => {
-      const itemsData = await getStuff("/products/options");
-      setItemsList(itemsData);
-      const suppliersData = await getStuff("/suppliers/options");
-      setSuppliersList(suppliersData);
-      const warehousesData = await getStuff("/inventory/warehouses");
-      setWarehousesList(warehousesData);
+      try {
+        const [productsResponse, suppliersResponse, warehousesResponse] = await Promise.all([
+          getProducts(),
+          getSuppliers(),
+          getWarehouses()
+        ]);
+        
+        if (productsResponse.status === 200) {
+          setItemsList(productsResponse.data);
+        }
+        if (suppliersResponse.status === 200) {
+          setSuppliersList(suppliersResponse.data);
+        }
+        if (warehousesResponse.status === 200) {
+          setWarehousesList(warehousesResponse.data);
+        }
+      } catch (error) {
+        console.error('Error fetching options:', error);
+        // Fallback to old APIs
+        try {
+          const itemsData = await getStuff("/products/options");
+          setItemsList(itemsData);
+          const suppliersData = await getStuff("/suppliers/options");
+          setSuppliersList(suppliersData);
+          const warehousesData = await getStuff("/inventory/warehouses");
+          setWarehousesList(warehousesData);
+        } catch (fallbackError) {
+          console.error('Fallback APIs also failed:', fallbackError);
+        }
+      }
     };
     fetchOptions();
   }, []);

@@ -19,8 +19,7 @@ import {
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useEffect, useState } from "react";
-import { getStuff, addRow, getWarehouses } from "../../network/api";
-import { createBatch } from "../../network/api";
+import { getStuff, addRow, getWarehouses, getProducts, getSuppliers, createBatch } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -71,36 +70,50 @@ const AddInventory = () => {
       return;
     }
 
-    // Create batch data for new API
-    const totalQuantity = selectedProducts.reduce((total, product) => total + Number(product.quantity), 0);
-    const batchData = {
-      productId: Number(selectedProducts[0]?.itemId) || 0,
-      supplierId: Number(selectedSupplier?.id) || 0,
-      batchCode: formData.batchNumber,
-      purchaseDate: formData.entryDate,
-      expiryDate: selectedProducts[0]?.expiryDate || null,
-      quantity: totalQuantity,
-      remainingQuantity: totalQuantity,
-      unitCost: totalPrice / totalQuantity,
-      warehouseId: Number(selectedLocation?.id) || 0,
-      remarks: formData.remarks || '',
-      isActive: true
-    };
-
-    const response = await createBatch(batchData);
-
-    if (response !== 201) {
-      if (response === 400) {
-        errorPopup("Failed to add inventory entry");
+    // Validate selected products
+    for (const product of selectedProducts) {
+      if (!product.quantity || product.quantity <= 0) {
+        errorPopup(`Please enter valid quantity for ${product.itemName}`);
         return;
-      } else {
-        errorPopup("Error adding batch!");
+      }
+      if (!product.recordUnitPrice || product.recordUnitPrice <= 0) {
+        errorPopup(`Please enter valid unit price for ${product.itemName}`);
         return;
       }
     }
 
-    successPopup("Batch Added");
-    navigate(`/inventory`);
+    // Create batch data for each product (new API expects one batch per product)
+    const totalQuantity = selectedProducts.reduce((total, product) => total + Number(product.quantity), 0);
+    
+    try {
+      // Create a batch for the first product (or create multiple batches if needed)
+      const mainProduct = selectedProducts[0];
+      const batchData = {
+        productId: Number(mainProduct.itemId),
+        supplierId: Number(selectedSupplier?.id),
+        batchCode: formData.batchNumber,
+        purchaseDate: formData.entryDate,
+        expiryDate: mainProduct.expiryDate || null,
+        quantity: Number(mainProduct.quantity),
+        remainingQuantity: Number(mainProduct.quantity),
+        unitCost: Number(mainProduct.recordUnitPrice),
+        warehouseId: Number(selectedLocation?.id),
+        remarks: formData.remarks || '',
+        isActive: true
+      };
+
+      const response = await createBatch(batchData);
+
+      if (response.status === 201 || response.status === 200) {
+        successPopup("Batch added successfully!");
+        navigate("/inventory");
+      } else {
+        errorPopup(response.data?.message || "Failed to add batch");
+      }
+    } catch (error) {
+      console.error('Error creating batch:', error);
+      errorPopup("Error adding batch!");
+    }
   };
 
   const handleAddProduct = (newItem) => {
@@ -132,10 +145,37 @@ const AddInventory = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const productsData = await getStuff("/products/options");
-      const suppliersData = await getStuff("/suppliers/options");
-      setProducts(productsData);
-      setSuppliers(suppliersData);
+      try {
+        // Use new APIs
+        const [productsResponse, suppliersResponse] = await Promise.all([
+          getProducts(),
+          getSuppliers()
+        ]);
+        
+        // if (productsResponse.status === 200) {
+        //   setProducts(productsResponse.data);
+        // }
+        if (productsResponse.status === 200) {
+  setProducts(Array.isArray(productsResponse.data) ? productsResponse.data : []);
+}
+        
+        if (suppliersResponse.status === 200) {
+          setSuppliers(suppliersResponse.data);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Fallback to old APIs
+        try {
+          const productsData = await getStuff("/products/options");
+          const suppliersData = await getStuff("/suppliers/options");
+          // setProducts(productsData);
+          setProducts(Array.isArray(productsData) ? productsData : []);
+          setSuppliers(suppliersData);
+        } catch (fallbackError) {
+          console.error('Fallback API also failed:', fallbackError);
+          errorPopup('Failed to load products and suppliers');
+        }
+      }
     };
 
     fetchLocations();
@@ -304,7 +344,7 @@ const AddInventory = () => {
 
           <InputBox
             name="entryDate"
-            type="datetime-local"
+            type="date"
             label="Entry"
             placeholder={"dd/mm/yyyy"}
             value={formData?.entryDate}
@@ -323,6 +363,7 @@ const AddInventory = () => {
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, batchNumber: e.target.value }))
             }
+            required
           />
           <InputBox
             name="invoiceNumber"

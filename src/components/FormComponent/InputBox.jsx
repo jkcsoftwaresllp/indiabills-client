@@ -1,74 +1,78 @@
 import React from 'react';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
+import { TextField, InputAdornment } from '@mui/material';
 
 const InputBox = ({
-    name,
-    small,
-    type,
-    label,
-    error,
-    helperText,
-    readonly,
-    minLength,
-    maxLength,
-    placeholder,
-    required,
-    startText,
-    endText,
-    value,
-    onChange,
-    min,
-    max,
-    multiline,
-    maxRows,
+  name,
+  type = "text",
+  label,
+  placeholder,
+  value,
+  onChange,
+  required = false,
+  readonly = false,
+  startText,
+  endText,
+  error,
+  helperText,
+  min,
+  max,
+  minLength,
+  maxLength,
+  multiline = false,
+  maxRows,
+  size = "small",
+  ...props
 }) => {
 
-    const generateLabel = (name) => {
-        return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-    };
+  const generateLabel = (fieldName) => {
+    return fieldName
+      ? fieldName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
+      : '';
+  };
 
-    return (
-        <TextField
-            fullWidth
-            variant="outlined"
-            name={name}
-            label={label || generateLabel(name)}
-            type={type !== 'string' ? type : 'text'} // Ensure 'text' is used instead of 'string'
-            required={required}
-            error={!!error}
-            helperText={helperText}
-            multiline={multiline}
-            maxRows={multiline ? maxRows : undefined}
-            placeholder={placeholder}
-            value={value !== undefined && value !== null ? value : ''}
-            inputProps={{
-                ...(min !== undefined && { min: min }),
-                ...(max !== undefined && { max: max }),
-                ...(minLength !== undefined && { minLength: minLength }),
-                ...(maxLength !== undefined && { maxLength: maxLength }),
-                readOnly: readonly,
-            }}
-            InputLabelProps={{
-                shrink: true
-            }}
-            InputProps={{
-                startAdornment: startText ? (
-                    <InputAdornment position="start">
-                        <span className="mr-1 font-semibold text-sky-700 break-keep text-nowrap w-fit">
-                            {startText}
-                        </span>
-                    </InputAdornment>
-                ) : undefined,
-                endAdornment: endText ? (
-                    <InputAdornment position="end">
-                        <span className="ml-1 font-semibold text-slate-700 break-keep text-nowrap w-fit">
-                            {endText}
-                        </span>
-                    </InputAdornment>
-                ) : undefined,
-            }}
-            sx={{
+  return (
+    <TextField
+      name={name}
+      type={type !== "string" ? type : "text"}
+      label={label || generateLabel(name)}
+      placeholder={placeholder}
+      value={value ?? ''}
+      onChange={onChange}
+      required={required}
+      error={!!error}
+      helperText={helperText || error}
+      fullWidth
+      variant="outlined"
+      size={size}
+      multiline={multiline}
+      maxRows={multiline ? maxRows : undefined}
+      inputProps={{
+        ...(min !== undefined && { min }),
+        ...(max !== undefined && { max }),
+        ...(minLength !== undefined && { minLength }),
+        ...(maxLength !== undefined && { maxLength }),
+        readOnly: readonly,
+      }}
+      InputLabelProps={{
+        shrink: true,
+      }}
+      InputProps={{
+        startAdornment: startText ? (
+          <InputAdornment position="start">
+            <span className="mr-1 font-semibold text-sky-700 break-keep text-nowrap w-fit">
+              {startText}
+            </span>
+          </InputAdornment>
+        ) : null,
+        endAdornment: endText ? (
+          <InputAdornment position="end">
+            <span className="ml-1 font-semibold text-slate-700 break-keep text-nowrap w-fit">
+              {endText}
+            </span>
+          </InputAdornment>
+        ) : null,
+      }}
+      sx={{
                 '& .MuiOutlinedInput-root': {
                     backgroundColor: 'rgb(245, 247, 252)', // Set desired background color
                     borderRadius: '1rem',
@@ -94,9 +98,9 @@ const InputBox = ({
                     color: 'rgb(68, 68, 68)', // Label color
                 },
             }}
-            onChange={onChange}
-        />
-    );
+      {...props}
+    />
+  );
 };
 
 export default InputBox;

@@ -35,6 +35,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { getOption } from '../../utils/FormHelper';
 import { getOrganizationById } from '../../network/api/organizationApi';
+import SwitchAccountIcon from '@mui/icons-material/SwitchAccount';
+import { getSession } from '../../utils/cacheHelper';
 
 const SetupPage = () => {
   const [currentOrg, setCurrentOrg] = useState(null);
@@ -48,6 +50,7 @@ const SetupPage = () => {
   const { successPopup, errorPopup } = useStore();
   const navigate = useNavigate();
   const orgContext = getOrganizationContext();
+  const session = getSession();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -459,7 +462,7 @@ const SetupPage = () => {
               </Typography>
             )}
 
-            <div className="flex gap-2 mt-3">
+            <div className="flex gap-2 mt-3 flex-wrap">
               <Chip
                 label={currentOrg.subscriptionStatus || 'trial'}
                 color={getStatusColor(currentOrg.subscriptionStatus)}
@@ -473,16 +476,34 @@ const SetupPage = () => {
                   variant="outlined"
                 />
               )}
+              {currentOrg.maxUsers && (
+                <Chip
+                  label={`Max Users: ${currentOrg.maxUsers}`}
+                  size="small"
+                  variant="outlined"
+                />
+              )}
             </div>
           </div>
 
-          <Button
-            variant="outlined"
-            startIcon={<EditIcon />}
-            onClick={() => navigate('/organization/edit')}
-          >
-            Edit
-          </Button>
+          <div className="flex flex-col gap-2">
+            {session.orgs && session.orgs.length > 1 && (
+              <Button
+                variant="contained"
+                startIcon={<SwitchAccountIcon />}
+                onClick={() => navigate('/organization-selector')}
+              >
+                Switch Organization
+              </Button>
+            )}
+            <Button
+              variant="outlined"
+              startIcon={<EditIcon />}
+              onClick={() => navigate('/organization/edit')}
+            >
+              Edit
+            </Button>
+          </div>
         </div>
 
         {/* Collapsible details */}

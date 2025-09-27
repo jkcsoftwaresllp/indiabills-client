@@ -19,9 +19,16 @@ const InspectWarehouse = () => {
     const fetchData = async () => {
       try {
         const response = await getWarehouseById(id);
-        setData(response);
+        if (response.status === 200) {
+          setData(response.data);
+        } else {
+          errorPopup('Warehouse not found');
+          navigate('/warehouses');
+        }
       } catch (error) {
         console.error('Error fetching warehouse:', error);
+        errorPopup('Failed to load warehouse data');
+        navigate('/warehouses');
       } finally {
         setLoading(false);
       }

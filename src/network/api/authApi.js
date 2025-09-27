@@ -67,3 +67,20 @@ export async function getUserOrganizations() {
     };
   }
 }
+
+// Check session validity
+export async function checkSession() {
+  try {
+    const response = await serverInstance.get('/check-session');
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Session check failed:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: { valid: false }
+    };
+  }
+}
