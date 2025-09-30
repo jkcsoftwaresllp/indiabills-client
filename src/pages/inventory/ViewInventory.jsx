@@ -58,7 +58,7 @@ const ViewInventory = () => {
   };
 
   const add = () => {
-    const currentPath = window.location.pathname;
+   const currentPath = window.location.pathname;
     if (currentPath.startsWith('/operator/')) {
       navigate("/operator/inventory/add");
     } else {
@@ -74,7 +74,7 @@ const ViewInventory = () => {
       navigate("/warehouses");
     }
   };
-
+  
   const transferBatch = () => {
     alert('Transfer batch feature (work in progress)');
   };
@@ -160,9 +160,9 @@ const ViewInventory = () => {
 
         setPCount(pData);
         setSCount(sData);
-        setWarehouses(wData);
+        setWarehouses(Array.isArray(wData) ? wData : []);
 
-        if (wData.length === 1) {
+        if (Array.isArray(wData) && wData.length === 1) {
           setSelectedWarehouse(wData[0]);
           fetchProducts(wData[0].id);
           fetchBatches();

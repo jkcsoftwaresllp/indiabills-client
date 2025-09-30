@@ -11,16 +11,10 @@ export async function getWarehouses(options = {}) {
     if (options.isActive !== undefined) params.append('isActive', options.isActive);
 
     const response = await serverInstance.get(`/internal/warehouses?${params.toString()}`);
-    return {
-      status: response.status,
-      data: response.data
-    };
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error('Failed to fetch warehouses:', error.response);
-    return {
-      status: error.response?.status || 500,
-      data: []
-    };
+    return [];
   }
 }
 
@@ -28,16 +22,10 @@ export async function getWarehouses(options = {}) {
 export async function getWarehouseById(id) {
   try {
     const response = await serverInstance.get(`/internal/warehouses/${id}`);
-    return {
-      status: response.status,
-      data: response.data
-    };
+    return response.data;
   } catch (error) {
     console.error(`Failed to fetch warehouse ${id}:`, error.response);
-    return {
-      status: error.response?.status || 500,
-      data: null
-    };
+    return null;
   }
 }
 
@@ -76,16 +64,10 @@ export async function createWarehouse(warehouseData) {
     }
 
     const response = await serverInstance.post('/internal/warehouses', warehouseData);
-    return {
-      status: response.status,
-      data: response.data
-    };
+    return response.status;
   } catch (error) {
     console.error('Failed to create warehouse:', error.response || error);
-    return {
-      status: error.response?.status || 400,
-      data: error.response?.data || { message: error.message || 'Warehouse creation failed' }
-    };
+    return error.response?.status || 400;
   }
 }
 
@@ -116,16 +98,10 @@ export async function updateWarehouse(id, warehouseData) {
     }
 
     const response = await serverInstance.patch(`/internal/warehouses/${id}`, warehouseData);
-    return {
-      status: response.status,
-      data: response.data
-    };
+    return response.status;
   } catch (error) {
     console.error(`Failed to update warehouse ${id}:`, error.response || error);
-    return {
-      status: error.response?.status || 400,
-      data: error.response?.data || { message: error.message || 'Warehouse update failed' }
-    };
+    return error.response?.status || 400;
   }
 }
 

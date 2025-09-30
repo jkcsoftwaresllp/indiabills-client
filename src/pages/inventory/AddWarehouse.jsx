@@ -47,12 +47,7 @@ const AddWarehouse = () => {
       
       if (status === 200 || status === 201) {
         successPopup('Warehouse created successfully!');
-        const currentPath = window.location.pathname;
-        if (currentPath.startsWith('/operator/')) {
-          navigate('/operator/warehouses');
-        } else {
-          navigate('/warehouses');
-        }
+        navigate('/warehouses');
       } else {
         errorPopup('Failed to create warehouse');
       }

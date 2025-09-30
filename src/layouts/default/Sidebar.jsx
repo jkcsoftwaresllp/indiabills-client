@@ -80,12 +80,31 @@ const Sidebar = () => {
     try {
       const response = await logout("ORG");
       if (response.status === 200) {
-        localStorage.removeItem("session");
-        localStorage.removeItem("organizationContext");
+        // Keep the token but clear current org context
+        const currentSession = getSession();
+        if (currentSession) {
+          // Set temp session for org selection
+          localStorage.setItem('tempUserSession', JSON.stringify({
+            token: currentSession.token,
+            user: {
+              id: currentSession.id,
+              name: currentSession.name,
+              email: currentSession.email,
+              username: currentSession.username,
+              orgs: currentSession.orgs
+            }
+          }));
+        }
+        // Clear current session and org context
+        localStorage.removeItem('session');
+        localStorage.removeItem('organizationContext');
         navigate("/organization-selector");
       }
     } catch (error) {
       console.error("Organization logout error:", error);
+      // Fallback: clear session and go to org selector
+      localStorage.removeItem('session');
+      localStorage.removeItem('organizationContext');
       navigate("/organization-selector");
     }
   };
@@ -179,8 +198,9 @@ const Sidebar = () => {
                 Audit
               </button>
             )}
-            {session.role === "admin" && session.orgs && session.orgs.length > 1 && (
+            {session.orgs && session.orgs.length > 1 && (
               <button className={styles.menuItem} onClick={() => navigate('/organization-selector')}>
+                <SwitchAccountIcon style={{ marginRight: '8px' }} />
                 Switch Organization
               </button>
             )}

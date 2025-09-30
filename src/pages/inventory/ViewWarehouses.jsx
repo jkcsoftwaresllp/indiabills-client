@@ -63,8 +63,6 @@ const ViewWarehouses = () => {
           if (status === 200) {
             successPopup("Deleted successfully");
             refreshTableSetId(data?.id);
-            // Refresh current page
-            window.location.reload();
           } else {
             errorPopup("Failed to delete warehouse");
           }
@@ -80,10 +78,7 @@ const ViewWarehouses = () => {
     <ViewData 
       menuOptions={menuOptions} 
       title="Warehouses" 
-      customDataFetcher={async () => {
-        const response = await getWarehouses();
-        return response.status === 200 ? response.data : [];
-      }}
+      url="/internal/warehouses"
       initialColDefs={colDefs}
     />
   );

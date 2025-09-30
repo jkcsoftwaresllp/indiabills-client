@@ -3,31 +3,27 @@ import Modal from "../../components/InventoryComponents/Modal";
 import { getOption } from "../../utils/FormHelper";
 import DropdownStream from "../../components/FormComponent/DropdownStream";
 import InputBoxStream from "../../components/FormComponent/InputBoxStream";
-import { quickAdd } from "../../network/api";
+import { createWarehouse } from "../../network/api"; // ✅ use same API as AddWarehouse.jsx
 import { useStore } from "../../store/store";
 
 // ✅ Define LocationMetadata locally
 const LocationMetadata = [
   {
-    name: "warehouseId",
-    type: "string",
-    label: "Location ID",
-    placeholder: "Location ID",
-    category: "Shipping",
-    autocomplete: false,
-    required: false,
-    readonly: true,
-    toAdd: false,
-  },
-  {
-    name: "warehouseName",
+    name: "name",
     type: "string",
     label: "Warehouse Name",
     placeholder: "",
     category: "Shipping",
-    autocomplete: false,
     required: true,
-    readonly: false,
+    toAdd: true,
+  },
+  {
+    name: "code",
+    type: "string",
+    label: "Warehouse Code",
+    placeholder: "WH001",
+    category: "Shipping",
+    required: true,
     toAdd: true,
   },
   {
@@ -36,9 +32,7 @@ const LocationMetadata = [
     label: "Capacity",
     placeholder: "(cm3)",
     category: "Shipping",
-    autocomplete: false,
     required: true,
-    readonly: false,
     toAdd: true,
   },
   {
@@ -47,20 +41,7 @@ const LocationMetadata = [
     label: "Address",
     placeholder: "Plot no. & Other details",
     category: "Shipping",
-    autocomplete: false,
     required: true,
-    readonly: false,
-    toAdd: true,
-  },
-  {
-    name: "landmark",
-    type: "string",
-    label: "Landmark",
-    placeholder: "Near anything recognisable?",
-    category: "Shipping",
-    autocomplete: false,
-    required: false,
-    readonly: false,
     toAdd: true,
   },
   {
@@ -69,20 +50,7 @@ const LocationMetadata = [
     label: "City",
     placeholder: "Patna, Delhi, etc.",
     category: "Shipping",
-    autocomplete: false,
     required: true,
-    readonly: false,
-    toAdd: true,
-  },
-  {
-    name: "district",
-    type: "string",
-    label: "District",
-    placeholder: "Specify district or area",
-    category: "Shipping",
-    autocomplete: false,
-    required: true,
-    readonly: false,
     toAdd: true,
   },
   {
@@ -93,61 +61,40 @@ const LocationMetadata = [
     category: "Shipping",
     autocomplete: true,
     required: true,
-    readonly: false,
     toAdd: true,
   },
   {
     name: "pinCode",
-    type: "number",
+    type: "string",
     label: "Pin Code",
     placeholder: "xxxxxx",
     category: "Shipping",
-    autocomplete: false,
     required: true,
-    readonly: false,
     toAdd: true,
   },
   {
-    name: "dateAdded",
-    type: "date",
-    label: "Date Added",
-    placeholder: "Date",
-    category: "Additional Info",
-    readonly: true,
-    autocomplete: false,
+    name: "managerName",
+    type: "text",
+    label: "Manager Name",
+    placeholder: "Name of the manager",
+    category: "Shipping",
+    required: true,
+    toAdd: true,
   },
   {
-    name: "addedBy",
-    type: "string",
-    label: "Added By",
-    placeholder: "Name",
-    category: "Additional Info",
-    readonly: true,
-    autocomplete: false,
-  },
-  {
-    name: "lastEditedDate",
-    type: "date",
-    label: "Last Edited Date",
-    placeholder: "Date",
-    category: "Additional Info",
-    readonly: true,
-    autocomplete: false,
-  },
-  {
-    name: "lastEditedBy",
-    type: "string",
-    label: "Last Edited By",
-    placeholder: "Name",
-    category: "Additional Info",
-    readonly: true,
-    autocomplete: false,
+    name: "managerPhone",
+    type: "text",
+    label: "Manager Phone",
+    placeholder: "Phone number of the manager",
+    category: "Shipping",
+    required: true,
+    toAdd: true,
   },
 ];
 
 const AddLocationModal = ({ open, handleClose, fetchLocations }) => {
   const [locationFormData, setLocationFormData] = useState({});
-  const { errorPopup } = useStore();
+  const { successPopup, errorPopup } = useStore();
 
   const handleLocationChange =
     (type, name, value) =>
@@ -165,19 +112,42 @@ const AddLocationModal = ({ open, handleClose, fetchLocations }) => {
       }
     };
 
-  const submitLocation = () => {
-    quickAdd("/inventory/warehouses/add", locationFormData).then((res) => {
-      if (res.status === 200) {
+  const submitLocation = async () => {
+    // ✅ Validation
+    const requiredFields = ["name", "code", "addressLine", "city", "state", "pinCode"];
+    for (let field of requiredFields) {
+      if (!locationFormData[field]) {
+        errorPopup(`Please fill in ${field}`);
+        return;
+      }
+    }
+
+    try {
+    const payload = {
+      ...locationFormData,
+      capacity: locationFormData.capacity
+        ? parseInt(locationFormData.capacity, 10)
+        : 0, // ✅ ensure integer
+      isActive: true,
+    };
+
+    const status = await createWarehouse(payload);
+
+      if (status === 200 || status === 201) {
+        successPopup("Warehouse created successfully!");
         fetchLocations().then(() => handleClose());
       } else {
-        errorPopup("Couldn't add location");
+        errorPopup("Failed to create warehouse");
       }
-    });
+    } catch (error) {
+      console.error("Error creating warehouse:", error);
+      errorPopup("Failed to create warehouse");
+    }
   };
 
   return (
     <Modal
-      title={"Add Location to your warehouse"}
+      title={"Add warehouse"}
       handleClose={handleClose}
       open={open}
       submit={submitLocation}

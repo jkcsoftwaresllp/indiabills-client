@@ -141,12 +141,12 @@ const AddProducts = () => {
       variants: formData.variants?.filter(variant => variant.key.trim() !== "") || []
     };
 
-    createProduct(apiData).then((response) => {
-      if (response.status === 201 || response.status === 200) {
+    createProduct(apiData).then((status) => {
+      if (status === 201 || status === 200) {
         successPopup("Item added successfully");
         navigate("/products");
       } else {
-        errorPopup(response.data?.message || "Failed to add item");
+        errorPopup("Failed to add item");
       }
     }).catch((error) => {
       console.error('Error creating product:', error);

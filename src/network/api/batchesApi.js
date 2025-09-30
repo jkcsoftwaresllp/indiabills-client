@@ -12,16 +12,10 @@ export async function getBatches(options = {}) {
     if (options.productId) params.append('productId', options.productId);
 
     const response = await serverInstance.get(`/internal/batches?${params.toString()}`);
-    return {
-      status: response.status,
-      data: response.data
-    };
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error('Failed to fetch batches:', error.response);
-    return {
-      status: error.response?.status || 500,
-      data: []
-    };
+    return [];
   }
 }
 
@@ -29,16 +23,10 @@ export async function getBatches(options = {}) {
 export async function getBatchById(id) {
   try {
     const response = await serverInstance.get(`/internal/batches/${id}`);
-    return {
-      status: response.status,
-      data: response.data
-    };
+    return response.data;
   } catch (error) {
     console.error(`Failed to fetch batch ${id}:`, error.response);
-    return {
-      status: error.response?.status || 500,
-      data: null
-    };
+    return null;
   }
 }
 

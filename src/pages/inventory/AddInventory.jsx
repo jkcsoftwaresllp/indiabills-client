@@ -46,7 +46,7 @@ const AddInventory = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const fetchLocations = async () => {
     const data = await getWarehouses();
-    setLocations(data);
+    setLocations(Array.isArray(data) ? data : []);
   };
 
   const navigate = useNavigate();

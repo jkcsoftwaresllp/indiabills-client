@@ -74,9 +74,25 @@ serverInstance.interceptors.request.use(
 
     return config;
   },
+  (error) => Promise.reject(error)
+);
 
+// ---- Response Interceptor ----
+serverInstance.interceptors.response.use(
+  (response) => response, // pass successful responses
   (error) => {
-    // Handle the error
+    if (error.response && error.response.status === 401) {
+      console.warn("Session expired or unauthorized. Redirecting to /login...");
+
+      // Clear stored sessions
+      localStorage.removeItem("session");
+      localStorage.removeItem("organizationContext");
+      localStorage.removeItem("tempUserSession");
+
+      // Redirect to login page
+      window.location.href = "/login";
+    }
+
     return Promise.reject(error);
   }
 );

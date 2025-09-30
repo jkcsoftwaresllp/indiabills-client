@@ -63,9 +63,8 @@ const EditBatch = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getBatchById(batchId);
-        if (response.status === 200) {
-          const batch = response.data;
+        const batch = await getBatchById(batchId);
+        if (batch) {
           setBatchData(batch);
 
           // Map batch data to form state
@@ -303,15 +302,9 @@ const EditBatch = () => {
           getWarehouses()
         ]);
         
-        if (productsResponse.status === 200) {
-          setItemsList(productsResponse.data);
-        }
-        if (suppliersResponse.status === 200) {
-          setSuppliersList(suppliersResponse.data);
-        }
-        if (warehousesResponse.status === 200) {
-          setWarehousesList(warehousesResponse.data);
-        }
+        setItemsList(Array.isArray(productsResponse) ? productsResponse : []);
+        setSuppliersList(Array.isArray(suppliersResponse) ? suppliersResponse : []);
+        setWarehousesList(Array.isArray(warehousesResponse) ? warehousesResponse : []);
       } catch (error) {
         console.error('Error fetching options:', error);
         // Fallback to old APIs

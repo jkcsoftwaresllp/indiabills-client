@@ -80,7 +80,6 @@ const InspectWarehouse = () => {
           metadata={metadata} 
           title="warehouses" 
           id={id}
-          url={`/internal/warehouses/${id}`}
         />
       </Box>
     </PageAnimate>
