@@ -40,32 +40,11 @@ const colDefs = [
 ];
 
 const ViewInventoryStock = () => {
-  const navigate = useNavigate();
-  const { successPopup, errorPopup } = useStore();
-
-  const menuOptions = [
-    {
-      label: "View Details",
-      onClick: (data) => {
-        console.log(`Viewing stock details ${data?.id}`);
-        navigate(`/inventory/stock/${data?.id}`);
-      },
-    },
-    {
-      label: "View Movements",
-      onClick: (data) => {
-        navigate(`/inventory/movements?productId=${data?.productID}&warehouseId=${data?.warehouseID}`);
-      },
-    },
-  ];
-
   return (
     <ViewData 
-      menuOptions={menuOptions} 
       title="Inventory Stock" 
       customDataFetcher={getInventoryStock}
       initialColDefs={colDefs}
-      disableControls={true}
     />
   );
 };

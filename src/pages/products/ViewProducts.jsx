@@ -137,54 +137,10 @@ const ViewProducts = () => {
     });
   };
 
-  // ✅ Menu options
-  const menuOptions = [
-    {
-      label: "Edit",
-      action: (row) => navigate(`/products/edit/${row.id}`),
-    },
-    {
-      label: "Delete",
-      action: async (row) => {
-        try {
-          const response = await deleteProduct(row.id);
-          if (response.status === 200) {
-            successPopup("Product deleted successfully");
-            refreshTableSetId(Date.now()); // refresh table instead of setProducts
-          } else {
-            errorPopup(response.data?.message || "Failed to delete product");
-          }
-        } catch (err) {
-          console.error("Delete failed:", err);
-          errorPopup("Failed to delete product");
-        }
-      },
-    },
-    {
-      label: (row) =>
-        wishlistItems.has(row.id) ? "Remove from Wishlist" : "Add to Wishlist",
-      action: (row) => handleWishlistToggle(row),
-    },
-  ];
-
-  // ✅ Custom fetcher that merges wishlist info into product data
-  const fetchProductsWithWishlist = async () => {
-    const response = await getProducts();
-    if (response.status === 200 && Array.isArray(response.data)) {
-      return response.data.map((product) => ({
-        ...product,
-        wishlist: wishlistItems.has(product.id),
-        onWishlistToggle: handleWishlistToggle, // pass handler down
-      }));
-    }
-    return [];
-  };
-
   return (
     <ViewData
-      menuOptions={menuOptions}
       title="Items"
-      customDataFetcher={fetchProductsWithWishlist}
+      customDataFetcher={getProducts}
       initialColDefs={colDefs}
     />
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUserOrganizations, createOrganization } from '../../network/api';
-import { getOrganizationContext, validateOrganizationData } from '../../utils/authHelper';
+import { getUserOrganizations, createOrganization, switchOrganization } from '../../network/api';
+import { getOrganizationContext, validateOrganizationData, setSession, setOrganizationContext } from '../../utils/authHelper';
 import { useStore } from '../../store/store';
 import PageAnimate from '../../components/Animate/PageAnimate';
 import {
@@ -34,8 +34,8 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { getOption } from '../../utils/FormHelper';
-import { getOrganizationById } from '../../network/api/organizationApi';
 import SwitchAccountIcon from '@mui/icons-material/SwitchAccount';
+import { getOrganizationById } from '../../network/api/organizationApi';
 import { getSession } from '../../utils/cacheHelper';
 
 const SetupPage = () => {
@@ -46,6 +46,7 @@ const SetupPage = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [creating, setCreating] = useState(false);
   const [errors, setErrors] = useState({});
+  const [switchingOrg, setSwitchingOrg] = useState(false);
   
   const { successPopup, errorPopup } = useStore();
   const navigate = useNavigate();
@@ -183,6 +184,54 @@ const SetupPage = () => {
       errorPopup('Failed to create organization');
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleSwitchOrganization = async (orgId) => {
+    setSwitchingOrg(true);
+    try {
+      const response = await switchOrganization(orgId);
+      if (response.status === 200) {
+        const { token, activeOrg, user } = response.data;
+        
+        // Update session with new organization context
+        const currentSession = getSession();
+        if (currentSession) {
+          const updatedSession = {
+            ...currentSession,
+            role: activeOrg.role.toLowerCase(),
+            organizationId: activeOrg.orgId,
+            token: token,
+            orgs: user.orgs || currentSession.orgs
+          };
+          
+          setSession(updatedSession);
+          
+          // Update organization context
+          const orgData = (user.orgs || currentSession.orgs)?.find(org => org.orgId === activeOrg.orgId);
+          if (orgData) {
+            setOrganizationContext({
+              id: activeOrg.orgId,
+              name: orgData.name || 'Organization',
+              domain: orgData.domain,
+              subdomain: orgData.subdomain,
+              logoUrl: orgData.logoUrl,
+              role: activeOrg.role.toLowerCase()
+            });
+          }
+          
+          successPopup(`Switched to ${orgData?.name || 'Organization'}`);
+          // Reload to refresh with new organization context
+          window.location.reload();
+        }
+      } else {
+        errorPopup('Failed to switch organization');
+      }
+    } catch (error) {
+      console.error('Error switching organization:', error);
+      errorPopup('Failed to switch organization');
+    } finally {
+      setSwitchingOrg(false);
     }
   };
 
@@ -462,7 +511,7 @@ const SetupPage = () => {
               </Typography>
             )}
 
-            <div className="flex gap-2 mt-3 flex-wrap">
+            <div className="flex gap-2 mt-3">
               <Chip
                 label={currentOrg.subscriptionStatus || 'trial'}
                 color={getStatusColor(currentOrg.subscriptionStatus)}
@@ -476,22 +525,16 @@ const SetupPage = () => {
                   variant="outlined"
                 />
               )}
-              {currentOrg.maxUsers && (
-                <Chip
-                  label={`Max Users: ${currentOrg.maxUsers}`}
-                  size="small"
-                  variant="outlined"
-                />
-              )}
             </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            {session.orgs && session.orgs.length > 1 && (
+          <div className="flex gap-2">
+            {session?.orgs && session.orgs.length > 1 && (
               <Button
-                variant="contained"
+                variant="outlined"
                 startIcon={<SwitchAccountIcon />}
                 onClick={() => navigate('/organization-selector')}
+                sx={{ mr: 1 }}
               >
                 Switch Organization
               </Button>
@@ -600,6 +643,15 @@ const SetupPage = () => {
                       <Typography variant="body2" color="textSecondary">
                         Status: {org.isActive ? 'Active' : 'Inactive'}
                       </Typography>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => handleSwitchOrganization(org.id)}
+                        disabled={switchingOrg}
+                        sx={{ mt: 1 }}
+                      >
+                        {switchingOrg ? 'Switching...' : 'Switch to this org'}
+                      </Button>
                     </CardContent>
                   </Card>
                 </Grid>

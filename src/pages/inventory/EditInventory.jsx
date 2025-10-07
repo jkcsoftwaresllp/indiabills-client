@@ -2,7 +2,7 @@ import StockIssuesEditTab from "./StockIssuesEditTab";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import BatchInvoicePreview from "./yeah"; // Import your batch
 import { useNavigate, useParams } from "react-router-dom";
-import { getRequest, getRow, getStuff, updatePut, getBatchById, updateBatch, getProducts, getSuppliers, getWarehouses } from "../../network/api";
+import { getBatchById, updateBatch, getProducts, getSuppliers, getWarehouses } from "../../network/api";
 import { useEffect, useState } from "react";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import BatchItemsEditTab from "./BatchItemsEditTab";
@@ -23,19 +23,6 @@ const EditBatch = () => {
 
   const [openInvoice, setOpenInvoice] = useState(false);
   const [organization, setOrganization] = useState({});
-
-  useEffect(() => {
-    const fetchOrganization = async () => {
-      try {
-        const data = await getRequest(`/organization`);
-        setOrganization(data);
-      } catch (error) {
-        console.error("Error fetching organization details:", error);
-      }
-    };
-
-    fetchOrganization();
-  }, []);
 
   const navigate = useNavigate();
   const { successPopup, errorPopup } = useStore();
@@ -71,8 +58,8 @@ const EditBatch = () => {
           setFormState({
             batchNumber: batch.batchCode || "",
             invoiceNumber: batch.invoiceNumber || "",
-            batchPrice: batch.quantity * batch.unitCost || "",
-            entryDate: batch.purchaseDate ? batch.purchaseDate.substring(0, 10) : "",
+            batchPrice: (batch.quantity * batch.unitCost) || "",
+            entryDate: batch.purchaseDate ? batch.purchaseDate.split('T')[0] : "",
             qualityPass: batch.qualityPass || "ok",
             status: batch.isActive ? "active" : "inactive",
             warehouseId: batch.warehouseId || "",
@@ -87,8 +74,8 @@ const EditBatch = () => {
               recordUnitPrice: batch.unitCost || "",
               discount: 0,
               discountType: "percentage",
-              manufactureDate: batch.manufactureDate ? batch.manufactureDate.substring(0, 10) : "",
-              expiryDate: batch.expiryDate ? batch.expiryDate.substring(0, 10) : "",
+              manufactureDate: batch.manufactureDate ? batch.manufactureDate.split('T')[0] : "",
+              expiryDate: batch.expiryDate ? batch.expiryDate.split('T')[0] : "",
             }],
             stockIssues: [],
           });
@@ -266,7 +253,7 @@ const EditBatch = () => {
         batchCode: formState.batchNumber,
         purchaseDate: formState.entryDate,
         quantity: Number(formState.subBatch[0]?.quantity),
-        remainingQuantity: Number(formState.subBatch[0]?.quantity), // Assuming no consumption yet
+        remainingQuantity: Number(formState.subBatch[0]?.quantity),
         unitCost: Number(formState.subBatch[0]?.recordUnitPrice),
         warehouseId: Number(formState.warehouseId),
         supplierId: Number(formState.supplierId),
@@ -275,9 +262,9 @@ const EditBatch = () => {
         isActive: formState.status === "active"
       };
 
-      const response = await updateBatch(batchId, updateData);
+      const status = await updateBatch(batchId, updateData);
       
-      if (response === 200) {
+      if (status === 200) {
         successPopup("Batch updated successfully!");
         navigate("/inventory");
       } else {
@@ -296,28 +283,18 @@ const EditBatch = () => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [productsResponse, suppliersResponse, warehousesResponse] = await Promise.all([
-          getProducts(),
-          getSuppliers(),
-          getWarehouses()
-        ]);
+        const productsResponse = await getProducts();
+        const suppliersResponse = await getSuppliers();
+        const warehousesResponse = await getWarehouses();
         
         setItemsList(Array.isArray(productsResponse) ? productsResponse : []);
         setSuppliersList(Array.isArray(suppliersResponse) ? suppliersResponse : []);
         setWarehousesList(Array.isArray(warehousesResponse) ? warehousesResponse : []);
       } catch (error) {
         console.error('Error fetching options:', error);
-        // Fallback to old APIs
-        try {
-          const itemsData = await getStuff("/products/options");
-          setItemsList(itemsData);
-          const suppliersData = await getStuff("/suppliers/options");
-          setSuppliersList(suppliersData);
-          const warehousesData = await getStuff("/inventory/warehouses");
-          setWarehousesList(warehousesData);
-        } catch (fallbackError) {
-          console.error('Fallback APIs also failed:', fallbackError);
-        }
+        setItemsList([]);
+        setSuppliersList([]);
+        setWarehousesList([]);
       }
     };
     fetchOptions();
@@ -438,7 +415,7 @@ const EditBatch = () => {
                 >
                   {suppliersList.map((supplier) => (
                     <MenuItem key={supplier.id} value={supplier.id}>
-                      {supplier.name}
+                      {supplier.supplierName || supplier.name}
                     </MenuItem>
                   ))}
                 </Select>

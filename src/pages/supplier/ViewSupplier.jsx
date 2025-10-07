@@ -48,39 +48,8 @@ const colDefs = [
 ];
 
 const ViewSuppliers = () => {
-  const navigate = useNavigate();
-  const { successPopup, errorPopup, refreshTableSetId } = useStore();
-
-  const menuOptions = [
-    {
-      label: "Inspect",
-      onClick: (data) => {
-        const currentPath = window.location.pathname;
-        if (currentPath.startsWith('/operator/')) {
-          navigate(`/operator/suppliers/${data?.id}`);
-        } else {
-          navigate(`/suppliers/${data?.id}`);
-        }
-      },
-    },
-    {
-      label: "Delete",
-      onClick: (data) => {
-        deleteSupplier(data?.id).then((response) => {
-          if (response === 200) {
-            successPopup("Deleted successfully");
-            refreshTableSetId(data?.id);
-          } else {
-            errorPopup("Failed to delete");
-          }
-        });
-      },
-    },
-  ];
-
   return (
     <ViewData 
-      menuOptions={menuOptions} 
       title="Suppliers" 
       url="/suppliers"
       customDataFetcher={getSuppliers}

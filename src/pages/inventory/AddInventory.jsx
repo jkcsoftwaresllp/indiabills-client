@@ -19,7 +19,7 @@ import {
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useEffect, useState } from "react";
-import { getStuff, addRow, getWarehouses, getProducts, getSuppliers, createBatch } from "../../network/api";
+import { getWarehouses, getProducts, getSuppliers, createBatch } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -45,8 +45,13 @@ const AddInventory = () => {
 
   const [selectedLocation, setSelectedLocation] = useState(null);
   const fetchLocations = async () => {
-    const data = await getWarehouses();
-    setLocations(Array.isArray(data) ? data : []);
+    try {
+      const data = await getWarehouses();
+      setLocations(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error fetching warehouses:', error);
+      setLocations([]);
+    }
   };
 
   const navigate = useNavigate();
@@ -146,26 +151,16 @@ const AddInventory = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Use new APIs
-        const [productsData, suppliersData] = await Promise.all([
-          getProducts(),
-          getSuppliers()
-        ]);
+        const productsData = await getProducts();
+        const suppliersData = await getSuppliers();
         
         setProducts(Array.isArray(productsData) ? productsData : []);
         setSuppliers(Array.isArray(suppliersData) ? suppliersData : []);
       } catch (error) {
         console.error('Error fetching data:', error);
-        // Fallback to old APIs
-        try {
-          const productsData = await getStuff("/products/options");
-          const suppliersData = await getStuff("/suppliers/options");
-          setProducts(Array.isArray(productsData) ? productsData : []);
-          setSuppliers(Array.isArray(suppliersData) ? suppliersData : []);
-        } catch (fallbackError) {
-          console.error('Fallback API also failed:', fallbackError);
-          errorPopup('Failed to load products and suppliers');
-        }
+        setProducts([]);
+        setSuppliers([]);
+        errorPopup('Failed to load products and suppliers');
       }
     };
 
@@ -211,8 +206,9 @@ const AddInventory = () => {
       if (product) {
         const productInfo = products.find((p) => p.id.toString() === product.itemId);
 
-        if (productInfo && productInfo.packSize) {
-          const unitPrice = Number(productInfo.purchaseRate) / Number(productInfo.packSize);
+        if (productInfo) {
+          const packSize = productInfo.packSize || 1;
+          const unitPrice = Number(productInfo.purchasePrice || productInfo.purchaseRate || 0) / Number(packSize);
           const faultyQuantity = Number(issue.faultyQuantity) || 0;
 
           const issuePrice = unitPrice * faultyQuantity;

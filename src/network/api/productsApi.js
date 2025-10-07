@@ -4,7 +4,8 @@ import serverInstance from './api-config';
 export async function getProducts() {
   try {
     const response = await serverInstance.get('/internal/products');
-    return Array.isArray(response.data) ? response.data : [];
+    // normalize always to array
+    return response.data?.data || [];
   } catch (error) {
     console.error('Failed to fetch products:', error.response);
     return [];

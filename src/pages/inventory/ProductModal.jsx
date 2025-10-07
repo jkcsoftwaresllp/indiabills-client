@@ -129,7 +129,7 @@ const ProductModal = ({
                 <Typography variant="body1">
                   Price per Pack: ₹
                   {formatToIndianCurrency(
-                    selectedProduct.purchaseRate.toFixed(2)
+                    (selectedProduct.purchasePrice || selectedProduct.purchaseRate || 0).toFixed(2)
                   )}
                 </Typography>
               </Grid>

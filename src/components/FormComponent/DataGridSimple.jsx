@@ -3,7 +3,7 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
 import { useRef, useCallback } from "react";
 
-const DataGrid = ({
+const DataGridSimple = ({
   colDefs,
   rowData,
   onCellValueChanged,
@@ -15,7 +15,7 @@ const DataGrid = ({
   const onSelectionChangedCallback = useCallback(() => {
     if (gridRef.current && gridRef.current.api) {
       const selectedRows = gridRef.current.api.getSelectedRows();
-      console.log('Selected rows in DataGrid:', selectedRows);
+      console.log('Selected rows in grid:', selectedRows);
       if (onSelectionChanged) {
         onSelectionChanged({ api: gridRef.current.api });
       }
@@ -58,4 +58,4 @@ const DataGrid = ({
   );
 };
 
-export default DataGrid;
+export default DataGridSimple;

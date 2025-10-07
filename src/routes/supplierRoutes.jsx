@@ -5,6 +5,7 @@ import ProtectedRoute from './protectedRoutes';
 const ViewSuppliers = lazy(() => import('../pages/supplier/ViewSupplier'));
 const AddSuppliers = lazy(() => import('../pages/supplier/AddSupplier'));
 const InspectSupplier = lazy(() => import('../pages/supplier/InspectSupplier'));
+const EditSupplier = lazy(() => import('../pages/supplier/EditSupplier'));
 
 const SupplierRoutes = () => {
   return [
@@ -34,6 +35,16 @@ const SupplierRoutes = () => {
       element={
         <ProtectedRoute
           element={InspectSupplier}
+          roles={['admin', 'operators']}
+        />
+      }
+    />,
+    <Route
+      key="suppliers-edit"
+      path="/suppliers/:supplierId/edit"
+      element={
+        <ProtectedRoute
+          element={EditSupplier}
           roles={['admin', 'operators']}
         />
       }

@@ -41,26 +41,11 @@ const colDefs = [
 ];
 
 const ViewInventoryMovements = () => {
-  const navigate = useNavigate();
-  const { successPopup, errorPopup } = useStore();
-
-  const menuOptions = [
-    {
-      label: "Inspect",
-      onClick: (data) => {
-        console.log(`Inspecting movement ${data?.id}`);
-        navigate(`/inventory/movements/${data?.id}`);
-      },
-    },
-  ];
-
   return (
     <ViewData 
-      menuOptions={menuOptions} 
       title="Inventory Movements" 
       customDataFetcher={getInventoryMovements}
       initialColDefs={colDefs}
-      disableControls={true}
       dateRange={true}
     />
   );

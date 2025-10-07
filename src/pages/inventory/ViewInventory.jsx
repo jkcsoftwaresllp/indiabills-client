@@ -34,7 +34,7 @@ import {
   PrecisionManufacturing as PrecisionManufacturingIcon,
   Warehouse as WarehouseIcon,
 } from "@mui/icons-material";
-import { getStuff, getCount, deleteRow, getWarehouses, getBatches, deleteBatch } from "../../network/api";
+import { getStuff, getCount, deleteRow, getWarehouses, getBatches, deleteBatch, getProducts, getSuppliers } from "../../network/api";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import InventoryTable from "./InventoryTable";
 import Checklist from "../../components/FormComponent/Checklist";
@@ -106,6 +106,9 @@ const ViewInventory = () => {
     { headerName: "ID", field: "batchId", width: 50, cellRenderer: (params) => (<p><span className="text-blue-950">#</span><span className="font-medium">{params.value}</span></p>) },
     { headerName: "Batch Number", field: "batchNumber", width: 150 },
     { headerName: "Invoice Number", field: "invoiceNumber", width: 150 },
+    { headerName: "Product Name", field: "productName", width: 200 },
+    { headerName: "Quantity", field: "quantity", width: 100 },
+    { headerName: "Remaining", field: "remainingQuantity", width: 100 },
     { headerName: "Sub Batches", field: "subBatches", width: 120, cellRenderer: (params) => (
           <div className="flex items-center">
             <div className="flex items-center gap-2">
@@ -152,20 +155,22 @@ const ViewInventory = () => {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [pData, sData, wData] = await Promise.all([
-          getCount("/products/count"),
-          getCount("/suppliers/count"),
-          getWarehouses(),
+        const wData = await getWarehouses();
+        const warehouses = Array.isArray(wData) ? wData : [];
+
+        // Get counts from products and suppliers
+        const [productsData, suppliersData] = await Promise.all([
+          getProducts(),
+          getSuppliers()
         ]);
+        
+        setPCount(Array.isArray(productsData) ? productsData.length : 0);
+        setSCount(Array.isArray(suppliersData) ? suppliersData.length : 0);
+        setWarehouses(warehouses);
 
-        setPCount(pData);
-        setSCount(sData);
-        setWarehouses(Array.isArray(wData) ? wData : []);
-
-        if (Array.isArray(wData) && wData.length === 1) {
-          setSelectedWarehouse(wData[0]);
-          fetchProducts(wData[0].id);
-          fetchBatches();
+        if (warehouses.length === 1) {
+          setSelectedWarehouse(warehouses[0]);
+          fetchProducts(warehouses[0].id);
         }
 
         setLoading(false);

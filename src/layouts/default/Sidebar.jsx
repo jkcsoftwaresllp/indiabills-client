@@ -84,7 +84,7 @@ const Sidebar = () => {
         const currentSession = getSession();
         if (currentSession) {
           // Set temp session for org selection
-          localStorage.setItem('tempUserSession', JSON.stringify({
+          const tempSessionData = {
             token: currentSession.token,
             user: {
               id: currentSession.id,
@@ -93,7 +93,8 @@ const Sidebar = () => {
               username: currentSession.username,
               orgs: currentSession.orgs
             }
-          }));
+          };
+          localStorage.setItem('tempUserSession', JSON.stringify(tempSessionData));
         }
         // Clear current session and org context
         localStorage.removeItem('session');
@@ -103,6 +104,19 @@ const Sidebar = () => {
     } catch (error) {
       console.error("Organization logout error:", error);
       // Fallback: clear session and go to org selector
+      const currentSession = getSession();
+      if (currentSession) {
+        localStorage.setItem('tempUserSession', JSON.stringify({
+          token: currentSession.token,
+          user: {
+            id: currentSession.id,
+            name: currentSession.name,
+            email: currentSession.email,
+            username: currentSession.username,
+            orgs: currentSession.orgs
+          }
+        }));
+      }
       localStorage.removeItem('session');
       localStorage.removeItem('organizationContext');
       navigate("/organization-selector");

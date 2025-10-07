@@ -8,7 +8,9 @@ const colDefs = [
   { 
     field: "id", 
     headerName: "ID", 
-    width: 50, 
+    width: 50,
+    checkboxSelection: true,
+    headerCheckboxSelection: false,
     cellRenderer: (params) => (
       <p>
         <span className="text-blue-950">#</span>
@@ -39,44 +41,8 @@ const colDefs = [
 ];
 
 const ViewWarehouses = () => {
-  const navigate = useNavigate();
-  const { successPopup, errorPopup, refreshTableSetId } = useStore();
-
-  const menuOptions = [
-    {
-      label: "Inspect",
-      action: (data) => {
-        console.log(`Inspecting warehouse ${data?.id}`);
-        const currentPath = window.location.pathname;
-        if (currentPath.startsWith('/operator/')) {
-          navigate(`/operator/warehouses/${data?.id}`);
-        } else {
-          navigate(`/warehouses/${data?.id}`);
-        }
-      },
-    },
-    {
-      label: "Delete",
-      action: async (data) => {
-        try {
-          const status = await deleteWarehouse(data?.id);
-          if (status === 200) {
-            successPopup("Deleted successfully");
-            refreshTableSetId(data?.id);
-          } else {
-            errorPopup("Failed to delete warehouse");
-          }
-        } catch (error) {
-          console.error("Delete failed:", error);
-          errorPopup("Failed to delete warehouse");
-        }
-      },
-    },
-  ];
-
   return (
     <ViewData 
-      menuOptions={menuOptions} 
       title="Warehouses" 
       url="/internal/warehouses"
       initialColDefs={colDefs}

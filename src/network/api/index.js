@@ -2,7 +2,7 @@ import serverInstance from "./api-config";
 import { getWarehouses, createWarehouse, updateWarehouse, deleteWarehouse, getWarehouseById } from './warehouseApi';
 import { getTransportPartners, createTransportPartner, updateTransportPartner, deleteTransportPartner, getTransportPartnerById } from './transportApi';
 import { getInventoryMovements, getInventoryMovementById, createInventoryMovement } from './inventoryMovementsApi';
-import { getInventoryStock, getInventoryStockById } from './inventoryStockApi';
+import { getInventoryStock, getInventoryStockById, createInventoryStock } from './inventoryStockApi';
 import { getReconciliations, getReconciliationById, createReconciliation, getReconciliationDetails, addReconciliationDetails, updateReconciliationStatus } from './reconciliationsApi';
 import { getBatches, getBatchById, createBatch, updateBatch, deleteBatch } from './batchesApi';
 import { getCustomers, getCustomerById, createCustomer, updateCustomer, deleteCustomer } from './customersApi';
@@ -308,6 +308,7 @@ export {
   // Inventory Stock APIs
   getInventoryStock,
   getInventoryStockById,
+  createInventoryStock,
   // Reconciliation APIs
   getReconciliations,
   getReconciliationById,
@@ -332,9 +333,7 @@ export {
   createOrganization,
   getOrganization,
   updateOrganization,
-  // updateOrganizationById,
   // Supplier APIs
-  getSuppliers,
   getSupplierById,
   createSupplier,
   updateSupplier,
@@ -342,6 +341,7 @@ export {
   // Product APIs
   getProducts,
   getProductById,
+  getSuppliers,
   createProduct,
   updateProduct,
   deleteProduct,
