@@ -5,6 +5,7 @@ import ProtectedRoute from './protectedRoutes';
 const OfferList = lazy(() => import('../pages/offers/ViewOffer'));
 const AddOffer = lazy(() => import('../pages/offers/AddOffer'));
 const InspectOffer = lazy(() => import('../pages/offers/InspectOffer'));
+const EditOffer = lazy(() => import('../pages/offers/EditOffer'));
 
 const OfferRoutes = () => {
   return [
@@ -34,6 +35,16 @@ const OfferRoutes = () => {
       element={
         <ProtectedRoute
           element={InspectOffer}
+          roles={['admin', 'operators']}
+        />
+      }
+    />,
+    <Route
+      key="offers-edit"
+      path="/offers/:offerId/edit"
+      element={
+        <ProtectedRoute
+          element={EditOffer}
           roles={['admin', 'operators']}
         />
       }

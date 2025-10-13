@@ -36,6 +36,7 @@ const EditSupplier = lazy(() => import('../pages/supplier/EditSupplier'));
 const ViewOffer = lazy(() => import('../pages/offers/ViewOffer'));
 const AddOffer = lazy(() => import('../pages/offers/AddOffer'));
 const InspectOffer = lazy(() => import('../pages/offers/InspectOffer'));
+const EditOffer = lazy(() => import('../pages/offers/EditOffer'));
 
 const ViewCustomers = lazy(() => import('../pages/customers/ViewCustomers'));
 const AddCustomers = lazy(() => import('../pages/customers/AddCustomers'));
@@ -47,6 +48,7 @@ const EditCustomerAddress = lazy(() => import('../pages/customers/EditCustomerAd
 const ViewTransport = lazy(() => import('../pages/transport/ViewTransport'));
 const AddTransport = lazy(() => import('../pages/transport/AddTransport'));
 const InspectTransport = lazy(() => import('../pages/transport/InspectTransport'));
+const EditTransport = lazy(() => import('../pages/transport/EditTransport'));
 
 const OperatorRoutes = () => {
   return (
@@ -89,6 +91,7 @@ const OperatorRoutes = () => {
           <Route path="offers" element={<ViewOffer />} />
           <Route path="offers/add" element={<AddOffer />} />
           <Route path="offers/:offerId" element={<InspectOffer />} />
+          <Route path="offers/:offerId/edit" element={<EditOffer />} />
           
           {/* Customers Routes */}
           <Route path="customers" element={<ViewCustomers />} />
@@ -102,6 +105,7 @@ const OperatorRoutes = () => {
           <Route path="transport" element={<ViewTransport />} />
           <Route path="transport/add" element={<AddTransport />} />
           <Route path="transport/:id" element={<InspectTransport />} />
+          <Route path="transport/:id/edit" element={<EditTransport />} />
         </Route>
       </Routes>
     </Suspense>

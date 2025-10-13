@@ -1,8 +1,8 @@
 import React from "react";
 import ViewData from "../../layouts/form/ViewData";
+import { getOffers, deleteOffer } from "../../network/api";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../store/store";
-import { getOffers, deleteOffer } from "../../network/api";
 
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
@@ -15,63 +15,92 @@ const formatDate = (dateString) => {
 };
 
 const colDefs = [
-  { field: "id", headerName: "ID", width: 50, cellRenderer: (params) => (<p><span className="text-blue-950">#</span><span className="font-medium">{params.value}</span></p>) },
-  { field: "name", headerName: "Offer Name", filter: true, editable: true, cellStyle: { textTransform: 'capitalize' } },
-  { field: "description", headerName: "Description", cellStyle: { textTransform: 'capitalize' } },
-  { field: "offerType", headerName: "Offer Type", cellStyle: { textTransform: 'capitalize' } },
-  { field: "discountType", headerName: "Discount Type", cellStyle: { textTransform: 'capitalize' } },
-  { field: "discountValue", headerName: "Discount Value" },
-  { field: "maxDiscountAmount", headerName: "Max Discount Amount", cellClassRules: { money: (p) => p.value } },
-  { field: "minOrderAmount", headerName: "Min Order Amount", cellClassRules: { money: (p) => p.value } },
-  { field: "startDate", headerName: "Start Date", valueFormatter: (p) => formatDate(p.value) },
-  { field: "endDate", headerName: "End Date", valueFormatter: (p) => formatDate(p.value) },
-  { field: "isActive", headerName: "Status", cellRenderer: (params) => (
-    <span className={`py-1 px-3 rounded-full text-xs ${params.value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-      {params.value ? 'Active' : 'Inactive'}
-    </span>
-  )},
-  { field: "createdAt", headerName: "Created At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
-  { field: "updatedAt", headerName: "Updated At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
+  {
+    field: "id",
+    headerName: "ID",
+    width: 50,
+    checkboxSelection: true,
+    headerCheckboxSelection: false,
+    cellRenderer: (params) => (
+      <p>
+        <span className="text-blue-950">#</span>
+        <span className="font-medium">{params.value}</span>
+      </p>
+    ),
+  },
+  { field: "name", headerName: "Offer Name", filter: true, editable: true, cellStyle: { textTransform: "capitalize" } },
+  { field: "description", headerName: "Description", editable: true },
+  { field: "offerType", headerName: "Offer Type", editable: true },
+  { field: "discountType", headerName: "Discount Type", editable: true },
+  { field: "discountValue", headerName: "Discount Value", editable: true },
+  { field: "maxDiscountAmount", headerName: "Max Discount Amount", editable: true },
+  { field: "minOrderAmount", headerName: "Min Order Amount", editable: true },
+  {
+    field: "startDate",
+    headerName: "Start Date",
+    editable: true,
+    valueFormatter: (p) => formatDate(p.value),
+  },
+  {
+    field: "endDate",
+    headerName: "End Date",
+    editable: true,
+    valueFormatter: (p) => formatDate(p.value),
+  },
+  {
+    field: "isActive",
+    headerName: "Status",
+    cellRenderer: (params) => (
+      <span
+        className={`py-1 px-3 rounded-full text-xs ${
+          params.value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+        }`}
+      >
+        {params.value ? "Active" : "Inactive"}
+      </span>
+    ),
+  },
+  {
+    field: "createdAt",
+    headerName: "Created At",
+    valueFormatter: ({ value }) => formatDate(value),
+  },
+  {
+    field: "updatedAt",
+    headerName: "Updated At",
+    valueFormatter: ({ value }) => formatDate(value),
+  },
 ];
 
 const ViewOffers = () => {
-  const navigate = useNavigate();
-  const { successPopup, errorPopup, refreshTableSetId } = useStore();
-
-  const menuOptions = [
-    {
-      label: "Inspect",
-      onClick: (data) => {
-        const currentPath = window.location.pathname;
-        if (currentPath.startsWith('/operator/')) {
-          navigate(`/operator/offers/${data?.id}`);
-        } else {
-          navigate(`/offers/${data?.id}`);
-        }
-      },
-    },
-    {
-      label: "Delete",
-      onClick: (data) => {
-        deleteOffer(data?.id).then((response) => {
-          if (response === 200) {
-            successPopup("Deleted successfully");
-            refreshTableSetId(data?.id);
-          } else {
-            errorPopup("Failed to delete");
-          }
-        });
-      }
-    }
-  ];
-
   return (
-    <ViewData 
-      menuOptions={menuOptions} 
-      title="Offers" 
+    <ViewData
+      title="Offers"
       url="/offers"
-      customDataFetcher={getOffers}
-      initialColDefs={colDefs} 
+      customDataFetcher={async () => {
+        const response = await getOffers();
+        //Map backend snake_case → camelCase
+        if (response?.data) {
+          return response.data.map((offer) => ({
+            id: offer.id,
+            name: offer.name,
+            description: offer.description,
+            offerType: offer.offer_type,
+            discountType: offer.discount_type,
+            discountValue: offer.discount_value,
+            maxDiscountAmount: offer.max_discount_amount,
+            minOrderAmount: offer.min_order_amount,
+            startDate: offer.start_date,
+            endDate: offer.end_date,
+            isActive: offer.is_active,
+            createdAt: offer.created_at,
+            updatedAt: offer.updated_at,
+          }));
+        }
+        return [];
+      }}
+      initialColDefs={colDefs}
+      onDelete={deleteOffer}
     />
   );
 };

@@ -138,3 +138,14 @@ export async function deleteBatch(id) {
     return error.response?.status || 500;
   }
 }
+
+// Get batches by warehouse ID
+export async function getBatchesByWarehouse(warehouseId) {
+  try {
+    const response = await serverInstance.get(`/internal/batches/warehouse/${warehouseId}`);
+    return Array.isArray(response.data) ? response.data : [];
+  } catch (error) {
+    console.error(`Failed to fetch batches for warehouse ${warehouseId}:`, error.response);
+    return [];
+  }
+}

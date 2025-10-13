@@ -50,15 +50,29 @@ const AddOffer = () => {
 	};
 
 	const submit = async () => {
-		createOffer(formData).then((status) => {
-			if (status === 201 || status === 200) {
-				successPopup("Offer created successfully!");
-				navigate('/offers');
-			} else {
-				errorPopup("Failed to create the offer :(");
-			}
-		});
-	};
+  const payload = {
+    name: formData.name.trim(),
+    description: formData.description?.trim() || "",
+    offer_type: formData.offerType,
+    discount_type: formData.discountType,
+    discount_value: Number(formData.discountValue) || 0,
+    max_discount_amount: Number(formData.maxDiscountAmount) || 0,
+    min_order_amount: Number(formData.minOrderAmount) || 0,
+    start_date: new Date(formData.startDate).toISOString(),
+    end_date: new Date(formData.endDate).toISOString(),
+    is_active: Boolean(formData.isActive),
+  };
+
+  const status = await createOffer(payload);
+
+  if (status === 201 || status === 200) {
+    successPopup("Offer created successfully!");
+    navigate('/offers');
+  } else {
+    errorPopup("Failed to create the offer :(");
+  }
+};
+
 
 	const steps = ["Basic Info", "Discount Details"];
 
