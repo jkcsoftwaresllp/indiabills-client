@@ -7,7 +7,7 @@ import InputBox from "../../components/FormComponent/InputBox";
 import Dropdown from "../../components/FormComponent/Dropdown";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { addRow, uploadImg } from "../../network/api";
+import { createCustomer } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import ImageUpload from "../../components/FormComponent/ImageUpload";
@@ -29,7 +29,7 @@ const AddCustomers = () => {
   }, [page]);
 
   const nextPage = useCallback(() => {
-    if (page < 3) {
+    if (page < 2) {
       setPage(page + 1);
     }
   }, [page]);
@@ -48,33 +48,36 @@ const AddCustomers = () => {
       return;
     }
 
-    let workaround = "";
+    let avatar = "";
     if (image) {
-      const ImageData = await renameAndOptimize(formData.customerName, image);
+      const ImageData = await renameAndOptimize(formData.first_name, image);
       const response = await uploadImg(ImageData.image, true);
       if (response !== 200) {
         console.error("Failed to upload the image");
         return;
       }
-      workaround = ImageData.name;
+      avatar = ImageData.name;
     }
 
     const finalData = {
       ...formData,
-      avatar: workaround,
+      avatar: avatar,
     };
 
-    addRow("/customers/add", finalData).then((status) => {
+    try {
+      const status = await createCustomer(finalData);
       if (status === 201 || status === 200) {
         successPopup("Customer registered successfully!");
         navigate("/customers");
       } else {
         errorPopup("Failed to register the customer :(");
       }
-    });
+    } catch (error) {
+      errorPopup(error.message || "Failed to register the customer :(");
+    }
   };
 
-  const steps = ["User", "Verification", "Address"];
+  const steps = ["Basic Information", "Business Details"];
 
   return (
     <PageAnimate>
@@ -110,17 +113,10 @@ const AddCustomers = () => {
                   handleChange={handleChange}
                 />
               )}
-              {page === 3 && (
-                <AddressPage
-                  formData={formData}
-                  setFormData={setFormData}
-                  handleChange={handleChange}
-                />
-              )}
             </main>
 
             <div className={"p-2 flex flex-col gap-4"}>
-              {page === 3 && (
+              {page === 2 && (
                 <button
                   className="p-3 flex-grow shadow-xl form-button-submit"
                   onClick={submit}
@@ -128,7 +124,7 @@ const AddCustomers = () => {
                   <CheckCircleIcon />
                 </button>
               )}
-              {page < 3 && (
+              {page < 2 && (
                 <button
                   className="p-3 flex-grow shadow-xl form-button-nav"
                   onClick={nextPage}
@@ -160,32 +156,52 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage })
       <div className="p-8 flex flex-col items-center gap-8 idms-bg">
         <main className="grid grid-cols-2 gap-6">
           <InputBox
-            name="customerName"
+            name="first_name"
             type="string"
-            label="Customer Name"
+            label="First Name"
             placeholder={""}
-            value={formData.customerName}
+            value={formData.first_name}
+            onChange={handleChange}
+            required
+          />
+          <InputBox
+            name="last_name"
+            type="string"
+            label="Last Name"
+            placeholder={""}
+            value={formData.last_name}
+            onChange={handleChange}
+            required
+          />
+          <InputBox
+            name="middle_name"
+            type="string"
+            label="Middle Name"
+            placeholder={""}
+            value={formData.middle_name}
             onChange={handleChange}
           />
           <ImageUpload setImage={setImage} />
           <MobileField
-            label={"Mobile"}
-            name={"mobile"}
+            label={"Phone"}
+            name={"phone"}
             setData={setFormData}
             data={formData}
+            required
           />
           <InputBox
             name="email"
-            type="string"
+            type="email"
             label="Email"
             placeholder={"example@domain.com"}
             value={formData.email}
             onChange={handleChange}
+            required
           />
           <Dropdown
             name={"gender"}
             label="Gender"
-            options={["Male", "Female", "Others", "Prefer not to say"]}
+            options={["male", "female", "other", "prefer_not_to_say"]}
             selectedData={formData}
             setValue={setFormData}
           />
@@ -196,6 +212,16 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage })
             placeholder={"Password"}
             value={formData.password}
             onChange={handleChange}
+            required
+          />
+          <InputBox
+            name="confirm_password"
+            type="password"
+            label="Confirm Password"
+            placeholder={"Confirm Password"}
+            value={formData.confirm_password}
+            onChange={handleChange}
+            required
           />
         </main>
       </div>
@@ -205,17 +231,25 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage })
 
 BasicPage.displayName = "BasicPage";
 
-const BusinessPage = React.memo(({ formData, handleChange }) => {
+const BusinessPage = React.memo(({ formData, handleChange, setFormData }) => {
   return (
     <MultiPageAnimate>
       <div className="p-8 flex flex-col items-center gap-8 idms-bg">
         <main className="grid grid-cols-2 gap-6">
+          <Dropdown
+            name={"customer_type"}
+            label="Customer Type"
+            options={["individual", "business"]}
+            selectedData={formData}
+            setValue={setFormData}
+            required
+          />
           <InputBox
-            name="businessName"
+            name="business_name"
             type="string"
             label="Business Name"
             placeholder={"Business Name"}
-            value={formData.businessName}
+            value={formData.business_name}
             onChange={handleChange}
           />
           <InputBox
@@ -227,35 +261,51 @@ const BusinessPage = React.memo(({ formData, handleChange }) => {
             onChange={handleChange}
           />
           <InputBox
-            name="fssai"
+            name="fssai_number"
             type="text"
-            label="FSSAI"
-            placeholder={"FSSAI"}
-            value={formData.fssai}
+            label="FSSAI Number"
+            placeholder={"FSSAI Number"}
+            value={formData.fssai_number}
             onChange={handleChange}
           />
           <InputBox
-            name="registrationNumber"
-            type="text"
-            label="Registration Number"
-            placeholder={"Registration Number"}
-            value={formData.registrationNumber}
-            onChange={handleChange}
-          />
-          <InputBox
-            name="aadharNumber"
-            type="text"
-            label="Aadhar Number"
-            placeholder={"Aadhar Number"}
-            value={formData.aadharNumber}
-            onChange={handleChange}
-          />
-          <InputBox
-            name="panNumber"
+            name="pan_number"
             type="text"
             label="PAN Number"
             placeholder={"PAN Number"}
-            value={formData.panNumber}
+            value={formData.pan_number}
+            onChange={handleChange}
+          />
+          <InputBox
+            name="aadhar_number"
+            type="text"
+            label="Aadhar Number"
+            placeholder={"Aadhar Number"}
+            value={formData.aadhar_number}
+            onChange={handleChange}
+          />
+          <InputBox
+            name="date_of_birth"
+            type="date"
+            label="Date of Birth"
+            placeholder={""}
+            value={formData.date_of_birth}
+            onChange={handleChange}
+          />
+          <InputBox
+            name="credit_limit"
+            type="number"
+            label="Credit Limit"
+            placeholder={"0"}
+            value={formData.credit_limit}
+            onChange={handleChange}
+          />
+          <InputBox
+            name="loyalty_points"
+            type="number"
+            label="Loyalty Points"
+            placeholder={"0"}
+            value={formData.loyalty_points}
             onChange={handleChange}
           />
         </main>

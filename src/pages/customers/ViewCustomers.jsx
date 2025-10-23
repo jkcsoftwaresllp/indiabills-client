@@ -11,6 +11,8 @@ const colDefs = [
     field: "id",
     headerName: "ID",
     width: 50,
+    checkboxSelection: true,
+    headerCheckboxSelection: false,
     cellRenderer: (params) => (
       <p>
         <span className="text-blue-950">#</span>
@@ -19,7 +21,7 @@ const colDefs = [
     ),
   },
   {
-    field: "name",
+    field: "first_name",
     headerName: "Customer",
     filter: true,
     editable: true,
@@ -31,15 +33,15 @@ const colDefs = [
               ? `${getBaseURL()}/${params.data.avatar}`
               : `${process.env.REACT_APP_SERVER_URL}/default.webp`
           }
-          alt={params.data.addedBy}
+          alt={params.data.first_name}
           sx={{ width: 28, height: 28 }}
         />
-        <span style={{ marginLeft: 8 }}>{params.data.name}</span>
+        <span style={{ marginLeft: 8 }}>{`${params.data.first_name} ${params.data.last_name}`}</span>
       </div>
     ),
   },
   {
-    field: "businessName",
+    field: "business_name",
     headerName: "Business Name",
     editable: true,
     valueFormatter: (params) => (params.value ? params.value : "N/A"),
@@ -53,28 +55,22 @@ const colDefs = [
     cellStyle: { textTransform: 'capitalize' },
   },
   { field: "phone", headerName: "Phone", editable: true },
-  {
-    field: "alternatePhone",
-    headerName: "Alternate Phone",
-    editable: true,
-    valueFormatter: (params) => (params.value ? params.value : "N/A"),
-  },
-  { field: "gstin", headerName: "GSTIN" },
-  { field: "fssaiNumber", headerName: "FSSAI Number" },
-  { field: "panNumber", headerName: "PAN Number" },
-  { field: "aadharNumber", headerName: "Aadhar Number", editable: true },
-  { field: "customerType", headerName: "Customer Type", cellStyle: { textTransform: 'capitalize' } },
-  { field: "creditLimit", headerName: "Credit Limit", cellClassRules: { money: (p) => p.value } },
-  { field: "outstandingBalance", headerName: "Outstanding Balance", cellClassRules: { money: (p) => p.value } },
-  { field: "loyaltyPoints", headerName: "Loyalty Points" },
-  { field: "isBlacklisted", headerName: "Blacklisted", cellRenderer: (params) => (
+  { field: "gstin", headerName: "GSTIN", editable: true },
+  { field: "fssai_number", headerName: "FSSAI Number", editable: true },
+  { field: "pan_number", headerName: "PAN Number", editable: true },
+  { field: "aadhar_number", headerName: "Aadhar Number", editable: true },
+  { field: "customer_type", headerName: "Customer Type", editable: true },
+  { field: "credit_limit", headerName: "Credit Limit", editable: true, cellClassRules: { money: (p) => p.value } },
+  { field: "outstanding_balance", headerName: "Outstanding Balance", cellClassRules: { money: (p) => p.value } },
+  { field: "loyalty_points", headerName: "Loyalty Points", editable: true },
+  { field: "is_blacklisted", headerName: "Blacklisted", cellRenderer: (params) => (
     <span className={`py-1 px-3 rounded-full text-xs ${params.value ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
       {params.value ? 'Yes' : 'No'}
     </span>
   )},
-  { field: "blacklistReason", headerName: "Blacklist Reason" },
+  { field: "blacklist_reason", headerName: "Blacklist Reason" },
   {
-    field: "isActive",
+    field: "is_active",
     headerName: "Status",
     cellRenderer: (params) => (
       <span className={`py-1 px-3 rounded-full text-xs ${params.value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
@@ -82,43 +78,14 @@ const colDefs = [
       </span>
     )
   },
-  { field: "dateOfBirth", headerName: "Date of Birth", valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : 'N/A' },
-  { field: "createdAt", headerName: "Created At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
-  { field: "updatedAt", headerName: "Updated At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
+  { field: "date_of_birth", headerName: "Date of Birth", editable: true, valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : 'N/A' },
+  { field: "created_at", headerName: "Created At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
+  { field: "updated_at", headerName: "Updated At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
 ];
 
 const ViewCustomers = () => {
-  const navigate = useNavigate();
-  const { successPopup, errorPopup, refreshTableSetId } = useStore();
-
-  const menuOptions = [
-    {
-      label: "Inspect",
-      onClick: (data) => {
-        console.log(`Inspecting ${data?.id}`);
-        navigate(`/customers/${data?.id}`);
-      },
-    },
-    {
-      label: "Delete",
-      onClick: (data) => {
-        deleteCustomer(data?.id).then((response) => {
-          if (response === 200) {
-            successPopup("Deleted successfully");
-            refreshTableSetId(data?.id);
-            navigate("/customers");
-          } else {
-            errorPopup("Failed to delete");
-            console.error("Failed to delete");
-          }
-        });
-      },
-    },
-  ];
-
   return (
     <ViewData
-      menuOptions={menuOptions}
       title="Customers"
       customDataFetcher={getCustomers}
       initialColDefs={colDefs}

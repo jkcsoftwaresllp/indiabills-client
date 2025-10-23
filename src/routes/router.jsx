@@ -22,6 +22,7 @@ import ReportRoutes from './reportRoutes';
 import AuditRoutes from './auditRoutes';
 import CustomerRoutes from './customerRoutes';
 import OperatorRoutes from './operatorRoutes';
+import ManagerRoutes from './managerRoutes';
 
 // DASHBOARD
 import Home from '../pages/interfaces/Home';
@@ -85,9 +86,12 @@ const Routing = () => {
 
             {/* CUSTOMER PORTAL */}
             <Route path="/customer/*" element={<CustomerRoutes />} />
-            
+
             {/* OPERATOR PORTAL */}
             <Route path="/operator/*" element={<OperatorRoutes />} />
+
+             {/* MANAGER PORTAL */}
+             <Route path="/manager/*" element={<ManagerRoutes />} />
           </Routes>
         </Suspense>
       </AnimatePresence>

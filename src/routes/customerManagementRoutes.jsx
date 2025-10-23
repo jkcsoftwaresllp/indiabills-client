@@ -17,7 +17,7 @@ const CustomerManagementRoutes = () => {
       element={
         <ProtectedRoute
           element={CustomerList}
-          roles={['admin', 'operators']}
+          roles={['admin', 'manager', 'operator']}
         />
       }
     />,
@@ -27,7 +27,7 @@ const CustomerManagementRoutes = () => {
       element={
         <ProtectedRoute
           element={AddCustomers}
-          roles={['admin', 'operators']}
+          roles={['admin', 'manager', 'operator']}
         />
       }
     />,
@@ -37,7 +37,7 @@ const CustomerManagementRoutes = () => {
       element={
         <ProtectedRoute
           element={AddCustomerAddress}
-          roles={['admin', 'operators']}
+          roles={['admin', 'manager', 'operator']}
         />
       }
     />,
@@ -47,7 +47,7 @@ const CustomerManagementRoutes = () => {
       element={
         <ProtectedRoute
           element={InspectCustomer}
-          roles={['admin', 'operators']}
+          roles={['admin', 'manager', 'operator']}
         />
       }
     />,
@@ -57,7 +57,7 @@ const CustomerManagementRoutes = () => {
       element={
         <ProtectedRoute
           element={EditCustomer}
-          roles={['admin', 'operators']}
+          roles={['admin', 'manager', 'operator']}
         />
       }
     />,
@@ -67,7 +67,7 @@ const CustomerManagementRoutes = () => {
       element={
         <ProtectedRoute
           element={EditCustomerAddress}
-          roles={['admin', 'operators']}
+          roles={['admin', 'manager', 'operator']}
         />
       }
     />

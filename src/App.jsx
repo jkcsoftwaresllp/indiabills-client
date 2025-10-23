@@ -105,7 +105,8 @@ function App() {
     location.pathname !== "/setup" &&
     location.pathname !== "/login" &&
     !location.pathname.startsWith("/customer") &&
-    !location.pathname.startsWith("/operator");
+    !location.pathname.startsWith("/operator") &&
+    !location.pathname.startsWith("/manager");
 
   return (
     <AuthProvider>
