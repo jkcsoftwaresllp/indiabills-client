@@ -9,7 +9,7 @@ export async function login(credentials) {
       data: response.data
     };
   } catch (error) {
-    console.error('Login failed:', error.response);
+    console.error('Login failed:', error);
     return {
       status: error.response?.status || 500,
       data: error.response?.data || { message: 'Login failed' }
