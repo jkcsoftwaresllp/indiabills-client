@@ -25,7 +25,8 @@ const ViewData = ({
   disableControls,
   dateRange,
   customDataFetcher,
-  mockData
+  mockData,
+  menuOptions
 }) => {
   const navigate = useNavigate();
   const { refreshTableId, Organization } = useStore();
@@ -312,6 +313,7 @@ const ViewData = ({
           <DataGrid
             rowData={filteredRowData}
             colDefs={filteredColDefs}
+            menuOptions={menuOptions}
             onCellValueChanged={onCellValueChanged}
             onSelectionChanged={onSelectionChanged}
           />

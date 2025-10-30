@@ -1,22 +1,18 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import React, { useState, useCallback, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import MultiPageAnimate from "../../components/Animate/MultiPageAnimate";
 import InputBox from "../../components/FormComponent/InputBox";
-import Dropdown from "../../components/FormComponent/Dropdown";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
-  TextField,
-  FormControlLabel,
-  RadioGroup,
-  Radio,
-  FormControl,
-  FormLabel,
+TextField,
+FormControlLabel,
+RadioGroup,
+Radio,
+FormControl,
+FormLabel,
 } from "@mui/material";
 import { createProduct } from "../../network/api";
 import { useStore } from "../../store/store";
@@ -26,16 +22,25 @@ import { TextInput } from "../../components/FormComponent/TextInput";
 import { BigTextInput } from "../../components/FormComponent/BigTextInput";
 import { DropdownInput } from "../../components/FormComponent/DropdownInput";
 import { CollapsableSection } from "../../components/FormComponent/CollapsableSection";
+import { getCategoryOptions } from "../../utils/cacheHelper";
 
 const AddProducts = () => {
   const { successPopup, errorPopup } = useStore();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({});
-  const [invalidForm, setInvalidForm] = useState(false);
   const [page, setPage] = useState(1);
   const [rateType, setRateType] = useState("purchasePriceWithoutTax"); // Toggle between 'purchasePriceWithoutTax' and 'purchaseRate'
+  const [categories, setCategories] = useState([]);
 
+  // Load categories on component mount
+  useEffect(() => {
+    const loadCategories = async () => {
+      const categoryOptions = getCategoryOptions();
+      setCategories(categoryOptions);
+    };
+    loadCategories();
+  }, []);
 
   const backPage = useCallback(() => {
     if (page > 1) {
@@ -116,52 +121,48 @@ const AddProducts = () => {
 
     // Map form data to API structure
     const apiData = {
-      name: formData.itemName,
-      description: formData.description,
-      categoryId: formData.categoryId || 1,
-      manufacturer: formData.manufacturer,
-      brand: formData.brand || formData.manufacturer,
-      barcode: formData.upc,
-      dimensions: formData.dimensions,
-      weight: formData.weight,
-      unitMrp: formData.unitMRP,
-      purchasePrice: formData.purchasePrice,
-      salePrice: formData.salePrice,
-      reorderLevel: formData.reorderLevel,
-      isActive: true,
-      unitOfMeasure: formData.unitOfMeasure || 'pieces',
-      maxStockLevel: formData.maxStockLevel || (formData.reorderLevel * 10),
-      hsn: formData.hsn,
-      upc: formData.upc,
-      taxes: {
-        cgst: formData.cgst || 0,
-        sgst: formData.sgst || 0,
-        cess: formData.cess || 0
-      },
-      variants: formData.variants?.filter(variant => variant.key.trim() !== "") || []
+    name: formData.itemName,
+    description: formData.description,
+    categoryId: Number(formData.categoryId) || 1,
+    manufacturer: formData.manufacturer,
+    brand: formData.brand || formData.manufacturer,
+    barcode: formData.barcode || formData.upc,
+    dimensions: formData.dimensions,
+    weight: Number(formData.weight) || 0,
+    unitMrp: Number(formData.unitMRP),
+    purchasePrice: Number(formData.purchasePrice),
+    salePrice: Number(formData.salePrice),
+    reorderLevel: Number(formData.reorderLevel) || 0,
+    isActive: true,
+    unitOfMeasure: formData.unitOfMeasure || 'pieces',
+    maxStockLevel: Number(formData.maxStockLevel) || (Number(formData.reorderLevel) * 10),
+    hsn: formData.hsn,
+    upc: formData.upc,
+    taxes: {
+    cgst: Number(formData.cgst) || 0,
+    sgst: Number(formData.sgst) || 0,
+    cess: Number(formData.cess) || 0
+    },
+    variants: formData.variants?.filter(variant => variant.key && variant.key.trim() !== "").map(variant => ({
+        key: variant.key.trim(),
+        values: Array.isArray(variant.values) ? variant.values : variant.values.split(',').map(v => v.trim()).filter(v => v)
+      })) || []
     };
 
     createProduct(apiData).then((status) => {
-      if (status === 201 || status === 200) {
-        successPopup("Item added successfully");
-        navigate("/products");
-      } else {
-        errorPopup("Failed to add item");
-      }
+    if (status === 201 || status === 200) {
+    successPopup("Item added successfully");
+    navigate("/products");
+    } else {
+    errorPopup("Failed to add item");
+    }
     }).catch((error) => {
-      console.error('Error creating product:', error);
-      errorPopup("Failed to add item");
+    console.error('Error creating product:', error);
+    errorPopup("Failed to add item");
     });
-  }, [formData, invalidForm, errorPopup, successPopup, navigate]);
+    }, [formData, errorPopup, successPopup, navigate]);
 
-    const finalData = {
-      ...formData,
-      variants: formData.variants?.filter(
-        (variant) => variant.key.trim() !== ""
-      ),
-    };
-
-  const handleVariantChange =
+    const handleVariantChange =
     (index, field) =>
     (e) => {
       const newVariants = [...(formData.variants || [])];
@@ -292,12 +293,12 @@ useEffect(() => {
               formData={formData}
               setFormData={setFormData}
               handleChange={handleChange}
+              categories={categories}
             />
           )}
           {page === 2 && (
             <InventoryPage
               formData={formData}
-              setFormData={setFormData}
               handleChange={handleChange}
               rateType={rateType}
               handleRateTypeChange={handleRateTypeChange}
@@ -318,7 +319,7 @@ useEffect(() => {
 
 export default AddProducts;
 
-const BasicPage = React.memo(({ formData, handleChange }) => {
+const BasicPage = React.memo(({ formData, handleChange, categories }) => {
   return (
     <MultiPageAnimate>
       <div className="flex flex-col w-full items-center rounded-xl">
@@ -416,7 +417,7 @@ const BasicPage = React.memo(({ formData, handleChange }) => {
 BasicPage.displayName = "BasicPage";
 
 const InventoryPage = React.memo(
-  ({ formData, setFormData, handleChange, rateType, handleRateTypeChange }) => {
+  ({ formData, handleChange, rateType, handleRateTypeChange }) => {
     return (
       <MultiPageAnimate>
         <div className="p-8 flex flex-col items-center gap-8 idms-bg">

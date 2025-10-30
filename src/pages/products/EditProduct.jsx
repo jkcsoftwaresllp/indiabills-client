@@ -45,10 +45,12 @@ const EditProduct = () => {
           ...productData,
           itemName: productData.name,
           unitMRP: productData.unitMrp,
+          categoryId: productData.categoryId,
           cgst: taxes.cgst || productData.cgst || 0,
           sgst: taxes.sgst || productData.sgst || 0,
           cess: taxes.cess || productData.cess || 0,
-          upc: productData.barcode || productData.upc
+          barcode: productData.barcode || productData.upc,
+          upc: productData.upc
         };
 
         mappedData.purchasePriceWithoutTax = calculatePurchasePriceWithoutTax(
@@ -70,7 +72,34 @@ const EditProduct = () => {
   const handleChange = handleFormFieldChange(setData);
 
   const handleSave = async (updatedData) => {
-    const response = await updateProduct(id, updatedData);
+    // Map form data to API structure
+    const apiData = {
+      name: updatedData.itemName || updatedData.name,
+      description: updatedData.description,
+      categoryId: Number(updatedData.categoryId),
+      manufacturer: updatedData.manufacturer,
+      brand: updatedData.brand,
+      barcode: updatedData.barcode,
+      dimensions: updatedData.dimensions,
+      weight: Number(updatedData.weight) || 0,
+      unitMrp: Number(updatedData.unitMRP || updatedData.unitMrp),
+      purchasePrice: Number(updatedData.purchasePrice),
+      salePrice: Number(updatedData.salePrice),
+      reorderLevel: Number(updatedData.reorderLevel) || 0,
+      isActive: true,
+      unitOfMeasure: updatedData.unitOfMeasure || 'pieces',
+      maxStockLevel: Number(updatedData.maxStockLevel),
+      hsn: updatedData.hsn,
+      upc: updatedData.upc,
+      taxes: {
+        cgst: Number(updatedData.cgst) || 0,
+        sgst: Number(updatedData.sgst) || 0,
+        cess: Number(updatedData.cess) || 0
+      },
+      variants: updatedData.variants || []
+    };
+
+    const response = await updateProduct(id, apiData);
     if (response === 200) {
       successPopup('Product updated successfully');
       return true;
@@ -131,6 +160,7 @@ const EditProduct = () => {
     rateType,
     data.purchasePriceWithoutTax,
     data.purchasePrice,
+    data,
   ]);
 
   const metadata = [
@@ -154,12 +184,12 @@ const EditProduct = () => {
           onChange={handleChange}
         />,
         <InputBox
-          key="categoryID"
-          name="categoryID"
-          type="number"
-          label="Category ID"
-          value={data.categoryID}
-          onChange={handleChange}
+        key="categoryId"
+        name="categoryId"
+        type="number"
+        label="Category ID"
+        value={data.categoryId}
+        onChange={handleChange}
         />,
         <InputBox
           optional

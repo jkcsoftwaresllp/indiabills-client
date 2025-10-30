@@ -42,11 +42,7 @@ const operatorButtons = [
         icon: '🔍',
         label: 'Reconciliations',
       },
-      {
-        to: '/operator/warehouses',
-        icon: '🏢',
-        label: 'Warehouses',
-      },
+      
       {
         to: '/operator/products',
         icon: '🏷️',

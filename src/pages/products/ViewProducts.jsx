@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ViewData from "../../layouts/form/ViewData";
 import { useNavigate } from "react-router-dom";
-import { getProducts, deleteProduct, getData } from "../../network/api";
+import { getProducts, deleteProduct } from "../../network/api";
 import { useStore } from "../../store/store";
 import { IconButton, Tooltip } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
@@ -33,7 +33,7 @@ const colDefs = [
     cellStyle: { textTransform: "capitalize" },
   },
   {
-    field: "categoryID",
+    field: "category_id",
     headerName: "Category",
     editable: true,
   },
@@ -54,25 +54,25 @@ const colDefs = [
     cellStyle: { textTransform: "capitalize" },
   },
   {
-    field: "salePrice",
+    field: "sale_price",
     headerName: "Sale Price",
     cellClassRules: { money: (p) => p.value },
   },
   {
-    field: "purchasePrice",
+    field: "purchase_price",
     headerName: "Purchase Price",
     cellClassRules: { money: (p) => p.value },
   },
   {
-    field: "unitMRP",
+    field: "unit_mrp",
     headerName: "Unit MRP",
     cellClassRules: { money: (p) => p.value },
   },
-  { field: "reorderLevel", headerName: "Reorder Level", editable: true },
-  { field: "maxStockLevel", headerName: "Max Stock Level", editable: true },
-  { field: "unitOfMeasure", headerName: "Unit of Measure" },
+  { field: "reorder_level", headerName: "Reorder Level", editable: true },
+  { field: "max_stock_level", headerName: "Max Stock Level", editable: true },
+  { field: "unit_of_measure", headerName: "Unit of Measure" },
   {
-    field: "isActive",
+    field: "is_active",
     headerName: "Status",
     cellRenderer: (params) => (
       <span
@@ -85,9 +85,10 @@ const colDefs = [
     ),
   },
   {
-    field: "createdAt",
+    field: "created_at",
     headerName: "Created At",
-    valueFormatter: ({ value }) => new Date(value).toLocaleDateString(),
+    valueFormatter: ({ value }) =>
+      value ? new Date(value).toLocaleDateString() : "—",
   },
   {
     field: "wishlist",
@@ -119,7 +120,7 @@ const ViewProducts = () => {
       return response.data.map((product) => ({
         ...product,
         wishlist: wishlistItems.has(product.id),
-        onWishlistToggle: handleWishlistToggle, // pass handler down
+        onWishlistToggle: handleWishlistToggle,
       }));
     }
     return [];
@@ -128,11 +129,8 @@ const ViewProducts = () => {
   const handleWishlistToggle = (product) => {
     setWishlistItems((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(product.id)) {
-        newSet.delete(product.id);
-      } else {
-        newSet.add(product.id);
-      }
+      if (newSet.has(product.id)) newSet.delete(product.id);
+      else newSet.add(product.id);
       return newSet;
     });
   };
@@ -142,6 +140,32 @@ const ViewProducts = () => {
       title="Items"
       customDataFetcher={getProducts}
       initialColDefs={colDefs}
+      deleteHandler={deleteProduct}
+      transformPayload={(data) => ({
+        // ensure outgoing payload matches backend format
+        id: data.id || 0,
+        organization_id: data.organization_id || 0,
+        name: data.name || "",
+        description: data.description || "",
+        category_id: data.category_id || 0,
+        manufacturer: data.manufacturer || "",
+        brand: data.brand || "",
+        barcode: data.barcode || "",
+        dimensions: data.dimensions || "",
+        weight: Number(data.weight) || 0,
+        unit_mrp: Number(data.unit_mrp) || 0,
+        purchase_price: Number(data.purchase_price) || 0,
+        sale_price: Number(data.sale_price) || 0,
+        reorder_level: Number(data.reorder_level) || 0,
+        unit_of_measure: data.unit_of_measure || "",
+        max_stock_level: Number(data.max_stock_level) || 0,
+        is_active: Boolean(data.is_active),
+        version: data.version || 0,
+        created_at: data.created_at || new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        created_by: data.created_by || 0,
+        updated_by: data.updated_by || 0,
+      })}
     />
   );
 };

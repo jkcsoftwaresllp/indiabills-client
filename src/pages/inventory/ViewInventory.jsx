@@ -23,6 +23,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
@@ -38,6 +40,7 @@ import { getStuff, getCount, deleteRow, getWarehouses, getBatches, deleteBatch, 
 import PageAnimate from "../../components/Animate/PageAnimate";
 import InventoryTable from "./InventoryTable";
 import Checklist from "../../components/FormComponent/Checklist";
+import ViewData from "../../layouts/form/ViewData";
 import { CustomPaper, CustomPopper, formatToIndianCurrency } from "../../utils/FormHelper";
 import MouseHoverPopover from "../../components/core/Explain";
 import { useStore } from "../../store/store";
@@ -67,12 +70,7 @@ const ViewInventory = () => {
   };
 
   const manageWarehouse = () => {
-    const currentPath = window.location.pathname;
-    if (currentPath.startsWith('/operator/')) {
-      navigate("/operator/warehouses");
-    } else {
-      navigate("/warehouses");
-    }
+    setActiveTab(1); // Switch to Warehouses tab
   };
   
   const transferBatch = () => {
@@ -91,6 +89,7 @@ const ViewInventory = () => {
 
   const [batchNumberSearch, setBatchNumberSearch] = useState('');
   const [invoiceNumberSearch, setInvoiceNumberSearch] = useState('');
+  const [activeTab, setActiveTab] = useState(0); // 0: Batches, 1: Warehouses
 
   const handleOpenModal = (subBatches) => {
     setSelectedSubBatches(subBatches);
@@ -101,6 +100,42 @@ const ViewInventory = () => {
     setSelectedSubBatches(null);
     setIsModalOpen(false);
   };
+
+  const warehouseColDefs = [
+    {
+      field: "id",
+      headerName: "ID",
+      width: 50,
+      checkboxSelection: true,
+      headerCheckboxSelection: false,
+      cellRenderer: (params) => (
+        <p>
+          <span className="text-blue-950">#</span>
+          <span className="font-medium">{params.value}</span>
+        </p>
+      )
+    },
+    { field: "name", headerName: "Warehouse Name", filter: true, editable: true },
+    { field: "code", headerName: "Code", editable: true },
+    { field: "capacity", headerName: "Capacity", editable: true },
+    { field: "managerName", headerName: "Manager", editable: true, cellStyle: { textTransform: 'capitalize' } },
+    { field: "managerPhone", headerName: "Manager Phone", editable: true },
+    { field: "addressLine", headerName: "Address", editable: true },
+    { field: "city", headerName: "City", editable: true, cellStyle: { textTransform: 'capitalize' } },
+    { field: "state", headerName: "State", editable: true, cellStyle: { textTransform: 'capitalize' } },
+    { field: "pinCode", headerName: "Pin Code", editable: true },
+    {
+      field: "isActive",
+      headerName: "Status",
+      cellRenderer: (params) => (
+        <span className={`py-1 px-3 rounded-full text-xs ${params.value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+          {params.value ? 'Active' : 'Inactive'}
+        </span>
+      )
+    },
+    { field: "createdAt", headerName: "Created At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
+    { field: "updatedAt", headerName: "Updated At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
+  ];
 
   const colDefs = [
     { headerName: "ID", field: "batchId", width: 50, cellRenderer: (params) => (<p><span className="text-blue-950">#</span><span className="font-medium">{params.value}</span></p>) },
@@ -235,7 +270,7 @@ const ViewInventory = () => {
     );
   }
 
-  const menuOptions = [
+  const batchMenuOptions = [
     {
       label: "Inspect",
       action: (data) => {
@@ -266,12 +301,65 @@ const ViewInventory = () => {
     }
   ];
 
+  const warehouseMenuOptions = [
+    {
+      label: "Inspect",
+      action: (data) => {
+        const currentPath = window.location.pathname;
+        if (currentPath.startsWith('/operator/')) {
+          navigate(`/operator/inventory/warehouses/${data?.id}`);
+        } else {
+          navigate(`/inventory/warehouses/${data?.id}`);
+        }
+      },
+    },
+    {
+      label: "Edit",
+      action: (data) => {
+        const currentPath = window.location.pathname;
+        if (currentPath.startsWith('/operator/')) {
+          navigate(`/operator/inventory/warehouses/${data?.id}/edit`);
+        } else {
+          navigate(`/inventory/warehouses/${data?.id}/edit`);
+        }
+      },
+    },
+    {
+      label: "Delete",
+      action: async (data) => {
+        try {
+          const response = await deleteWarehouse(data?.id);
+          if (response === 200) {
+            successPopup("Deleted successfully");
+            // Refresh warehouses list, but since ViewData handles it, perhaps not needed
+          } else {
+            errorPopup("Failed to delete");
+          }
+        } catch (error) {
+          console.error("Delete failed:", error);
+          errorPopup("Failed to delete");
+        }
+      }
+    }
+  ];
+
   return (
     <PageAnimate>
       <Container maxWidth="xl">
         <Grid container spacing={4} alignItems="center" justifyContent="space-between" marginY={4}>
-          <Grid item xs={12} md={6}>
-            <Autocomplete
+          <Grid item xs={12}>
+            <Tabs value={activeTab} onChange={(event, newValue) => setActiveTab(newValue)}>
+              <Tab label="Batches" />
+              <Tab label="Warehouses" />
+            </Tabs>
+          </Grid>
+        </Grid>
+
+        {activeTab === 0 && (
+          <>
+            <Grid container spacing={4} alignItems="center" justifyContent="space-between" marginY={4}>
+              <Grid item xs={12} md={6}>
+                <Autocomplete
               id="warehouse"
               options={warehouses}
               getOptionLabel={(option) => option.name}
@@ -354,7 +442,7 @@ const ViewInventory = () => {
                 <div className="ag-theme-quartz" style={{ height: 500, width: "100%" }}>
                   {filteredEntries.length > 0 ? (
                     <DataGrid
-                      menuOptions={menuOptions}
+                      menuOptions={batchMenuOptions}
                       rowData={filteredEntries}
                       colDefs={colDefs}
                     />
@@ -441,6 +529,17 @@ const ViewInventory = () => {
               </Grid>
             </Grid>
           </Grid>
+        )}
+        </>
+        )}
+
+        {activeTab === 1 && (
+          <ViewData
+            title="Warehouses"
+            url="/internal/warehouses"
+            initialColDefs={warehouseColDefs}
+            menuOptions={warehouseMenuOptions}
+          />
         )}
 
         <Dialog

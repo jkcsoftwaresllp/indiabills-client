@@ -16,10 +16,10 @@ const ViewReconciliations = lazy(() => import('../pages/inventory/ViewReconcilia
 const AddReconciliation = lazy(() => import('../pages/inventory/AddReconciliation'));
 const InspectReconciliation = lazy(() => import('../pages/inventory/InspectReconciliation'));
 
-const ViewWarehouses = lazy(() => import('../pages/inventory/ViewWarehouses'));
 const AddWarehouse = lazy(() => import('../pages/inventory/AddWarehouse'));
 const InspectWarehouse = lazy(() => import('../pages/inventory/InspectWarehouse'));
 const EditWarehouse = lazy(() => import('../pages/inventory/EditWarehouse'));
+
 const AddInventoryStock = lazy(() => import('../pages/inventory/AddInventoryStock'));
 const AddInventoryMovement = lazy(() => import('../pages/inventory/AddInventoryMovement'));
 
@@ -68,12 +68,11 @@ const OperatorRoutes = () => {
           <Route path="inventory/reconciliations" element={<ViewReconciliations />} />
           <Route path="inventory/reconciliations/add" element={<AddReconciliation />} />
           <Route path="inventory/reconciliations/:id" element={<InspectReconciliation />} />
+          <Route path="inventory/warehouses/add" element={<AddWarehouse />} />
+          <Route path="inventory/warehouses/:id" element={<InspectWarehouse />} />
+          <Route path="inventory/warehouses/:id/edit" element={<EditWarehouse />} />
           
-          {/* Warehouse Routes */}
-          <Route path="warehouses" element={<ViewWarehouses />} />
-          <Route path="warehouses/add" element={<AddWarehouse />} />
-          <Route path="warehouses/:id" element={<InspectWarehouse />} />
-          <Route path="warehouses/:id/edit" element={<EditWarehouse />} />
+          
           
           {/* Products Routes */}
           <Route path="products" element={<ViewProducts />} />
