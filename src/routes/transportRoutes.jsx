@@ -15,7 +15,7 @@ const TransportRoutes = () => {
       element={
         <ProtectedRoute
           element={TransportList}
-          roles={['admin', 'operators', 'delivery']}
+          roles={['admin', 'manager', 'operator', 'delivery']}
         />
       }
     />,
@@ -25,7 +25,7 @@ const TransportRoutes = () => {
       element={
         <ProtectedRoute
           element={AddTransport}
-          roles={['admin', 'operators', 'delivery']}
+          roles={['admin', 'manager', 'operator', 'delivery']}
         />
       }
     />,
@@ -35,7 +35,7 @@ const TransportRoutes = () => {
       element={
         <ProtectedRoute
           element={InspectTransport}
-          roles={['admin', 'operators', 'Delivery']}
+          roles={['admin', 'manager', 'operator', 'delivery']}
         />
       }
     />,
@@ -45,7 +45,7 @@ const TransportRoutes = () => {
       element={
         <ProtectedRoute
           element={EditTransport}
-          roles={['admin', 'operators']}
+          roles={['admin', 'manager', 'operator', 'delivery']}
         />
       }
     />

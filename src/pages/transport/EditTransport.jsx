@@ -15,23 +15,33 @@ const EditTransport = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getTransportPartnerById(id);
-      setData(response);
-      setLoading(false);
+      try {
+        const response = await getTransportPartnerById(id);
+        if (response) {
+          setData(response);
+        }
+      } catch (error) {
+        errorPopup("Failed to fetch transport partner details");
+      } finally {
+        setLoading(false);
+      }
     };
-
     fetchData();
-  }, [id]);
+  }, [id, errorPopup]);
 
   const handleChange = handleFormFieldChange(setData);
 
   const handleSave = async (updatedData) => {
-    const response = await updateTransportPartner(id, updatedData);
-    if (response === 200) {
-      successPopup('Transport partner updated successfully');
-      return true;
-    } else {
-      errorPopup('Failed to update transport partner');
+    try {
+      const response = await updateTransportPartner(id, updatedData);
+      if (response?.status === 200 || response === 200) {
+        successPopup("Transport partner updated successfully");
+        return true;
+      } else {
+        throw new Error();
+      }
+    } catch {
+      errorPopup("Failed to update transport partner");
       return false;
     }
   };
@@ -40,38 +50,145 @@ const EditTransport = () => {
     {
       category: "Basic Information",
       elements: [
-        <InputBox key="name" name="name" type="string" label="Transport Name" value={data.name} onChange={handleChange} placeholder="" />,
-        <InputBox key="businessName" name="businessName" type="string" label="Business Name" value={data.businessName} onChange={handleChange} placeholder="" />,
-        <InputBox key="contactPerson" name="contactPerson" type="string" label="Contact Person" value={data.contactPerson} onChange={handleChange} placeholder="" />,
-        <InputBox key="email" name="email" type="string" label="Email" value={data.email} onChange={handleChange} placeholder="" />,
-        <InputBox key="phone" name="phone" type="string" label="Phone" value={data.phone} onChange={handleChange} placeholder="" />,
-        <InputBox key="alternatePhone" name="alternatePhone" type="string" label="Alternate Phone" value={data.alternatePhone} onChange={handleChange} placeholder="" />,
+        <InputBox
+          key="name"
+          name="name"
+          label="Transport Partner Name"
+          value={data.name || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="business_name"
+          name="business_name"
+          label="Business Name"
+          value={data.business_name || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="contact_person"
+          name="contact_person"
+          label="Contact Person"
+          value={data.contact_person || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="email"
+          name="email"
+          type="email"
+          label="Email"
+          value={data.email || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="phone"
+          name="phone"
+          label="Phone"
+          value={data.phone || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="alternate_phone"
+          name="alternate_phone"
+          label="Alternate Phone"
+          value={data.alternate_phone || ""}
+          onChange={handleChange}
+        />,
       ],
     },
     {
       category: "Address Information",
       elements: [
-        <InputBox key="addressLine" name="addressLine" type="string" label="Address Line" value={data.addressLine} onChange={handleChange} placeholder="" />,
-        <InputBox key="city" name="city" type="string" label="City" value={data.city} onChange={handleChange} placeholder="" />,
-        <InputBox key="state" name="state" type="string" label="State" value={data.state} onChange={handleChange} placeholder="" />,
-        <InputBox key="pinCode" name="pinCode" type="string" label="Pin Code" value={data.pinCode} onChange={handleChange} placeholder="" />,
+        <InputBox
+          key="address_line1"
+          name="address_line1"
+          label="Address Line 1"
+          value={data.address_line1 || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="address_line2"
+          name="address_line2"
+          label="Address Line 2"
+          value={data.address_line2 || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="city"
+          name="city"
+          label="City"
+          value={data.city || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="state"
+          name="state"
+          label="State"
+          value={data.state || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="pin_code"
+          name="pin_code"
+          label="PIN Code"
+          value={data.pin_code || ""}
+          onChange={handleChange}
+        />,
       ],
     },
     {
       category: "Financial & Vehicle Information",
       elements: [
-        <InputBox key="panNumber" name="panNumber" type="string" label="PAN Number" value={data.panNumber} onChange={handleChange} placeholder="" />,
-        <InputBox key="gstNumber" name="gstNumber" type="string" label="GST Number" value={data.gstNumber} onChange={handleChange} placeholder="" />,
-        <InputBox key="baseRate" name="baseRate" type="number" label="Base Rate" value={data.baseRate} onChange={handleChange} placeholder="" />,
-        <InputBox key="ratePerKm" name="ratePerKm" type="number" label="Rate Per KM" value={data.ratePerKm} onChange={handleChange} placeholder="" />,
-        <InputBox key="vehicleDetails" name="vehicleDetails" type="string" label="Vehicle Details" value={data.vehicleDetails} onChange={handleChange} placeholder="" />,
+        <InputBox
+          key="pan_number"
+          name="pan_number"
+          label="PAN Number"
+          value={data.pan_number || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="gst_number"
+          name="gst_number"
+          label="GST Number"
+          value={data.gst_number || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="base_rate"
+          name="base_rate"
+          type="number"
+          label="Base Rate"
+          value={data.base_rate || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="rate_per_km"
+          name="rate_per_km"
+          type="number"
+          label="Rate per KM"
+          value={data.rate_per_km || ""}
+          onChange={handleChange}
+        />,
+        <InputBox
+          key="vehicle_details"
+          name="vehicle_details"
+          label="Vehicle Details"
+          value={data.vehicle_details || ""}
+          onChange={handleChange}
+        />,
       ],
     },
   ];
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -82,10 +199,10 @@ const EditTransport = () => {
       <Typography variant="h4" gutterBottom>
         Edit Transport Partner #{id}
       </Typography>
-      <InspectData 
-        data={data} 
-        metadata={metadata} 
-        title={"transport"} 
+      <InspectData
+        data={data}
+        metadata={metadata}
+        title="Transport Partner"
         id={id}
         onSave={handleSave}
       />

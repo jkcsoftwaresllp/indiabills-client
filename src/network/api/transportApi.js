@@ -12,7 +12,42 @@ export async function getTransportPartners(options = {}) {
 
     const url = `/internal/transport-partners${params.toString() ? `?${params.toString()}` : ''}`;
     const response = await serverInstance.get(url);
-    return response.data;
+    console.log('Full response data:', response.data);
+    let dataArray = [];
+    if (Array.isArray(response.data)) {
+      dataArray = response.data;
+      console.log('Response is an array:', dataArray);
+    } else if (response.data.data && Array.isArray(response.data.data)) {
+      dataArray = response.data.data;
+    } else if (response.data && typeof response.data === 'object' && response.data.name) {
+      // Single object response, wrap in array
+      dataArray = [response.data];
+    }
+    const transformedData = dataArray.map(partner => ({
+      id: partner.id,
+      name: partner.name,
+      businessName: partner.business_name,
+      contactPerson: partner.contact_person,
+      phone: partner.phone,
+      alternatePhone: partner.alternate_phone,
+      email: partner.email,
+      addressLine: partner.address_line,
+      city: partner.city,
+      state: partner.state,
+      pinCode: partner.pin_code,
+      gstNumber: partner.gst_number,
+      panNumber: partner.pan_number,
+      baseRate: partner.base_rate,
+      ratePerKm: partner.rate_per_km,
+      vehicleDetails: Array.isArray(partner.vehicle_details?.vehicles)
+        ? partner.vehicle_details.vehicles.join(', ')
+        : JSON.stringify(partner.vehicle_details),
+      isActive: partner.is_active,
+      createdAt: partner.created_at,
+      updatedAt: partner.updated_at
+    }));
+
+    return transformedData;
   } catch (error) {
     console.error('Failed to fetch transport partners:', error.response);
     return [];

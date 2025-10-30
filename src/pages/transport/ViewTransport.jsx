@@ -32,11 +32,11 @@ const colDefs = [
 
 const ViewTransport = () => {
   return (
-    <ViewData 
-      title="Transport Partners" 
+    <ViewData
+      title="Transport"
       url="/transport"
       customDataFetcher={getTransportPartners}
-      initialColDefs={colDefs} 
+      initialColDefs={colDefs}
     />
   );
 };

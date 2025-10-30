@@ -202,18 +202,21 @@ const ViewData = ({
   };
 
   const add = () => {
-    if (title === "Batches") {
-      navigate("/inventory/add");
-    } else {
-      const currentPath = window.location.pathname;
-      console.log('Current Path:', currentPath);
-      if (currentPath.startsWith('/operator/')) {
-        navigate(`${currentPath}/add`);
-      } 
-      else if (currentPath.startsWith('/products')) {
-        navigate(`${currentPath}/add`);
-      } 
-      else {
+  if (title === "Batches") {
+  navigate("/inventory/add");
+  } else {
+  const currentPath = window.location.pathname;
+  console.log('Current Path:', currentPath);
+  if (currentPath.startsWith('/operator/')) {
+  navigate(`${currentPath}/add`);
+  }
+  else if (currentPath.startsWith('/products')) {
+  navigate(`${currentPath}/add`);
+  }
+  else if (currentPath.startsWith('/transport')) {
+  navigate(`${currentPath}/add`);
+  }
+    else {
         navigate(`/${title.toLowerCase()}/add`);
       }
     }

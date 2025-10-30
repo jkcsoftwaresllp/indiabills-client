@@ -62,21 +62,21 @@ export default [
     group: 'Operations',
     items: [
       {
-        to: '/inventory',
-        icon: <Inventory2RoundedIcon />,
-        label: 'Inventory',
-        roles: ['admin', 'operator'],
-      },
-      {
         to: '/products',
         icon: <CategoryRoundedIcon />,
-        label: 'Items',
+        label: 'Products',
         roles: ['admin', 'operator'],
       },
       {
         to: '/suppliers',
         icon: <PrecisionManufacturingIcon />,
         label: 'Suppliers',
+        roles: ['admin', 'operator'],
+      },
+      {
+        to: '/inventory',
+        icon: <Inventory2RoundedIcon />,
+        label: 'Inventory',
         roles: ['admin', 'operator'],
       },
       {
