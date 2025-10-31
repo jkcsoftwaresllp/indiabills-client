@@ -143,7 +143,8 @@ export async function deleteBatch(id) {
 export async function getBatchesByWarehouse(warehouseId) {
   try {
     const response = await serverInstance.get(`/internal/batches/warehouse/${warehouseId}`);
-    return Array.isArray(response.data) ? response.data : [];
+    // API returns { success, count, data: [...] }
+    return response.data?.data || [];
   } catch (error) {
     console.error(`Failed to fetch batches for warehouse ${warehouseId}:`, error.response);
     return [];

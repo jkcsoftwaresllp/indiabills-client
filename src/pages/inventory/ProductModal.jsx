@@ -26,17 +26,19 @@ const ProductModal = ({
   const [manufactureDate, setManufactureDate] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [expiryDateError, setExpiryDateError] = useState("");
+  const [unitPrice, setUnitPrice] = useState(0);
 
   const handleProductChange = (event, newValue) => {
     setSelectedProduct(newValue);
+    setUnitPrice(Number(newValue?.unit_mrp || 0));
   };
 
   const handleQuantityChange = (event) => {
-    setQuantity(parseInt(event.target.value, 10));
+    setQuantity(parseInt(event.target.value, 10) || 1);
   };
 
   const handleDiscountChange = (event) => {
-    setDiscount(parseFloat(event.target.value));
+    setDiscount(parseFloat(event.target.value) || 0);
   };
 
   const handleDiscountTypeChange = (event) => {
@@ -65,15 +67,15 @@ const ProductModal = ({
   };
 
   const handleAdd = () => {
-    if (selectedProduct && !expiryDateError) {
+    if (selectedProduct && !expiryDateError && unitPrice > 0) {
       handleAddProduct({
         itemId: selectedProduct.id.toString(),
         itemName: selectedProduct.name,
         quantity,
         discount,
         discountType,
-        packSize: selectedProduct.packSize,
-        recordUnitPrice: selectedProduct.purchaseRate,
+        packSize: selectedProduct.packSize || 1,
+        recordUnitPrice: unitPrice,
         manufactureDate,
         expiryDate,
       });
@@ -86,9 +88,7 @@ const ProductModal = ({
     }
   };
 
-  const totalPrice = selectedProduct
-    ? selectedProduct.purchaseRate * quantity
-    : 0;
+  const totalPrice = selectedProduct ? unitPrice * quantity : 0;
 
   const discountedPrice =
     discountType === "percentage"
@@ -122,15 +122,36 @@ const ProductModal = ({
             <>
               <Grid item xs={12}>
                 <Typography variant="body1">
-                  Pack Size: {selectedProduct.packSize}
+                  Unit of Measure: {selectedProduct.unit_of_measure || "pieces"}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="body1">
-                  Price per Pack: ₹
+                  Purchase Price: ₹
                   {formatToIndianCurrency(
-                    (selectedProduct.purchasePrice || selectedProduct.purchaseRate || 0).toFixed(2)
+                    Number(selectedProduct.purchase_price || 0).toFixed(2)
                   )}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="body1">
+                  MRP: ₹
+                  {formatToIndianCurrency(
+                    Number(selectedProduct.unit_mrp || 0).toFixed(2)
+                  )}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="body1">
+                  Sale Price: ₹
+                  {formatToIndianCurrency(
+                    Number(selectedProduct.sale_price || 0).toFixed(2)
+                  )}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="body1">
+                  Reorder Level: {selectedProduct.reorder_level || 0}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
@@ -145,9 +166,7 @@ const ProductModal = ({
                 <Typography variant="body1">
                   Total Price (after discount):{" "}
                   {totalPrice > 0
-                    ? `₹${formatToIndianCurrency(
-                        discountedPrice.toFixed(2)
-                      )}`
+                    ? `₹${formatToIndianCurrency(discountedPrice.toFixed(2))}`
                     : "0"}
                 </Typography>
               </Grid>
