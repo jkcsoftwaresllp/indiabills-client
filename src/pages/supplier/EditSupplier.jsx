@@ -63,11 +63,12 @@ const EditSupplier = () => {
       elements: [
         <InputBox key="bankAccountNumber" name="bankAccountNumber" type="string" value={data.bankAccountNumber} onChange={handleChange} placeholder="" />,
         <InputBox key="ifscCode" name="ifscCode" type="string" value={data.ifscCode} onChange={handleChange} placeholder="" />,
-        <InputBox key="upiId" name="upiId" type="string" value={data.upiid} onChange={handleChange} placeholder="" />,
+        <InputBox key="upiId" name="upiId" type="string" value={data.upiId} onChange={handleChange} placeholder="" />,
         <InputBox key="creditLimit" name="creditLimit" type="number" value={data.creditLimit} onChange={handleChange} placeholder="" />,
         <InputBox key="paymentTerms" name="paymentTerms" type="string" value={data.paymentTerms} onChange={handleChange} placeholder="" />,
         <InputBox key="rating" name="rating" type="number" value={data.rating} onChange={handleChange} placeholder="" inputProps={{ min: 1, max: 5 }} />,
         <InputBox key="remarks" name="remarks" type="string" value={data.remarks} onChange={handleChange} placeholder="" />,
+        <InputBox key="isActive" name="isActive" type="checkbox" label="Active" value={data.isActive} onChange={handleChange} placeholder="" />,
       ],
     },
   ];

@@ -87,37 +87,60 @@ const AddInventory = () => {
       }
     }
 
-    // Create batch data for each product (new API expects one batch per product)
-    const totalQuantity = selectedProducts.reduce((total, product) => total + Number(product.quantity), 0);
-    
+    // Create batch data for each product (API expects one batch per product)
     try {
-      // Create a batch for the first product (or create multiple batches if needed)
-      const mainProduct = selectedProducts[0];
-      const batchData = {
-        productId: Number(mainProduct.itemId),
-        supplierId: Number(selectedSupplier?.id),
-        batchCode: formData.batchNumber,
-        purchaseDate: formData.entryDate,
-        expiryDate: mainProduct.expiryDate || null,
-        quantity: Number(mainProduct.quantity),
-        remainingQuantity: Number(mainProduct.quantity),
-        unitCost: Number(mainProduct.recordUnitPrice),
-        warehouseId: Number(selectedLocation?.id),
-        remarks: formData.remarks || '',
-        isActive: true
-      };
+      let successCount = 0;
+      const errors = [];
 
-      const response = await createBatch(batchData);
+      for (let i = 0; i < selectedProducts.length; i++) {
+        const product = selectedProducts[i];
 
-      if (response === 201 || response === 200) {
-        successPopup("Batch added successfully!");
+        // Generate unique batch code for each product in this entry
+        const batchCode = selectedProducts.length === 1
+          ? formData.batchNumber
+          : `${formData.batchNumber}-${product.itemId}`;
+
+        const batchData = {
+          productId: Number(product.itemId),
+          supplierId: Number(selectedSupplier?.id),
+          batchCode: batchCode,
+          purchaseDate: formData.entryDate,
+          expiryDate: product.expiryDate || null,
+          quantity: Number(product.quantity),
+          remainingQuantity: Number(product.quantity),
+          unitCost: Number(product.recordUnitPrice),
+          warehouseId: Number(selectedLocation?.id),
+          remarks: formData.remarks || '',
+          isActive: true
+        };
+
+        try {
+          const response = await createBatch(batchData);
+          if (response === 201 || response === 200) {
+            successCount++;
+          } else {
+            errors.push(`Failed to create batch for ${product.itemName}`);
+          }
+        } catch (batchError) {
+          console.error(`Error creating batch for ${product.itemName}:`, batchError);
+          errors.push(`Error creating batch for ${product.itemName}: ${batchError.message || 'Unknown error'}`);
+        }
+      }
+
+      if (successCount === selectedProducts.length) {
+        successPopup(`${successCount} batch(es) added successfully!`);
         navigate("/inventory");
+      } else if (successCount > 0) {
+        successPopup(`${successCount} out of ${selectedProducts.length} batch(es) added successfully. Some failed.`);
+        if (errors.length > 0) {
+          errorPopup(`Errors: ${errors.join('; ')}`);
+        }
       } else {
-        errorPopup("Failed to add batch");
+        errorPopup(`Failed to add any batches. Errors: ${errors.join('; ')}`);
       }
     } catch (error) {
-      console.error('Error creating batch:', error);
-      errorPopup("Error adding batch!");
+      console.error('Error in batch creation process:', error);
+      errorPopup("Error adding batches!");
     }
   };
 
@@ -208,7 +231,7 @@ const AddInventory = () => {
 
         if (productInfo) {
           const packSize = productInfo.packSize || 1;
-          const unitPrice = Number(productInfo.purchasePrice || productInfo.purchaseRate || 0) / Number(packSize);
+          const unitPrice = Number(productInfo.purchaseRate || productInfo.purchasePrice || 0) / Number(packSize);
           const faultyQuantity = Number(issue.faultyQuantity) || 0;
 
           const issuePrice = unitPrice * faultyQuantity;

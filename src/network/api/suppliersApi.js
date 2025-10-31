@@ -12,30 +12,30 @@ export async function getSuppliers(options = {}) {
     const url = `/internal/suppliers${params.toString() ? `?${params.toString()}` : ''}`;
     const response = await serverInstance.get(url);
     
-    // Transform snake_case to camelCase
+    // Handle both snake_case and camelCase
     const transformedData = response.data.data?.map(supplier => ({
       id: supplier.id,
       name: supplier.name,
-      businessName: supplier.business_name,
-      contactPerson: supplier.contact_person,
+      businessName: supplier.business_name || supplier.businessName,
+      contactPerson: supplier.contact_person || supplier.contactPerson,
       phone: supplier.phone,
-      alternatePhone: supplier.alternate_phone,
+      alternatePhone: supplier.alternate_phone || supplier.alternatePhone,
       email: supplier.email,
-      addressLine: supplier.address_line,
+      addressLine: supplier.address_line || supplier.addressLine,
       city: supplier.city,
       state: supplier.state,
-      pinCode: supplier.pin_code,
+      pinCode: supplier.pin_code || supplier.pinCode,
       gstin: supplier.gstin,
-      bankAccountNumber: supplier.bank_account_number,
-      ifsccode: supplier.ifsc_code,
-      upiid: supplier.upi_id,
-      creditLimit: supplier.credit_limit,
-      paymentTerms: supplier.payment_terms,
+      bankAccountNumber: supplier.bank_account_number || supplier.bankAccountNumber,
+      ifscCode: supplier.ifsc_code || supplier.ifscCode,
+      upiId: supplier.upi_id || supplier.upiId,
+      creditLimit: supplier.credit_limit || supplier.creditLimit,
+      paymentTerms: supplier.payment_terms || supplier.paymentTerms,
       remarks: supplier.remarks,
       rating: supplier.rating,
-      isActive: supplier.is_active,
-      createdAt: supplier.created_at,
-      updatedAt: supplier.updated_at
+      isActive: supplier.is_active || supplier.isActive,
+      createdAt: supplier.created_at || supplier.createdAt,
+      updatedAt: supplier.updated_at || supplier.updatedAt
     })) || [];
     
     return transformedData;
@@ -49,7 +49,32 @@ export async function getSuppliers(options = {}) {
 export async function getSupplierById(id) {
   try {
     const response = await serverInstance.get(`/internal/suppliers/${id}`);
-    return response.data;
+    // Transform snake_case to camelCase
+    const supplier = response.data;
+    return {
+      id: supplier.id,
+      name: supplier.name,
+      businessName: supplier.business_name || supplier.businessName,
+      contactPerson: supplier.contact_person || supplier.contactPerson,
+      phone: supplier.phone,
+      alternatePhone: supplier.alternate_phone || supplier.alternatePhone,
+      email: supplier.email,
+      addressLine: supplier.address_line || supplier.addressLine,
+      city: supplier.city,
+      state: supplier.state,
+      pinCode: supplier.pin_code || supplier.pinCode,
+      gstin: supplier.gstin,
+      bankAccountNumber: supplier.bank_account_number || supplier.bankAccountNumber,
+      ifscCode: supplier.ifsc_code || supplier.ifscCode,
+      upiId: supplier.upi_id || supplier.upiId,
+      creditLimit: supplier.credit_limit || supplier.creditLimit,
+      paymentTerms: supplier.payment_terms || supplier.paymentTerms,
+      remarks: supplier.remarks,
+      rating: supplier.rating,
+      isActive: supplier.is_active || supplier.isActive,
+      createdAt: supplier.created_at || supplier.createdAt,
+      updatedAt: supplier.updated_at || supplier.updatedAt
+    };
   } catch (error) {
     console.error(`Failed to fetch supplier ${id}:`, error.response);
     return null;

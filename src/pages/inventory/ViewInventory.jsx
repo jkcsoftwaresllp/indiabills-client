@@ -36,7 +36,7 @@ import {
   PrecisionManufacturing as PrecisionManufacturingIcon,
   Warehouse as WarehouseIcon,
 } from "@mui/icons-material";
-import { getStuff, getCount, deleteRow, getWarehouses, getBatches, deleteBatch, getProducts, getSuppliers } from "../../network/api";
+import { getStuff, getCount, deleteRow, getWarehouses, getBatches, deleteBatch, deleteWarehouse, getProducts, getSuppliers } from "../../network/api";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import InventoryTable from "./InventoryTable";
 import Checklist from "../../components/FormComponent/Checklist";
