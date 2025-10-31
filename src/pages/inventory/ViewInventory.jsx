@@ -457,7 +457,7 @@ const ViewInventory = () => {
           spacing={4}
           alignItems="center"
           justifyContent="space-between"
-          marginY={4}
+          marginY={1}
         >
           <Grid item xs={12}>
             <Tabs
@@ -477,7 +477,7 @@ const ViewInventory = () => {
               spacing={4}
               alignItems="center"
               justifyContent="space-between"
-              marginY={4}
+              marginY={2}
             >
               <Grid item xs={12} md={6}>
                 <Autocomplete
@@ -557,7 +557,7 @@ const ViewInventory = () => {
               </Grid>
             </Grid>
 
-            <Grid container spacing={2} marginBottom={2}>
+            <Grid container spacing={2} marginBottom={1}>
               <Grid item xs={12} md={6}>
                 <TextField
                   label="Search by Batch Number"
@@ -584,7 +584,7 @@ const ViewInventory = () => {
                   <Grid item xs={12}>
                     <div
                       className="ag-theme-quartz"
-                      style={{ height: 500, width: "100%" }}
+                      style={{ height: 400, overflowX: "auto", width: "100%" }}
                     >
                       {filteredEntries.length > 0 ? (
                         <DataGrid
