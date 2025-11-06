@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useStore } from "../../store/store";
+import { getSessions } from "../../utils/authHelper";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import {
   Card,
@@ -22,7 +23,7 @@ import {
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import {
-  getCustomerProfile,
+  getCustomerProfileById,
   updateCustomerSelf,
   getCustomerAddresses,
   createCustomerAddress,
@@ -55,6 +56,7 @@ const CustomerProfile = () => {
   });
 
   const [addresses, setAddresses] = useState([]);
+  const [profileError, setProfileError] = useState(null);
   const [addressDialogOpen, setAddressDialogOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
   const [addressFormData, setAddressFormData] = useState({
@@ -76,9 +78,16 @@ const CustomerProfile = () => {
   // Load profile and addresses on component mount
   useEffect(() => {
     const loadData = async () => {
+      const currentSession = getSessions();
+      if (!currentSession?.id) {
+        setProfileError("Session not found. Please log in again.");
+        setLoading(false);
+        return;
+      }
+
       try {
         const [profile, addressList] = await Promise.all([
-          getCustomerProfile(),
+          getCustomerProfileById(currentSession.id),
           getCustomerAddresses(),
         ]);
 
@@ -102,14 +111,20 @@ const CustomerProfile = () => {
             is_active:
               profile.is_active !== undefined ? profile.is_active : true,
           });
+          setProfileError(null);
+        } else {
+          setProfileError(
+            "Unable to load customer profile. Please contact support."
+          );
         }
 
-        if (addressList) {
-          setAddresses(addressList);
-        }
+        // Ensure addressList is always an array
+        setAddresses(Array.isArray(addressList) ? addressList : []);
       } catch (error) {
-        errorPopup("Failed to load profile data");
         console.error("Error loading profile data:", error);
+        setProfileError("Failed to load profile data. Please try again.");
+        setAddresses([]); // Ensure addresses is always an array
+        errorPopup("Failed to load profile data");
       } finally {
         setLoading(false);
       }
@@ -148,7 +163,12 @@ const CustomerProfile = () => {
     // Reset to original data - reload from API
     const loadData = async () => {
       try {
-        const profile = await getCustomerProfile();
+        const currentSession = getSessions();
+        if (!currentSession?.id) {
+          errorPopup("Session expired. Please log in again.");
+          return;
+        }
+        const profile = await getCustomerProfileById(currentSession.id);
         if (profile) {
           setProfileData({
             first_name: profile.first_name || "",
@@ -260,6 +280,12 @@ const CustomerProfile = () => {
             Manage your personal information and preferences
           </p>
         </div>
+
+        {profileError && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-800">{profileError}</p>
+          </div>
+        )}
 
         <Grid container spacing={4}>
           {/* Profile Information */}

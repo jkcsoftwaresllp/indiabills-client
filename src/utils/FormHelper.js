@@ -174,15 +174,15 @@ function getRequiredField(title) {
       ];
     case "customers":
       return [
-        "customerName",
-        "email",
-        "mobile",
-        "addressType",
-        "addressLine",
-        "city",
-        "state",
-        "pinCode",
+       "first_name",
+       "last_name",
+       "email",
+       "phone",
+       "password",
+       "confirm_password",
+       "customer_type",
       ];
+
     case "transports":
       return [
         "transportName",
