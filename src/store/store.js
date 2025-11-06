@@ -23,6 +23,11 @@ export const useStore = create((set) => ({
     wishlist: [],
     profile: null
   },
+  cart: {
+    items: [],
+    loading: false,
+    error: null,
+  },
 
   setFiscalStart: (date) => set(() => ({ fiscalStart: date })),
   setOrganization: (org) => set(() => ({ Organization: org })),
@@ -114,5 +119,45 @@ export const useStore = create((set) => ({
   
   updateCustomerProfile: (profile) => set((state) => ({
     customerData: { ...state.customerData, profile }
+  })),
+
+  // Cart management
+  setCartLoading: (loading) => set((state) => ({
+    cart: { ...state.cart, loading }
+  })),
+
+  setCartError: (error) => set((state) => ({
+    cart: { ...state.cart, error, loading: false }
+  })),
+
+  setCartItems: (items) => set((state) => ({
+    cart: { ...state.cart, items, loading: false, error: null }
+  })),
+
+  addCartItem: (item) => set((state) => {
+    const existingItemIndex = state.cart.items.findIndex(cartItem => cartItem.product_id === item.product_id);
+    if (existingItemIndex >= 0) {
+      const updatedItems = [...state.cart.items];
+      updatedItems[existingItemIndex] = { ...updatedItems[existingItemIndex], ...item };
+      return { cart: { ...state.cart, items: updatedItems } };
+    } else {
+      return { cart: { ...state.cart, items: [...state.cart.items, item] } };
+    }
+  }),
+
+  updateCartItem: (productId, updates) => set((state) => {
+    const updatedItems = state.cart.items.map(item =>
+      item.product_id === productId ? { ...item, ...updates } : item
+    );
+    return { cart: { ...state.cart, items: updatedItems } };
+  }),
+
+  removeCartItem: (productId) => set((state) => {
+    const updatedItems = state.cart.items.filter(item => item.product_id !== productId);
+    return { cart: { ...state.cart, items: updatedItems } };
+  }),
+
+  clearCart: () => set((state) => ({
+    cart: { ...state.cart, items: [], loading: false, error: null }
   })),
 }));

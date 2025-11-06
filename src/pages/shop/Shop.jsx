@@ -167,6 +167,7 @@ import { useStore } from '../../store/store';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRoutes } from '../../hooks/useRoutes';
+import { useCart } from '../../hooks/useCart';
 
 // 👇 Mocked getData function with demo products and announcement
 const getData = async (endpoint) => {
@@ -214,6 +215,7 @@ const ShopPage = () => {
   const [announcement, setAnnouncement] = useState({});
 
   const { selectedProducts } = useStore();
+  const { getCartItemCount } = useCart();
   const { getRoute } = useRoutes();
   const navigate = useNavigate();
 
@@ -228,9 +230,7 @@ const ShopPage = () => {
   }, []);
 
   const ShowCart = () => {
-    if (selectedProducts) {
-      navigate(getRoute('/cart'));
-    }
+    navigate(getRoute('/cart'));
   };
 
   const ShowOrders = () => {
@@ -332,11 +332,10 @@ const ShopPage = () => {
           />
 
           <div className="p-2 rounded-xl idms-transparent-control relative">
-            <ShoppingCartIcon />
-            <p className="absolute top-0 right-0 bg-rose-500 text-slate-200 px-1 rounded-full text-xs">
-              {Object.keys(selectedProducts).length > 0 &&
-                Object.keys(selectedProducts).length}
-            </p>
+          <ShoppingCartIcon />
+          <p className="absolute top-0 right-0 bg-rose-500 text-slate-200 px-1 rounded-full text-xs">
+          {getCartItemCount() > 0 && getCartItemCount()}
+          </p>
           </div>
 
           <div

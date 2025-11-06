@@ -15,6 +15,8 @@ import { getUsers, getUserById, getUserByUsername, getUsersByRole, createUser, u
 import { uploadUserImage } from './userApi';
 // import { updateOrganizationById } from './organizationApi';
 import { checkSession } from './authApi';
+import { addToCart, removeFromCart, updateCartItem, getCart, checkoutCart } from './cartApi';
+import { toggleWishlist, getWishlist, clearWishlist } from './wishlistApi';
 
 async function getStuff(path) {
   try {
@@ -370,4 +372,14 @@ export {
   uploadUserImage,
   // Session APIs
   checkSession,
+  // Cart APIs
+  addToCart,
+  removeFromCart,
+  updateCartItem,
+  getCart,
+  checkoutCart,
+  // Wishlist APIs
+  toggleWishlist,
+  getWishlist,
+  clearWishlist,
 };

@@ -12,53 +12,43 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ClearIcon from '@mui/icons-material/Clear';
 import { useStore } from '../../store/store';
-import { getProducts } from '../../network/api';
+import { getProducts, getWishlist, toggleWishlist, clearWishlist } from '../../network/api';
 
-const getWishlist = () => {
-  const wishlist = localStorage.getItem('customerWishlist');
-  return wishlist ? JSON.parse(wishlist) : [];
-};
 
-const saveWishlist = (wishlist) => {
-  localStorage.setItem('customerWishlist', JSON.stringify(wishlist));
-};
 
 const CustomerWishlist = () => {
   const navigate = useNavigate();
-  const { selectProduct, successPopup } = useStore();
-  const [wishlistItems, setWishlistItems] = useState([]);
+  const { selectProduct, successPopup, customerData, updateCustomerWishlist } = useStore();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchWishlistProducts = async () => {
+    const fetchWishlist = async () => {
       try {
-        const wishlist = getWishlist();
-        const allProducts = await getProducts();
-        
-        const wishlistProducts = allProducts.filter(product => 
-          wishlist.includes(product.id)
-        );
-        
-        setWishlistItems(wishlist);
-        setProducts(wishlistProducts);
+        const result = await getWishlist();
+        if (result.status === 200) {
+          setProducts(result.data);
+          updateCustomerWishlist(result.data); // Update store
+        }
       } catch (error) {
-        console.error('Error fetching wishlist products:', error);
+        console.error('Error fetching wishlist:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchWishlistProducts();
+    fetchWishlist();
   }, []);
 
-  const handleRemoveFromWishlist = (productId) => {
-    const updatedWishlist = wishlistItems.filter(id => id !== productId);
-    setWishlistItems(updatedWishlist);
-    saveWishlist(updatedWishlist);
-    setProducts(prev => prev.filter(product => product.id !== productId));
-    successPopup('Removed from wishlist');
+  const handleRemoveFromWishlist = async (productId) => {
+    const result = await toggleWishlist(productId);
+    if (result.status === 200) {
+      setProducts(prev => prev.filter(product => product.id !== productId));
+      updateCustomerWishlist(customerData.wishlist.filter(item => item.id !== productId));
+      successPopup('Removed from wishlist');
+    }
   };
 
   const handleAddToCart = (product) => {
@@ -72,6 +62,15 @@ const CustomerWishlist = () => {
     });
     successPopup(`Added ${products.length} items to cart`);
     navigate('/customer/cart');
+  };
+
+  const handleClearWishlist = async () => {
+    const result = await clearWishlist();
+    if (result.status === 200) {
+      setProducts([]);
+      updateCustomerWishlist([]);
+      successPopup('Wishlist cleared');
+    }
   };
 
   if (loading) {
@@ -96,14 +95,24 @@ const CustomerWishlist = () => {
               </p>
             </div>
             {products.length > 0 && (
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<ShoppingCartIcon />}
-                onClick={handleMoveAllToCart}
-              >
-                Move All to Cart
-              </Button>
+            <div className="flex gap-2">
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<ClearIcon />}
+                onClick={handleClearWishlist}
+            >
+                Clear Wishlist
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<ShoppingCartIcon />}
+                  onClick={handleMoveAllToCart}
+                >
+                  Move All to Cart
+                </Button>
+              </div>
             )}
           </div>
         </div>

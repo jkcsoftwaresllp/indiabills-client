@@ -16,9 +16,7 @@ const ShopCustomer = () => {
   const navigate = useNavigate();
 
   const ShowCart = () => {
-    if (selectedProducts) {
-      navigate("/cart");
-    }
+  navigate("/cart");
   };
 
   const ShowOrders = () => {

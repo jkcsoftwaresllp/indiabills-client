@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ViewData from "../../layouts/form/ViewData";
 import { useNavigate } from "react-router-dom";
-import { getProducts, deleteProduct } from "../../network/api";
+import { getProducts, deleteProduct, toggleWishlist } from "../../network/api";
 import { useStore } from "../../store/store";
 import { IconButton, Tooltip } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
@@ -111,8 +111,16 @@ const ViewProducts = () => {
 
   // Fetch wishlist on mount
   useEffect(() => {
-    fetchWishlist();
+    fetchWishlistItems();
   }, []);
+
+  const fetchWishlistItems = async () => {
+    const response = await getWishlist();
+    if (response.status === 200 && Array.isArray(response.data)) {
+      const wishlistIds = new Set(response.data.map(item => item.id));
+      setWishlistItems(wishlistIds);
+    }
+  };
 
   const fetchWishlist = async () => {
     const response = await getProducts();
@@ -126,13 +134,22 @@ const ViewProducts = () => {
     return [];
   };
 
-  const handleWishlistToggle = (product) => {
-    setWishlistItems((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(product.id)) newSet.delete(product.id);
-      else newSet.add(product.id);
-      return newSet;
-    });
+  const handleWishlistToggle = async (product) => {
+    const result = await toggleWishlist(product.id);
+    if (result.status === 200) {
+      setWishlistItems((prev) => {
+        const newSet = new Set(prev);
+        if (newSet.has(product.id)) {
+          newSet.delete(product.id);
+        } else {
+          newSet.add(product.id);
+        }
+        return newSet;
+      });
+      successPopup(result.data?.message || 'Wishlist updated');
+    } else {
+      errorPopup('Failed to update wishlist');
+    }
   };
 
   return (

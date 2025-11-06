@@ -1,27 +1,28 @@
-import { useEffect, useState } from 'react';
-import PrintIcon from '@mui/icons-material/Print';
-import PageAnimate from '../../../components/Animate/PageAnimate';
-import { useStore } from '../../../store/store';
+import { useEffect, useState } from "react";
+import PrintIcon from "@mui/icons-material/Print";
+import PageAnimate from "../../../components/Animate/PageAnimate";
+import { useStore } from "../../../store/store";
+import { useCart } from "../../../hooks/useCart";
 import {
   fetchProduct,
   getData,
   getStuff,
   placeOrder,
   getRequest,
-} from '../../../network/api';
-import OrderCard from '../../../components/shop/OrderCard';
-import ReceiptIcon from '@mui/icons-material/Receipt';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import ComprehensiveInvoiceTemplate from '../../invoices/templates/Comprehensive';
-import PaymentIcon from '@mui/icons-material/Payment';
-import { useNavigate } from 'react-router-dom';
+} from "../../../network/api";
+import OrderCard from "../../../components/shop/OrderCard";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ComprehensiveInvoiceTemplate from "../../invoices/templates/Comprehensive";
+import PaymentIcon from "@mui/icons-material/Payment";
+import { useNavigate } from "react-router-dom";
 import {
   calculateSubtotal,
   calculateTaxes,
   calculateDiscount,
   calculateTotalAmount,
-} from './share/calculations';
-import { CustomerSection, OrderDetails } from './share/ShopSections';
+} from "./share/calculations";
+import { CustomerSection, OrderDetails } from "./share/ShopSections";
 import {
   Modal,
   Button,
@@ -31,14 +32,14 @@ import {
   InputLabel,
   FormControl,
   Typography,
-} from '@mui/material';
-import MouseHoverPopover from '../../../components/core/Explain';
-import ShortInvoiceTemplate from '../../invoices/templates/Short';
-import { useRoutes } from '../../../hooks/useRoutes';
+} from "@mui/material";
+import MouseHoverPopover from "../../../components/core/Explain";
+import ShortInvoiceTemplate from "../../invoices/templates/Short";
+import { useRoutes } from "../../../hooks/useRoutes";
 
 const CustomerCheckout = () => {
-  const { errorPopup, successPopup, selectedProducts, clearSelectedProducts } =
-    useStore();
+  const { errorPopup, successPopup } = useStore();
+  const { cartItems, checkout, loading: cartLoading } = useCart();
   const navigate = useNavigate();
   const { getRoute } = useRoutes();
 
@@ -49,19 +50,19 @@ const CustomerCheckout = () => {
         const data = await getRequest(`/organization`);
         setOrganization(data);
       } catch (error) {
-        console.error('Error fetching organization details:', error);
+        console.error("Error fetching organization details:", error);
       }
     };
 
     fetchOrganization();
   }, []);
 
-  const TemplateType = localStorage.getItem('invoiceTemplate') || 'short';
-  const invo = (Number(localStorage.getItem('invoiceCount') || '0000') + 1)
+  const TemplateType = localStorage.getItem("invoiceTemplate") || "short";
+  const invo = (Number(localStorage.getItem("invoiceCount") || "0000") + 1)
     .toString()
-    .padStart(4, '0');
+    .padStart(4, "0");
 
-  const [initials, setInitials] = useState('');
+  const [initials, setInitials] = useState("");
   const [invoiceData, setInvoiceData] = useState({
     invoiceNumber: invo,
     invoiceDate: new Date(),
@@ -69,35 +70,35 @@ const CustomerCheckout = () => {
   });
 
   const [payment, setPayment] = useState({
-    paymentMethod: 'cash',
-    upi: '',
-    cardNumber: '',
-    cardHolderName: '',
-    expiryDate: '',
-    cvv: '',
-    cardType: '',
-    bankName: '',
-    paymentStatus: 'done',
+    paymentMethod: "cash",
+    upi: "",
+    cardNumber: "",
+    cardHolderName: "",
+    expiryDate: "",
+    cvv: "",
+    cardType: "",
+    bankName: "",
+    paymentStatus: "done",
   });
 
   const [orderData, setOrderData] = useState({
     orderDate: new Date(),
-    orderStatus: 'pending',
+    orderStatus: "pending",
     totalAmount: 0,
     taxAmount: 0,
     discountApplied: 0,
     shippingCost: 0,
-    shippingAddress: '',
+    shippingAddress: "",
     shippingDate: new Date(),
-    customerId: '0',
+    customerId: "0",
   });
 
   const [products, setProducts] = useState([]);
-  const [discountType, setDiscountType] = useState('automatic');
+  const [discountType, setDiscountType] = useState("automatic");
   const [manualDiscount, setManualDiscount] = useState(0);
   const [activeDiscounts, setActiveDiscounts] = useState({});
 
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [payOffline, setPayOffline] = useState(false);
   const [payMethods, setPayMethods] = useState([]);
 
@@ -109,20 +110,20 @@ const CustomerCheckout = () => {
   const [isNewCustomer, setIsNewCustomer] = useState(false);
 
   const [newCustomer, setNewCustomer] = useState({
-    customerName: '',
-    businessName: '',
-    email: '',
-    gender: '',
-    mobile: '',
-    gstin: '',
+    customerName: "",
+    businessName: "",
+    email: "",
+    gender: "",
+    mobile: "",
+    gstin: "",
   });
 
   const [newShipping, setNewShipping] = useState({
-    addressLine: '',
-    city: '',
-    landmark: '',
-    state: '',
-    pinCode: '',
+    addressLine: "",
+    city: "",
+    landmark: "",
+    state: "",
+    pinCode: "",
   });
 
   const [shippings, setShippings] = useState([]);
@@ -140,14 +141,14 @@ const CustomerCheckout = () => {
   };
 
   const fetchCustomers = async () => {
-    const data = await getStuff('/customers/options');
+    const data = await getStuff("/customers/options");
     setCustomers(data);
   };
 
   useEffect(() => {
     const fetchFormDetails = async () => {
-      const data = await getData('/settings/payment/methods');
-      const ini = await getData('/settings/initials');
+      const data = await getData("/settings/payment/methods");
+      const ini = await getData("/settings/initials");
       setInitials(ini);
       setPayMethods(data);
     };
@@ -155,31 +156,27 @@ const CustomerCheckout = () => {
   }, []);
 
   useEffect(() => {
-    const IDs = Object.keys(selectedProducts);
+    // Set products from cart items since cart API returns product details
+    const cartProducts = cartItems.map((item) => ({
+      itemId: item.product_id,
+      itemName: item.name,
+      salePrice: item.price_at_addition,
+      unitMRP: item.price_at_addition,
+      purchasePrice: item.price_at_addition, // This might need to be fetched separately
+      discountValue: 0, // Cart API doesn't include discount info
+      offerName: null,
+      variants: {}, // Cart API doesn't include variants
+      cess: 0,
+      cgst: 0,
+      sgst: 0,
+      quantity: item.quantity,
+    }));
+    setProducts(cartProducts);
 
-    if (IDs.length <= 0) return;
-
-    const fetchProductsAndCustomers = async () => {
-      try {
-        const res = await fetchProduct(IDs);
-        if (res.status !== 200) {
-          errorPopup("Server Error, Couldn't fetch products :(");
-          return;
-        }
-        setProducts(res.data);
-
-        await fetchCustomers();
-      } catch (error) {
-        errorPopup("Couldn't fetch product information :(.");
-      }
-    };
-
-    if (Object.keys(selectedProducts).length > 0) {
-      fetchProductsAndCustomers();
-    } else {
-      setProducts([]);
+    if (cartItems.length > 0) {
+      fetchCustomers();
     }
-  }, [selectedProducts, errorPopup]);
+  }, [cartItems, errorPopup]);
 
   useEffect(() => {
     if (selectedCustomer) {
@@ -206,7 +203,7 @@ const CustomerCheckout = () => {
     setOrderData((prev) => ({
       ...prev,
       shippingAddress: isNewCustomer
-        ? newShipping.addressLine || ''
+        ? newShipping.addressLine || ""
         : newaddress(),
     }));
   }, [selectedShipping, newShipping, isNewCustomer]);
@@ -217,13 +214,7 @@ const CustomerCheckout = () => {
     }
   }, [selectedCustomer]);
 
-  useEffect(() => {
-    const filterKeys = new Set(Object.keys(selectedProducts).map(Number));
-    const filteredArray = products.filter((product) =>
-      filterKeys.has(Number(product.itemId))
-    );
-    setProducts(filteredArray);
-  }, [selectedProducts]);
+  // No need to filter products anymore since we're setting them directly from cartItems
 
   useEffect(() => {
     if (products.length > 0) {
@@ -238,12 +229,18 @@ const CustomerCheckout = () => {
   }, [products]);
 
   useEffect(() => {
-    const newTotalAmount = calculateTotalAmount(products, selectedProducts);
-    const newTaxes = calculateTaxes(products, selectedProducts);
+    // Create a mock selectedProducts object from cartItems for compatibility
+    const mockSelectedProducts = {};
+    cartItems.forEach((item) => {
+      mockSelectedProducts[item.product_id] = { quantity: item.quantity };
+    });
+
+    const newTotalAmount = calculateTotalAmount(products, mockSelectedProducts);
+    const newTaxes = calculateTaxes(products, mockSelectedProducts);
     const newSubtotal = calculateSubtotal(newTotalAmount, newTaxes);
     const newDiscountValue = calculateDiscount(
       products,
-      selectedProducts,
+      mockSelectedProducts,
       discountType,
       manualDiscount,
       activeDiscounts
@@ -252,7 +249,7 @@ const CustomerCheckout = () => {
       newTotalAmount - newDiscountValue + Number(orderData.shippingCost);
 
     const totalPurchasePrice = products.reduce((total, product) => {
-      const quantity = selectedProducts[product.itemId]?.quantity || 0;
+      const quantity = mockSelectedProducts[product.itemId]?.quantity || 0;
       const purchasePrice = Number(product.purchasePrice) || 0;
       return total + purchasePrice * quantity;
     }, 0);
@@ -266,7 +263,7 @@ const CustomerCheckout = () => {
     setProfitOrLoss(newProfitOrLoss);
   }, [
     products,
-    selectedProducts,
+    cartItems,
     discountType,
     manualDiscount,
     activeDiscounts,
@@ -284,100 +281,61 @@ const CustomerCheckout = () => {
         !newShipping.state ||
         !newShipping.pinCode
       ) {
-        errorPopup('Please fill all the fields!');
+        errorPopup("Please fill all the fields!");
         return true;
       }
     } else {
       if (!selectedCustomer || !selectedShipping || !orderData.shippingDate) {
-        errorPopup('Please select a customer!');
+        errorPopup("Please select a customer!");
         return true;
       } else if (!payOffline && !paymentMethod) {
-        errorPopup('Please select a payment method!');
+        errorPopup("Please select a payment method!");
         return true;
       }
     }
   };
 
   const collectFinalData = async () => {
-    const apiData = {
-      newCustomer: isNewCustomer ? { ...newCustomer, ...newShipping } : null,
-      invoice: invoiceData,
-      orderData: { ...orderData, orderStatus: ship ? 'shipped' : 'pending' },
-      orderItems: products.map((product) => {
-        const selectedProduct = selectedProducts[product.itemId];
-        return {
-          itemName: product.itemName,
-          itemId: Number(product.itemId),
-          variants: selectedProduct.variants,
-          unitMRP: product.unitMRP,
-          quantity: selectedProduct.quantity,
-          discount:
-            discountType === 'manual'
-              ? '0'
-              : product.discountValue?.toString() || '0',
-          purchasePrice: product.purchasePrice.toString(),
-          salePrice:
-            selectedProduct.salePrice === undefined
-              ? product.salePrice
-              : selectedProduct.salePrice.toString(),
-          cess: product.cess?.toString() || '0',
-          cgst: product.cgst?.toString() || '0',
-          sgst: product.sgst?.toString() || '0',
-        };
-      }),
-      payment: {
-        ...payment,
-        paymentDate: new Date(),
-        ...(payment.paymentMethod === 'upi' &&
-          !payment.upi && { upi: undefined }),
-        ...(payment.paymentMethod === 'card' &&
-          !payment.cardNumber && {
-            cardNumber: undefined,
-            cardHolderName: undefined,
-            expiryDate: undefined,
-            cvv: undefined,
-            cardType: undefined,
-            bankName: undefined,
-          }),
-      },
-    };
+    // Use the checkout API instead of placeOrder
+    const result = await checkout();
 
-    const response = await placeOrder(apiData);
-
-    if (response.status !== 201) {
-      errorPopup(`${response.message}`);
+    if (!result.success) {
+      errorPopup(result.error);
       return;
     }
 
-    successPopup('Order placed successfully!');
-    clearSelectedProducts();
-    
+    successPopup("Order placed successfully!");
+
     // Store order in localStorage for customer portal
     const newOrder = {
       orderId: Date.now(),
       invoiceNumber: invoiceData.invoiceNumber,
-      customerName: isNewCustomer ? newCustomer.customerName : selectedCustomer?.name,
+      customerName: isNewCustomer
+        ? newCustomer.customerName
+        : selectedCustomer?.name,
       orderDate: new Date().toISOString(),
       totalAmount: totalCost.toString(),
-      orderStatus: ship ? 'shipped' : 'pending',
-      paymentStatus: 'paid',
-      items: products.map(product => {
-        const selectedProduct = selectedProducts[product.itemId];
-        return {
-          orderItemId: Date.now() + Math.random(),
-          itemId: product.itemId,
-          itemName: product.itemName,
-          quantity: selectedProduct.quantity,
-          salePrice: selectedProduct.salePrice || product.salePrice,
-          variants: JSON.stringify(selectedProduct.variants || {})
-        };
-      })
+      orderStatus: ship ? "shipped" : "pending",
+      paymentStatus: "paid",
+      items: products.map((product) => ({
+        orderItemId: Date.now() + Math.random(),
+        itemId: product.itemId,
+        itemName: product.itemName,
+        quantity: product.quantity,
+        salePrice: product.salePrice,
+        variants: JSON.stringify({}),
+      })),
     };
-    
-    const existingOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
-    localStorage.setItem('customerOrders', JSON.stringify([newOrder, ...existingOrders]));
-    
-    navigate(getRoute('/orders'));
+
+    const existingOrders = JSON.parse(
+      localStorage.getItem("customerOrders") || "[]"
+    );
+    localStorage.setItem(
+      "customerOrders",
+      JSON.stringify([newOrder, ...existingOrders])
+    );
+
+    navigate(getRoute("/orders"));
   };
 
   const [open, setOpen] = useState(false);
@@ -404,19 +362,19 @@ const CustomerCheckout = () => {
     upi: payment.upi,
     cardNumber: payment.cardNumber,
     cardHolderName: payment.cardHolderName,
-    expiryDate: payment.expiryDate || '',
-    cvv: payment.cvv || '',
-    cardType: payment.cardType || '',
-    bankName: payment.bankName || '',
+    expiryDate: payment.expiryDate || "",
+    cvv: payment.cvv || "",
+    cardType: payment.cardType || "",
+    bankName: payment.bankName || "",
     customerId: Number(orderData.customerId),
     customerName: isNewCustomer
-      ? newCustomer.customerName || ''
-      : selectedCustomer?.name || '',
+      ? newCustomer.customerName || ""
+      : selectedCustomer?.name || "",
     customerAddress: isNewCustomer
       ? `${newShipping.addressLine}, ${newShipping.city}, ${newShipping.state}, ${newShipping.pinCode}`
-      : orderData.shippingAddress || '',
-    mobile: isNewCustomer ? newCustomer.mobile || '' : '',
-    gstin: isNewCustomer ? newCustomer.gstin || '' : '',
+      : orderData.shippingAddress || "",
+    mobile: isNewCustomer ? newCustomer.mobile || "" : "",
+    gstin: isNewCustomer ? newCustomer.gstin || "" : "",
     shippingAddress: orderData.shippingAddress,
     totalAmount: totalCost.toFixed(2),
     taxAmount: taxes.toFixed(2),
@@ -424,28 +382,19 @@ const CustomerCheckout = () => {
     shippingDate: new Date(orderData.shippingDate).toISOString(),
     placedByUserId: 0,
     shippingCost: orderData.shippingCost.toFixed(2),
-    items: products.map((product) => {
-      const selectedProduct = selectedProducts[product.itemId];
-      if (!selectedProduct) {
-        console.warn(
-          `Product with ID ${product.itemId} is missing from selectedProducts.`
-        );
-        return null;
-      }
-      return {
-        itemName: product.itemName,
-        itemId: Number(product.itemId),
-        quantity: selectedProduct.quantity,
-        unitMRP: product.unitMRP,
-        discount: product.discountValue,
-        purchasePrice: product.purchasePrice,
-        salePrice: product.salePrice,
-        hsn: product.hsn || '',
-        cess: product.cess || '0',
-        cgst: product.cgst || '0',
-        sgst: product.sgst || '0',
-      };
-    }),
+    items: products.map((product) => ({
+      itemName: product.itemName,
+      itemId: Number(product.itemId),
+      quantity: product.quantity,
+      unitMRP: product.unitMRP,
+      discount: product.discountValue,
+      purchasePrice: product.purchasePrice,
+      salePrice: product.salePrice,
+      hsn: product.hsn || "",
+      cess: product.cess || "0",
+      cgst: product.cgst || "0",
+      sgst: product.sgst || "0",
+    })),
   };
 
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -467,22 +416,22 @@ const CustomerCheckout = () => {
     }));
   };
 
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
 
   return (
     <PageAnimate nostyle>
       <main className="p-6 w-full flex flex-col gap-8 bg-white rounded-xl">
         <section className="p-4 w-full flex items-center justify-between">
-          <button className={''} onClick={() => navigate(getRoute(''))}>
+          <button className={""} onClick={() => navigate(getRoute(""))}>
             <ArrowBackIosNewIcon />
             Back to Shop
           </button>
-          <div className={'flex gap-2 items-center'}>
+          <div className={"flex gap-2 items-center"}>
             <div>
               <MouseHoverPopover
                 triggerElement={
                   <Button
-                    variant={'outlined'}
+                    variant={"outlined"}
                     color="primary"
                     onClick={handleOpen}
                   >
@@ -498,7 +447,7 @@ const CustomerCheckout = () => {
                 aria-describedby="invoice-modal-description"
               >
                 <section id="invoice">
-                  {TemplateType === 'short' ? (
+                  {TemplateType === "short" ? (
                     <ShortInvoiceTemplate
                       invoice={invoiceReport}
                       Organization={organization}
@@ -523,14 +472,14 @@ const CustomerCheckout = () => {
               onClick={() => setShip(!ship)}
             >
               Instant Ship?
-              <span className={'text-rose-500 font-medium'}>
-                {ship ? 'Yes' : 'No'}
+              <span className={"text-rose-500 font-medium"}>
+                {ship ? "Yes" : "No"}
               </span>
             </div>
           </div>
         </section>
 
-        {Object.keys(selectedProducts).length > 0 ? (
+        {cartItems.length > 0 ? (
           <section
             id="selected-products"
             className="flex overflow-x-scroll gap-2 text-slate-500 p-4"
@@ -539,8 +488,8 @@ const CustomerCheckout = () => {
           </section>
         ) : (
           <h1 className="text-slate-500 p-4 idms-control">
-            {' '}
-            Nothing to show :p{' '}
+            {" "}
+            Nothing to show :p{" "}
           </h1>
         )}
 
@@ -619,7 +568,7 @@ const CustomerCheckout = () => {
                 </Select>
               </FormControl>
 
-              {selectedPaymentMethod === 'upi' && (
+              {selectedPaymentMethod === "upi" && (
                 <TextField
                   label="UPI ID"
                   variant="outlined"
@@ -632,7 +581,7 @@ const CustomerCheckout = () => {
                 />
               )}
 
-              {selectedPaymentMethod === 'card' && (
+              {selectedPaymentMethod === "card" && (
                 <>
                   <TextField
                     label="Card Number"
@@ -702,12 +651,12 @@ const CustomerCheckout = () => {
                 </>
               )}
 
-              {(selectedPaymentMethod === 'cash' ||
-                selectedPaymentMethod === 'credit') && (
+              {(selectedPaymentMethod === "cash" ||
+                selectedPaymentMethod === "credit") && (
                 <Typography variant="body1" className="mb-4">
-                  No additional information required for{' '}
+                  No additional information required for{" "}
                   {selectedPaymentMethod.charAt(0).toUpperCase() +
-                    selectedPaymentMethod.slice(1)}{' '}
+                    selectedPaymentMethod.slice(1)}{" "}
                   payments.
                 </Typography>
               )}
@@ -724,14 +673,14 @@ const CustomerCheckout = () => {
                   onClick={() => {
                     let hasWarnings = false;
 
-                    if (selectedPaymentMethod === 'upi' && !payment.upi) {
+                    if (selectedPaymentMethod === "upi" && !payment.upi) {
                       errorPopup(
                         "You selected UPI but didn't provide a UPI ID."
                       );
                       hasWarnings = true;
                     }
 
-                    if (selectedPaymentMethod === 'card') {
+                    if (selectedPaymentMethod === "card") {
                       const {
                         cardNumber,
                         cardHolderName,
@@ -762,8 +711,9 @@ const CustomerCheckout = () => {
                   }}
                   color="primary"
                   variant="contained"
+                  disabled={cartLoading}
                 >
-                  Confirm & Pay
+                  {cartLoading ? "Processing..." : "Confirm & Pay"}
                 </Button>
               </div>
             </div>

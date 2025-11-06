@@ -24,78 +24,62 @@ import {
 import { motion } from 'framer-motion';
 import { useStore } from '../../store/store';
 import { useRoutes } from '../../hooks/useRoutes';
+import { useCart } from '../../hooks/useCart';
+import { toggleWishlist } from '../../network/api';
 
-// --- Wishlist management ---
-const getWishlist = () => JSON.parse(localStorage.getItem('customerWishlist') || '[]');
-const saveWishlist = (w) => localStorage.setItem('customerWishlist', JSON.stringify(w));
 
-const addToWishlist = (id) => {
-  const w = getWishlist();
-  if (!w.includes(id)) {
-    w.push(id);
-    saveWishlist(w);
-  }
-};
-
-const removeFromWishlist = (id) => {
-  const w = getWishlist().filter((i) => i !== id);
-  saveWishlist(w);
-};
 
 // --- Component ---
 const ProductCard = ({ product }) => {
-  const { selectedProducts, selectProduct, removeSelectedProduct } = useStore();
   const { getRoute } = useRoutes();
+  const { cartItems, addItemToCart, removeItemFromCart, loading } = useCart();
+  const { customerData, updateCustomerWishlist } = useStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariants, setSelectedVariants] = useState({});
-  const [isInCart, setIsInCart] = useState(false);
   const [error, setError] = useState('');
-  const [isInWishlist, setIsInWishlist] = useState(false);
 
   const productId = product.itemId || product.id;
+  const cartItem = cartItems.find(item => item.product_id === productId);
+  const isInCart = !!cartItem;
+  const isInWishlist = customerData.wishlist.some(item => item.product_id === productId);
 
   const formatNumber = (num) =>
     num % 1 === 0 ? num.toString() : (Number(num) || 0).toFixed(2);
 
-  useEffect(() => {
-    const wishlist = getWishlist();
-    setIsInWishlist(wishlist.includes(productId));
-  }, [productId]);
+
 
   useEffect(() => {
-    const selected = selectedProducts[product.itemId];
-    setIsInCart(!!selected);
-    if (selected) {
-      setQuantity(selected.quantity || 1);
-      setSelectedVariants(selected);
+    if (cartItem) {
+      setQuantity(cartItem.quantity || 1);
     } else {
       setQuantity(1);
       setSelectedVariants({});
     }
-  }, [selectedProducts, product.itemId]);
+  }, [cartItem]);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (quantity <= 0) return setError('Quantity must be greater than zero');
     setError('');
-    selectProduct(product, { ...selectedVariants, quantity });
+    await addItemToCart(productId, quantity);
     setIsModalOpen(false);
-    setIsInCart(true);
   };
 
-  const handleWishlistToggle = () => {
-    if (isInWishlist) {
-      removeFromWishlist(productId);
-    } else {
-      addToWishlist(productId);
+  const handleWishlistToggle = async () => {
+    const result = await toggleWishlist(productId);
+    if (result.status === 200) {
+      // Update the store - but we need to refetch the wishlist or update locally
+      // For now, let's toggle locally in the store
+      const updatedWishlist = isInWishlist
+        ? customerData.wishlist.filter(item => item.product_id !== productId)
+        : [...customerData.wishlist, { product_id: productId }];
+      updateCustomerWishlist(updatedWishlist);
     }
-    setIsInWishlist(!isInWishlist);
   };
 
-  const handleRemove = () => {
-    removeSelectedProduct(product.itemId);
-    setIsInCart(false);
+  const handleRemove = async () => {
+    await removeItemFromCart(productId);
     setIsModalOpen(false);
     setQuantity(1);
     setSelectedVariants({});
@@ -209,14 +193,15 @@ const ProductCard = ({ product }) => {
           {/* Buttons */}
           <div className="flex flex-col gap-2">
             <Button
-              variant="contained"
-              color={isInCart ? 'success' : 'primary'}
-              startIcon={<ShoppingBagIcon />}
-              onClick={() => setIsModalOpen(true)}
-              fullWidth
+            variant="contained"
+            color={isInCart ? 'success' : 'primary'}
+            startIcon={<ShoppingBagIcon />}
+            onClick={() => setIsModalOpen(true)}
+            fullWidth
+            disabled={loading}
               sx={{ textTransform: 'none', borderRadius: '10px', py: 1.2 }}
             >
-              {isInCart ? 'Update Cart' : 'Add to Cart'}
+              {loading ? 'Adding...' : (isInCart ? 'Update Cart' : 'Add to Cart')}
             </Button>
             {isInCart && (
               <Button
