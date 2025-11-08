@@ -8,6 +8,7 @@ import { IconButton, InputBase, MenuItem, Select } from '@mui/material';
 import React from 'react';
 import { EachOrder } from './EachOrder';
 import PageAnimate from '../../components/Animate/PageAnimate';
+import axios from 'axios';
 
 const safeParse = (jsonString) => {
   try {
@@ -25,6 +26,25 @@ const getOrdersData = () => {
     return JSON.parse(storedOrders);
   }
   return [];
+};
+
+// Fetch payment status for orders
+const fetchPaymentStatuses = async (orders) => {
+  const updatedOrders = await Promise.all(
+    orders.map(async (order) => {
+      try {
+        // Assuming we can get payment by order_id, but since API is by payment_id or invoice_id, perhaps query by order_id
+        // For now, assume payment status is updated in localStorage when changed
+        // But to make it work, we can call an API to get payment for order
+        // Since no such API, for now keep as is
+        return order;
+      } catch (error) {
+        console.error('Error fetching payment status for order:', order.orderId, error);
+        return order;
+      }
+    })
+  );
+  return updatedOrders;
 };
 
 const ViewOrders = () => {

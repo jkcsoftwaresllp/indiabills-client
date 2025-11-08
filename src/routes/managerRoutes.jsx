@@ -50,6 +50,8 @@ const AddTransport = lazy(() => import('../pages/transport/AddTransport'));
 const InspectTransport = lazy(() => import('../pages/transport/InspectTransport'));
 const EditTransport = lazy(() => import('../pages/transport/EditTransport'));
 
+const ViewPayments = lazy(() => import('../pages/payments/ViewPayments'));
+
 const ManagerRoutes = () => {
   return (
     <Suspense fallback={<SpinnerFullPage />}>
@@ -106,6 +108,9 @@ const ManagerRoutes = () => {
           <Route path="transport/add" element={<AddTransport />} />
           <Route path="transport/:id" element={<InspectTransport />} />
           <Route path="transport/:id/edit" element={<EditTransport />} />
+
+          {/* Payments Routes */}
+          <Route path="payments" element={<ViewPayments />} />
         </Route>
       </Routes>
     </Suspense>

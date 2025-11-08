@@ -64,6 +64,11 @@ const operatorButtons = [
         label: 'Customers',
       },
       {
+        to: '/operator/payments',
+        icon: '💳',
+        label: 'Payments',
+      },
+      {
         to: '/operator/transport',
         icon: '🚛',
         label: 'Transport',

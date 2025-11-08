@@ -16,6 +16,7 @@ import ShopIcon from '@mui/icons-material/Shop';
 import SupportIcon from '@mui/icons-material/Support';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
+import PaymentIcon from '@mui/icons-material/Payment';
 
 export default [
   {
@@ -90,6 +91,12 @@ export default [
         icon: <SupervisedUserCircleIcon />,
         label: 'Customers',
         roles: ['admin', 'operator'],
+      },
+      {
+        to: '/payments',
+        icon: <PaymentIcon />,
+        label: 'Payments',
+        roles: ['admin', 'manager', 'operator'],
       },
       {
         to: '/transport',

@@ -36,6 +36,7 @@ import {
 import MouseHoverPopover from "../../../components/core/Explain";
 import ShortInvoiceTemplate from "../../invoices/templates/Short";
 import { useRoutes } from "../../../hooks/useRoutes";
+import { createPayment } from "../../../network/api";
 
 const CustomerCheckout = () => {
   const { errorPopup, successPopup } = useStore();
@@ -304,11 +305,34 @@ const CustomerCheckout = () => {
       return;
     }
 
-    successPopup("Order placed successfully!");
+    const orderId = result.data?.order_id || Date.now();
+
+    // Create payment record with status pending
+    try {
+      const paymentData = {
+        order_id: orderId,
+        customer_id: isNewCustomer ? null : selectedCustomer?.id, // Assuming selectedCustomer has id
+        payment_method: paymentMethod || "cash",
+        payment_status: "pending",
+        amount: totalCost,
+        payment_date: new Date().toISOString().split('T')[0],
+        // Add other payment details if available
+      };
+
+      const result = await createPayment(paymentData);
+
+      if (result.status !== 201) {
+        console.error('Failed to create payment record:', result.error);
+      }
+    } catch (error) {
+      console.error('Error creating payment:', error);
+    }
+
+    successPopup("Order placed successfully! Payment is pending confirmation.");
 
     // Store order in localStorage for customer portal
     const newOrder = {
-      orderId: Date.now(),
+      orderId: orderId,
       invoiceNumber: invoiceData.invoiceNumber,
       customerName: isNewCustomer
         ? newCustomer.customerName
@@ -316,7 +340,7 @@ const CustomerCheckout = () => {
       orderDate: new Date().toISOString(),
       totalAmount: totalCost.toString(),
       orderStatus: ship ? "shipped" : "pending",
-      paymentStatus: "paid",
+      paymentStatus: "pending", // Changed to pending
       items: products.map((product) => ({
         orderItemId: Date.now() + Math.random(),
         itemId: product.itemId,

@@ -16,6 +16,7 @@ import { uploadUserImage } from './userApi';
 // import { updateOrganizationById } from './organizationApi';
 import { checkSession } from './authApi';
 import { addToCart, removeFromCart, updateCartItem, getCart, checkoutCart } from './cartApi';
+import { getPayments, updatePaymentStatus, createPayment, getInvoice } from './paymentsApi';
 import { toggleWishlist, getWishlist, clearWishlist } from './wishlistApi';
 
 async function getStuff(path) {
@@ -378,8 +379,13 @@ export {
   updateCartItem,
   getCart,
   checkoutCart,
-  // Wishlist APIs
-  toggleWishlist,
-  getWishlist,
-  clearWishlist,
+  // Payment APIs
+  getPayments,
+  updatePaymentStatus,
+  createPayment,
+   getInvoice,
+   // Wishlist APIs
+   toggleWishlist,
+   getWishlist,
+   clearWishlist,
 };

@@ -20,6 +20,11 @@ const managerMenuItems = [
     label: 'Customers',
   },
   {
+    to: '/manager/payments',
+    icon: '💳',
+    label: 'Payments',
+  },
+  {
     to: '/manager/inventory',
     icon: '📦',
     label: 'Inventory',
