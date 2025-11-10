@@ -35,7 +35,7 @@ const ItemsEditTab = ({ items, handleItemChange, handleDeleteItem, handleAddItem
     <div>
       <h3>Items</h3>
       <Button variant="contained" color="primary" onClick={handleAddItem} style={{ marginBottom: '16px' }} >
-        FiPlus Item
+        Add Item
       </Button>
       <TableContainer component={Paper}>
         <Table aria-label="items table" size="small">
