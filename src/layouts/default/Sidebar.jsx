@@ -8,6 +8,7 @@ import buttons from "./sidebar_buttons";
 import { fetchLogo, logout } from "../../network/api";
 import { getBaseURL } from "../../network/api/api-config";
 import { useAuth } from "../../hooks/useAuth";
+import { setTempSession } from "../../utils/authHelper";
 import styles from "./Sidebar.module.css";
 
 // MUI
@@ -123,6 +124,23 @@ const Sidebar = () => {
     navigate("/organization");
   };
 
+  const handleSwitchOrganization = () => {
+    // Set temp session for organization selector
+    const tempSessionData = {
+      token: session.token,
+      user: {
+        id: session.id,
+        name: session.name,
+        email: session.email,
+        username: session.username,
+        orgs: session.orgs
+      }
+    };
+    setTempSession(tempSessionData);
+    setShowUserMenu(false);
+    navigate('/organization-selector');
+  };
+
   const toggleUserMenu = () => {
     setShowUserMenu(!showUserMenu);
   };
@@ -209,10 +227,10 @@ const Sidebar = () => {
               </button>
             )}
             {session.orgs && session.orgs.length > 1 && (
-              <button className={styles.menuItem} onClick={() => navigate('/organization-selector')}>
-                <FiSettings style={{ marginRight: '8px' }} />
-                Switch Organization
-              </button>
+            <button className={styles.menuItem} onClick={handleSwitchOrganization}>
+            <FiSettings style={{ marginRight: '8px' }} />
+            Switch Organization
+            </button>
             )}
             <button className={styles.menuItem} onClick={() => window.location.reload()}>
               Refresh

@@ -146,6 +146,32 @@ const SetupPage = () => {
       const response = await createOrganization(formData);
       
       if (response.status === 200 || response.status === 201) {
+        // Apply brand colors to CSS variables immediately
+        console.log('[SETUP_PAGE] API Response:', response);
+        
+        let primaryColor = response.data?.brand_primary_color || response.data?.brandPrimaryColor;
+        let accentColor = response.data?.brand_accent_color || response.data?.brandAccentColor;
+        
+        // If response doesn't have colors, fetch org details
+        if (!primaryColor && response.data?.id) {
+          console.log('[SETUP_PAGE] Fetching org details for ID:', response.data.id);
+          const orgDetails = await getOrganizationById(response.data.id);
+          if (orgDetails.status === 200 && orgDetails.data) {
+            primaryColor = orgDetails.data.brand_primary_color || orgDetails.data.brandPrimaryColor;
+            accentColor = orgDetails.data.brand_accent_color || orgDetails.data.brandAccentColor;
+          }
+        }
+        
+        // Apply colors if they exist and differ from defaults
+        if (primaryColor && primaryColor !== '#1e2938') {
+          console.log('[SETUP_PAGE] Applying primary color:', primaryColor);
+          document.documentElement.style.setProperty('--color-primary', primaryColor);
+        }
+        if (accentColor && accentColor !== '#c42032') {
+          console.log('[SETUP_PAGE] Applying accent color:', accentColor);
+          document.documentElement.style.setProperty('--color-accent', accentColor);
+        }
+        
         successPopup('Organization created successfully!');
         setCreateDialogOpen(false);
         setFormData({
@@ -182,27 +208,27 @@ const SetupPage = () => {
   };
 
   const handleSwitchOrganization = async (orgId) => {
-    setSwitchingOrg(true);
-    try {
-      const response = await switchOrganization(orgId);
-      if (response.status === 200) {
-        const { token, activeOrg, user } = response.data;
-        
-        // Update session with new organization context
-        const currentSession = getSession();
-        if (currentSession) {
-          const updatedSession = {
-            ...currentSession,
-            role: activeOrg.role.toLowerCase(),
-            organizationId: activeOrg.orgId,
-            token: token,
-            orgs: user.orgs || currentSession.orgs
-          };
+  setSwitchingOrg(true);
+  try {
+  const response = await switchOrganization(orgId);
+  if (response.status === 200) {
+  const { token, activeOrg, user } = response.data;
+  
+  // Update session with new organization context
+  const currentSession = getSession();
+  if (currentSession) {
+  const updatedSession = {
+  ...currentSession,
+  role: activeOrg.role.toLowerCase(),
+  organizationId: activeOrg.orgId,
+  token: token,
+  orgs: user?.orgs || currentSession?.orgs || []
+  };
           
           setSession(updatedSession);
           
           // Update organization context
-          const orgData = (user.orgs || currentSession.orgs)?.find(org => org.orgId === activeOrg.orgId);
+          const orgData = (user?.orgs || currentSession?.orgs || [])?.find(org => org.orgId === activeOrg.orgId);
           if (orgData) {
             setOrganizationContext({
               id: activeOrg.orgId,
@@ -538,7 +564,7 @@ const SetupPage = () => {
               startIcon={<FiEdit />}
               onClick={() => navigate('/organization/edit')}
             >
-              FiEdit
+              Edit
             </Button>
           </div>
         </div>
@@ -662,7 +688,7 @@ const SetupPage = () => {
             <CardContent className="text-center py-8">
               <FiBriefcase size={60} style={{ color: 'gray', marginBottom: 16 }} />
               <Typography variant="h6" className="mb-2">
-                FiPlus Another Organization
+                Add Another Organization
               </Typography>
               <Typography variant="body1" color="textSecondary" className="mb-4">
                 Create a new organization to manage multiple businesses

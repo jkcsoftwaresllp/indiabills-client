@@ -25,6 +25,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import { getSession, getOrganizationContext } from '../../utils/cacheHelper';
+import { setSession, setOrganizationContext } from '../../utils/authHelper';
 import { useStore } from '../../store/store';
 import { useAuth } from '../../hooks/useAuth';
 import { logout, switchOrganization, getUserOrganizations } from '../../network/api';
@@ -104,12 +105,50 @@ const Header = () => {
     setSwitchingOrg(true);
     try {
       const response = await switchOrganization(orgId);
+      console.log('[SWITCH_ORG] Response:', response);
+      
       if (response.status === 200) {
-        // Reload the page to refresh with new organization context
-        window.location.reload();
+        const { token, activeOrg, user } = response.data;
+        
+        console.log('[SWITCH_ORG] activeOrg:', activeOrg, 'user:', user);
+        
+        // Update session with new organization context
+        const currentSession = getSession();
+        if (currentSession) {
+          const updatedSession = {
+            ...currentSession,
+            role: activeOrg.role.toLowerCase(),
+            organizationId: activeOrg.orgId,
+            token: token,
+            orgs: user.orgs || currentSession.orgs
+          };
+          
+          console.log('[SWITCH_ORG] Updating session:', updatedSession);
+          setSession(updatedSession);
+          
+          // Update organization context
+          const orgData = (user.orgs || currentSession.orgs)?.find(org => org.orgId === activeOrg.orgId);
+          if (orgData) {
+            console.log('[SWITCH_ORG] Setting org context:', orgData);
+            setOrganizationContext({
+              id: activeOrg.orgId,
+              name: orgData.name || 'Organization',
+              domain: orgData.domain,
+              subdomain: orgData.subdomain,
+              logoUrl: orgData.logoUrl,
+              role: activeOrg.role.toLowerCase()
+            });
+          }
+          
+          console.log('[SWITCH_ORG] Reloading page...');
+          // Reload the page to refresh with new organization context
+          window.location.reload();
+        }
+      } else {
+        console.error('[SWITCH_ORG] Failed to switch, status:', response.status);
       }
     } catch (error) {
-      console.error('Error switching organization:', error);
+      console.error('[SWITCH_ORG] Error switching organization:', error);
     } finally {
       setSwitchingOrg(false);
       setOrgSwitchDialog(false);
