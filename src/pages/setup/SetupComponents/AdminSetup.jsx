@@ -1,5 +1,5 @@
 // SetupComponents/AdminSetup.jsx
-import React, { memo } from "react";
+import { memo } from "react";
 import InputBox from "../../../components/FormComponent/InputBox";
 import ImageUpload from "../../../components/FormComponent/ImageUpload";
 import SetupTemplate from "../../../components/core/SetupTemplate";

@@ -1,5 +1,4 @@
-import { FiTrash2 } from 'react-icons/fi';
-import React from 'react';
+import { FiTrash2, FiShoppingCart } from 'react-icons/fi';
 import {
   Table,
   TableBody,

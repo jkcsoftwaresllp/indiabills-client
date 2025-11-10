@@ -1,5 +1,5 @@
 import { FiBox, FiCalendar, FiPlus, FiTrash2, FiShoppingBag, FiInfo, FiHeart } from 'react-icons/fi';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -17,8 +17,6 @@ import { motion } from 'framer-motion';
 import { useStore } from '../../store/store';
 import { useRoutes } from '../../hooks/useRoutes';
 import { addToCart, removeFromCart, toggleWishlist } from '../../network/api';
-
-
 
 // --- Component ---
 const ProductCard = ({ product }) => {
@@ -38,8 +36,6 @@ const ProductCard = ({ product }) => {
 
   const formatNumber = (num) =>
     num % 1 === 0 ? num.toString() : (Number(num) || 0).toFixed(2);
-
-
 
   useEffect(() => {
     if (cartItem) {

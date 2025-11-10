@@ -1,4 +1,3 @@
-import React from 'react';
 import ViewInvoices from '../invoices/InspectInvoice';
 
 const CustomerInvoices = () => {

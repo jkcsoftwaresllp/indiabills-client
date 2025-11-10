@@ -1,4 +1,3 @@
-import React from 'react';
 
 const Widget = ({ widgetKey, removeWidget }) => {
   const renderContent = () => {

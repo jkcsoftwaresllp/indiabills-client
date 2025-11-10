@@ -1,5 +1,5 @@
 import { FiArrowUp } from 'react-icons/fi';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 

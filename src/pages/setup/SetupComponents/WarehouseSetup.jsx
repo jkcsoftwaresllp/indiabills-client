@@ -1,5 +1,5 @@
 // SetupComponents/WarehouseSetup.jsx
-import React, { memo } from "react";
+import { memo } from "react";
 import InputBoxStream from "../../../components/FormComponent/InputBoxStream";
 import DropdownStream from "../../../components/FormComponent/DropdownStream";
 import SetupTemplate from "../../../components/core/SetupTemplate";

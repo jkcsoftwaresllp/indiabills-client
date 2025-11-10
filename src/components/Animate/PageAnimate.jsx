@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import React from "react";
 import { useStore } from "zustand";
 
 const PageAnimate = ({ children, nostyle }) => {

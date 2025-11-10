@@ -1,5 +1,5 @@
 // SetupComponents/BrandingSetup.jsx
-import React, { memo } from "react";
+import { memo } from "react";
 import InputBox from "../../../components/FormComponent/InputBox";
 import ImageUpload from "../../../components/FormComponent/ImageUpload";
 import Dropdown from "../../../components/FormComponent/Dropdown";

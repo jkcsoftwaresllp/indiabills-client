@@ -1,6 +1,5 @@
 import MultiPageAnimate from "../../components/Animate/MultiPageAnimate";
 import { Button } from "@mui/material";
-import React from "react";
 
 const SetupTemplate = ({ heading, main, finish, big, navigation, setPage }) => {
   const parts = heading.split(/(\[.*?\])/);

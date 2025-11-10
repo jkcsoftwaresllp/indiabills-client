@@ -1,5 +1,4 @@
 import { Alert, Snackbar } from "@mui/material";
-import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AlertBox = ({ title, message, navigateTo, active }) => {

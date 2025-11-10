@@ -1,5 +1,5 @@
-import { FiPlus } from 'react-icons/fi';
-import React, { useState, useEffect } from 'react';
+import { FiArrowRight, FiBriefcase, FiPlus } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useStore } from '../../store/store';

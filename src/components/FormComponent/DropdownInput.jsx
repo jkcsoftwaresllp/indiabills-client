@@ -1,5 +1,4 @@
 import { FiMoreVertical } from 'react-icons/fi';
-import React from "react";
 
 export const DropdownInput = ({ label, name, value, onChange, error, help, startText, endText, options, objectOptions }) => {
     return (

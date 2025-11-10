@@ -1,4 +1,3 @@
-import React from "react";
 import ViewData from "../../layouts/form/ViewData";
 import Rating from '@mui/material/Rating';
 import { getSuppliers, deleteSupplier } from "../../network/api";

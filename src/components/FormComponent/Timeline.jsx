@@ -1,5 +1,4 @@
 import { FiCheckCircle } from 'react-icons/fi';
-import { FC } from "react";
 
 const Stepper = ({ steps, currentStep }) => {
   return (

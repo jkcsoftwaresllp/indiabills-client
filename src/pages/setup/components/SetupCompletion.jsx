@@ -1,5 +1,4 @@
 import { FiArrowUpRight, FiBarChart2, FiBox, FiCheckCircle, FiHeadphones, FiPlus } from 'react-icons/fi';
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './SetupCompletion.module.css';
 

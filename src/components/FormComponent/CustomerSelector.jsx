@@ -1,5 +1,5 @@
 import { FiMoreVertical } from 'react-icons/fi';
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getBaseURL } from "../../network/api/api-config";
 import { getData } from "../../network/api";
 

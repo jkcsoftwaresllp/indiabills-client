@@ -1,5 +1,5 @@
-import { FiEdit, FiPlus, FiBriefcase } from 'react-icons/fi';
-import React, { useState, useEffect } from 'react';
+import { FiArrowLeft, FiArrowRight, FiBriefcase, FiCheckCircle, FiEdit, FiPlus, FiSettings } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserOrganizations, createOrganization, switchOrganization } from '../../network/api';
 import { getOrganizationContext, validateOrganizationData, setSession, setOrganizationContext } from '../../utils/authHelper';
@@ -591,7 +591,6 @@ const SetupPage = () => {
     </Card>
   </div>
 )}
-
 
         {/* Other Organizations */}
         {otherOrgs.length > 0 && (

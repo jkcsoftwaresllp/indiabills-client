@@ -1,5 +1,5 @@
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
-import React, { useState } from "react";
+import { useState } from "react";
 import InputField from "../../../../components/FormComponent/InputField";
 import DropdownBar from "../../../../components/FormComponent/DropdownBar";
 import Dropdown from "../../../../components/FormComponent/Dropdown";

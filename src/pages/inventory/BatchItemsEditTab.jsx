@@ -1,4 +1,3 @@
-import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button, FormControl, Select, MenuItem, InputLabel, } from '@mui/material';
 
 const BatchItemsEditTab = ({ items, availableItems, handleItemChange, handleDeleteItem, handleAddItem, }) => {

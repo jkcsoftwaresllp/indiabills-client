@@ -1,6 +1,6 @@
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import {AnimatePresence, motion} from "framer-motion";
-import React, {useState} from "react";
+import { useState} from "react";
 
 export const CollapsableSection = ({ title, children }) => {
 

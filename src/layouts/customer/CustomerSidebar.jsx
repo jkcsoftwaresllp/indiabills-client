@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getSession } from '../../utils/cacheHelper';
 import { useStore } from '../../store/store';
 import logo from '../../assets/IndiaBills_logo.png';

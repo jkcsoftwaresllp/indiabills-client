@@ -1,5 +1,5 @@
-import { FiDownload } from 'react-icons/fi';
-import React, { useEffect, useState } from "react";
+import { FiChevronDown, FiChevronUp, FiColumns, FiDownload } from 'react-icons/fi';
+import { useEffect, useState } from "react";
 import {
   Container,
   Typography,

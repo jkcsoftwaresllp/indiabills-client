@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { postData } from '../../network/api';
 
 const AddExpenseModal = ({ isOpen, onClose, onExpenseAdded }) => {

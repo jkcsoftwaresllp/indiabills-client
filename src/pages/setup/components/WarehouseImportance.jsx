@@ -1,5 +1,4 @@
 import { FiBarChart2, FiBox, FiHeadphones, FiTruck } from 'react-icons/fi';
-import React from 'react';
 import styles from './ImportanceCard.module.css';
 
 const WarehouseImportance = ({ onContinueSetup }) => {

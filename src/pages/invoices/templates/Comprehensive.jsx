@@ -1,4 +1,3 @@
-import React from "react";
 import QRCode from 'react-qr-code';
 import numberToWords from 'number-to-words';
 import { formatDateDDMMYYYY } from "../../../utils/FormHelper";

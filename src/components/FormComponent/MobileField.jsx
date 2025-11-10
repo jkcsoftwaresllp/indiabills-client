@@ -1,5 +1,4 @@
 import {MuiTelInput} from "mui-tel-input";
-import {FC} from "react";
 
 const MobileField = ({ name, label, setData, data }) => {
     return (

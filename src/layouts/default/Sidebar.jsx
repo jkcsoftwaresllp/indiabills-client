@@ -1,5 +1,5 @@
 import { FiBarChart2, FiBriefcase, FiLogOut, FiSettings, FiShoppingCart, FiTool } from 'react-icons/fi';
-import React, { useState } from "react";
+import { useState } from "react";
 import { getSession } from "../../utils/cacheHelper";
 import { useStore } from "../../store/store";
 import logo from "../../assets/IndiaBills_logo.png";

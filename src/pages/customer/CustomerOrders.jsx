@@ -1,4 +1,3 @@
-import React from 'react';
 import ViewOrders from '../orders/ViewOrders';
 
 const CustomerOrders = () => {

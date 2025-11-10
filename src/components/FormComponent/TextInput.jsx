@@ -1,4 +1,3 @@
-import React from "react";
 
 export const TextInput = ({ label, name, value, onChange, error, help, maxlength, startText, placeholder, endText, width }) => {
     return (

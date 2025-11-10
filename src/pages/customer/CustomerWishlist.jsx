@@ -1,5 +1,5 @@
-import { FiTrash2 } from 'react-icons/fi';
-import React, { useState, useEffect } from 'react';
+import { FiShoppingCart, FiTrash2, FiX } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageAnimate from '../../components/Animate/PageAnimate';
 import {
@@ -13,8 +13,6 @@ import {
 } from '@mui/material';
 import { useStore } from '../../store/store';
 import { getProducts, getWishlist, toggleWishlist, clearWishlist } from '../../network/api';
-
-
 
 const CustomerWishlist = () => {
   const navigate = useNavigate();

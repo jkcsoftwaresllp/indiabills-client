@@ -1,5 +1,5 @@
 import { FiChevronDown, FiHeadphones, FiMail, FiPhone, FiPlus } from 'react-icons/fi';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PageAnimate from '../../components/Animate/PageAnimate';
 import {
   Card,

@@ -1,5 +1,5 @@
 import { FiArrowLeft, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createFirstTimeOrganization } from '../../network/api/organizationApi';
 import { useStore } from '../../store/store';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getData } from '../../network/api';
 import { useStore } from '../../store/store';
 import SubscriptionSection from '../setup/components/SubscriptionSection';

@@ -1,5 +1,5 @@
 import { FiEdit, FiMail, FiPhone, FiGlobe, FiBriefcase, FiEdit3, FiCalendar, FiMapPin } from 'react-icons/fi';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getOrganizationContext } from '../../utils/authHelper';
 import { differenceInYears, differenceInMonths, differenceInDays } from 'date-fns';

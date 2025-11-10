@@ -1,4 +1,3 @@
-import React from "react";
 import { getBaseURL } from "../../../network/api/api-config";
 
 const ShortInvoiceTemplate = ({ invoice, Organization }) => {

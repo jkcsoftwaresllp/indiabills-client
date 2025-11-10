@@ -1,3 +1,4 @@
+import { FiCheckCircle, FiDollarSign, FiEdit, FiFileText } from 'react-icons/fi';
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getCustomerById, updateCustomer } from "../../network/api";

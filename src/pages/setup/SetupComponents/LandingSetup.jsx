@@ -1,5 +1,5 @@
 // SetupComponents/LandingSetup.jsx
-import React, { memo } from "react";
+import { memo } from "react";
 import SetupTemplate from "../../../components/core/SetupTemplate";
 import styles from "./LandingSetup.module.css"; 
 

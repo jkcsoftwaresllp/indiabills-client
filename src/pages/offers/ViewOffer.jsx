@@ -1,4 +1,3 @@
-import React from "react";
 import ViewData from "../../layouts/form/ViewData";
 import { getOffers, deleteOffer } from "../../network/api";
 import { useNavigate } from "react-router-dom";

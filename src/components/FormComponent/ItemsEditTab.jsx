@@ -1,5 +1,4 @@
 import { FiTrash2 } from 'react-icons/fi';
-import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, IconButton, Button, MenuItem, FormControl, InputLabel, Select, } from '@mui/material';
 
 const textFieldStyles = {

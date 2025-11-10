@@ -1,4 +1,3 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
 import OperatorSidebar from './OperatorSidebar';
 import Popup from '../../components/core/Popup';

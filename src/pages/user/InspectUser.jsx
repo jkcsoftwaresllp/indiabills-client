@@ -1,5 +1,5 @@
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
-import React, { useEffect, useState } from "react";
+import { FiArrowLeft, FiEdit, FiSave, FiTrash2, FiUploadCloud } from 'react-icons/fi';
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getUserById, updateUser, deleteUser, uploadUserImage } from "../../network/api";
 import { useStore } from "../../store/store";

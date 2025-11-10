@@ -1,5 +1,4 @@
 import { TextField } from "@mui/material";
-import { FC } from "react";
 
 const InputField = ({ type, name, label, optional, setData, value, startText, limitWidth, placeholder }) => {
     return (

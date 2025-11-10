@@ -1,4 +1,4 @@
-import { FiArrowLeft, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
+import { FiArrowLeft, FiArrowRight, FiCheckCircle, FiBriefcase } from 'react-icons/fi';
 import React, { useState, useCallback } from "react";
 import MultiPageAnimate from "../../components/Animate/MultiPageAnimate";
 import InputBox from "../../components/FormComponent/InputBox";

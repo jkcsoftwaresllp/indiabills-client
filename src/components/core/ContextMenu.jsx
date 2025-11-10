@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const ContextMenu = ({ x, y, items, onClose }) => {
   const handleClickOutside = (event) => {

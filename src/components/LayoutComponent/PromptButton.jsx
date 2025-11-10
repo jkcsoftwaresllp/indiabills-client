@@ -7,7 +7,7 @@ import {
 	DialogTitle,
 	Slide,
 } from "@mui/material";
-import React, { forwardRef, useState } from "react";
+import { forwardRef, useState } from "react";
 
 const Transition = forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;

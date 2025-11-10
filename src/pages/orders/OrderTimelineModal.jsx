@@ -1,5 +1,4 @@
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
-import React from "react";
 import ModalMaker from "../../components/core/ModalMaker";
 
 const OrderTimelineModal = ({

@@ -1,5 +1,5 @@
+import React from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
-import React from "react";
 import Divider from '@mui/material/Divider';
 import {
   Box,

@@ -1,5 +1,5 @@
-import { FiTrash2 } from 'react-icons/fi';
-import React, { useEffect, useState } from "react";
+import { FiTrash2, FiX, FiEdit, FiCheckCircle } from 'react-icons/fi';
+import { useEffect, useState } from "react";
 import InputBoxStream from "./InputBoxStream";
 import { groupByCategory } from "../../utils/FormHelper";
 import { deleteRow, getRow, updateRow } from "../../network/api";

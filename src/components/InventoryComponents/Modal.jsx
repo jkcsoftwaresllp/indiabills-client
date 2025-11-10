@@ -1,4 +1,3 @@
-import React from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 
 const Modal = ({ handleClose, open, title, children, submit }) => {

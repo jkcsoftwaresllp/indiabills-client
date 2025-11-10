@@ -1,4 +1,4 @@
-import { FiDownload } from 'react-icons/fi';
+import { FiCheckCircle, FiDollarSign, FiDownload, FiEdit, FiFileText } from 'react-icons/fi';
 import { useEffect, useState } from "react";
 import { getReport } from "../../network/api";
 import SettleCreditModal from "./SettleCreditModal";

@@ -1,5 +1,5 @@
 import { FiBriefcase, FiCalendar, FiChevronDown, FiChevronUp, FiLink, FiRefreshCw, FiTrendingUp, FiUser } from 'react-icons/fi';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './SubscriptionSection.module.css';
 
 const SubscriptionSection = ({ subscriptionData, onRefresh }) => {

@@ -1,11 +1,12 @@
 import { FiCheckCircle } from 'react-icons/fi';
-import React, { useState } from "react";
+import { useState } from "react";
 import InputBoxStream from "./InputBoxStream";
 import {
 	groupByCategory,
 	initializeFormData,
 	getOption,
 	renameAndOptimize,
+	getOptionIDProduct,
 } from "../../utils/FormHelper";
 import { addRow, uploadImg } from "../../network/api";
 import DropdownStream from "./DropdownStream";

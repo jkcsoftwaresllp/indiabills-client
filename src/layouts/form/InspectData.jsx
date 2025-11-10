@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Button, Typography, Divider } from "@mui/material";
 import { updateRow } from "../../network/api";
 import { useStore } from "../../store/store";

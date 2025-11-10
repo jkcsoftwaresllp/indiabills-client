@@ -1,4 +1,3 @@
-import React from "react";
 
 export const BigTextInput = ({ label, name, value, onChange, error, help, maxlength, placeholder }) => {
     return (

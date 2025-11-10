@@ -1,5 +1,4 @@
 import { FiBox, FiPlus, FiUsers, FiList, FiTool, FiTag, FiTruck } from 'react-icons/fi';
-import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 

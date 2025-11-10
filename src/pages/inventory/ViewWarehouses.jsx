@@ -1,4 +1,3 @@
-import React from "react";
 import ViewData from "../../layouts/form/ViewData";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../store/store";

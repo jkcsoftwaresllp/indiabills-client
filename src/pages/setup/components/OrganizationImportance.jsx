@@ -1,5 +1,4 @@
 import { FiBriefcase, FiEdit3, FiFileText, FiLock, FiPlus } from 'react-icons/fi';
-import React from 'react';
 import styles from './ImportanceCard.module.css';
 
 const OrganizationImportance = ({ onStartSetup }) => {

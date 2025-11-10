@@ -9,7 +9,7 @@ import {
   FiBox,
 } from "react-icons/fi";
 import DataGrid from "../../components/FormComponent/DataGrid";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -57,6 +57,7 @@ import {
 import MouseHoverPopover from "../../components/core/Explain";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
+import { AddCircleRounded } from '@mui/icons-material';
 
 const ViewInventory = () => {
   const navigate = useNavigate();

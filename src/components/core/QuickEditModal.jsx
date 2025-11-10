@@ -1,5 +1,5 @@
-import { FiTrash2 } from 'react-icons/fi';
-import React, { useState, useEffect } from 'react';
+import { FiSave, FiTrash2, FiX } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, IconButton } from '@mui/material';
 
 const QuickEditModal = ({ open, onClose, data, columns, onSave, onDelete, title }) => {

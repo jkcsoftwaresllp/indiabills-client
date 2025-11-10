@@ -1,4 +1,3 @@
-import React from "react";
 import SearchBar from "../../components/LayoutComponent/SearchBar";
 
 const ShopLayout = ({ setProduct, children }) => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { postData } from "../../network/api";
 import { useStore } from "../../store/store";
 

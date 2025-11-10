@@ -1,5 +1,5 @@
 import { FiArrowLeft, FiEdit, FiSave } from 'react-icons/fi';
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { updateOrganization } from "../../network/api";
 import { getOrganizationContext, validateOrganizationData } from "../../utils/authHelper";

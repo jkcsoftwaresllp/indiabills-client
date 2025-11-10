@@ -1,4 +1,3 @@
-import React from "react";
 
 const HeaderBranding = ({first_title, last_title}) => (
     <div id="logo">

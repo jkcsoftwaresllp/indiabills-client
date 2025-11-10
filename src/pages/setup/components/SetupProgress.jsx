@@ -1,5 +1,4 @@
 import { FiCheckCircle, FiCircle } from 'react-icons/fi';
-import React from 'react';
 import styles from './SetupProgress.module.css';
 
 const SetupProgress = ({ progress, completedSteps, totalSteps, isComplete }) => {

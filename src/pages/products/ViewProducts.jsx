@@ -1,10 +1,11 @@
 import { FiPlus } from 'react-icons/fi';
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import ViewData from "../../layouts/form/ViewData";
 import { useNavigate } from "react-router-dom";
 import { getProducts, deleteProduct, toggleWishlist, getWishlist } from "../../network/api";
 import { useStore } from "../../store/store";
 import { IconButton, Tooltip } from "@mui/material";
+import { Favorite, FavoriteBorder } from '@mui/icons-material';
 
 const colDefs = [
   {

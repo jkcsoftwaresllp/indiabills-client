@@ -1,5 +1,5 @@
 import { FiArrowLeft, FiCheckCircle } from 'react-icons/fi';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../store/store';
 import { createInventoryMovement, getWarehouses, getProducts, getBatches } from '../../network/api';

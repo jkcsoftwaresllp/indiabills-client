@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
@@ -45,8 +45,6 @@ const ViewPayments = () => {
       setSnackbar({ open: true, message: 'Failed to fetch payments', severity: 'error' });
     }
   };
-
-
 
   const handleStatusChange = async () => {
     try {
