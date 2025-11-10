@@ -24,16 +24,15 @@ import {
 import { motion } from 'framer-motion';
 import { useStore } from '../../store/store';
 import { useRoutes } from '../../hooks/useRoutes';
-import { useCart } from '../../hooks/useCart';
-import { toggleWishlist } from '../../network/api';
+import { addToCart, removeFromCart, toggleWishlist } from '../../network/api';
 
 
 
 // --- Component ---
 const ProductCard = ({ product }) => {
   const { getRoute } = useRoutes();
-  const { cartItems, addItemToCart, removeItemFromCart, loading } = useCart();
-  const { customerData, updateCustomerWishlist } = useStore();
+  const { cart, customerData, updateCustomerWishlist, errorPopup, successPopup } = useStore();
+  const { items: cartItems } = cart;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -62,7 +61,12 @@ const ProductCard = ({ product }) => {
   const handleConfirm = async () => {
     if (quantity <= 0) return setError('Quantity must be greater than zero');
     setError('');
-    await addItemToCart(productId, quantity);
+    const result = await addToCart({ product_id: productId, quantity });
+    if (result.status === 201 || result.status === 200) {
+      successPopup('Product added to cart');
+    } else {
+      errorPopup(result.error);
+    }
     setIsModalOpen(false);
   };
 
@@ -79,7 +83,12 @@ const ProductCard = ({ product }) => {
   };
 
   const handleRemove = async () => {
-    await removeItemFromCart(productId);
+    const result = await removeFromCart({ product_id: productId });
+    if (result.status === 200) {
+      successPopup('Product removed from cart');
+    } else {
+      errorPopup(result.error);
+    }
     setIsModalOpen(false);
     setQuantity(1);
     setSelectedVariants({});
@@ -192,16 +201,16 @@ const ProductCard = ({ product }) => {
 
           {/* Buttons */}
           <div className="flex flex-col gap-2">
-            <Button
-            variant="contained"
-            color={isInCart ? 'success' : 'primary'}
-            startIcon={<ShoppingBagIcon />}
-            onClick={() => setIsModalOpen(true)}
-            fullWidth
-            disabled={loading}
-              sx={{ textTransform: 'none', borderRadius: '10px', py: 1.2 }}
-            >
-              {loading ? 'Adding...' : (isInCart ? 'Update Cart' : 'Add to Cart')}
+          <Button
+          variant="contained"
+          color={isInCart ? 'success' : 'primary'}
+          startIcon={<ShoppingBagIcon />}
+          onClick={() => setIsModalOpen(true)}
+          fullWidth
+          disabled={cart.loading}
+          sx={{ textTransform: 'none', borderRadius: '10px', py: 1.2 }}
+          >
+          {cart.loading ? 'Adding...' : (isInCart ? 'Update Cart' : 'Add to Cart')}
             </Button>
             {isInCart && (
               <Button
