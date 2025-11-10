@@ -1,3 +1,4 @@
+import { FiHeadphones, FiMessageCircle, FiPlus, FiStar } from 'react-icons/fi';
 import React, { useState, useEffect } from 'react';
 import { 
   Box, 
@@ -24,7 +25,6 @@ import {
   ListItemText,
   Divider
 } from '@mui/material';
-import { Add as AddIcon, Support as SupportIcon, RateReview as ReviewIcon } from '@mui/icons-material';
 import { getData, addRow } from '../../network/api';
 import { useStore } from '../../store/store';
 import PageAnimate from '../../components/Animate/PageAnimate';
@@ -73,7 +73,7 @@ const CustomerSupport = () => {
     try {
       const response = await addRow('/ops/sales/portal/customer/support/tickets', ticketForm);
       if (response === 200 || response === 201) {
-        successPopup('Support ticket created successfully');
+        successPopup('FiHeadphones ticket created successfully');
         setOpenTicketDialog(false);
         setTicketForm({
           subject: '',
@@ -139,23 +139,23 @@ const CustomerSupport = () => {
     <PageAnimate>
       <Box sx={{ p: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Customer Support
+          Customer FiHeadphones
         </Typography>
 
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-          <Tabs value={activeTab} onChange={(e, newValue) => setActiveTab(newValue)}>
-            <Tab label="Support Tickets" icon={<SupportIcon />} />
-            <Tab label="Product Reviews" icon={<ReviewIcon />} />
-          </Tabs>
+        <Tabs value={activeTab} onChange={(e, newValue) => setActiveTab(newValue)}>
+        <Tab label="Support Tickets" icon={<FiHeadphones />} />
+        <Tab label="Product Reviews" icon={<FiStar />} />
+        </Tabs>
         </Box>
 
         {activeTab === 0 && (
           <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-              <Typography variant="h5">My Support Tickets</Typography>
+              <Typography variant="h5">My FiHeadphones Tickets</Typography>
               <Button
                 variant="contained"
-                startIcon={<AddIcon />}
+                startIcon={<FiPlus />}
                 onClick={() => setOpenTicketDialog(true)}
               >
                 Create Ticket
@@ -213,7 +213,7 @@ const CustomerSupport = () => {
               <Typography variant="h5">Product Reviews</Typography>
               <Button
                 variant="contained"
-                startIcon={<AddIcon />}
+                startIcon={<FiPlus />}
                 onClick={() => setOpenReviewDialog(true)}
               >
                 Write Review
@@ -228,7 +228,7 @@ const CustomerSupport = () => {
 
         {/* Create Ticket Dialog */}
         <Dialog open={openTicketDialog} onClose={() => setOpenTicketDialog(false)} maxWidth="md" fullWidth>
-          <DialogTitle>Create Support Ticket</DialogTitle>
+          <DialogTitle>Create FiHeadphones Ticket</DialogTitle>
           <DialogContent>
             <Box sx={{ pt: 1 }}>
               <TextField

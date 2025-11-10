@@ -1,5 +1,4 @@
-import PrintIcon from '@mui/icons-material/Print';
-import ShareIcon from '@mui/icons-material/Share';
+import { FiPrinter, FiShare2 } from 'react-icons/fi';
 import { useEffect, useState } from "react";
 import ShortInvoiceTemplate from "./templates/Short";
 import ComprehensiveInvoiceTemplate from "./templates/Comprehensive";
@@ -93,10 +92,10 @@ const OrderInvoice = () => {
                     Go Back
                 </button>
                 <button onClick={handlePrint} className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-700">
-                    <PrintIcon />
+                    <FiPrinter />
                 </button>
                 <button onClick={handleShare} className="bg-primary text-white px-4 py-2 rounded hover:bg-green-700">
-                    <ShareIcon />
+                    <FiShare2 />
                 </button>
             </section>
 

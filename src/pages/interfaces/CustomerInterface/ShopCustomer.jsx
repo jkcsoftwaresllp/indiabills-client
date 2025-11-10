@@ -1,9 +1,9 @@
+import { FiShoppingCart } from 'react-icons/fi';
 import { useEffect, useState } from "react";
 import { getData } from "../../../network/api";
 import ProductCard from "../../../components/shop/ProductCard";
 import SearchBar from "../../../components/LayoutComponent/SearchBar";
 import PageAnimate from "../../../components/Animate/PageAnimate";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useStore } from "../../../store/store";
 import { useNavigate } from "react-router-dom";
@@ -94,7 +94,7 @@ const ShopCustomer = () => {
               "p-2 cursor-pointer rounded-xl idms-transparent-control relative"
             }
           >
-            <ShoppingCartIcon />
+            <FiShoppingCart />
             <p
               className={
                 "absolute top-0 right-0 bg-rose-500 outline-none border-none text-slate-200 px-1 rounded-full text-xs"

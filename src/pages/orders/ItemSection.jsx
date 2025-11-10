@@ -1,4 +1,4 @@
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { FiArrowUp } from 'react-icons/fi';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -42,7 +42,7 @@ const ItemSection = ({ order, toggleItemsVisibility, isItemsVisible }) => {
               onClick={toggleItemsVisibility}
             >
               {order.items.length} Items
-              <KeyboardArrowUpIcon
+              <FiArrowUp
                 className={`transition-transform duration-300 ${
                   isItemsVisible ? "transform rotate-180" : ""
                 }`}

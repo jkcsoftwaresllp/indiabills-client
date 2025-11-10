@@ -1,8 +1,6 @@
+import { FiTrash2 } from 'react-icons/fi';
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import SaveIcon from '@mui/icons-material/Save';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 const QuickEditModal = ({ open, onClose, data, columns, onSave, onDelete, title }) => {
   const [formData, setFormData] = useState({});
@@ -51,9 +49,9 @@ const QuickEditModal = ({ open, onClose, data, columns, onSave, onDelete, title 
     >
       <DialogTitle>
         <div className="flex justify-between items-center">
-          <span className="text-2xl font-bold">Quick Edit {title}</span>
+          <span className="text-2xl font-bold">Quick FiEdit {title}</span>
           <IconButton onClick={onClose} size="small">
-            <CloseIcon />
+            <FiX />
           </IconButton>
         </div>
       </DialogTitle>
@@ -87,9 +85,9 @@ const QuickEditModal = ({ open, onClose, data, columns, onSave, onDelete, title 
           onClick={handleDelete} 
           variant="outlined" 
           color="error"
-          startIcon={<DeleteIcon />}
+          startIcon={<FiTrash2 />}
         >
-          Delete
+          FiTrash2
         </Button>
         <div className="flex-grow" />
         <Button onClick={onClose} variant="outlined">
@@ -99,7 +97,7 @@ const QuickEditModal = ({ open, onClose, data, columns, onSave, onDelete, title 
           onClick={handleSave} 
           variant="contained" 
           color="primary"
-          startIcon={<SaveIcon />}
+          startIcon={<FiSave />}
         >
           Save Changes
         </Button>

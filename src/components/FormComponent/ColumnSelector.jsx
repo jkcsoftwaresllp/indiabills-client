@@ -1,3 +1,4 @@
+import { FiMenu, FiX } from 'react-icons/fi';
 import React from "react";
 import Divider from '@mui/material/Divider';
 import {
@@ -12,8 +13,6 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
 
 const ColumnSelector = ({ columns, selectedColumns, onColumnChange }) => {
   const theme = useTheme();
@@ -59,7 +58,7 @@ const ColumnSelector = ({ columns, selectedColumns, onColumnChange }) => {
             onClick={toggleDrawer}
             sx={{ position: "fixed", top: 16, left: 16, zIndex: 1300 }}
           >
-            <MenuIcon />
+            <FiMenu />
           </IconButton>
           <Drawer
             anchor="left"
@@ -79,7 +78,7 @@ const ColumnSelector = ({ columns, selectedColumns, onColumnChange }) => {
             >
               <Typography variant="h6">Select Columns</Typography>
               <IconButton onClick={toggleDrawer}>
-                <CloseIcon />
+                <FiX />
               </IconButton>
             </Box>
             {content}

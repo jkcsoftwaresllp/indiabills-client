@@ -1,7 +1,14 @@
+import {
+  FiPlus,
+  FiRefreshCw,
+  FiMapPin,
+  FiCheck,
+  FiThumbsDown,
+  FiThumbsUp,
+  FiTool,
+  FiBox,
+} from "react-icons/fi";
 import DataGrid from "../../components/FormComponent/DataGrid";
-import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import RecommendIcon from "@mui/icons-material/Recommend";
-import DoneIcon from "@mui/icons-material/Done";
 import React, { useState, useEffect } from "react";
 import {
   TextField,
@@ -26,16 +33,6 @@ import {
   Tabs,
   Tab,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import ImportExportIcon from "@mui/icons-material/ImportExport";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {
-  LocationCity as LocationCityIcon,
-  AddCircleRounded,
-  SwitchAccessShortcut as SwitchAccessShortcutIcon,
-  PrecisionManufacturing as PrecisionManufacturingIcon,
-  Warehouse as WarehouseIcon,
-} from "@mui/icons-material";
 import {
   getStuff,
   getCount,
@@ -253,11 +250,11 @@ const ViewInventory = () => {
       cellRenderer: (params) => {
         switch (params.value) {
           case "ok":
-            return <DoneIcon sx={{ color: "success.main" }} />;
+            return <FiCheck style={{ color: "#10b981" }} />;
           case "poor":
-            return <ThumbDownIcon sx={{ color: "error.main" }} />;
+            return <FiThumbsDown style={{ color: "#ef4444" }} />;
           case "good":
-            return <RecommendIcon sx={{ color: "warning.main" }} />;
+            return <FiThumbsUp style={{ color: "#f59e0b" }} />;
           default:
             return params.value;
         }
@@ -387,7 +384,7 @@ const ViewInventory = () => {
       },
     },
     {
-      label: "Delete",
+      label: "FiTrash2",
       action: async (data) => {
         try {
           const response = await deleteBatch(data?.batchId);
@@ -400,7 +397,7 @@ const ViewInventory = () => {
             errorPopup("Failed to delete");
           }
         } catch (error) {
-          console.error("Delete failed:", error);
+          console.error("FiTrash2 failed:", error);
           errorPopup("Failed to delete");
         }
       },
@@ -420,7 +417,7 @@ const ViewInventory = () => {
       },
     },
     {
-      label: "Edit",
+      label: "FiEdit",
       action: (data) => {
         const currentPath = window.location.pathname;
         if (currentPath.startsWith("/operator/")) {
@@ -431,7 +428,7 @@ const ViewInventory = () => {
       },
     },
     {
-      label: "Delete",
+      label: "FiTrash2",
       action: async (data) => {
         try {
           const response = await deleteWarehouse(data?.id);
@@ -442,7 +439,7 @@ const ViewInventory = () => {
             errorPopup("Failed to delete");
           }
         } catch (error) {
-          console.error("Delete failed:", error);
+          console.error("FiTrash2 failed:", error);
           errorPopup("Failed to delete");
         }
       },
@@ -515,7 +512,7 @@ const ViewInventory = () => {
                           onClick={() => transferBatch()}
                           className={`transition text-slate-300 ease-in-out p-2 w-fit bg-primary rounded-full`}
                         >
-                          <ImportExportIcon />
+                          <FiRefreshCw size={20} />
                         </button>
                       }
                       popoverContent={
@@ -530,7 +527,7 @@ const ViewInventory = () => {
                           onClick={() => manageWarehouse()}
                           className={`transition text-slate-300 ease-in-out p-2 w-fit bg-primary rounded-full`}
                         >
-                          <LocationCityIcon />
+                          <FiMapPin size={20} />
                         </button>
                       }
                       popoverContent={
@@ -545,11 +542,11 @@ const ViewInventory = () => {
                           onClick={() => add()}
                           className={`transition text-slate-300 ease-in-out p-2 w-fit bg-primary rounded-full`}
                         >
-                          <AddIcon />
+                          <FiPlus />
                         </button>
                       }
                       popoverContent={
-                        <span className="text-xs"> Add a batch </span>
+                        <span className="text-xs"> FiPlus a batch </span>
                       }
                     />
                   </Grid>
@@ -621,9 +618,7 @@ const ViewInventory = () => {
                         spacing={2}
                       >
                         <Grid item>
-                          <PrecisionManufacturingIcon
-                            sx={{ fontSize: 100, color: "error.main" }}
-                          />
+                          <FiTool size={100} style={{ color: "#ef4444" }} />
                         </Grid>
                         <Grid item>
                           <Typography variant="h5">
@@ -651,7 +646,7 @@ const ViewInventory = () => {
                               color="textSecondary"
                               align="center"
                             >
-                              Add the following before proceeding:
+                              FiPlus the following before proceeding:
                             </Typography>
                             <Checklist
                               list={[
@@ -673,9 +668,7 @@ const ViewInventory = () => {
                         spacing={2}
                       >
                         <Grid item>
-                          <WarehouseIcon
-                            sx={{ fontSize: 100, color: "primary.main" }}
-                          />
+                          <FiBox size={100} style={{ color: "#3b82f6" }} />
                         </Grid>
                         <Grid item>
                           <Typography variant="h5" align="center">
@@ -704,9 +697,7 @@ const ViewInventory = () => {
                     spacing={2}
                   >
                     <Grid item>
-                      <WarehouseIcon
-                        sx={{ fontSize: 100, color: "primary.main" }}
-                      />
+                      <FiBox size={100} style={{ color: "#3b82f6" }} />
                     </Grid>
                     <Grid item>
                       <Typography variant="h5" align="center">

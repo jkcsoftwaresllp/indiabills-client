@@ -1,6 +1,5 @@
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import React from "react";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ModalMaker from "../../components/core/ModalMaker";
 
 const OrderTimelineModal = ({
@@ -34,7 +33,7 @@ const OrderTimelineModal = ({
         <section id={"Timeline"}>
           <div className="mt-6">
             <button className="flex items-center text-[#474a77] hover:underline" onClick={() => toggleTimeline(order.orderId)}>
-              {timelineCollapsed[order.orderId] ? ( <> <ExpandMoreIcon /> Show Timeline </> ) : ( <> <ExpandLessIcon /> Hide Timeline </> )}
+              {timelineCollapsed[order.orderId] ? ( <> <FiChevronDown /> Show Timeline </> ) : ( <> <FiChevronUp /> Hide Timeline </> )}
             </button>
             {!timelineCollapsed[order.orderId] && (
               <div className="mt-4">

@@ -1,10 +1,10 @@
+import { FiPlus } from 'react-icons/fi';
 import React, { useState, useEffect } from "react";
 import ViewData from "../../layouts/form/ViewData";
 import { useNavigate } from "react-router-dom";
 import { getProducts, deleteProduct, toggleWishlist, getWishlist } from "../../network/api";
 import { useStore } from "../../store/store";
 import { IconButton, Tooltip } from "@mui/material";
-import { Favorite, FavoriteBorder } from "@mui/icons-material";
 
 const colDefs = [
   {
@@ -95,7 +95,7 @@ const colDefs = [
     headerName: "Wishlist",
     width: 120,
     cellRenderer: (params) => (
-      <Tooltip title={params.value ? "Remove from Wishlist" : "Add to Wishlist"}>
+      <Tooltip title={params.value ? "Remove from Wishlist" : "FiPlus to Wishlist"}>
         <IconButton size="small" onClick={() => params.data.onWishlistToggle(params.data)}>
           {params.value ? <Favorite color="error" /> : <FavoriteBorder />}
         </IconButton>

@@ -1,3 +1,4 @@
+import { FiTrash2 } from 'react-icons/fi';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageAnimate from '../../components/Animate/PageAnimate';
@@ -10,9 +11,6 @@ import {
   IconButton,
   Chip
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import ClearIcon from '@mui/icons-material/Clear';
 import { useStore } from '../../store/store';
 import { getProducts, getWishlist, toggleWishlist, clearWishlist } from '../../network/api';
 
@@ -99,7 +97,7 @@ const CustomerWishlist = () => {
             <Button
               variant="outlined"
               color="error"
-              startIcon={<ClearIcon />}
+              startIcon={<FiX />}
                 onClick={handleClearWishlist}
             >
                 Clear Wishlist
@@ -107,7 +105,7 @@ const CustomerWishlist = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  startIcon={<ShoppingCartIcon />}
+                  startIcon={<FiShoppingCart />}
                   onClick={handleMoveAllToCart}
                 >
                   Move All to Cart
@@ -148,7 +146,7 @@ const CustomerWishlist = () => {
                         onClick={() => handleRemoveFromWishlist(product.id)}
                         size="small"
                       >
-                        <DeleteIcon />
+                        <FiTrash2 />
                       </IconButton>
                     </div>
                     
@@ -171,12 +169,12 @@ const CustomerWishlist = () => {
                     <Button
                       variant="contained"
                       color="primary"
-                      startIcon={<ShoppingCartIcon />}
+                      startIcon={<FiShoppingCart />}
                       onClick={() => handleAddToCart(product)}
                       fullWidth
                       disabled={!product.isActive}
                     >
-                      Add to Cart
+                      FiPlus to Cart
                     </Button>
                   </CardContent>
                 </Card>

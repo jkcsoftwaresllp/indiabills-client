@@ -1,5 +1,5 @@
+import { FiArrowLeft, FiCreditCard, FiFileText } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
-import PrintIcon from '@mui/icons-material/Print';
 import PageAnimate from '../../../components/Animate/PageAnimate';
 import { useStore } from '../../../store/store';
 import {
@@ -10,10 +10,7 @@ import {
   getRequest,
 } from '../../../network/api';
 import OrderCard from '../../../components/shop/OrderCard';
-import ReceiptIcon from '@mui/icons-material/Receipt';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ComprehensiveInvoiceTemplate from '../../invoices/templates/Comprehensive'; // Adjust the path as necessary
-import PaymentIcon from '@mui/icons-material/Payment';
 import { useNavigate } from 'react-router-dom';
 import {
   calculateSubtotal,
@@ -474,7 +471,7 @@ const AdminCheckout = () => {
       <main className="p-6 w-full flex flex-col gap-8 bg-white rounded-xl">
         <section className="p-4 w-full flex items-center justify-between">
           <button className={''} onClick={() => navigate(getRoute('/shop') === '/customer/shop' ? '/customer' : '/shop')}>
-            <ArrowBackIosNewIcon />
+            <FiArrowLeft />
             Back to Shop
           </button>
           <div className={'flex gap-2 items-center'}>
@@ -486,7 +483,7 @@ const AdminCheckout = () => {
                     color="primary"
                     onClick={handleOpen}
                   >
-                    <ReceiptIcon />
+                    <FiFileText />
                   </Button>
                 }
                 popoverContent={<span className="text-xs"> View Invoice </span>}
@@ -516,7 +513,7 @@ const AdminCheckout = () => {
               onClick={handlePayClick}
               className="p-2 min-w-32 bg-primary text-slate-200 rounded-md"
             >
-              <PaymentIcon /> Pay
+              <FiCreditCard /> Pay
             </button>
             <div
               className="flex items-center gap-2"

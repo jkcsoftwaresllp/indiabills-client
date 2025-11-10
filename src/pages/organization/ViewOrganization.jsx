@@ -1,3 +1,4 @@
+import { FiEdit, FiMail, FiPhone, FiGlobe, FiBriefcase, FiEdit3, FiCalendar, FiMapPin } from 'react-icons/fi';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getOrganizationContext } from '../../utils/authHelper';
@@ -15,14 +16,6 @@ import {
   CircularProgress,
   Avatar
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import BusinessIcon from '@mui/icons-material/Business';
-import EmailIcon from '@mui/icons-material/Email';
-import PhoneIcon from '@mui/icons-material/Phone';
-import LanguageIcon from '@mui/icons-material/Language';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import PaletteIcon from '@mui/icons-material/Palette';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { getOrganizationById } from '../../network/api/organizationApi';
 
 const ViewOrganization = () => {
@@ -125,10 +118,10 @@ const ViewOrganization = () => {
             </div>
             <Button
               variant="contained"
-              startIcon={<EditIcon />}
+              startIcon={<FiEdit />}
               onClick={() => navigate('/organization/edit')}
             >
-              Edit Organization
+              FiEdit Organization
             </Button>
           </div>
         </div>
@@ -144,7 +137,7 @@ const ViewOrganization = () => {
                     alt={`${organization.name} logo`}
                     sx={{ width: 96, height: 96 }}
                   >
-                    <BusinessIcon sx={{ fontSize: 48 }} />
+                    <FiBriefcase sx={{ fontSize: 48 }} />
                   </Avatar>
                   <div className="flex-1">
                     <Typography variant="h4" className="font-bold mb-2">
@@ -199,13 +192,13 @@ const ViewOrganization = () => {
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom className="flex items-center gap-2">
-                  <BusinessIcon />
+                  <FiBriefcase />
                   Contact Information
                 </Typography>
                 <div className="space-y-3">
                   {organization.email && (
                     <div className="flex items-center gap-3">
-                      <EmailIcon color="primary" />
+                      <FiMail color="primary" />
                       <div>
                         <Typography variant="body2" color="textSecondary">Email</Typography>
                         <Typography variant="body1">{organization.email}</Typography>
@@ -214,7 +207,7 @@ const ViewOrganization = () => {
                   )}
                   {organization.phone && (
                     <div className="flex items-center gap-3">
-                      <PhoneIcon color="primary" />
+                      <FiPhone color="primary" />
                       <div>
                         <Typography variant="body2" color="textSecondary">Phone</Typography>
                         <Typography variant="body1">{organization.phone}</Typography>
@@ -223,7 +216,7 @@ const ViewOrganization = () => {
                   )}
                   {organization.website && (
                     <div className="flex items-center gap-3">
-                      <LanguageIcon color="primary" />
+                      <FiGlobe color="primary" />
                       <div>
                         <Typography variant="body2" color="textSecondary">Website</Typography>
                         <Typography variant="body1">
@@ -241,7 +234,7 @@ const ViewOrganization = () => {
                   )}
                   {organization.gstin && (
                     <div className="flex items-center gap-3">
-                      <BusinessIcon color="primary" />
+                      <FiBriefcase color="primary" />
                       <div>
                         <Typography variant="body2" color="textSecondary">GSTIN</Typography>
                         <Typography variant="body1">{organization.gstin}</Typography>
@@ -255,12 +248,12 @@ const ViewOrganization = () => {
 
           {/* Address Information */}
           <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom className="flex items-center gap-2">
-                  <LocationOnIcon />
-                  Address Information
-                </Typography>
+          <Card>
+          <CardContent>
+          <Typography variant="h6" gutterBottom className="flex items-center gap-2">
+          <FiMapPin />
+          Address Information
+          </Typography>
                 <div className="space-y-2">
                   {organization.addressLine && (
                     <Typography variant="body1">{organization.addressLine}</Typography>
@@ -330,7 +323,7 @@ const ViewOrganization = () => {
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom className="flex items-center gap-2">
-                  <PaletteIcon />
+                  <FiEdit3 />
                   Brand Settings
                 </Typography>
                 <div className="space-y-3">
@@ -368,7 +361,7 @@ const ViewOrganization = () => {
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom className="flex items-center gap-2">
-                  <CalendarTodayIcon />
+                  <FiCalendar />
                   System Information
                 </Typography>
                 <Grid container spacing={3}>

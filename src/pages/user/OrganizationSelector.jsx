@@ -1,3 +1,4 @@
+import { FiPlus } from 'react-icons/fi';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -8,9 +9,6 @@ import logo from '../../assets/IndiaBills_logo.png';
 import bg from '../../assets/bglogo.png';
 import styles from './OrganizationSelector.module.css';
 import { Card, CardContent, Typography, Button, Grid, Avatar, Chip, Box, CircularProgress } from '@mui/material';
-import BusinessIcon from '@mui/icons-material/Business';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import AddIcon from '@mui/icons-material/Add';
 
 const OrganizationSelector = () => {
   const [organizations, setOrganizations] = useState([]);
@@ -152,7 +150,7 @@ const OrganizationSelector = () => {
                         sx={{ width: 60, height: 60 }}
                         className={styles.avatar}
                       >
-                        <BusinessIcon />
+                        <FiBriefcase />
                       </Avatar>
                       <div className={styles.infoArea}>
                         <Typography variant="h6" className={styles.orgName}>
@@ -167,7 +165,7 @@ const OrganizationSelector = () => {
                             color={org.subscriptionStatus === 'active' ? 'success' : 'warning'} size="small" />
                         </div>
                       </div>
-                      <ArrowForwardIcon className={styles.arrowIcon} />
+                      <FiArrowRight className={styles.arrowIcon} />
                     </div>
                     <div className={styles.cardMeta}>
                       <p><strong>Status:</strong> {org.isActive ? 'Active' : 'Inactive'}</p>
@@ -183,7 +181,7 @@ const OrganizationSelector = () => {
           </Grid>
         ) : (
           <div className={styles.emptyState}>
-            <BusinessIcon sx={{ fontSize: 80 }} className={styles.emptyIcon} />
+            <FiBriefcase sx={{ fontSize: 80 }} className={styles.emptyIcon} />
             <Typography variant="h6" className={styles.emptyTitle}>
               No organizations found
             </Typography>
@@ -196,7 +194,7 @@ const OrganizationSelector = () => {
           <Button
             variant="outlined"
             onClick={handleCreateNewOrganization}
-            startIcon={<AddIcon />}
+            startIcon={<FiPlus />}
             disabled={switching}
             className={styles.actionBtn}
           >

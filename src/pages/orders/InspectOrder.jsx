@@ -1,5 +1,5 @@
+import { FiEdit, FiFileText } from 'react-icons/fi';
 import React, { useEffect, useState } from "react";
-import ReceiptIcon from "@mui/icons-material/Receipt";
 import MouseHoverPopover from "../../components/core/Explain";
 import { Button, Modal } from "@mui/material";
 import ComprehensiveInvoiceTemplate from "../invoices/templates/Comprehensive";
@@ -259,12 +259,12 @@ const InspectOrder = () => {
 
   return (
     <PageAnimate>
-      <h2 className="text-2xl font-bold mb-4">Edit Order #{orderId}</h2>
+      <h2 className="text-2xl font-bold mb-4">FiEdit Order #{orderId}</h2>
       <div className="flex justify-between items-center">
         <Button
           variant="contained"
           color="primary"
-          startIcon={<ReceiptIcon />}
+          startIcon={<FiFileText />}
           onClick={handleOpenInvoice}
         >
           View Invoice

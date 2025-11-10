@@ -1,3 +1,4 @@
+import { FiBriefcase, FiChevronDown, FiHelpCircle, FiLogOut, FiRefreshCw, FiSettings, FiSliders, FiMonitor } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import {
   AppBar,
@@ -23,15 +24,6 @@ import {
   Chip,
   CircularProgress
 } from '@mui/material';
-import ExpandIcon from '@mui/icons-material/Expand';
-import DvrIcon from '@mui/icons-material/Dvr';
-import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
-import CachedIcon from '@mui/icons-material/Cached';
-import ContactSupportRoundedIcon from '@mui/icons-material/ContactSupportRounded';
-import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
-import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
-import SwitchAccountIcon from '@mui/icons-material/SwitchAccount';
-import BusinessIcon from '@mui/icons-material/Business';
 import { getSession, getOrganizationContext } from '../../utils/cacheHelper';
 import { useStore } from '../../store/store';
 import { useAuth } from '../../hooks/useAuth';
@@ -210,7 +202,7 @@ const Header = () => {
                   </Box>
                 )}
                 <IconButton onClick={handleMenuClick}>
-                  <ArrowDropDownRoundedIcon />
+                  <FiChevronDown />
                 </IconButton>
               </Box>
               <Popover
@@ -242,7 +234,7 @@ const Header = () => {
                       handleMenuClose();
                     }}
                   >
-                    <ExpandIcon sx={{ mr: 1 }} />
+                    <FiChevronDown sx={{ mr: 1 }} />
                     {sidebarState}
                   </MenuItem>
                   
@@ -251,7 +243,7 @@ const Header = () => {
                       sx={{ padding: '.6rem' }}
                       onClick={handleSwitchOrganization}
                     >
-                      <SwitchAccountIcon sx={{ mr: 1 }} />
+                      <FiSettings sx={{ mr: 1 }} />
                       Switch Organization
                     </MenuItem>
                   )}
@@ -263,7 +255,7 @@ const Header = () => {
                       handleMenuClose();
                     }}
                   >
-                    <BusinessIcon sx={{ mr: 1 }} />
+                    <FiBriefcase sx={{ mr: 1 }} />
                     Organization
                   </MenuItem>
                   
@@ -275,7 +267,7 @@ const Header = () => {
                         handleMenuClose();
                       }}
                     >
-                      <DvrIcon sx={{ mr: 1 }} />
+                      <FiMonitor size={18} style={{ marginRight: 8 }} />
                       Audit
                     </MenuItem>
                   )}
@@ -287,7 +279,7 @@ const Header = () => {
                       handleMenuClose();
                     }}
                   >
-                    <CachedIcon sx={{ mr: 1 }} />
+                    <FiRefreshCw sx={{ mr: 1 }} />
                     Refresh
                   </MenuItem>
                   
@@ -298,7 +290,7 @@ const Header = () => {
                       handleMenuClose();
                     }}
                   >
-                    <ContactSupportRoundedIcon sx={{ mr: 1 }} />
+                    <FiHelpCircle sx={{ mr: 1 }} />
                     Get Help
                   </MenuItem>
                   
@@ -309,7 +301,7 @@ const Header = () => {
                       handleMenuClose();
                     }}
                   >
-                    <TuneRoundedIcon sx={{ mr: 1 }} />
+                    <FiSliders sx={{ mr: 1 }} />
                     Settings
                   </MenuItem>
                   
@@ -322,7 +314,7 @@ const Header = () => {
                       handleMenuClose();
                     }}
                   >
-                    <LogoutRoundedIcon sx={{ mr: 1 }} />
+                    <FiLogOut sx={{ mr: 1 }} />
                     Logout
                   </MenuItem>
                 </Box>
@@ -355,7 +347,7 @@ const Header = () => {
                   <CardContent sx={{ py: 2 }}>
                     <div className="flex items-center gap-3">
                       <Avatar src={org.logoUrl} sx={{ width: 40, height: 40 }}>
-                        <BusinessIcon />
+                        <FiBriefcase />
                       </Avatar>
                       <div className="flex-1">
                         <Typography variant="subtitle1" className="font-semibold">
@@ -417,7 +409,7 @@ const Header = () => {
                 handleLogoutOrg();
                 setLogoutDialog(false);
               }}
-              startIcon={<SwitchAccountIcon />}
+              startIcon={<FiSettings />}
               fullWidth
             >
               Logout from Current Organization
@@ -429,7 +421,7 @@ const Header = () => {
                 handleLogoutAll();
                 setLogoutDialog(false);
               }}
-              startIcon={<LogoutRoundedIcon />}
+              startIcon={<FiLogOut />}
               fullWidth
             >
               Logout from All Organizations

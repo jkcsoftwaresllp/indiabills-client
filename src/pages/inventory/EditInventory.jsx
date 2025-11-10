@@ -1,5 +1,5 @@
+import { FiEdit, FiFileText } from 'react-icons/fi';
 import StockIssuesEditTab from "./StockIssuesEditTab";
-import ReceiptIcon from "@mui/icons-material/Receipt";
 import BatchInvoicePreview from "./yeah"; // Import your batch
 import { useNavigate, useParams } from "react-router-dom";
 import { getBatchById, updateBatch, getProducts, getSuppliers, getWarehouses } from "../../network/api";
@@ -304,7 +304,7 @@ const EditBatch = () => {
 
   return (
     <PageAnimate>
-      <h2 className="text-2xl font-bold mb-4">Edit Batch #{batchId}</h2>
+      <h2 className="text-2xl font-bold mb-4">FiEdit Batch #{batchId}</h2>
 
       <MouseHoverPopover
         triggerElement={
@@ -313,7 +313,7 @@ const EditBatch = () => {
             color="primary"
             onClick={handleOpenInvoice}
           >
-            <ReceiptIcon />
+            <FiFileText />
           </Button>
         }
         popoverContent={<span className="text-xs">View Invoice</span>}

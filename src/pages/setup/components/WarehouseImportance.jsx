@@ -1,30 +1,27 @@
+import { FiBarChart2, FiBox, FiHeadphones, FiTruck } from 'react-icons/fi';
 import React from 'react';
-import WarehouseIcon from '@mui/icons-material/Warehouse';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import AnalyticsIcon from '@mui/icons-material/Analytics';
 import styles from './ImportanceCard.module.css';
 
 const WarehouseImportance = ({ onContinueSetup }) => {
   const benefits = [
     {
-      icon: <InventoryIcon />,
+      icon: <FiBox />,
       title: 'Inventory Management',
       description: 'Track stock levels, manage products, and monitor inventory across locations'
     },
     {
-      icon: <LocalShippingIcon />,
+      icon: <FiTruck />,
       title: 'Order Fulfillment',
       description: 'Efficiently process orders and manage shipping from your warehouse locations'
     },
     {
-      icon: <AnalyticsIcon />,
+      icon: <FiBarChart2 />,
       title: 'Business Analytics',
       description: 'Generate reports and insights based on warehouse performance and inventory data'
     },
     {
-      icon: <WarehouseIcon />,
-      title: 'Multi-Location Support',
+      icon: <FiBox />,
+      title: 'Multi-Location FiHeadphones',
       description: 'Manage multiple warehouse locations and distribute inventory effectively'
     }
   ];
@@ -32,7 +29,7 @@ const WarehouseImportance = ({ onContinueSetup }) => {
   return (
     <div className={styles.card}>
       <div className={styles.header}>
-        <WarehouseIcon className={styles.headerIcon} />
+        <FiBox className={styles.headerIcon} />
         <div>
           <h2 className={styles.title}>Warehouse Setup Required</h2>
           <p className={styles.subtitle}>

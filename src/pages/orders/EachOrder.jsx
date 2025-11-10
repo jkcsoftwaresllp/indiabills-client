@@ -1,8 +1,6 @@
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { FiCheck, FiClock, FiEdit } from 'react-icons/fi';
 import { useEffect, useRef, useState } from "react";
 import { Avatar } from "@mui/material";
-import WatchLaterIcon from "@mui/icons-material/WatchLater";
-import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import { useNavigate } from "react-router-dom";
 import ContextMenu from "../../components/core/ContextMenu";
 import OrderTimelineModal from "./OrderTimelineModal";
@@ -65,7 +63,7 @@ export const EachOrder = ({
     const items = [
       { label: "View Invoice", onClick: () => navigate(`/invoice/${order.orderId}`) },
       { label: "View Timeline", onClick: () => setIsTimelineModalOpen(true) },
-      { label: "Edit", onClick: () => navigate(`/orders/${order.orderId}`) },
+      { label: "FiEdit", onClick: () => navigate(`/orders/${order.orderId}`) },
       {
         label: order.paymentStatus === "pending" ? "Mark Payment" : "Unmark Payment",
         onClick: () => handleMarkPayment(order.orderId, order.paymentStatus !== "paid" ? "paid" : "pending"),
@@ -203,7 +201,7 @@ export const EachOrder = ({
               <div className="flex justify-between">
                 <p className="flex flex-col rotate-90">|||</p>
                 <span className="mx-2">
-                  <TaskAltIcon />
+                  <FiCheck />
                 </span>
                 <p className="flex flex-col rotate-90">|||</p>
               </div>
@@ -211,7 +209,7 @@ export const EachOrder = ({
               <div className="flex justify-between">
                 <p className="flex flex-col rotate-90">|||</p>
                 <span className="mx-2">
-                  <WatchLaterIcon />
+                  <FiClock />
                 </span>
                 <p className="flex flex-col rotate-90">|||</p>
               </div>

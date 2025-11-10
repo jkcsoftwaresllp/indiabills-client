@@ -1,3 +1,4 @@
+import { FiArrowLeft, FiPlus } from 'react-icons/fi';
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../../store/store';
@@ -22,7 +23,6 @@ import {
   Paper,
   Chip
 } from '@mui/material';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 const InspectReconciliation = () => {
   const { id } = useParams();
@@ -103,7 +103,7 @@ const InspectReconciliation = () => {
             className="flex items-center" 
             onClick={() => navigate(-1)}
           >
-            <ArrowBackIosNewIcon /> Go back
+            <FiArrowLeft /> Go back
           </button>
           
           <div className="flex gap-2">
@@ -188,7 +188,7 @@ const InspectReconciliation = () => {
                   variant="outlined"
                   onClick={() => navigate(`/inventory/reconciliations/${id}/add`)}
                 >
-                  Add Items
+                  FiPlus Items
                 </Button>
               )}
             </div>
@@ -230,7 +230,7 @@ const InspectReconciliation = () => {
               </TableContainer>
             ) : (
               <Typography variant="body1" color="textSecondary" className="text-center py-8">
-                No reconciliation details found. Click "Add Items" to start counting.
+                No reconciliation details found. Click "FiPlus Items" to start counting.
               </Typography>
             )}
           </CardContent>

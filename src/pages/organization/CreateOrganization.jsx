@@ -1,3 +1,4 @@
+import { FiArrowLeft, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createOrganization } from '../../network/api';
@@ -24,10 +25,6 @@ import {
   StepLabel,
   CircularProgress
 } from '@mui/material';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { getOption } from '../../utils/FormHelper';
 
 const CreateOrganization = () => {
@@ -368,7 +365,7 @@ const CreateOrganization = () => {
         <Box mt={4} display="flex" justifyContent="space-between">
           <Button
             onClick={() => navigate('/organization-selector')}
-            startIcon={<ArrowBackIosNewIcon />}
+            startIcon={<FiArrowLeft />}
             disabled={loading}
           >
             Back to Organizations
@@ -378,7 +375,7 @@ const CreateOrganization = () => {
             {activeStep > 0 && (
               <Button
                 onClick={handleBack}
-                startIcon={<ArrowBackIcon />}
+                startIcon={<FiArrowLeft />}
                 disabled={loading}
               >
                 Back
@@ -389,7 +386,7 @@ const CreateOrganization = () => {
               <Button
                 variant="contained"
                 onClick={handleNext}
-                endIcon={<ArrowForwardIcon />}
+                endIcon={<FiArrowRight />}
                 disabled={loading}
               >
                 Next
@@ -398,7 +395,7 @@ const CreateOrganization = () => {
               <Button
                 variant="contained"
                 onClick={handleSubmit}
-                startIcon={<CheckCircleIcon />}
+                startIcon={<FiCheckCircle />}
                 disabled={loading}
               >
                 {loading ? <CircularProgress size={20} /> : 'Create Organization'}

@@ -1,19 +1,16 @@
+import { FiTrash2 } from 'react-icons/fi';
 import React, { useEffect, useState } from "react";
 import InputBoxStream from "./InputBoxStream";
 import { groupByCategory } from "../../utils/FormHelper";
-import CancelIcon from "@mui/icons-material/Cancel";
 import { deleteRow, getRow, updateRow } from "../../network/api";
 import InputBoxReadonly from "./InputBoxReadonly";
 import { Button, CircularProgress } from "@mui/material";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import DeleteIcon from "@mui/icons-material/Delete";
 import PromptButton from "../LayoutComponent/PromptButton";
 import { amber } from "@mui/material/colors";
 import { useNavigate, useParams } from "react-router-dom";
 import DivAnimate from "../Animate/DivAnimate";
 import FormAnimate from "../Animate/FormAnimate";
 import { useStore } from "../../store/store";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const UpdateForm = ({ title, id, metadata }) => {
     const [data, setData] = useState({});
@@ -169,7 +166,7 @@ const UpdateForm = ({ title, id, metadata }) => {
                     }}
                 >
                     <DivAnimate>
-                        {isEditMode ? <CancelIcon /> : <EditRoundedIcon />}
+                        {isEditMode ? <FiX /> : <FiEdit />}
                     </DivAnimate>
                 </Button>
                 {isEditMode && (
@@ -179,15 +176,15 @@ const UpdateForm = ({ title, id, metadata }) => {
                             type="submit"
                             className="py-3 px-4 shadow-xl idms-submit"
                         >
-                            <CheckCircleIcon />
+                            <FiCheckCircle />
                         </button>
                     </DivAnimate>
                 )}
                 {!isEditMode && (
                     <DivAnimate>
                         <PromptButton
-                            icon={<DeleteIcon />}
-                            title="Delete"
+                            icon={<FiTrash2 />}
+                            title="FiTrash2"
                             content="Are you sure you want to delete this item?"
                             onClick={() =>
                                 deleteRow(`/${title}/delete/${path}`).then(() => {

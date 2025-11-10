@@ -1,3 +1,4 @@
+import { FiBox, FiCalendar, FiPlus, FiTrash2, FiShoppingBag, FiInfo, FiHeart } from 'react-icons/fi';
 import React, { useState, useEffect } from 'react';
 import {
   Card,
@@ -12,15 +13,6 @@ import {
   Tooltip,
   IconButton,
 } from '@mui/material';
-import {
-  ShoppingBag as ShoppingBagIcon,
-  Delete as DeleteIcon,
-  Info as InfoIcon,
-  Inventory as InventoryIcon,
-  CalendarToday as CalendarTodayIcon,
-  Favorite as FavoriteIcon,
-  FavoriteBorder as FavoriteBorderIcon,
-} from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useStore } from '../../store/store';
 import { useRoutes } from '../../hooks/useRoutes';
@@ -117,7 +109,7 @@ const ProductCard = ({ product }) => {
             className="absolute top-3 right-3"
             color={isInWishlist ? 'error' : 'default'}
           >
-            {isInWishlist ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            {isInWishlist ? <FiHeart /> : <FiHeart />}
           </IconButton>
 
           {/* Product name + price */}
@@ -145,7 +137,7 @@ const ProductCard = ({ product }) => {
           {/* Stock & Expiry */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="flex items-center gap-2">
-              <InventoryIcon className="text-gray-500" />
+              <FiBox className="text-gray-500" />
               <div>
                 <Typography variant="body2" color="text.secondary">
                   In Stock
@@ -159,7 +151,7 @@ const ProductCard = ({ product }) => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <CalendarTodayIcon className="text-gray-500" />
+              <FiCalendar className="text-gray-500" />
               <div>
                 <Typography variant="body2" color="text.secondary">
                   Expiry
@@ -183,7 +175,7 @@ const ProductCard = ({ product }) => {
           {/* Details */}
           <div className="bg-gray-50 rounded-xl p-3 mb-5 border border-gray-100">
             <Typography variant="body2" className="mb-2 flex items-center gap-1 text-gray-600 font-medium">
-              <InfoIcon fontSize="small" /> Product Info
+              <FiInfo /> Product Info
             </Typography>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="text-gray-500">Dimensions</div>
@@ -204,19 +196,19 @@ const ProductCard = ({ product }) => {
           <Button
           variant="contained"
           color={isInCart ? 'success' : 'primary'}
-          startIcon={<ShoppingBagIcon />}
+          startIcon={<FiShoppingBag />}
           onClick={() => setIsModalOpen(true)}
           fullWidth
           disabled={cart.loading}
           sx={{ textTransform: 'none', borderRadius: '10px', py: 1.2 }}
           >
           {cart.loading ? 'Adding...' : (isInCart ? 'Update Cart' : 'Add to Cart')}
-            </Button>
+          </Button>
             {isInCart && (
               <Button
                 variant="outlined"
                 color="error"
-                startIcon={<DeleteIcon />}
+                startIcon={<FiTrash2 />}
                 onClick={handleRemove}
                 fullWidth
                 sx={{ borderRadius: '10px', py: 1.2 }}

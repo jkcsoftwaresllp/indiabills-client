@@ -1,14 +1,7 @@
+import { FiBox, FiPlus, FiList, FiTool, FiTag, FiUsers, FiTruck } from 'react-icons/fi';
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Inventory2Rounded as InventoryIcon,
-  Category as ItemsIcon,
-  PrecisionManufacturing as SuppliersIcon,
-  LocalOffer as OffersIcon,
-  SupervisedUserCircle as CustomersIcon,
-  LocalShipping as TransportIcon
-} from '@mui/icons-material';
 
 const OperatorDashboard = () => {
   const { user } = useAuth();
@@ -18,72 +11,72 @@ const OperatorDashboard = () => {
     {
       title: 'Inventory Management',
       description: 'Manage stock levels, batches, and warehouse operations',
-      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      icon: <FiBox sx={{ fontSize: 48 }} />,
       path: '/operator/inventory',
       color: 'bg-blue-500'
     },
     {
       title: 'Stock Movements',
       description: 'Track all inventory movements and transactions',
-      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      icon: <FiBox sx={{ fontSize: 48 }} />,
       path: '/operator/inventory/movements',
       color: 'bg-cyan-500'
     },
     {
       title: 'Stock Levels',
       description: 'Monitor current stock levels across warehouses',
-      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      icon: <FiBox sx={{ fontSize: 48 }} />,
       path: '/operator/inventory/stock',
       color: 'bg-teal-500'
     },
     {
       title: 'Reconciliations',
       description: 'Perform and manage inventory reconciliations',
-      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      icon: <FiBox sx={{ fontSize: 48 }} />,
       path: '/operator/inventory/reconciliations',
       color: 'bg-emerald-500'
     },
     {
       title: 'Warehouses',
       description: 'Manage warehouse locations and capacity',
-      icon: <InventoryIcon sx={{ fontSize: 48 }} />,
+      icon: <FiBox sx={{ fontSize: 48 }} />,
       path: '/operator/warehouses',
       color: 'bg-gray-500'
     },
     {
-      title: 'Items Catalog',
-      description: 'Add, edit, and manage product items',
-      icon: <ItemsIcon sx={{ fontSize: 48 }} />,
-      path: '/operator/products',
-      color: 'bg-green-500'
+    title: 'Items Catalog',
+    description: 'Add, edit, and manage product items',
+    icon: <FiList sx={{ fontSize: 48 }} />,
+    path: '/operator/products',
+    color: 'bg-green-500'
     },
     {
-      title: 'Suppliers',
-      description: 'Manage supplier information and relationships',
-      icon: <SuppliersIcon sx={{ fontSize: 48 }} />,
-      path: '/operator/suppliers',
-      color: 'bg-purple-500'
+    title: 'Suppliers',
+    description: 'Manage supplier information and relationships',
+    icon: <FiTool sx={{ fontSize: 48 }} />,
+    path: '/operator/suppliers',
+    color: 'bg-purple-500'
     },
     {
-      title: 'Offers & Promotions',
-      description: 'Create and manage promotional offers',
-      icon: <OffersIcon sx={{ fontSize: 48 }} />,
-      path: '/operator/offers',
-      color: 'bg-orange-500'
+    title: 'Offers & Promotions',
+    description: 'Create and manage promotional offers',
+    icon: <FiTag sx={{ fontSize: 48 }} />,
+    path: '/operator/offers',
+    color: 'bg-orange-500'
     },
     {
-      title: 'Customer Management',
-      description: 'View and manage customer information',
-      icon: <CustomersIcon sx={{ fontSize: 48 }} />,
+    title: 'Customer Management',
+    description: 'View and manage customer information',
+    icon: <FiUsers sx={{ fontSize: 48 }} />,
       path: '/operator/customers',
       color: 'bg-indigo-500'
     },
     {
-      title: 'Transport & Logistics',
-      description: 'Manage transportation and delivery services',
-      icon: <TransportIcon sx={{ fontSize: 48 }} />,
-      path: '/operator/transport',
-      color: 'bg-red-500'
+    title: 'Transport & Logistics',
+    description: 'Manage transportation and delivery services',
+    icon: <FiTruck sx={{ fontSize: 48 }} />,
+    path: '/operator/transport',
+    color: 'bg-red-500'
     }
   ];
 
@@ -133,7 +126,7 @@ const OperatorDashboard = () => {
         <h4 className="text-lg font-semibold text-yellow-800 mb-2">Quick Tips</h4>
         <ul className="text-yellow-700 text-sm space-y-1">
           <li>• Use the inventory module to track stock levels and manage batches</li>
-          <li>• Add new products through the items catalog</li>
+          <li>• FiPlus new products through the items catalog</li>
           <li>• Keep supplier information updated for smooth operations</li>
           <li>• Create promotional offers to boost sales</li>
         </ul>

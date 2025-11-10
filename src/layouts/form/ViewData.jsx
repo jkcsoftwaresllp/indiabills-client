@@ -1,9 +1,5 @@
+import { FiPlus } from 'react-icons/fi';
 import React, { useEffect, useState, useMemo } from "react";
-import ViewColumnIcon from '@mui/icons-material/ViewColumn';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import SearchIcon from '@mui/icons-material/Search';
-import AddIcon from '@mui/icons-material/Add';
-import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import { useNavigate } from "react-router-dom";
 import DataGrid from "../../components/FormComponent/DataGrid";
@@ -156,7 +152,7 @@ const ViewData = ({
   };
 
   const handleQuickEdit = () => {
-    console.log('Quick Edit clicked, selected rows:', selectedRows);
+    console.log('Quick FiEdit clicked, selected rows:', selectedRows);
     if (selectedRows.length === 0) {
       alert('Please select a row to edit');
       return;
@@ -192,7 +188,7 @@ const ViewData = ({
         setSelectedRows([]);
       }
     } catch (error) {
-      console.error('Delete failed:', error);
+      console.error('FiTrash2 failed:', error);
     }
   };
 
@@ -248,7 +244,7 @@ const ViewData = ({
         <div><h4 className={"text-3xl transition font-bold hover:text-rose-500"}>{title}</h4></div>
 
         <div className="flex items-center mb-4 md:mb-0">
-          <IconButton type="button" aria-label="search"><SearchIcon /></IconButton>
+          <IconButton type="button" aria-label="search"><FiSearch /></IconButton>
           <InputBase
             placeholder={`Search by ${title} name`}
             inputProps={{ 'aria-label': 'search' }}
@@ -267,7 +263,7 @@ const ViewData = ({
               <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="p-2 bg-light rounded-xl border text-sm"/>
             </div>
             <button className="bg-primary flex items-center justify-center transition rounded-full hover:bg-accent text-light font-medium p-2 hover:brightness-125 shadow-2xl" onClick={handleFilter}>
-              <CheckCircleOutlineIcon fontSize='small' />
+              <FiCheckCircle fontSize='small' />
             </button>
           </section>
         )}
@@ -281,16 +277,16 @@ const ViewData = ({
                   className={`transition ease-in-out p-2 w-fit bg-primary rounded-full ${selectedRows.length === 0 ? 'text-slate-200' : 'text-amber-500 -translate-y-1 shadow-lg'}`}
                   disabled={selectedRows.length === 0}
                 >
-                  <ElectricBoltIcon />
+                  <FiZap />
                 </button>
               }
-              popoverContent={<span className="text-xs"> Quick Edit {selectedRows.length > 0 ? `(${selectedRows.length} selected)` : ''} </span>}
+              popoverContent={<span className="text-xs"> Quick FiEdit {selectedRows.length > 0 ? `(${selectedRows.length} selected)` : ''} </span>}
             />
           )}
           <MouseHoverPopover
             triggerElement={
               <button onClick={() => setIsModalOpen(true)} className="p-2 min-w-20 bg-primary text-slate-200 rounded-full">
-                <ViewColumnIcon />
+                <FiColumns />
               </button>
             }
             popoverContent={<span className="text-xs"> Select Columns </span>}
@@ -299,7 +295,7 @@ const ViewData = ({
             <MouseHoverPopover
               triggerElement={
                 <button onClick={add} className="p-2 w-fit bg-primary text-slate-200 rounded-full hover:bg-accent hover:brightness-200">
-                  <AddIcon />
+                  <FiPlus />
                 </button>
               }
               popoverContent={<span className="text-xs"> New {title} </span>}

@@ -1,3 +1,4 @@
+import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { useState, useEffect } from "react";
 import { useStore } from "../../store/store";
 import { getSessions } from "../../utils/authHelper";
@@ -21,7 +22,6 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
 import {
   getCustomerProfileById,
   updateCustomerSelf,
@@ -298,7 +298,7 @@ const CustomerProfile = () => {
                     variant={isEditing ? "outlined" : "contained"}
                     onClick={() => setIsEditing(!isEditing)}
                   >
-                    {isEditing ? "Cancel" : "Edit Profile"}
+                    {isEditing ? "Cancel" : "FiEdit Profile"}
                   </Button>
                 </div>
 
@@ -527,7 +527,7 @@ const CustomerProfile = () => {
                 <div className="flex justify-between items-center mb-4">
                   <Typography variant="h6">My Addresses</Typography>
                   <Button variant="outlined" onClick={handleAddAddress}>
-                    Add New Address
+                    FiPlus New Address
                   </Button>
                 </div>
 
@@ -535,7 +535,7 @@ const CustomerProfile = () => {
                   <Typography>Loading addresses...</Typography>
                 ) : addresses.length === 0 ? (
                   <Typography>
-                    No addresses found. Add your first address.
+                    No addresses found. FiPlus your first address.
                   </Typography>
                 ) : (
                   <Grid container spacing={3}>
@@ -573,14 +573,14 @@ const CustomerProfile = () => {
                                 size="small"
                                 onClick={() => handleEditAddress(address)}
                               >
-                                <Edit fontSize="small" />
+                                <FiEdit fontSize="small" />
                               </IconButton>
                               <IconButton
                                 size="small"
                                 color="error"
                                 onClick={() => handleDeleteAddress(address.id)}
                               >
-                                <Delete fontSize="small" />
+                                <FiTrash2 fontSize="small" />
                               </IconButton>
                             </Box>
                           </CardContent>
@@ -603,7 +603,7 @@ const CustomerProfile = () => {
         fullWidth
       >
         <DialogTitle>
-          {editingAddress ? "Edit Address" : "Add New Address"}
+          {editingAddress ? "FiEdit Address" : "FiPlus New Address"}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={3} sx={{ mt: 1 }}>
@@ -742,7 +742,7 @@ const CustomerProfile = () => {
         <DialogActions>
           <Button onClick={() => setAddressDialogOpen(false)}>Cancel</Button>
           <Button onClick={handleSaveAddress} variant="contained">
-            {editingAddress ? "Update" : "Add"} Address
+            {editingAddress ? "Update" : "FiPlus"} Address
           </Button>
         </DialogActions>
       </Dialog>

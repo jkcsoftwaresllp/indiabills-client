@@ -2,13 +2,7 @@ import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import Shop from '../shop/Shop';
-import { 
-  ShoppingCart as CartIcon,
-  Receipt as InvoiceIcon,
-  LocalShipping as OrderIcon,
-  AccountCircle as ProfileIcon,
-  Favorite as WishlistIcon
-} from '@mui/icons-material';
+import { FiShoppingCart as CartIcon, FiFileText as InvoiceIcon, FiTruck as OrderIcon, FiUser as ProfileIcon, FiHeart as WishlistIcon } from 'react-icons/fi';
 
 const CustomerDashboard = () => {
   const { user } = useAuth();

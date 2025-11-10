@@ -1,6 +1,6 @@
+import { FiCheckCircle } from 'react-icons/fi';
 import React, { useState } from "react";
 import InputBoxStream from "./InputBoxStream";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
 	groupByCategory,
 	initializeFormData,
@@ -170,7 +170,7 @@ const AddForm = ({ title, metadata }) => {
 			</div>
 			<div className="flex justify-center">
 				<button type="submit" className="p-3 m-5 shadow-xl idms-submit">
-					<CheckCircleIcon />
+					<FiCheckCircle />
 				</button>
 			</div>
 		</form>

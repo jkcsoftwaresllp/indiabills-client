@@ -1,9 +1,7 @@
+import { FiChevronDown, FiFilter, FiPlus } from 'react-icons/fi';
 import { useEffect, useState } from "react";
-import FilterListIcon from '@mui/icons-material/FilterList';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getUsersByRole } from "../../network/api";
 import UserCard from "../../components/FormComponent/UserCard";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PageAnimate from "../../components/Animate/PageAnimate";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -83,7 +81,7 @@ const ViewUsers = () => {
                         <h1 className="p-2 text-4xl bg-transparent rounded font-semibold">
                             {selectedRole ? capitalize(selectedRole) : 'Select a Role'}
                         </h1>
-                        <span className="font-semibold"><ExpandMoreIcon/></span>
+                        <span className="font-semibold"><FiChevronDown/></span>
                         <select 
                             className="bg-transparent rounded absolute inset-0 opacity-0" 
                             value={selectedRole}
@@ -104,7 +102,7 @@ const ViewUsers = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     <div id="sort" className={"flex relative"}>
-                        <FilterListIcon onClick={() => setSorter(!sorter)} style={{ fontSize: 40 }} />
+                        <FiFilter onClick={() => setSorter(!sorter)} style={{ fontSize: 40 }} />
                         {sorter && (
                             <div className="flex flex-col absolute bottom-0 rounded-lg text-sm bg-primary text-slate-300">
                                 <button 
@@ -173,7 +171,7 @@ const ViewUsers = () => {
                             exit="exit" 
                             layout
                         >
-                            <AddCircleOutlineIcon />
+                            <FiPlus />
                         </motion.div>
                     </div>
                 )}

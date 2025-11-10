@@ -1,3 +1,4 @@
+import { FiChevronDown, FiHeadphones, FiMail, FiPhone, FiPlus } from 'react-icons/fi';
 import React, { useState } from 'react';
 import PageAnimate from '../../components/Animate/PageAnimate';
 import {
@@ -17,10 +18,6 @@ import {
   AccordionDetails,
   Box
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import SupportAgentIcon from '@mui/icons-material/SupportAgent';
-import EmailIcon from '@mui/icons-material/Email';
-import PhoneIcon from '@mui/icons-material/Phone';
 
 const CustomerSupport = () => {
   const [ticketForm, setTicketForm] = useState({
@@ -65,7 +62,7 @@ const CustomerSupport = () => {
     // TODO: Implement API call to create support ticket
     console.log('Creating ticket:', ticketForm);
     
-    // Add to local state for demo
+    // FiPlus to local state for demo
     const newTicket = {
       id: tickets.length + 1,
       ...ticketForm,
@@ -107,7 +104,7 @@ const CustomerSupport = () => {
     <PageAnimate>
       <div className="w-full p-6">
         <div className="mb-6 p-6 bg-blue-50 rounded-lg">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Customer Support</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Customer FiHeadphones</h1>
           <p className="text-gray-600">Get help with your orders, products, and account</p>
         </div>
 
@@ -117,19 +114,19 @@ const CustomerSupport = () => {
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom className="flex items-center gap-2">
-                  <SupportAgentIcon />
+                  <FiHeadphones />
                   Contact Us
                 </Typography>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <EmailIcon color="primary" />
+                    <FiMail color="primary" />
                     <div>
                       <Typography variant="body2" color="textSecondary">Email</Typography>
                       <Typography variant="body1">support@indiabills.com</Typography>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <PhoneIcon color="primary" />
+                    <FiPhone color="primary" />
                     <div>
                       <Typography variant="body2" color="textSecondary">Phone</Typography>
                       <Typography variant="body1">+91 1800-123-4567</Typography>
@@ -152,7 +149,7 @@ const CustomerSupport = () => {
           <Grid item xs={12} md={8}>
             <Card>
               <CardContent>
-                <Typography variant="h6" gutterBottom>Create Support Ticket</Typography>
+                <Typography variant="h6" gutterBottom>Create FiHeadphones Ticket</Typography>
                 <form onSubmit={handleSubmitTicket}>
                   <Grid container spacing={3}>
                     <Grid item xs={12}>
@@ -233,12 +230,12 @@ const CustomerSupport = () => {
           <Grid item xs={12}>
             <Card>
               <CardContent>
-                <Typography variant="h6" gutterBottom>My Support Tickets</Typography>
+                <Typography variant="h6" gutterBottom>My FiHeadphones Tickets</Typography>
                 {tickets.length > 0 ? (
                   <div className="space-y-3">
                     {tickets.map((ticket) => (
                       <Accordion key={ticket.id}>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <AccordionSummary expandIcon={<FiChevronDown />}>
                           <div className="flex justify-between items-center w-full mr-4">
                             <div>
                               <Typography variant="subtitle1">{ticket.subject}</Typography>

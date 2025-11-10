@@ -1,3 +1,4 @@
+import { FiTrash2 } from 'react-icons/fi';
 import React from 'react';
 import {
   Table,
@@ -11,7 +12,6 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { useStore } from '../../store/store';
 
 const textFieldStyles = {
@@ -122,7 +122,7 @@ const OrderCard = ({ products }) => {
                       onClick={() => removeSelectedProduct(product.itemId)}
                       color="secondary"
                     >
-                      <DeleteIcon />
+                      <FiTrash2 />
                     </IconButton>
                   </Tooltip>
                 </TableCell>

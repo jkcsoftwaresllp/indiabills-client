@@ -1,7 +1,4 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import SearchIcon from '@mui/icons-material/Search';
-import SortIcon from '@mui/icons-material/Sort';
+import { FiChevronDown, FiChevronUp, FiFilter, FiSearch } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import { useStore } from '../../store/store';
 import { IconButton, InputBase, MenuItem, Select } from '@mui/material';
@@ -154,7 +151,7 @@ const ViewOrders = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <div className="flex items-center mb-4 md:mb-0">
             <IconButton aria-label="search">
-              <SearchIcon />
+              <FiSearch />
             </IconButton>
             <InputBase
               placeholder="Search by Customer Name, Invoice Number or Order ID"
@@ -165,7 +162,7 @@ const ViewOrders = () => {
             />
           </div>
           <div className="flex items-center">
-            <SortIcon />
+            <FiFilter />
             <Select
               value={sortField}
               onChange={handleSortFieldChange}
@@ -177,7 +174,7 @@ const ViewOrders = () => {
               <MenuItem value="totalAmount">Total Price</MenuItem>
             </Select>
             <IconButton onClick={handleSortOrderToggle} aria-label="toggle sort order">
-              {sortOrder === 'asc' ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              {sortOrder === 'asc' ? <FiChevronUp /> : <FiChevronDown />}
             </IconButton>
           </div>
         </div>

@@ -1,12 +1,5 @@
+import { FiBriefcase, FiCalendar, FiChevronDown, FiChevronUp, FiLink, FiRefreshCw, FiTrendingUp, FiUser } from 'react-icons/fi';
 import React, { useState } from 'react';
-import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
-import BusinessIcon from '@mui/icons-material/Business';
-import PersonIcon from '@mui/icons-material/Person';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import LinkIcon from '@mui/icons-material/Link';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import styles from './SubscriptionSection.module.css';
 
 const SubscriptionSection = ({ subscriptionData, onRefresh }) => {
@@ -50,7 +43,7 @@ const SubscriptionSection = ({ subscriptionData, onRefresh }) => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.titleSection}>
-          <SubscriptionsIcon className={styles.headerIcon} />
+          <FiTrendingUp className={styles.headerIcon} />
           <div>
             <h2 className={styles.title}>Subscription Details</h2>
             <p className={styles.subtitle}>
@@ -63,7 +56,7 @@ const SubscriptionSection = ({ subscriptionData, onRefresh }) => {
           onClick={handleRefresh}
           disabled={refreshing}
         >
-          <RefreshIcon />
+          <FiRefreshCw />
           {refreshing ? 'Refreshing...' : 'Refresh'}
         </button>
       </div>
@@ -86,7 +79,7 @@ const SubscriptionSection = ({ subscriptionData, onRefresh }) => {
             </div>
             <div className={styles.planDetails}>
               <div className={styles.planDetail}>
-                <CalendarTodayIcon className={styles.detailIcon} />
+                <FiCalendar className={styles.detailIcon} />
                 <div>
                   <span className={styles.detailLabel}>Valid Till</span>
                   <span className={styles.detailValue}>
@@ -95,7 +88,7 @@ const SubscriptionSection = ({ subscriptionData, onRefresh }) => {
                 </div>
               </div>
               <div className={styles.planDetail}>
-                <BusinessIcon className={styles.detailIcon} />
+                <FiBriefcase className={styles.detailIcon} />
                 <div>
                   <span className={styles.detailLabel}>Organizations</span>
                   <span className={styles.detailValue}>
@@ -121,7 +114,7 @@ const SubscriptionSection = ({ subscriptionData, onRefresh }) => {
                         {org.logo ? (
                           <img src={org.logo} alt={org.name} />
                         ) : (
-                          <BusinessIcon />
+                          <FiBriefcase />
                         )}
                       </div>
                       <div className={styles.orgDetails}>
@@ -136,7 +129,7 @@ const SubscriptionSection = ({ subscriptionData, onRefresh }) => {
                       className={styles.expandButton}
                       onClick={() => toggleOrgExpansion(org.id)}
                     >
-                      {expandedOrg === org.id ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                      {expandedOrg === org.id ? <FiChevronUp /> : <FiChevronDown />}
                     </button>
                   </div>
 
@@ -147,7 +140,7 @@ const SubscriptionSection = ({ subscriptionData, onRefresh }) => {
                         <div className={styles.loginUrls}>
                           {org.loginUrls && org.loginUrls.map((url, index) => (
                             <div key={index} className={styles.loginUrl}>
-                              <LinkIcon className={styles.linkIcon} />
+                              <FiLink className={styles.linkIcon} />
                               <a href={url} target="_blank" rel="noopener noreferrer">
                                 {url}
                               </a>
@@ -193,7 +186,7 @@ const SubscriptionSection = ({ subscriptionData, onRefresh }) => {
                                 {user.avatar ? (
                                   <img src={user.avatar} alt={user.name} />
                                 ) : (
-                                  <PersonIcon />
+                                  <FiUser />
                                 )}
                               </div>
                               <div className={styles.userInfo}>
@@ -212,7 +205,7 @@ const SubscriptionSection = ({ subscriptionData, onRefresh }) => {
             </div>
           ) : (
             <div className={styles.emptyState}>
-              <BusinessIcon className={styles.emptyIcon} />
+              <FiBriefcase className={styles.emptyIcon} />
               <h4 className={styles.emptyTitle}>No Organizations Found</h4>
               <p className={styles.emptyText}>
                 You haven't created any organizations yet. Complete the setup process to create your first organization.

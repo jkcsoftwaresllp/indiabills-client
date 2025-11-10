@@ -1,13 +1,5 @@
+import { FiBarChart2, FiBox, FiUser, FiTrendingUp, FiAlertCircle, FiList, FiTag } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import {
-  Inventory as InventoryIcon,
-  Person as PersonIcon,
-  Assessment as AssessmentIcon,
-  TrendingUp as TrendingUpIcon,
-  BugReport as BugReportIcon,
-  Category as CategoryIcon,
-  LocalOffer as LocalOfferIcon,
-} from '@mui/icons-material';
 import PageAnimate from '../../components/Animate/PageAnimate';
 import styles from './styles/ViewReports.module.css'; 
 
@@ -16,70 +8,70 @@ const reports = [
     key: 'stock-level',
     title: 'Stock and Sales Summary',
     description: 'View current stock levels and sales summaries.',
-    icon: <InventoryIcon />,
+    icon: <FiBox />,
     path: '/reports/stocklevel',
   },
   {
     key: 'supplier-performance',
     title: 'Supplier Performance',
     description: 'Analyze performance of your suppliers.',
-    icon: <PersonIcon />,
+    icon: <FiUser />,
     path: '/reports/supplierperformance',
   },
   {
     key: 'invoice',
     title: 'Invoice Reports',
     description: 'Check invoice details and summaries.',
-    icon: <AssessmentIcon />,
+    icon: <FiBarChart2 />,
     path: '/reports/invoice',
   },
   {
     key: 'customer-purchase',
     title: 'Customer Purchase',
     description: 'Review customer purchase reports.',
-    icon: <PersonIcon />,
+    icon: <FiUser />,
     path: '/reports/customerpurchase',
   },
   {
     key: 'expense',
     title: 'Expense Reports',
     description: 'Monitor your expenses over time.',
-    icon: <TrendingUpIcon />,
+    icon: <FiTrendingUp />,
     path: '/reports/expenses',
   },
   {
     key: 'stock-issue',
     title: 'Stock Issues',
     description: 'Identify and resolve stock issues.',
-    icon: <BugReportIcon />,
+    icon: <FiAlertCircle />,
     path: '/reports/stockissue',
   },
   {
     key: 'credits',
     title: 'Credit Management',
     description: 'Manage credit reports and analyses.',
-    icon: <CategoryIcon />,
+    icon: <FiList />,
     path: '/reports/credits',
   },
   {
     key: 'revenue',
     title: 'Revenue Reports',
     description: 'Track revenue reports over periods.',
-    icon: <TrendingUpIcon />,
+    icon: <FiTrendingUp />,
     path: '/reports/revenue',
   },
   {
     key: 'hsn',
     title: 'HSN Reports',
     description: 'HSN classification and tax reports.',
-    icon: <LocalOfferIcon />,
+    icon: <FiTag />,
     path: '/reports/hsn',
   },
   {
     key: 'sales',
     title: 'Sales Reports',
     description: 'View invoices organized by tax slabs.',
-    icon: <AssessmentIcon />,
+    icon: <FiBarChart2 />,
     path: '/reports/pms',
   },
 ];

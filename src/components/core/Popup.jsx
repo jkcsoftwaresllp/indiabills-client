@@ -1,5 +1,5 @@
+import { FiBell } from 'react-icons/fi';
 import { useState, useEffect } from "react";
-import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import { Alert, Snackbar } from "@mui/material";
 import { useStore } from "../../store/store";
 
@@ -31,7 +31,7 @@ const Popup = () => {
 			>
 				<Alert
 					severity={Popup.variant}
-					icon={<CircleNotificationsIcon />}
+					icon={<FiBell />}
 					sx={{ width: "100%" }}
 					onClose={handleClose}
 				>

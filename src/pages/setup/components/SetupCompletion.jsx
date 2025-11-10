@@ -1,8 +1,5 @@
+import { FiArrowUpRight, FiBarChart2, FiBox, FiCheckCircle, FiHeadphones, FiPlus } from 'react-icons/fi';
 import React from 'react';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import InventoryIcon from '@mui/icons-material/Inventory';
 import { useNavigate } from 'react-router-dom';
 import styles from './SetupCompletion.module.css';
 
@@ -11,14 +8,14 @@ const SetupCompletion = () => {
 
   const nextSteps = [
     {
-      icon: <DashboardIcon />,
+      icon: <FiBarChart2 />,
       title: 'Explore Dashboard',
       description: 'Get an overview of your business metrics and key performance indicators',
       action: () => navigate('/')
     },
     {
-      icon: <InventoryIcon />,
-      title: 'Add Products',
+      icon: <FiBox />,
+      title: 'FiPlus Products',
       description: 'Start adding your products and inventory to begin managing your stock',
       action: () => navigate('/products/add')
     }
@@ -28,8 +25,8 @@ const SetupCompletion = () => {
     <div className={styles.container}>
       <div className={styles.celebration}>
         <div className={styles.iconContainer}>
-          <CheckCircleIcon className={styles.successIcon} />
-          <RocketLaunchIcon className={styles.rocketIcon} />
+          <FiCheckCircle className={styles.successIcon} />
+          <FiArrowUpRight className={styles.rocketIcon} />
         </div>
         <h2 className={styles.title}>🎉 Setup Complete!</h2>
         <p className={styles.subtitle}>
@@ -41,19 +38,19 @@ const SetupCompletion = () => {
         <h3 className={styles.achievementsTitle}>What You've Accomplished:</h3>
         <div className={styles.achievementsList}>
           <div className={styles.achievement}>
-            <CheckCircleIcon className={styles.achievementIcon} />
+            <FiCheckCircle className={styles.achievementIcon} />
             <span>Organization profile and branding configured</span>
           </div>
           <div className={styles.achievement}>
-            <CheckCircleIcon className={styles.achievementIcon} />
+            <FiCheckCircle className={styles.achievementIcon} />
             <span>Warehouse location and inventory system set up</span>
           </div>
           <div className={styles.achievement}>
-            <CheckCircleIcon className={styles.achievementIcon} />
+            <FiCheckCircle className={styles.achievementIcon} />
             <span>Admin user account created and configured</span>
           </div>
           <div className={styles.achievement}>
-            <CheckCircleIcon className={styles.achievementIcon} />
+            <FiCheckCircle className={styles.achievementIcon} />
             <span>System ready for business operations</span>
           </div>
         </div>
@@ -91,7 +88,7 @@ const SetupCompletion = () => {
           className={styles.supportButton}
           onClick={() => navigate('/help')}
         >
-          Contact Support
+          Contact FiHeadphones
         </button>
       </div>
     </div>

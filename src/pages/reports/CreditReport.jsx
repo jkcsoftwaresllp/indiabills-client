@@ -1,7 +1,5 @@
-import BorderColorIcon from "@mui/icons-material/BorderColor";
+import { FiDownload } from 'react-icons/fi';
 import { useEffect, useState } from "react";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import DescriptionIcon from "@mui/icons-material/Description";
 import { getReport } from "../../network/api";
 import SettleCreditModal from "./SettleCreditModal";
 import { AgGridReact } from "ag-grid-react";
@@ -9,14 +7,12 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import DebitModal from "./DebitModal";
 import { useStore } from "../../store/store";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { CustomerSelector } from "../../components/FormComponent/CustomerSelector";
 import { formatDate } from "../../utils/FormHelper";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Papa from "papaparse";
 import EditCreditModal from "./EditCredit";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import MouseHoverPopover from "../../components/core/Explain";
 import { Button } from "@mui/material";
 
@@ -375,7 +371,7 @@ const CreditReport = () => {
             fetchCreditData(selectedCustomerId, startDate, endDate)
           }
         >
-          <CheckCircleOutlineIcon fontSize="small" />
+          <FiCheckCircle fontSize="small" />
         </button>
       </section>
 
@@ -400,7 +396,7 @@ const CreditReport = () => {
             className="bg-primary flex items-center justify-center transition rounded-full hover:bg-accent text-light font-medium p-2 hover:brightness-125 shadow-2xl"
             onClick={() => setIsSettleModalOpen(true)}
           >
-            <PointOfSaleIcon />
+            <FiDollarSign />
           </button>
         </div>
 
@@ -411,10 +407,10 @@ const CreditReport = () => {
                 className="p-2 min-w-12 text-slate-200 text-sm bg-primary rounded-xl hover:bg-accent transition"
                 onClick={() => setIsEditModalOpen(!isEditModalOpen)}
               >
-                <BorderColorIcon />
+                <FiEdit />
               </button>
             }
-            popoverContent={<span className="text-xs"> Edit </span>}
+            popoverContent={<span className="text-xs"> FiEdit </span>}
           />
           <MouseHoverPopover
             triggerElement={
@@ -422,7 +418,7 @@ const CreditReport = () => {
                 className="p-2 min-w-12 text-slate-200 text-sm bg-primary rounded-xl hover:bg-accent transition"
                 onClick={handleExportPDF}
               >
-                <PictureAsPdfIcon />
+                <FiDownload />
               </button>
             }
             popoverContent={<span className="text-xs"> Export as PDF </span>}
@@ -433,7 +429,7 @@ const CreditReport = () => {
                 className="p-2 min-w-12 text-slate-200 text-sm bg-primary rounded-xl hover:bg-accent transition"
                 onClick={handleExportCSV}
               >
-                <DescriptionIcon />
+                <FiFileText />
               </button>
             }
             popoverContent={<span className="text-xs"> Export as CSV </span>}

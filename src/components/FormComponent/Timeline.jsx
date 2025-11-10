@@ -1,5 +1,5 @@
+import { FiCheckCircle } from 'react-icons/fi';
 import { FC } from "react";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const Stepper = ({ steps, currentStep }) => {
   return (
@@ -7,7 +7,7 @@ const Stepper = ({ steps, currentStep }) => {
         {steps?.map((step, i) => (
           <div key={i} className={`step-item ${currentStep === i + 1 ? "active" : ""} ${i + 1 < currentStep ? "complete" : ""}`}>
             <div className="step">
-              {i + 1 < currentStep ? <CheckCircleIcon /> : i + 1}
+              {i + 1 < currentStep ? <FiCheckCircle /> : i + 1}
             </div>
             <p className="text-gray-500">{step}</p>
           </div>

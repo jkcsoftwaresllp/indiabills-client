@@ -1,3 +1,4 @@
+import { FiEdit, FiPlus, FiBriefcase } from 'react-icons/fi';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserOrganizations, createOrganization, switchOrganization } from '../../network/api';
@@ -27,14 +28,7 @@ import {
   Step,
   StepLabel
 } from '@mui/material';
-import BusinessIcon from '@mui/icons-material/Business';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { getOption } from '../../utils/FormHelper';
-import SwitchAccountIcon from '@mui/icons-material/SwitchAccount';
 import { getOrganizationById } from '../../network/api/organizationApi';
 import { getSession } from '../../utils/cacheHelper';
 
@@ -493,7 +487,7 @@ const SetupPage = () => {
             alt={`${currentOrg.name} logo`}
             sx={{ width: 72, height: 72 }}
           >
-            <BusinessIcon sx={{ fontSize: 36 }} />
+            <FiBriefcase sx={{ fontSize: 36 }} />
           </Avatar>
 
           <div className="flex-1">
@@ -532,7 +526,7 @@ const SetupPage = () => {
             {session?.orgs && session.orgs.length > 1 && (
               <Button
                 variant="outlined"
-                startIcon={<SwitchAccountIcon />}
+                startIcon={<FiSettings />}
                 onClick={() => navigate('/organization-selector')}
                 sx={{ mr: 1 }}
               >
@@ -541,10 +535,10 @@ const SetupPage = () => {
             )}
             <Button
               variant="outlined"
-              startIcon={<EditIcon />}
+              startIcon={<FiEdit />}
               onClick={() => navigate('/organization/edit')}
             >
-              Edit
+              FiEdit
             </Button>
           </div>
         </div>
@@ -616,7 +610,7 @@ const SetupPage = () => {
                           alt={org.name}
                           sx={{ width: 50, height: 50 }}
                         >
-                          <BusinessIcon />
+                          <FiBriefcase />
                         </Avatar>
                         <div className="flex-1">
                           <Typography variant="h6" className="font-bold">
@@ -667,16 +661,16 @@ const SetupPage = () => {
           </Typography>
           <Card>
             <CardContent className="text-center py-8">
-              <BusinessIcon sx={{ fontSize: 60, color: 'gray', mb: 2 }} />
+              <FiBriefcase size={60} style={{ color: 'gray', marginBottom: 16 }} />
               <Typography variant="h6" className="mb-2">
-                Add Another Organization
+                FiPlus Another Organization
               </Typography>
               <Typography variant="body1" color="textSecondary" className="mb-4">
                 Create a new organization to manage multiple businesses
               </Typography>
               <Button
                 variant="contained"
-                startIcon={<AddIcon />}
+                startIcon={<FiPlus />}
                 onClick={() => setCreateDialogOpen(true)}
                 size="large"
               >
@@ -722,7 +716,7 @@ const SetupPage = () => {
               {activeStep > 0 && (
                 <Button
                   onClick={handleBack}
-                  startIcon={<ArrowBackIcon />}
+                  startIcon={<FiArrowLeft />}
                   disabled={creating}
                 >
                   Back
@@ -733,7 +727,7 @@ const SetupPage = () => {
                 <Button
                   variant="contained"
                   onClick={handleNext}
-                  endIcon={<ArrowForwardIcon />}
+                  endIcon={<FiArrowRight />}
                   disabled={creating}
                 >
                   Next
@@ -742,7 +736,7 @@ const SetupPage = () => {
                 <Button
                   variant="contained"
                   onClick={handleCreateOrganization}
-                  startIcon={creating ? <CircularProgress size={20} /> : <CheckCircleIcon />}
+                  startIcon={creating ? <CircularProgress size={20} /> : <FiCheckCircle />}
                   disabled={creating}
                 >
                   {creating ? 'Creating...' : 'Create Organization'}

@@ -1,5 +1,4 @@
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import {AnimatePresence, motion} from "framer-motion";
 import React, {useState} from "react";
 
@@ -17,9 +16,9 @@ export const CollapsableSection = ({ title, children }) => {
                     className="flex items-center justify-between w-full p-3 bg-gray-100 rounded-lg ">
                 <span className="font-semibold">{title}</span>
                 {isOptionalOpen ? (
-                    <ExpandMoreIcon className="text-gray-600"/>
+                    <FiChevronDown className="text-gray-600"/>
                 ) : (
-                    <ExpandLessIcon className="text-gray-600"/>
+                    <FiChevronUp className="text-gray-600"/>
                 )}
             </button>
 

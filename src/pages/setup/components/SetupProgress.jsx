@@ -1,6 +1,5 @@
+import { FiCheckCircle, FiCircle } from 'react-icons/fi';
 import React from 'react';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import styles from './SetupProgress.module.css';
 
 const SetupProgress = ({ progress, completedSteps, totalSteps, isComplete }) => {
@@ -26,9 +25,9 @@ const SetupProgress = ({ progress, completedSteps, totalSteps, isComplete }) => 
       <div className={styles.stepsList}>
         <div className={`${styles.step} ${completedSteps >= 1 ? styles.completed : ''}`}>
           {completedSteps >= 1 ? (
-            <CheckCircleIcon className={styles.stepIcon} />
+            <FiCheckCircle className={styles.stepIcon} />
           ) : (
-            <RadioButtonUncheckedIcon className={styles.stepIcon} />
+            <FiCircle className={styles.stepIcon} />
           )}
           <div className={styles.stepContent}>
             <h3 className={styles.stepTitle}>Organization Setup</h3>
@@ -40,9 +39,9 @@ const SetupProgress = ({ progress, completedSteps, totalSteps, isComplete }) => 
 
         <div className={`${styles.step} ${completedSteps >= 2 ? styles.completed : ''}`}>
           {completedSteps >= 2 ? (
-            <CheckCircleIcon className={styles.stepIcon} />
+            <FiCheckCircle className={styles.stepIcon} />
           ) : (
-            <RadioButtonUncheckedIcon className={styles.stepIcon} />
+            <FiCircle className={styles.stepIcon} />
           )}
           <div className={styles.stepContent}>
             <h3 className={styles.stepTitle}>Warehouse Setup</h3>
@@ -55,7 +54,7 @@ const SetupProgress = ({ progress, completedSteps, totalSteps, isComplete }) => 
 
       {isComplete && (
         <div className={styles.completionBadge}>
-          <CheckCircleIcon className={styles.completionIcon} />
+          <FiCheckCircle className={styles.completionIcon} />
           <span>Setup Complete!</span>
         </div>
       )}

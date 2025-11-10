@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FiEye } from 'react-icons/fi';
 import {
   Card,
   CardContent,
@@ -8,7 +9,6 @@ import {
   Chip,
   IconButton
 } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const UserCard = ({ 
   id, 
@@ -46,15 +46,15 @@ const UserCard = ({
             sx={{ width: 80, height: 80, mx: 'auto', mb: 2 }}
           />
           <IconButton
-            className="absolute top-0 right-0"
-            onClick={handleViewUser}
-            size="small"
-            sx={{ 
-              backgroundColor: 'rgba(0,0,0,0.1)', 
-              '&:hover': { backgroundColor: 'rgba(0,0,0,0.2)' } 
-            }}
+          className="absolute top-0 right-0"
+          onClick={handleViewUser}
+          size="small"
+          sx={{ 
+          backgroundColor: 'rgba(0,0,0,0.1)', 
+          '&:hover': { backgroundColor: 'rgba(0,0,0,0.2)' } 
+          }}
           >
-            <VisibilityIcon fontSize="small" />
+          <FiEye />
           </IconButton>
         </div>
         

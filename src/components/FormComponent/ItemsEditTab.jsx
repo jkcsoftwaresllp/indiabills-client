@@ -1,6 +1,6 @@
+import { FiTrash2 } from 'react-icons/fi';
 import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, IconButton, Button, MenuItem, FormControl, InputLabel, Select, } from '@mui/material';
-import { Delete as DeleteIcon } from '@mui/icons-material';
 
 const textFieldStyles = {
   '& .MuiOutlinedInput-root': {
@@ -36,7 +36,7 @@ const ItemsEditTab = ({ items, handleItemChange, handleDeleteItem, handleAddItem
     <div>
       <h3>Items</h3>
       <Button variant="contained" color="primary" onClick={handleAddItem} style={{ marginBottom: '16px' }} >
-        Add Item
+        FiPlus Item
       </Button>
       <TableContainer component={Paper}>
         <Table aria-label="items table" size="small">

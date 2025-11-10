@@ -1,11 +1,8 @@
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { FiArrowLeft, FiArrowRight, FiCheckCircle, FiPlus } from 'react-icons/fi';
 import React, { useState, useCallback, useEffect } from "react";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import MultiPageAnimate from "../../components/Animate/MultiPageAnimate";
 import InputBox from "../../components/FormComponent/InputBox";
 import PageAnimate from "../../components/Animate/PageAnimate";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
 TextField,
 FormControlLabel,
@@ -246,7 +243,7 @@ useEffect(() => {
         <header className="p-4 flex gap-8 w-full items-center justify-center mt-4 mb-8">
           <button className={"flex items-center"} onClick={() => navigate(-1)}>
             {" "}
-            <ArrowBackIosNewIcon />
+            <FiArrowLeft />
           </button>
           <h1 className="text-2xl lowercase font-extrabold">
             {" "}
@@ -262,7 +259,7 @@ useEffect(() => {
                 onClick={backPage}
               >
                 {" "}
-                <ArrowBackIosNewIcon />{" "}
+                <FiArrowLeft />{" "}
               </button>
             )}
             <Timeline steps={steps} currentStep={page} />
@@ -272,7 +269,7 @@ useEffect(() => {
                 onClick={nextPage}
               >
                 {" "}
-                <ArrowForwardIosIcon />{" "}
+                <FiArrowRight />{" "}
               </button>
             )}
             {page === 3 && (
@@ -281,7 +278,7 @@ useEffect(() => {
                 onClick={submit}
               >
                 {" "}
-                <CheckCircleIcon />{" "}
+                <FiCheckCircle />{" "}
               </button>
             )}
           </div>
@@ -601,7 +598,7 @@ const VariantPage = React.memo(
               className="p-3 flex-grow shadow-xl idms-add opacity-70"
               onClick={addVariantRow}
             >
-              <AddCircleOutlineIcon />
+              <FiPlus />
             </button>
           </main>
         </div>

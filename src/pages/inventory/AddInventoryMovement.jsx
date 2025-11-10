@@ -1,3 +1,4 @@
+import { FiArrowLeft, FiCheckCircle } from 'react-icons/fi';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../store/store';
@@ -5,8 +6,6 @@ import { createInventoryMovement, getWarehouses, getProducts, getBatches } from 
 import PageAnimate from '../../components/Animate/PageAnimate';
 import InputBox from '../../components/FormComponent/InputBox';
 import Dropdown from '../../components/FormComponent/Dropdown';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const MOVEMENT_TYPES = [
   { id: 'in', name: 'In (Stock Received)' },
@@ -144,7 +143,7 @@ const AddInventoryMovement = () => {
           className="self-start flex items-center" 
           onClick={() => navigate(-1)}
         >
-          <ArrowBackIosNewIcon /> Go back
+          <FiArrowLeft /> Go back
         </button>
 
         <h1 className="text-2xl rounded-lg lowercase transition hover:shadow-lg p-4 text-center w-3/4 idms-transparent-bg font-extrabold">
@@ -275,7 +274,7 @@ const AddInventoryMovement = () => {
             type="submit"
             className="p-3 flex-grow shadow-xl form-button-submit flex items-center gap-2"
           >
-            <CheckCircleIcon />
+            <FiCheckCircle />
             Record Movement
           </button>
         </form>

@@ -1,3 +1,4 @@
+import { FiBarChart2, FiBriefcase, FiLogOut, FiSettings, FiShoppingCart, FiTool } from 'react-icons/fi';
 import React, { useState } from "react";
 import { getSession } from "../../utils/cacheHelper";
 import { useStore } from "../../store/store";
@@ -18,11 +19,6 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-
-// Icons
-import { FiBarChart2, FiBriefcase, FiSettings, FiShoppingCart, FiTool } from "react-icons/fi";
-import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 
 const groupIcons = {
   Dashboard: <FiBarChart2 />,
@@ -214,7 +210,7 @@ const Sidebar = () => {
             )}
             {session.orgs && session.orgs.length > 1 && (
               <button className={styles.menuItem} onClick={() => navigate('/organization-selector')}>
-                <SwitchAccountIcon style={{ marginRight: '8px' }} />
+                <FiSettings style={{ marginRight: '8px' }} />
                 Switch Organization
               </button>
             )}
@@ -254,7 +250,7 @@ const Sidebar = () => {
             <Button
               variant="outlined"
               onClick={handleLogoutOrg}
-              startIcon={<SwitchAccountIcon />}
+              startIcon={<FiSettings />}
               fullWidth
             >
               Logout from Current Organization
@@ -263,7 +259,7 @@ const Sidebar = () => {
               variant="contained"
               color="error"
               onClick={handleLogoutAll}
-              startIcon={<LogoutRoundedIcon />}
+              startIcon={<FiLogOut />}
               fullWidth
             >
               Logout from All Organizations

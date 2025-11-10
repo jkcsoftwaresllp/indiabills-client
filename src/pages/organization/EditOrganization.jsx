@@ -1,3 +1,4 @@
+import { FiArrowLeft, FiEdit, FiSave } from 'react-icons/fi';
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { updateOrganization } from "../../network/api";
@@ -18,8 +19,6 @@ import {
   Select,
   MenuItem
 } from '@mui/material';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import SaveIcon from '@mui/icons-material/Save';
 import { getOption } from "../../utils/FormHelper";
 import { getOrganizationById } from "../../network/api/organizationApi";
 
@@ -148,9 +147,9 @@ const EditOrganization = () => {
             className="flex items-center" 
             onClick={() => navigate(-1)}
           >
-            <ArrowBackIosNewIcon /> Go back
+            <FiArrowLeft /> Go back
           </button>
-          <h1 className="text-3xl font-bold text-gray-800">Edit Organization</h1>
+          <h1 className="text-3xl font-bold text-gray-800">FiEdit Organization</h1>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -426,7 +425,7 @@ const EditOrganization = () => {
               type="submit"
               variant="contained"
               size="large"
-              startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
+              startIcon={saving ? <CircularProgress size={20} /> : <FiSave />}
               disabled={saving}
             >
               {saving ? 'Saving...' : 'Save Changes'}

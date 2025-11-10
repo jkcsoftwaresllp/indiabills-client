@@ -1,5 +1,5 @@
+import { FiChevronDown } from 'react-icons/fi';
 import React from "react";
-import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
@@ -44,7 +44,7 @@ const InventoryTable = ({ entries }) => {
                     {entry.subBatches.length}
                     {entry.subBatches.length > 1 ? "Items" : "Item"}
                     {entry.subBatches.length > 0 ? (
-                      <ExpandCircleDownIcon />
+                      <FiChevronDown />
                     ) : (
                       <>
                       </>

@@ -1,7 +1,6 @@
+import { FiHelpCircle, FiSettings } from 'react-icons/fi';
 import { useState } from "react";
 import { motion } from "framer-motion";
-import ContactSupportIcon from '@mui/icons-material/ContactSupport';
-import SettingsIcon from '@mui/icons-material/Settings';
 
 const Footer = () => {
 
@@ -25,11 +24,11 @@ const Footer = () => {
 		>
 			<div className="border-2 items-center flex gap-2 rounded-xl w-full">
 				<div className="flex ml-2 border-r-2">
-				<ContactSupportIcon />
+				<FiHelpCircle />
 				</div>
 				<input className="w-full p-2 bg-transparent" placeholder="Smart Chat" type="text" />
 			</div>
-<SettingsIcon/>
+<FiSettings/>
 
 		</motion.div>
 	);

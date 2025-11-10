@@ -1,13 +1,10 @@
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import React, { useState } from "react";
-import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
-import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import InputField from "../../../../components/FormComponent/InputField";
 import DropdownBar from "../../../../components/FormComponent/DropdownBar";
 import Dropdown from "../../../../components/FormComponent/Dropdown";
 import MobileField from "../../../../components/FormComponent/MobileField";
 import { extractCustomerName, getOption } from "../../../../utils/FormHelper";
-import RedeemIcon from '@mui/icons-material/Redeem';
-import PointOfSaleRoundedIcon from '@mui/icons-material/PointOfSaleRounded';
 import Modal from '@mui/material/Modal';
 import { Box } from '@mui/material';
 
@@ -123,7 +120,7 @@ export const CustomerSection = ({
       </section>
 
       <button type="button" className="m-4 text-slate-500 self-start" onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
-        {showAdvancedOptions ? <h2>Hide Advanced Options <ExpandLessRoundedIcon/> </h2> : <h2>View Advanced Options <ExpandMoreRoundedIcon /></h2>}
+        {showAdvancedOptions ? <h2>Hide Advanced Options <FiChevronUp/> </h2> : <h2>View Advanced Options <FiChevronDown /></h2>}
       </button>
       {showAdvancedOptions && (
         <section id={"moreOptions"} className="flex flex-col gap-6 p-6 w-full max-h-fit text-slate-500 idms-control">

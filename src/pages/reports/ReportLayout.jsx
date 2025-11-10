@@ -1,3 +1,4 @@
+import { FiDownload } from 'react-icons/fi';
 import React, { useEffect, useState } from "react";
 import {
   Container,
@@ -16,16 +17,10 @@ import { AgGridReact } from "ag-grid-react";
 import { getReport } from "../../network/api";
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ViewColumnIcon from "@mui/icons-material/ViewColumn";
-import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Papa from "papaparse";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import MouseHoverPopover from "../../components/core/Explain";
 import ColumnSelector from "../../components/FormComponent/ColumnSelector";
 import Modal from "../../components/core/ModalMaker";
@@ -344,7 +339,7 @@ const ReportLayout = ({
                 color="primary"
                 onClick={handleExportPDF}
                 aria-label="Export to PDF"
-                startIcon={<PictureAsPdfIcon />}
+                startIcon={<FiDownload />}
               >
                 Export to PDF
               </Button>
@@ -355,7 +350,7 @@ const ReportLayout = ({
                 color="primary"
                 onClick={handleExportCSV}
                 aria-label="Export to CSV"
-                startIcon={<FileDownloadIcon />}
+                startIcon={<FiDownload />}
               >
                 Export to CSV
               </Button>
@@ -365,14 +360,14 @@ const ReportLayout = ({
                 onClick={() => setIsModalOpen(true)}
                 aria-label="Select Columns"
               >
-                <ViewColumnIcon />
+                <FiColumns />
               </IconButton>
             </Grid>
           </Grid>
           {renderChart && (
             <Button
               onClick={toggleChart}
-              startIcon={chartOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              startIcon={chartOpen ? <FiChevronUp /> : <FiChevronDown />}
               className="mb-2"
             >
               {chartOpen ? "Hide Chart" : "Show Chart"}

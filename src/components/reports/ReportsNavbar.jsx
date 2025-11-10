@@ -1,75 +1,75 @@
-import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  Inventory as InventoryIcon,
-  Person as PersonIcon,
-  Assessment as AssessmentIcon,
-  TrendingUp as TrendingUpIcon,
-  BugReport as BugReportIcon,
-  Category as CategoryIcon,
-  LocalOffer as LocalOfferIcon,
-} from '@mui/icons-material';
-import styles from './ReportsNavbar.module.css';
+  FiBarChart2,
+  FiBox,
+  FiUser,
+  FiTrendingUp,
+  FiAlertCircle,
+  FiList,
+  FiTag,
+} from "react-icons/fi";
+import { useNavigate, useLocation } from "react-router-dom";
+import styles from "./ReportsNavbar.module.css";
 
 const reports = [
   {
-    key: 'stock-level',
-    title: 'Stock & Sales',
-    icon: <InventoryIcon />,
-    path: '/reports/stocklevel',
+    key: "stock-level",
+    title: "Stock & Sales",
+    icon: <FiBox />,
+    path: "/reports/stocklevel",
   },
   {
-    key: 'supplier-performance',
-    title: 'Supplier Performance',
-    icon: <PersonIcon />,
-    path: '/reports/supplierperformance',
+    key: "supplier-performance",
+    title: "Supplier Performance",
+    icon: <FiUser />,
+    path: "/reports/supplierperformance",
   },
   {
-    key: 'invoice',
-    title: 'Invoice',
-    icon: <AssessmentIcon />,
-    path: '/reports/invoice',
+    key: "invoice",
+    title: "Invoice",
+    icon: <FiBarChart2 />,
+    path: "/reports/invoice",
   },
   {
-    key: 'customer-purchase',
-    title: 'Customer Purchase',
-    icon: <PersonIcon />,
-    path: '/reports/customerpurchase',
+    key: "customer-purchase",
+    title: "Customer Purchase",
+    icon: <FiUser />,
+    path: "/reports/customerpurchase",
   },
   {
-    key: 'expense',
-    title: 'Expenses',
-    icon: <TrendingUpIcon />,
-    path: '/reports/expenses',
+    key: "expense",
+    title: "Expenses",
+    icon: <FiTrendingUp />,
+    path: "/reports/expenses",
   },
   {
-    key: 'stock-issue',
-    title: 'Stock Issues',
-    icon: <BugReportIcon />,
-    path: '/reports/stockissue',
+    key: "stock-issue",
+    title: "Stock Issues",
+    icon: <FiAlertCircle />,
+    path: "/reports/stockissue",
   },
   {
-    key: 'credits',
-    title: 'Credits',
-    icon: <CategoryIcon />,
-    path: '/reports/credits',
+    key: "credits",
+    title: "Credits",
+    icon: <FiList />,
+    path: "/reports/credits",
   },
   {
-    key: 'revenue',
-    title: 'Revenue',
-    icon: <TrendingUpIcon />,
-    path: '/reports/revenue',
+    key: "revenue",
+    title: "Revenue",
+    icon: <FiTrendingUp />,
+    path: "/reports/revenue",
   },
   {
-    key: 'hsn',
-    title: 'HSN Report',
-    icon: <LocalOfferIcon />,
-    path: '/reports/hsn',
+    key: "hsn",
+    title: "HSN Report",
+    icon: <FiTag />,
+    path: "/reports/hsn",
   },
   {
-    key: 'sales',
-    title: 'Sales Report',
-    icon: <AssessmentIcon />,
-    path: '/reports/pms',
+    key: "sales",
+    title: "Sales Report",
+    icon: <FiBarChart2 />,
+    path: "/reports/pms",
   },
 ];
 
@@ -93,14 +93,12 @@ const ReportsNavbar = () => {
             <div
               key={report.key}
               className={`${styles.reportItem} ${
-                isActive(report.path) ? styles.active : ''
+                isActive(report.path) ? styles.active : ""
               }`}
               onClick={() => handleReportClick(report.path)}
               title={report.title}
             >
-              <div className={styles.iconWrapper}>
-                {report.icon}
-              </div>
+              <div className={styles.iconWrapper}>{report.icon}</div>
               <span className={styles.title}>{report.title}</span>
             </div>
           ))}

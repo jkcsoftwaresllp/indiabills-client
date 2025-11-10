@@ -1,5 +1,4 @@
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import PlaylistAddCheckCircleIcon from "@mui/icons-material/PlaylistAddCheckCircle";
+import { FiCheckCircle, FiChevronDown, FiFileText, FiMinus, FiPlus } from 'react-icons/fi';
 import ProductModal from "./ProductModal";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import {
@@ -16,17 +15,13 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useEffect, useState } from "react";
 import { getWarehouses, getProducts, getSuppliers, createBatch } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { formatToIndianCurrency } from "../../utils/FormHelper";
 import InputBox from "../../components/FormComponent/InputBox";
 import MouseHoverPopover from "../../components/core/Explain";
-import ReceiptIcon from "@mui/icons-material/Receipt";
 import AddLocationModal from "./AddLocationModal";
 import DropdownBar from "../../components/FormComponent/DropdownBar";
 import BatchInvoicePreview from "./yeah";
@@ -259,7 +254,7 @@ const AddInventory = () => {
             <MouseHoverPopover
               triggerElement={
                 <Button variant={"outlined"} color="primary" onClick={handleOpenInvoice}>
-                  <ReceiptIcon />
+                  <FiFileText />
                 </Button>
               }
               popoverContent={<span className="text-xs"> View Invoice </span>}
@@ -285,7 +280,7 @@ const AddInventory = () => {
               selectedProducts.length === 0
             }
           >
-            <CheckCircleIcon />
+            <FiCheckCircle />
             <span className="ml-2">Submit</span>
           </button>
         </div>
@@ -313,7 +308,7 @@ const AddInventory = () => {
                   onClick={() => handleRemoveProduct(product.itemId)}
                   className="p-2 rounded-full text-red-400 absolute top-0 right-0"
                 >
-                  <RemoveCircleOutlineIcon />
+                  <FiMinus />
                 </button>
               </div>
             ))}
@@ -345,7 +340,7 @@ const AddInventory = () => {
                 whiteSpace: "nowrap",
                 padding: "1rem",
               }}
-              startIcon={<AddCircleOutlineIcon />}
+              startIcon={<FiPlus />}
               onClick={() => setOpenLocationModal(true)}
             >
               new warehouse?
@@ -400,16 +395,16 @@ const AddInventory = () => {
 
           <Button
             sx={{ textTransform: "capitalize" }}
-            startIcon={<PlaylistAddCheckCircleIcon />}
+            startIcon={<FiCheckCircle />}
             onClick={() => setOpenProductModal(true)}
           >
-            Add Items
+            FiPlus Items
           </Button>
         </form>
 
         <Accordion sx={{ width: "100%", marginTop: 4 }}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<FiChevronDown />}
             aria-controls="stock-issue-content"
             id="stock-issue-header"
           >
@@ -487,7 +482,7 @@ const AddInventory = () => {
                 color="primary"
                 onClick={handleAddStockIssue}
               >
-                Add Issue
+                FiPlus Issue
               </Button>
             </Box>
           </AccordionDetails>

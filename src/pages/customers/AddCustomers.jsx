@@ -1,12 +1,10 @@
+import { FiArrowLeft, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
 import React, { useState, useCallback } from "react";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { getOption, renameAndOptimize, validateForm } from "../../utils/FormHelper";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import MultiPageAnimate from "../../components/Animate/MultiPageAnimate";
 import InputBox from "../../components/FormComponent/InputBox";
 import Dropdown from "../../components/FormComponent/Dropdown";
 import PageAnimate from "../../components/Animate/PageAnimate";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { createCustomer } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
@@ -86,7 +84,7 @@ const AddCustomers = () => {
           className={"self-start flex items-center"}
           onClick={() => navigate(-1)}
         >
-          <ArrowBackIosNewIcon /> Go back
+          <FiArrowLeft /> Go back
         </button>
 
         <h1 className="text-2xl rounded-lg lowercase transition hover:shadow-lg p-4 text-center w-3/4 idms-transparent-bg font-extrabold">
@@ -121,7 +119,7 @@ const AddCustomers = () => {
                   className="p-3 flex-grow shadow-xl form-button-submit"
                   onClick={submit}
                 >
-                  <CheckCircleIcon />
+                  <FiCheckCircle />
                 </button>
               )}
               {page < 2 && (
@@ -129,7 +127,7 @@ const AddCustomers = () => {
                   className="p-3 flex-grow shadow-xl form-button-nav"
                   onClick={nextPage}
                 >
-                  <ArrowForwardIosIcon />
+                  <FiArrowRight />
                 </button>
               )}
               {page >= 2 && (
@@ -137,7 +135,7 @@ const AddCustomers = () => {
                   className="p-3 flex-grow shadow-xl form-button-nav"
                   onClick={backPage}
                 >
-                  <ArrowBackIosNewIcon />
+                  <FiArrowLeft />
                 </button>
               )}
             </div>

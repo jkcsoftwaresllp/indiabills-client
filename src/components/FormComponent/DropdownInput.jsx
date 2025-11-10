@@ -1,5 +1,5 @@
+import { FiMoreVertical } from 'react-icons/fi';
 import React from "react";
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 
 export const DropdownInput = ({ label, name, value, onChange, error, help, startText, endText, options, objectOptions }) => {
     return (
@@ -40,7 +40,7 @@ export const DropdownInput = ({ label, name, value, onChange, error, help, start
                         </>
                     )}
                 </select>
-                <UnfoldMoreIcon fontSize="small" className="absolute right-2 text-gray-500 pointer-events-none" />
+                <FiMoreVertical fontSize="small" className="absolute right-2 text-gray-500 pointer-events-none" />
                 {endText && <span className="mr-3">{endText}</span>}
             </div>
             {error && <small className={'text-red-600 ml-1'}>{error}</small>}

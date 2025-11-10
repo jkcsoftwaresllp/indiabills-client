@@ -1,7 +1,7 @@
+import { FiMoreVertical } from 'react-icons/fi';
 import React, { useEffect, useState, useRef } from "react";
 import { getBaseURL } from "../../network/api/api-config";
 import { getData } from "../../network/api";
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 
 export const CustomerSelector = ({ data, setData }) => {
     const [customers, setCustomers] = useState([]);
@@ -65,7 +65,7 @@ export const CustomerSelector = ({ data, setData }) => {
                 ) : (
                     <span className="text-gray-500">Select a customer</span>
                 )}
-                <UnfoldMoreIcon fontSize="small" className="text-gray-500" />
+                <FiMoreVertical fontSize="small" className="text-gray-500" />
             </button>
 
             {isOpen && (

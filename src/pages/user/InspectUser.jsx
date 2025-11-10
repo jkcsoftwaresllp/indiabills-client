@@ -1,3 +1,4 @@
+import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getUserById, updateUser, deleteUser, uploadUserImage } from "../../network/api";
@@ -24,11 +25,6 @@ import {
   DialogActions,
   Input
 } from '@mui/material';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SaveIcon from '@mui/icons-material/Save';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const InspectUser = () => {
     const { userID } = useParams();
@@ -245,7 +241,7 @@ const InspectUser = () => {
             <div className="w-full p-6">
                 <div className="mb-6 flex items-center gap-4">
                     <button className="flex items-center" onClick={() => navigate(-1)}>
-                        <ArrowBackIosNewIcon /> Go back
+                        <FiArrowLeft /> Go back
                     </button>
                     <h1 className="text-3xl font-bold text-gray-800">User Details</h1>
                 </div>
@@ -273,7 +269,7 @@ const InspectUser = () => {
                                             <Button
                                                 variant="outlined"
                                                 component="span"
-                                                startIcon={uploading ? <CircularProgress size={20} /> : <CloudUploadIcon />}
+                                                startIcon={uploading ? <CircularProgress size={20} /> : <FiUploadCloud />}
                                                 disabled={uploading}
                                                 size="small"
                                             >
@@ -330,25 +326,25 @@ const InspectUser = () => {
                                             <>
                                                 <Button
                                                     variant="contained"
-                                                    startIcon={<EditIcon />}
+                                                    startIcon={<FiEdit />}
                                                     onClick={() => setEditing(true)}
                                                 >
-                                                    Edit
+                                                    FiEdit
                                                 </Button>
                                                 <Button
                                                     variant="outlined"
                                                     color="error"
-                                                    startIcon={<DeleteIcon />}
+                                                    startIcon={<FiTrash2 />}
                                                     onClick={() => setDeleteDialog(true)}
                                                 >
-                                                    Delete
+                                                    FiTrash2
                                                 </Button>
                                             </>
                                         ) : (
                                             <>
                                                 <Button
                                                     variant="contained"
-                                                    startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
+                                                    startIcon={saving ? <CircularProgress size={20} /> : <FiSave />}
                                                     onClick={handleSave}
                                                     disabled={saving}
                                                 >
@@ -518,14 +514,14 @@ const InspectUser = () => {
                     </Grid>
                 </Grid>
 
-                {/* Delete Confirmation Dialog */}
+                {/* FiTrash2 Confirmation Dialog */}
                 <Dialog
                     open={deleteDialog}
                     onClose={() => setDeleteDialog(false)}
                     maxWidth="sm"
                     fullWidth
                 >
-                    <DialogTitle>Delete User</DialogTitle>
+                    <DialogTitle>FiTrash2 User</DialogTitle>
                     <DialogContent>
                         <Typography>
                             Are you sure you want to delete {user?.first_name} {user?.last_name}? 
@@ -535,7 +531,7 @@ const InspectUser = () => {
                     <DialogActions>
                         <Button onClick={() => setDeleteDialog(false)}>Cancel</Button>
                         <Button onClick={handleDelete} color="error" variant="contained">
-                            Delete
+                            FiTrash2
                         </Button>
                     </DialogActions>
                 </Dialog>

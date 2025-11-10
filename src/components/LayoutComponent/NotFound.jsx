@@ -1,5 +1,4 @@
 import {FC} from "react";
-import {AddCircleRounded, SearchOff} from "@mui/icons-material";
 import {NavLink} from "react-router-dom";
 
 const NotFound = ({title}) => {

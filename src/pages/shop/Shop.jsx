@@ -3,7 +3,6 @@
 // import ProductCard from "../../components/shop/ProductCard";
 // import SearchBar from "../../components/LayoutComponent/SearchBar";
 // import PageAnimate from "../../components/Animate/PageAnimate";
-// import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 // import CircularProgress from "@mui/material/CircularProgress";
 // import { useStore } from "../../store/store";
 // import { useNavigate } from "react-router-dom";
@@ -130,7 +129,7 @@
 //           />
 
 //           <div className={"p-2 rounded-xl idms-transparent-control relative"}>
-//             <ShoppingCartIcon />
+//             <FiShoppingCart />
 //             <p className={"absolute top-0 right-0 bg-rose-500 outline-none border-none text-slate-200 px-1 rounded-full text-xs"}>
 //               {Object.keys(selectedProducts).length > 0 &&
 //                 Object.keys(selectedProducts).length}
@@ -157,11 +156,11 @@
 // export default ShopPage;
 
 
+import { FiShoppingCart } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import ProductCard from '../../components/shop/ProductCard';
 import SearchBar from '../../components/LayoutComponent/SearchBar';
 import PageAnimate from '../../components/Animate/PageAnimate';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useStore } from '../../store/store';
 import { useNavigate } from 'react-router-dom';
@@ -332,7 +331,7 @@ const ShopPage = () => {
           />
 
           <div className="p-2 rounded-xl idms-transparent-control relative">
-          <ShoppingCartIcon />
+          <FiShoppingCart />
           <p className="absolute top-0 right-0 bg-rose-500 text-slate-200 px-1 rounded-full text-xs">
           {getCartItemCount() > 0 && getCartItemCount()}
           </p>

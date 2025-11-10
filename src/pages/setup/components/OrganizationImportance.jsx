@@ -1,29 +1,26 @@
+import { FiBriefcase, FiEdit3, FiFileText, FiLock, FiPlus } from 'react-icons/fi';
 import React from 'react';
-import BusinessIcon from '@mui/icons-material/Business';
-import BrandingWatermarkIcon from '@mui/icons-material/BrandingWatermark';
-import ReceiptIcon from '@mui/icons-material/Receipt';
-import SecurityIcon from '@mui/icons-material/Security';
 import styles from './ImportanceCard.module.css';
 
 const OrganizationImportance = ({ onStartSetup }) => {
   const benefits = [
     {
-      icon: <BusinessIcon />,
+      icon: <FiBriefcase />,
       title: 'Professional Identity',
       description: 'Establish your business identity with proper branding and contact information'
     },
     {
-      icon: <BrandingWatermarkIcon />,
+      icon: <FiEdit3 />,
       title: 'Custom Branding',
-      description: 'Add your logo, colors, and branding to all invoices and documents'
+      description: 'FiPlus your logo, colors, and branding to all invoices and documents'
     },
     {
-      icon: <ReceiptIcon />,
+      icon: <FiFileText />,
       title: 'Legal Compliance',
       description: 'Ensure all invoices and documents meet legal requirements with proper business details'
     },
     {
-      icon: <SecurityIcon />,
+      icon: <FiLock />,
       title: 'Data Security',
       description: 'Secure your business data with proper organization-level access controls'
     }
@@ -32,7 +29,7 @@ const OrganizationImportance = ({ onStartSetup }) => {
   return (
     <div className={styles.card}>
       <div className={styles.header}>
-        <BusinessIcon className={styles.headerIcon} />
+        <FiBriefcase className={styles.headerIcon} />
         <div>
           <h2 className={styles.title}>Organization Setup Required</h2>
           <p className={styles.subtitle}>
