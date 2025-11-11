@@ -188,7 +188,7 @@ const InspectReconciliation = () => {
                   variant="outlined"
                   onClick={() => navigate(`/inventory/reconciliations/${id}/add`)}
                 >
-                  FiPlus Items
+                  Add Items
                 </Button>
               )}
             </div>
@@ -230,7 +230,7 @@ const InspectReconciliation = () => {
               </TableContainer>
             ) : (
               <Typography variant="body1" color="textSecondary" className="text-center py-8">
-                No reconciliation details found. Click "FiPlus Items" to start counting.
+                No reconciliation details found. Click "Add Items" to start counting.
               </Typography>
             )}
           </CardContent>

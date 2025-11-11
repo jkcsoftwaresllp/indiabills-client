@@ -329,7 +329,7 @@ const InspectUser = () => {
                                                     startIcon={<FiEdit />}
                                                     onClick={() => setEditing(true)}
                                                 >
-                                                    FiEdit
+                                                    Edit
                                                 </Button>
                                                 <Button
                                                     variant="outlined"

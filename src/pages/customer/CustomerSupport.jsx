@@ -62,7 +62,7 @@ const CustomerSupport = () => {
     // TODO: Implement API call to create support ticket
     console.log('Creating ticket:', ticketForm);
     
-    // FiPlus to local state for demo
+    // Add to local state for demo
     const newTicket = {
       id: tickets.length + 1,
       ...ticketForm,

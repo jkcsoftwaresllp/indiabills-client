@@ -218,7 +218,7 @@ const AddInventoryStock = () => {
             className="p-3 flex-grow shadow-xl form-button-submit flex items-center gap-2"
           >
             <FiCheckCircle />
-            FiPlus Inventory Stock
+            Add Inventory Stock
           </button>
         </form>
       </div>

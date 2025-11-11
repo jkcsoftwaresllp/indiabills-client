@@ -527,7 +527,7 @@ const CustomerProfile = () => {
                 <div className="flex justify-between items-center mb-4">
                   <Typography variant="h6">My Addresses</Typography>
                   <Button variant="outlined" onClick={handleAddAddress}>
-                    FiPlus New Address
+                    Add New Address
                   </Button>
                 </div>
 
@@ -535,7 +535,7 @@ const CustomerProfile = () => {
                   <Typography>Loading addresses...</Typography>
                 ) : addresses.length === 0 ? (
                   <Typography>
-                    No addresses found. FiPlus your first address.
+                    No addresses found. Add your first address.
                   </Typography>
                 ) : (
                   <Grid container spacing={3}>
@@ -603,7 +603,7 @@ const CustomerProfile = () => {
         fullWidth
       >
         <DialogTitle>
-          {editingAddress ? "FiEdit Address" : "FiPlus New Address"}
+          {editingAddress ? "Edit Address" : "Add New Address"}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={3} sx={{ mt: 1 }}>
@@ -742,7 +742,7 @@ const CustomerProfile = () => {
         <DialogActions>
           <Button onClick={() => setAddressDialogOpen(false)}>Cancel</Button>
           <Button onClick={handleSaveAddress} variant="contained">
-            {editingAddress ? "Update" : "FiPlus"} Address
+            {editingAddress ? "Update" : "Add"} Address
           </Button>
         </DialogActions>
       </Dialog>

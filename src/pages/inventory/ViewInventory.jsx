@@ -547,7 +547,7 @@ const ViewInventory = () => {
                         </button>
                       }
                       popoverContent={
-                        <span className="text-xs"> FiPlus a batch </span>
+                        <span className="text-xs"> Add a batch </span>
                       }
                     />
                   </Grid>
@@ -647,7 +647,7 @@ const ViewInventory = () => {
                               color="textSecondary"
                               align="center"
                             >
-                              FiPlus the following before proceeding:
+                              Add the following before proceeding:
                             </Typography>
                             <Checklist
                               list={[

@@ -11,7 +11,7 @@ const OrganizationImportance = ({ onStartSetup }) => {
     {
       icon: <FiEdit3 />,
       title: 'Custom Branding',
-      description: 'FiPlus your logo, colors, and branding to all invoices and documents'
+      description: 'Add your logo, colors, and branding to all invoices and documents'
     },
     {
       icon: <FiFileText />,

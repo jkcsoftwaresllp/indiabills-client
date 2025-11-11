@@ -96,7 +96,7 @@ const colDefs = [
     headerName: "Wishlist",
     width: 120,
     cellRenderer: (params) => (
-      <Tooltip title={params.value ? "Remove from Wishlist" : "FiPlus to Wishlist"}>
+      <Tooltip title={params.value ? "Remove from Wishlist" : "Add to Wishlist"}>
         <IconButton size="small" onClick={() => params.data.onWishlistToggle(params.data)}>
           {params.value ? <Favorite color="error" /> : <FavoriteBorder />}
         </IconButton>

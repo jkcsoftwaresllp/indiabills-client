@@ -14,7 +14,7 @@ const SetupCompletion = () => {
     },
     {
       icon: <FiBox />,
-      title: 'FiPlus Products',
+      title: 'Add Products',
       description: 'Start adding your products and inventory to begin managing your stock',
       action: () => navigate('/products/add')
     }

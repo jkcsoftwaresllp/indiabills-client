@@ -97,7 +97,7 @@ const ManagerDashboard = () => {
               onClick={() => navigate('/manager/customers/add')}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              FiPlus New Customer
+              Add New Customer
             </button>
             <button
               onClick={() => navigate('/manager/inventory')}
@@ -109,7 +109,7 @@ const ManagerDashboard = () => {
               onClick={() => navigate('/manager/products/add')}
               className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors"
             >
-              FiPlus Product
+              Add Product
             </button>
             <button
               onClick={() => navigate('/manager/reports')}

@@ -125,7 +125,7 @@ const OperatorDashboard = () => {
         <h4 className="text-lg font-semibold text-yellow-800 mb-2">Quick Tips</h4>
         <ul className="text-yellow-700 text-sm space-y-1">
           <li>• Use the inventory module to track stock levels and manage batches</li>
-          <li>• FiPlus new products through the items catalog</li>
+          <li>• Add new products through the items catalog</li>
           <li>• Keep supplier information updated for smooth operations</li>
           <li>• Create promotional offers to boost sales</li>
         </ul>

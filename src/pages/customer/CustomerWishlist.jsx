@@ -24,9 +24,13 @@ const CustomerWishlist = () => {
     const fetchWishlist = async () => {
       try {
         const result = await getWishlist();
+        console.log('Wishlist fetch result:', result);
         if (result.status === 200) {
+          console.log('Setting products:', result.data);
           setProducts(result.data);
           updateCustomerWishlist(result.data); // Update store
+        } else {
+          console.warn('Unexpected status code:', result.status);
         }
       } catch (error) {
         console.error('Error fetching wishlist:', error);
@@ -36,7 +40,7 @@ const CustomerWishlist = () => {
     };
 
     fetchWishlist();
-  }, []);
+  }, [updateCustomerWishlist]);
 
   const handleRemoveFromWishlist = async (productId) => {
     const result = await toggleWishlist(productId);
@@ -172,7 +176,7 @@ const CustomerWishlist = () => {
                       fullWidth
                       disabled={!product.isActive}
                     >
-                      FiPlus to Cart
+                      Add to Cart
                     </Button>
                   </CardContent>
                 </Card>

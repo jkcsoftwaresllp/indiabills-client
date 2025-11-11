@@ -398,7 +398,7 @@ const AddInventory = () => {
             startIcon={<FiCheckCircle />}
             onClick={() => setOpenProductModal(true)}
           >
-            FiPlus Items
+            Add Items
           </Button>
         </form>
 
@@ -482,7 +482,7 @@ const AddInventory = () => {
                 color="primary"
                 onClick={handleAddStockIssue}
               >
-                FiPlus Issue
+                Add Issue
               </Button>
             </Box>
           </AccordionDetails>

@@ -313,7 +313,7 @@ const CustomerCheckout = () => {
         payment_status: "pending",
         amount: totalCost,
         payment_date: new Date().toISOString().split('T')[0],
-        // FiPlus other payment details if available
+        // Add other payment details if available
       };
 
       const result = await createPayment(paymentData);
