@@ -337,7 +337,7 @@ const InspectUser = () => {
                                                     startIcon={<FiTrash2 />}
                                                     onClick={() => setDeleteDialog(true)}
                                                 >
-                                                    FiTrash2
+                                                    Delete
                                                 </Button>
                                             </>
                                         ) : (
@@ -514,14 +514,14 @@ const InspectUser = () => {
                     </Grid>
                 </Grid>
 
-                {/* FiTrash2 Confirmation Dialog */}
+                {/* Delete Confirmation Dialog */}
                 <Dialog
                     open={deleteDialog}
                     onClose={() => setDeleteDialog(false)}
                     maxWidth="sm"
                     fullWidth
                 >
-                    <DialogTitle>FiTrash2 User</DialogTitle>
+                    <DialogTitle>Delete User</DialogTitle>
                     <DialogContent>
                         <Typography>
                             Are you sure you want to delete {user?.first_name} {user?.last_name}? 
@@ -531,7 +531,7 @@ const InspectUser = () => {
                     <DialogActions>
                         <Button onClick={() => setDeleteDialog(false)}>Cancel</Button>
                         <Button onClick={handleDelete} color="error" variant="contained">
-                            FiTrash2
+                            Delete
                         </Button>
                     </DialogActions>
                 </Dialog>

@@ -298,7 +298,7 @@ const CustomerProfile = () => {
                     variant={isEditing ? "outlined" : "contained"}
                     onClick={() => setIsEditing(!isEditing)}
                   >
-                    {isEditing ? "Cancel" : "FiEdit Profile"}
+                    {isEditing ? "Cancel" : "Edit Profile"}
                   </Button>
                 </div>
 

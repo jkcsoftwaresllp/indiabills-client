@@ -149,7 +149,7 @@ const EditOrganization = () => {
           >
             <FiArrowLeft /> Go back
           </button>
-          <h1 className="text-3xl font-bold text-gray-800">FiEdit Organization</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Edit Organization</h1>
         </div>
 
         <form onSubmit={handleSubmit}>

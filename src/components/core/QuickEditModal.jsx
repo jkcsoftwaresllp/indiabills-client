@@ -49,7 +49,7 @@ const QuickEditModal = ({ open, onClose, data, columns, onSave, onDelete, title 
     >
       <DialogTitle>
         <div className="flex justify-between items-center">
-          <span className="text-2xl font-bold">Quick FiEdit {title}</span>
+          <span className="text-2xl font-bold">Quick Edit {title}</span>
           <IconButton onClick={onClose} size="small">
             <FiX />
           </IconButton>
@@ -87,7 +87,7 @@ const QuickEditModal = ({ open, onClose, data, columns, onSave, onDelete, title 
           color="error"
           startIcon={<FiTrash2 />}
         >
-          FiTrash2
+          Delete
         </Button>
         <div className="flex-grow" />
         <Button onClick={onClose} variant="outlined">

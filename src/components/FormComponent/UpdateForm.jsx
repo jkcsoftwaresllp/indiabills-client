@@ -184,7 +184,7 @@ const UpdateForm = ({ title, id, metadata }) => {
                     <DivAnimate>
                         <PromptButton
                             icon={<FiTrash2 />}
-                            title="FiTrash2"
+                            title="Delete"
                             content="Are you sure you want to delete this item?"
                             onClick={() =>
                                 deleteRow(`/${title}/delete/${path}`).then(() => {

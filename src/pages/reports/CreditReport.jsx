@@ -410,7 +410,7 @@ const CreditReport = () => {
                 <FiEdit />
               </button>
             }
-            popoverContent={<span className="text-xs"> FiEdit </span>}
+            popoverContent={<span className="text-xs"> Edit </span>}
           />
           <MouseHoverPopover
             triggerElement={

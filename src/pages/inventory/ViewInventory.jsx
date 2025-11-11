@@ -385,7 +385,7 @@ const ViewInventory = () => {
       },
     },
     {
-      label: "FiTrash2",
+      label: "Delete",
       action: async (data) => {
         try {
           const response = await deleteBatch(data?.batchId);
@@ -398,7 +398,7 @@ const ViewInventory = () => {
             errorPopup("Failed to delete");
           }
         } catch (error) {
-          console.error("FiTrash2 failed:", error);
+          console.error("Delete failed:", error);
           errorPopup("Failed to delete");
         }
       },
@@ -418,7 +418,7 @@ const ViewInventory = () => {
       },
     },
     {
-      label: "FiEdit",
+      label: "Edit",
       action: (data) => {
         const currentPath = window.location.pathname;
         if (currentPath.startsWith("/operator/")) {
@@ -429,7 +429,7 @@ const ViewInventory = () => {
       },
     },
     {
-      label: "FiTrash2",
+      label: "Delete",
       action: async (data) => {
         try {
           const response = await deleteWarehouse(data?.id);
@@ -440,7 +440,7 @@ const ViewInventory = () => {
             errorPopup("Failed to delete");
           }
         } catch (error) {
-          console.error("FiTrash2 failed:", error);
+          console.error("Delete failed:", error);
           errorPopup("Failed to delete");
         }
       },

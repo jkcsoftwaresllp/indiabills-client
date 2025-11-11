@@ -304,7 +304,7 @@ const EditBatch = () => {
 
   return (
     <PageAnimate>
-      <h2 className="text-2xl font-bold mb-4">FiEdit Batch #{batchId}</h2>
+      <h2 className="text-2xl font-bold mb-4">Edit Batch #{batchId}</h2>
 
       <MouseHoverPopover
         triggerElement={

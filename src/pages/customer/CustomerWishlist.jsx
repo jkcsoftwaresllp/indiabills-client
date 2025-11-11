@@ -176,7 +176,7 @@ const CustomerWishlist = () => {
                       fullWidth
                       disabled={!product.isActive}
                     >
-                      Add to Cart
+                      FiPlus to Cart
                     </Button>
                   </CardContent>
                 </Card>

@@ -259,7 +259,7 @@ const InspectOrder = () => {
 
   return (
     <PageAnimate>
-      <h2 className="text-2xl font-bold mb-4">FiEdit Order #{orderId}</h2>
+      <h2 className="text-2xl font-bold mb-4">Edit Order #{orderId}</h2>
       <div className="flex justify-between items-center">
         <Button
           variant="contained"

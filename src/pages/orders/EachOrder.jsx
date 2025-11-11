@@ -63,7 +63,7 @@ export const EachOrder = ({
     const items = [
       { label: "View Invoice", onClick: () => navigate(`/invoice/${order.orderId}`) },
       { label: "View Timeline", onClick: () => setIsTimelineModalOpen(true) },
-      { label: "FiEdit", onClick: () => navigate(`/orders/${order.orderId}`) },
+      { label: "Edit", onClick: () => navigate(`/orders/${order.orderId}`) },
       {
         label: order.paymentStatus === "pending" ? "Mark Payment" : "Unmark Payment",
         onClick: () => handleMarkPayment(order.orderId, order.paymentStatus !== "paid" ? "paid" : "pending"),

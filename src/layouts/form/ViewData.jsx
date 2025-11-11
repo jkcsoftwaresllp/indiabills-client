@@ -152,7 +152,7 @@ const ViewData = ({
   };
 
   const handleQuickEdit = () => {
-    console.log('Quick FiEdit clicked, selected rows:', selectedRows);
+    console.log('Quick Edit clicked, selected rows:', selectedRows);
     if (selectedRows.length === 0) {
       alert('Please select a row to edit');
       return;
@@ -280,7 +280,7 @@ const ViewData = ({
                   <FiZap />
                 </button>
               }
-              popoverContent={<span className="text-xs"> Quick FiEdit {selectedRows.length > 0 ? `(${selectedRows.length} selected)` : ''} </span>}
+              popoverContent={<span className="text-xs"> Quick Edit {selectedRows.length > 0 ? `(${selectedRows.length} selected)` : ''} </span>}
             />
           )}
           <MouseHoverPopover

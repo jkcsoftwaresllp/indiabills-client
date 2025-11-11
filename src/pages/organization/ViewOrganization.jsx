@@ -121,7 +121,7 @@ const ViewOrganization = () => {
               startIcon={<FiEdit />}
               onClick={() => navigate('/organization/edit')}
             >
-              FiEdit Organization
+              Edit Organization
             </Button>
           </div>
         </div>
