@@ -1,48 +1,110 @@
-import { useState, useEffect } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-import {
-  Box,
-  Button,
-  Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-  Snackbar,
-  Alert
-} from '@mui/material';
-import { getPayments, updatePaymentStatus } from '../../network/api';
+import { FiSearch, FiX, FiCheck } from 'react-icons/fi';
+import { useState, useEffect, useMemo } from "react";
+import PageAnimate from "../../components/Animate/PageAnimate";
+import DataGrid from "../../components/FormComponent/DataGrid";
+import Modal from "../../components/core/ModalMaker";
+import { getPayments, updatePaymentStatus } from "../../network/api";
+import { useStore } from "../../store/store";
+import "ag-grid-community/styles/ag-theme-material.css";
+
+const colDefs = [
+  {
+    field: "id",
+    headerName: "Payment ID",
+    width: 100,
+    cellRenderer: (params) => (
+      <p>
+        <span className="text-blue-950">#</span>
+        <span className="font-medium">{params.value}</span>
+      </p>
+    ),
+  },
+  {
+    field: "order_number",
+    headerName: "Order Number",
+    width: 150,
+  },
+  {
+    field: "customer_name",
+    headerName: "Customer",
+    width: 170,
+    cellStyle: { textTransform: "capitalize" },
+  },
+  {
+    field: "payment_method",
+    headerName: "Method",
+    width: 130,
+  },
+  {
+    field: "amount",
+    headerName: "Amount",
+    width: 120,
+    cellClassRules: { money: (p) => p.value },
+    valueFormatter: (params) => `₹${params.value}`,
+  },
+  {
+    field: "payment_status",
+    headerName: "Status",
+    width: 130,
+    cellRenderer: (params) => (
+      <span
+        className={`py-1 px-3 rounded-full text-xs ${
+          params.value === 'paid'
+            ? "bg-green-100 text-green-800"
+            : params.value === 'pending'
+            ? "bg-yellow-100 text-yellow-800"
+            : params.value === 'failed'
+            ? "bg-red-100 text-red-800"
+            : "bg-blue-100 text-blue-800"
+        }`}
+      >
+        {params.value?.charAt(0).toUpperCase() + params.value?.slice(1)}
+      </span>
+    ),
+  },
+  {
+    field: "payment_date",
+    headerName: "Date",
+    width: 130,
+    valueFormatter: ({ value }) =>
+      value ? new Date(value).toLocaleDateString() : "—",
+  },
+];
 
 const ViewPayments = () => {
+  const { successPopup, errorPopup } = useStore();
+  const [searchTerm, setSearchTerm] = useState('');
   const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [newStatus, setNewStatus] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
     fetchPayments();
   }, [statusFilter]);
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
   const fetchPayments = async () => {
+    setLoading(true);
     try {
       const result = await getPayments({ status: statusFilter });
-      if (result.status === 200) {
-        setPayments(result.data);
+      if (result.status === 200 || Array.isArray(result)) {
+        setPayments(Array.isArray(result) ? result : result.data || []);
       } else {
         setSnackbar({ open: true, message: result.error || 'Failed to fetch payments', severity: 'error' });
       }
     } catch (error) {
       console.error('Error fetching payments:', error);
       setSnackbar({ open: true, message: 'Failed to fetch payments', severity: 'error' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,117 +127,161 @@ const ViewPayments = () => {
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'paid': return 'success';
-      case 'pending': return 'warning';
-      case 'failed': return 'error';
-      case 'refunded': return 'info';
-      default: return 'default';
+  const filteredRowData = useMemo(() =>
+    Array.isArray(payments)
+      ? payments.filter((row) =>
+          Object.values(row).some((value) => {
+            if (value === null || value === undefined) return false;
+            if (typeof value === 'object') return false;
+            return String(value).toLowerCase().includes(searchTerm.toLowerCase());
+          })
+        )
+      : [],
+    [payments, searchTerm]
+  );
+
+  const handleQuickStatusUpdate = () => {
+    if (selectedRows.length === 0) {
+      alert('Please select a payment to update');
+      return;
     }
+    if (selectedRows.length > 1) {
+      alert('Please select only one payment to update');
+      return;
+    }
+    setSelectedPayment(selectedRows[0]);
+    setNewStatus(selectedRows[0].payment_status);
+    setOpenDialog(true);
   };
 
-  const columnDefs = [
-    { field: 'id', headerName: 'Payment ID', width: 100 },
-    { field: 'order_number', headerName: 'Order Number', width: 150 },
-    { field: 'customer_name', headerName: 'Customer', width: 150 },
-    { field: 'payment_method', headerName: 'Method', width: 100 },
-    {
-      field: 'payment_status',
-      headerName: 'Status',
-      width: 120,
-      cellRenderer: (params) => (
-        <Chip label={params.value} color={getStatusColor(params.value)} size="small" />
-      )
-    },
-    { field: 'amount', headerName: 'Amount', width: 100, valueFormatter: (params) => `₹${params.value}` },
-    { field: 'payment_date', headerName: 'Date', width: 120 },
-    {
-      headerName: 'Actions',
-      width: 150,
-      cellRenderer: (params) => (
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={() => {
-            setSelectedPayment(params.data);
-            setNewStatus(params.data.payment_status);
-            setOpenDialog(true);
-          }}
-        >
-          Update Status
-        </Button>
-      )
-    }
-  ];
+  const onSelectionChanged = (event) => {
+    const selected = event.api.getSelectedRows();
+    setSelectedRows(selected);
+  };
+
+  const onRowClicked = (rowData) => {
+    setSelectedPayment(rowData);
+    setNewStatus(rowData.payment_status);
+    setOpenDialog(true);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-80vh flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Payments Management
-      </Typography>
+    <PageAnimate>
+      <header className={"flex items-center justify-between px-4 py-1"}>
+        <div><h4 className={"text-3xl transition font-bold hover:text-rose-500"}>Payments</h4></div>
 
-      <Box sx={{ mb: 2 }}>
-        <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel>Filter by Status</InputLabel>
-          <Select
+        <div className="flex items-center mb-4 md:mb-0 gap-4">
+          <button type="button" aria-label="search" className="p-2 hover:bg-gray-100 rounded-lg">
+            <FiSearch size={20} />
+          </button>
+          <input
+            type="text"
+            placeholder="Search payments"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="ml-2 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+          />
+          <select
             value={statusFilter}
-            label="Filter by Status"
             onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary text-sm"
           >
-            <MenuItem value="all">All</MenuItem>
-            <MenuItem value="pending">Pending</MenuItem>
-            <MenuItem value="paid">Paid</MenuItem>
-            <MenuItem value="failed">Failed</MenuItem>
-            <MenuItem value="refunded">Refunded</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="failed">Failed</option>
+            <option value="refunded">Refunded</option>
+          </select>
+        </div>
+      </header>
 
-      <Box className="ag-theme-alpine" sx={{ height: 600, width: '100%' }}>
-        <AgGridReact
-          rowData={payments}
-          columnDefs={columnDefs}
-          pagination={true}
-          paginationPageSize={20}
-        />
-      </Box>
+      <div className="ag-theme-quartz" style={{ height: 500, width: "100%", marginBottom: '2rem' }}>
+        {filteredRowData.length > 0 ? (
+          <DataGrid
+            rowData={filteredRowData}
+            colDefs={colDefs}
+            onSelectionChanged={onSelectionChanged}
+            onRowClicked={onRowClicked}
+          />
+        ) : (
+          <div className="h-full grid place-items-center">
+            <div className="flex gap-4 items-center">
+              <h1 className="text-2xl">No data found <span className="ml-4">ʕ•́ᴥ•̀ʔっ</span></h1>
+            </div>
+          </div>
+        )}
+      </div>
 
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>Update Payment Status</DialogTitle>
-        <DialogContent>
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <InputLabel>New Status</InputLabel>
-            <Select
-              value={newStatus}
-              label="New Status"
-              onChange={(e) => setNewStatus(e.target.value)}
+      <Modal isOpen={openDialog} onClose={() => setOpenDialog(false)}>
+        <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">Update Payment Status</h2>
+            <button 
+              onClick={() => setOpenDialog(false)}
+              className="p-1 hover:bg-gray-100 rounded-lg"
             >
-              <MenuItem value="pending">Pending</MenuItem>
-              <MenuItem value="paid">Paid</MenuItem>
-              <MenuItem value="failed">Failed</MenuItem>
-              <MenuItem value="refunded">Refunded</MenuItem>
-            </Select>
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-          <Button onClick={handleStatusChange} variant="contained">
-            Update
-          </Button>
-        </DialogActions>
-      </Dialog>
+              <FiX size={20} />
+            </button>
+          </div>
+          
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              New Status
+            </label>
+            <select
+              value={newStatus}
+              onChange={(e) => setNewStatus(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+            >
+              <option value="pending">Pending</option>
+              <option value="paid">Paid</option>
+              <option value="failed">Failed</option>
+              <option value="refunded">Refunded</option>
+            </select>
+          </div>
 
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-      >
-        <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Box>
+          <div className="flex gap-3 justify-end">
+            <button 
+              onClick={() => setOpenDialog(false)}
+              className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+            >
+              Cancel
+            </button>
+            <button 
+              onClick={handleStatusChange}
+              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition flex items-center gap-2"
+            >
+              <FiCheck size={18} />
+              Update
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {snackbar.open && (
+        <div className={`fixed bottom-4 right-4 p-4 rounded-lg shadow-lg text-white ${
+          snackbar.severity === 'success' ? 'bg-green-500' : 'bg-red-500'
+        }`}>
+          <div className="flex items-center justify-between gap-4">
+            <span>{snackbar.message}</span>
+            <button 
+              onClick={() => setSnackbar({ ...snackbar, open: false })}
+              className="hover:bg-white hover:bg-opacity-20 rounded p-1"
+            >
+              <FiX size={18} />
+            </button>
+          </div>
+        </div>
+      )}
+    </PageAnimate>
   );
 };
 

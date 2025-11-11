@@ -1,7 +1,7 @@
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useMemo } from "react";
 
 const DataGrid = ({
   colDefs,
@@ -9,6 +9,7 @@ const DataGrid = ({
   onCellValueChanged,
   onSelectionChanged,
   onRowDoubleClicked,
+  onRowClicked,
 }) => {
   const gridRef = useRef();
 
@@ -21,6 +22,30 @@ const DataGrid = ({
       }
     }
   }, [onSelectionChanged]);
+
+  const onRowClickedCallback = useCallback((event) => {
+    // Don't open details modal if clicking on checkbox column
+    if (event.colDef && event.colDef.checkboxSelection) {
+      return;
+    }
+    if (onRowClicked) {
+      onRowClicked(event.data);
+    }
+  }, [onRowClicked]);
+
+  // Add checkbox column at the beginning
+  const columnDefsWithCheckbox = useMemo(() => {
+    const checkboxColDef = {
+      field: "checkbox",
+      headerCheckboxSelection: true,
+      checkboxSelection: true,
+      width: 50,
+      resizable: false,
+      sortable: false,
+      filter: false,
+    };
+    return [checkboxColDef, ...colDefs];
+  }, [colDefs]);
 
   if (rowData.length === 0) {
     return (
@@ -43,16 +68,18 @@ const DataGrid = ({
       <AgGridReact
         ref={gridRef}
         rowData={rowData}
-        columnDefs={colDefs}
+        columnDefs={columnDefsWithCheckbox}
         onCellValueChanged={onCellValueChanged}
         onRowDoubleClicked={onRowDoubleClicked}
-        rowSelection="single"
+        onRowClicked={onRowClickedCallback}
+        rowSelection="multiple"
         onSelectionChanged={onSelectionChangedCallback}
         defaultColDef={{
           sortable: true,
           filter: true,
           resizable: true,
         }}
+        suppressRowClickSelection={true}
       />
     </div>
   );

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import DataGrid from "../../components/FormComponent/DataGrid";
 import ColumnSelector from "../../components/FormComponent/ColumnSelector";
 import QuickEditModal from "../../components/core/QuickEditModal";
+import DetailsModal from "../../components/core/DetailsModal";
 import { IconButton, InputBase } from '@mui/material';
 import "ag-grid-community/styles/ag-theme-material.css";
 import Modal from "../../components/core/ModalMaker";
@@ -37,6 +38,8 @@ const ViewData = ({
   const [endDate, setEndDate] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const [quickEditOpen, setQuickEditOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [selectedRowData, setSelectedRowData] = useState(null);
 
   useEffect(() => {
     if (!Organization.fiscalStart) return;
@@ -198,6 +201,11 @@ const ViewData = ({
     setSelectedRows(selected);
   };
 
+  const handleRowClicked = (rowData) => {
+    setSelectedRowData(rowData);
+    setDetailsOpen(true);
+  };
+
   const add = () => {
   if (title === "Batches") {
   navigate("/inventory/add");
@@ -285,7 +293,7 @@ const ViewData = ({
           )}
           <MouseHoverPopover
             triggerElement={
-              <button onClick={() => setIsModalOpen(true)} className="p-2 min-w-20 bg-primary text-slate-200 rounded-full">
+              <button onClick={() => setIsModalOpen(true)} className="p-2 w-fit bg-primary text-slate-200 rounded-full hover:bg-accent hover:brightness-200">
                 <FiColumns />
               </button>
             }
@@ -312,6 +320,7 @@ const ViewData = ({
             menuOptions={menuOptions}
             onCellValueChanged={onCellValueChanged}
             onSelectionChanged={onSelectionChanged}
+            onRowClicked={handleRowClicked}
           />
         ) : (
           <div className="h-full grid place-items-center">
@@ -340,6 +349,17 @@ const ViewData = ({
         columns={initialColDefs}
         onSave={handleQuickEditSave}
         onDelete={handleQuickEditDelete}
+        title={title}
+      />
+
+      <DetailsModal
+        open={detailsOpen}
+        onClose={() => {
+          setDetailsOpen(false);
+          setSelectedRowData(null);
+        }}
+        data={selectedRowData}
+        columns={initialColDefs}
         title={title}
       />
     </PageAnimate>
