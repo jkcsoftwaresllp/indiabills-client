@@ -63,20 +63,36 @@ export async function getCart() {
     console.log('Cart API Response:', response.data);
     console.log('Cart API Status:', response.status);
     
-    // Backend returns data array directly
-    const cartItems = (response.data?.data || []).map(item => ({
+    // Handle different response formats
+    let cartData = [];
+    if (Array.isArray(response.data)) {
+      cartData = response.data;
+    } else if (response.data?.data && Array.isArray(response.data.data)) {
+      cartData = response.data.data;
+    } else if (response.data?.items && Array.isArray(response.data.items)) {
+      cartData = response.data.items;
+    }
+    
+    // Map cart items with all necessary fields
+    const cartItems = cartData.map(item => ({
       id: item.cart_id,
+      product_id: item.product_id, // Backend uses this field
       productId: item.product_id,
-      quantity: item.quantity,
-      priceAtAddition: item.price_at_addition,
-      price_at_addition: item.price_at_addition, // Keep original too
+      quantity: Number(item.quantity) || 1,
+      priceAtAddition: Number(item.price_at_addition) || 0,
+      price_at_addition: Number(item.price_at_addition) || 0, // Keep original too
       status: item.status,
+      is_active: item.is_active,
       createdAt: item.created_at,
+      created_at: item.created_at,
       updatedAt: item.updated_at,
+      updated_at: item.updated_at,
       productName: item.product_name,
       name: item.product_name, // Also add as 'name' for component compatibility
       unitOfMeasure: item.unit_of_measure,
-      salePrice: item.sale_price,
+      unit_of_measure: item.unit_of_measure,
+      salePrice: Number(item.sale_price) || 0,
+      sale_price: Number(item.sale_price) || 0,
       brand: item.brand,
       barcode: item.barcode
     }));
@@ -100,9 +116,13 @@ export async function getCart() {
 }
 
 // Checkout cart
-export async function checkoutCart() {
+export async function checkoutCart(checkoutData = {}) {
   try {
-    const response = await serverInstance.post('/internal/cart/checkout');
+    const response = await serverInstance.post('/internal/cart/checkout', {
+      billing_address_id: checkoutData.billing_address_id,
+      shipping_address_id: checkoutData.shipping_address_id,
+      notes: checkoutData.notes || '',
+    });
     return {
       status: response.status,
       data: response.data,

@@ -19,7 +19,7 @@ import { useRoutes } from '../../hooks/useRoutes';
 import { addToCart, removeFromCart, toggleWishlist } from '../../network/api';
 
 // --- Component ---
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, showCartControls = false }) => {
   const { getRoute } = useRoutes();
   const { cart, customerData, updateCustomerWishlist, errorPopup, successPopup } = useStore();
   const { items: cartItems } = cart;
@@ -191,16 +191,16 @@ const ProductCard = ({ product }) => {
           <div className="flex flex-col gap-2">
           <Button
           variant="contained"
-          color={isInCart ? 'success' : 'primary'}
+          color={isInCart && showCartControls ? 'success' : 'primary'}
           startIcon={<FiShoppingBag />}
           onClick={() => setIsModalOpen(true)}
           fullWidth
           disabled={cart.loading}
           sx={{ textTransform: 'none', borderRadius: '10px', py: 1.2 }}
           >
-          {cart.loading ? 'Adding...' : (isInCart ? 'Update Cart' : 'Add to Cart')}
+          {cart.loading ? 'Adding...' : (isInCart && showCartControls ? 'Update Cart' : 'Add to Cart')}
           </Button>
-            {isInCart && (
+            {isInCart && showCartControls && (
               <Button
                 variant="outlined"
                 color="error"

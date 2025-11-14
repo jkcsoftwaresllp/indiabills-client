@@ -49,7 +49,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import CustomerCheckout from "./templates/CustomerCheckout";
+import ProfessionalCheckout from "./templates/ProfessionalCheckout";
 import SpinnerFullPage from "../more/spinner";
 
 const PlaceOrder = () => {
@@ -77,7 +77,7 @@ const PlaceOrder = () => {
 
   return (
     <div>
-      <CustomerCheckout />
+      <ProfessionalCheckout />
     </div>
   );
 };

@@ -23,12 +23,20 @@ export const useCart = () => {
 
   const loadCart = async () => {
     setCartLoading(true);
-    const result = await getCart();
-    if (result.status === 200) {
-      setCartItems(result.data);
-    } else {
-      setCartError(result.error);
-      errorPopup(result.error);
+    try {
+      const result = await getCart();
+      if (result.status === 200) {
+        setCartItems(result.data || []);
+        setCartLoading(false);
+      } else {
+        setCartError(result.error);
+        errorPopup(result.error);
+        setCartLoading(false);
+      }
+    } catch (error) {
+      console.error('Error loading cart:', error);
+      setCartError(error.message || 'Failed to load cart');
+      setCartLoading(false);
     }
   };
 
@@ -71,9 +79,9 @@ export const useCart = () => {
     }
   };
 
-  const checkout = async () => {
+  const checkout = async (addressData = {}) => {
     setCartLoading(true);
-    const result = await checkoutCart();
+    const result = await checkoutCart(addressData);
     if (result.status === 201 || result.status === 200) {
       clearCart();
       successPopup('Order placed successfully!');
