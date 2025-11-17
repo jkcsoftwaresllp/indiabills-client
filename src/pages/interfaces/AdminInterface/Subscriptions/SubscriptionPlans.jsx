@@ -157,42 +157,44 @@ const SubscriptionPlans = () => {
             const isFeatured = idx === 1 || idx === Math.floor(plans.length / 2);
             return (
                 <Card
-                   sx={{
-                     height: 'auto',
-                     display: 'flex',
-                     flexDirection: 'column',
-                     position: 'relative',
-                     minWidth: '360px',
-                     border: isFeatured ? '2px solid' : '1px solid #e0e0e0',
-                     borderColor: isFeatured ? 'primary.main' : '#e0e0e0',
-                     boxShadow: isFeatured ? '0 15px 30px rgba(30, 41, 56, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.06)',
-                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                     borderRadius: 2,
-                     overflow: 'visible',
-                     '&:hover': {
-                       boxShadow: isFeatured ? '0 20px 40px rgba(30, 41, 56, 0.25)' : '0 8px 16px rgba(0, 0, 0, 0.12)',
-                       borderColor: 'primary.main'
-                     }
-                   }}
-                 >
-                  {isFeatured && (
-                    <Box
-                      sx={{
-                        background: 'linear-gradient(90deg, var(--color-primary), var(--color-accent))',
-                        color: 'white',
-                        py: 0.6,
-                        px: 2,
-                        textAlign: 'center',
-                        fontSize: '0.8rem',
-                        fontWeight: 700,
-                        letterSpacing: '0.05em'
-                      }}
-                    >
-                      MOST POPULAR
-                    </Box>
-                  )}
+                    sx={{
+                      height: '630px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      position: 'relative',
+                      minWidth: '360px',
+                      width: '360px',
+                      border: isFeatured ? '2px solid' : '1px solid #e0e0e0',
+                      borderColor: isFeatured ? 'primary.main' : '#e0e0e0',
+                      boxShadow: isFeatured ? '0 15px 30px rgba(30, 41, 56, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.06)',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      borderRadius: 2,
+                      overflow: 'hidden',
+                      '&:hover': {
+                        boxShadow: isFeatured ? '0 20px 40px rgba(30, 41, 56, 0.25)' : '0 8px 16px rgba(0, 0, 0, 0.12)',
+                        borderColor: 'primary.main'
+                      }
+                    }}
+                  >
+                   {isFeatured && (
+                     <Box
+                       sx={{
+                         background: 'linear-gradient(90deg, var(--color-primary), var(--color-accent))',
+                         color: 'white',
+                         py: 0.6,
+                         px: 2,
+                         textAlign: 'center',
+                         fontSize: '0.8rem',
+                         fontWeight: 700,
+                         letterSpacing: '0.05em',
+                         width: '100%'
+                       }}
+                     >
+                       MOST POPULAR
+                     </Box>
+                   )}
 
-                  <CardContent sx={{ flex: 1, pt: isFeatured ? 1.75 : 2, px: 2.5, py: 2 }}>
+                  <CardContent sx={{ flex: 1, pt: 2, px: 2.5, py: 2, overflowY: 'auto' }}>
                     <Typography 
                       variant="h6" 
                       component="h2" 
