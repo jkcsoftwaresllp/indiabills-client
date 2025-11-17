@@ -17,7 +17,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 2.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
   border-bottom: none;
   position: relative;
   overflow: hidden;
@@ -127,13 +127,13 @@
 }
 
 .planCard {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
   color: white;
   border-radius: 1.25rem;
   padding: 2.5rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10px 30px rgba(30, 41, 56, 0.3);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -150,7 +150,7 @@
 
 .planCard:hover {
   transform: translateY(-8px);
-  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 15px 40px rgba(30, 41, 56, 0.4);
 }
 
 .planHeader {

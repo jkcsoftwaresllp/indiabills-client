@@ -121,7 +121,7 @@ const SubscriptionPlans = () => {
        )}
 
       {plans.length === 0 ? (
-        <Paper sx={{ p: 3, textAlign: 'center', borderRadius: 1.5, border: '2px dashed #e0e0e0', background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
+        <Paper sx={{ p: 3, textAlign: 'center', borderRadius: 1.5, border: '2px dashed #e0e0e0', background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)' }}>
           <Typography variant="body1" color="textSecondary">
             No subscription plans available at this time.
           </Typography>
@@ -165,12 +165,12 @@ const SubscriptionPlans = () => {
                      minWidth: '360px',
                      border: isFeatured ? '2px solid' : '1px solid #e0e0e0',
                      borderColor: isFeatured ? 'primary.main' : '#e0e0e0',
-                     boxShadow: isFeatured ? '0 15px 30px rgba(102, 126, 234, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.06)',
+                     boxShadow: isFeatured ? '0 15px 30px rgba(30, 41, 56, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.06)',
                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                      borderRadius: 2,
                      overflow: 'visible',
                      '&:hover': {
-                       boxShadow: isFeatured ? '0 20px 40px rgba(102, 126, 234, 0.25)' : '0 8px 16px rgba(0, 0, 0, 0.12)',
+                       boxShadow: isFeatured ? '0 20px 40px rgba(30, 41, 56, 0.25)' : '0 8px 16px rgba(0, 0, 0, 0.12)',
                        borderColor: 'primary.main'
                      }
                    }}
@@ -178,7 +178,7 @@ const SubscriptionPlans = () => {
                   {isFeatured && (
                     <Box
                       sx={{
-                        background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                        background: 'linear-gradient(90deg, var(--color-primary), var(--color-accent))',
                         color: 'white',
                         py: 0.6,
                         px: 2,
@@ -222,18 +222,18 @@ const SubscriptionPlans = () => {
                     )}
 
                     <Box 
-                      sx={{ 
-                        mb: 2, 
-                        pb: 1.75, 
-                        borderBottom: '1px solid #f0f0f0',
-                        background: isFeatured ? 'linear-gradient(135deg, #f0f5ff 0%, #f5f0ff 100%)' : 'transparent',
-                        p: 1.5,
-                        borderRadius: 1.5,
-                        mx: -2.5,
-                        px: 1.5,
-                        mt: 0.75
-                      }}
-                    >
+                       sx={{ 
+                         mb: 2, 
+                         pb: 1.75, 
+                         borderBottom: '1px solid #f0f0f0',
+                         background: isFeatured ? 'linear-gradient(135deg, rgba(30, 41, 56, 0.05), rgba(196, 32, 50, 0.05))' : 'transparent',
+                         p: 1.5,
+                         borderRadius: 1.5,
+                         mx: -2.5,
+                         px: 1.5,
+                         mt: 0.75
+                       }}
+                     >
                       <Typography 
                         variant="h5" 
                         sx={{ 
@@ -331,7 +331,7 @@ const SubscriptionPlans = () => {
                             height: '26px',
                             backgroundColor: 'transparent',
                             '&:hover': {
-                              backgroundColor: 'rgba(102, 126, 234, 0.1)'
+                              backgroundColor: 'rgba(30, 41, 56, 0.1)'
                             }
                           }}
                         />
@@ -355,7 +355,7 @@ const SubscriptionPlans = () => {
                         borderRadius: 1.2,
                         transition: 'all 0.3s ease',
                         '&:hover:not(:disabled)': {
-                          boxShadow: isFeatured ? '0 8px 16px rgba(102, 126, 234, 0.2)' : '0 4px 8px rgba(102, 126, 234, 0.15)'
+                          boxShadow: isFeatured ? '0 8px 16px rgba(30, 41, 56, 0.2)' : '0 4px 8px rgba(30, 41, 56, 0.15)'
                         }
                       }}
                     >

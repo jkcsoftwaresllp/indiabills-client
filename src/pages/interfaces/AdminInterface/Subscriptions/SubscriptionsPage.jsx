@@ -33,7 +33,7 @@ const SubscriptionsPage = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       <Container maxWidth="xl" sx={{ py: 1, flex: 1, overflow: 'auto' }}>
         {/* Header */}
         <Box sx={{ mb: 2 }}>
@@ -44,7 +44,7 @@ const SubscriptionsPage = () => {
               mb: 0.3,
               letterSpacing: '-0.02em',
               fontSize: '1.95rem',
-              background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(90deg, var(--color-primary), var(--color-accent))',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent'
@@ -94,7 +94,7 @@ const SubscriptionsPage = () => {
                   }
                 },
                 '& .MuiTabs-indicator': {
-                  background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                  background: 'linear-gradient(90deg, var(--color-primary), var(--color-accent))',
                   height: 3,
                   borderRadius: '2px 2px 0 0'
                 }
