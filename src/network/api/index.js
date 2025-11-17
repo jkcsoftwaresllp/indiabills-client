@@ -18,6 +18,7 @@ import { checkSession } from './authApi';
 import { addToCart, removeFromCart, updateCartItem, getCart, checkoutCart } from './cartApi';
 import { getPayments, updatePaymentStatus, createPayment, getInvoice } from './paymentsApi';
 import { toggleWishlist, getWishlist, clearWishlist } from './wishlistApi';
+import { getSubscriptionPlans, getSubscriptionPlan, createSubscriptionOrder, verifySubscriptionPayment, getSubscriptionHistory } from './subscriptionApi';
 
 async function getStuff(path) {
   try {
@@ -388,4 +389,10 @@ export {
    toggleWishlist,
    getWishlist,
    clearWishlist,
+   // Subscription APIs
+   getSubscriptionPlans,
+   getSubscriptionPlan,
+   createSubscriptionOrder,
+   verifySubscriptionPayment,
+   getSubscriptionHistory,
 };

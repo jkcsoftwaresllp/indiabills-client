@@ -24,6 +24,7 @@ import CustomerRoutes from './customerRoutes';
 import OperatorRoutes from './operatorRoutes';
 import ManagerRoutes from './managerRoutes';
 import PaymentRoutes from './paymentRoutes';
+import SubscriptionRoutes from './subscriptionRoutes';
 
 // DASHBOARD
 import Home from '../pages/interfaces/Home';
@@ -87,6 +88,9 @@ const Routing = () => {
 
             {/* PAYMENT ROUTES */}
             {PaymentRoutes()}
+
+            {/* SUBSCRIPTION ROUTES */}
+            {SubscriptionRoutes()}
 
             {/* CUSTOMER PORTAL */}
             <Route path="/customer/*" element={<CustomerRoutes />} />

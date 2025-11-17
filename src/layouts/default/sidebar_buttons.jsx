@@ -146,7 +146,7 @@ export default [
         roles: ["admin"],
       },
       {
-        to: "/subscription",
+        to: "/subscriptions",
         icon: <FiTrendingUp />,
         label: "Subscription",
         roles: ["admin"],
