@@ -4,7 +4,7 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 40px 24px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f0f4f8 100%);
+  background: var(--color-light);
   min-height: 100vh;
 }
 
@@ -38,7 +38,7 @@
 
 .mainTitle {
   font-weight: 700;
-  background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -59,7 +59,7 @@
   width: 80px;
   height: 80px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
   color: white;
   animation: float 3s ease-in-out infinite;
 }
@@ -110,7 +110,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #7c3aed 0%, #06b6d4 100%);
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
 }
 
 .currentOrgCard:hover {
@@ -129,8 +129,8 @@
   height: 100px;
   border-radius: 16px;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  box-shadow: 0 4px 12px rgba(196, 32, 50, 0.3);
 }
 
 .orgDetails {
@@ -196,7 +196,7 @@
 }
 
 .viewDetailsBtn {
-  color: #7c3aed !important;
+  color: var(--color-accent) !important;
   font-weight: 600 !important;
   font-size: 0.95rem !important;
   padding: 8px 0 !important;
@@ -205,7 +205,7 @@
 }
 
 .viewDetailsBtn:hover {
-  color: #6d28d9 !important;
+  color: var(--color-primary) !important;
   background-color: transparent !important;
 }
 
@@ -248,7 +248,7 @@
 .detailsDialogTitle {
   padding: 24px !important;
   border-bottom: 1px solid #e2e8f0;
-  background: linear-gradient(135deg, #f8fafc 0%, #f0f4f8 100%);
+  background: var(--color-light);
 }
 
 .detailsDialogHeader {
@@ -279,7 +279,7 @@
   width: 64px;
   height: 64px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
   flex-shrink: 0;
 }
 
@@ -302,7 +302,7 @@
 }
 
 .detailsModalItem:hover {
-  border-color: #7c3aed;
+  border-color: var(--color-accent);
   background: #f0f4f8;
 }
 
@@ -349,7 +349,7 @@
 }
 
 .detailsBtn {
-  color: #7c3aed !important;
+  color: var(--color-accent) !important;
   font-weight: 600 !important;
   text-transform: capitalize !important;
   padding: 6px 0 !important;
@@ -380,8 +380,8 @@
 }
 
 .otherOrgCard:hover {
-  border-color: #7c3aed;
-  box-shadow: 0 12px 24px rgba(124, 58, 237, 0.15);
+  border-color: var(--color-accent);
+  box-shadow: 0 12px 24px rgba(196, 32, 50, 0.15);
   transform: translateY(-4px);
 }
 
@@ -402,7 +402,7 @@
   height: 56px;
   border-radius: 12px;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
 }
 
 .otherOrgInfo {
@@ -449,13 +449,13 @@
 }
 
 .switchBtn:hover:not(:disabled) {
-  border-color: #7c3aed;
-  color: #7c3aed;
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 /* Create Organization Card */
 .createCard {
-  background: linear-gradient(135deg, #f0f4f8 0%, #e0e7ff 100%);
+  background: var(--color-light);
   border: 2px dashed #cbd5e1;
   border-radius: 16px;
   transition: all 0.3s ease;
@@ -463,9 +463,9 @@
 }
 
 .createCard:hover {
-  border-color: #7c3aed;
-  background: linear-gradient(135deg, #f8fafc 0%, #ede9fe 100%);
-  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.1);
+  border-color: var(--color-accent);
+  background: var(--color-light);
+  box-shadow: 0 8px 24px rgba(196, 32, 50, 0.1);
 }
 
 .createCardContent {
@@ -481,7 +481,7 @@
   width: 72px;
   height: 72px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -507,14 +507,14 @@
   font-weight: 600;
   padding: 12px 32px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
   text-transform: capitalize;
   transition: all 0.3s ease;
 }
 
 .createBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 8px 20px rgba(196, 32, 50, 0.3);
 }
 
 /* Dialog Styles */
@@ -527,7 +527,7 @@
   font-weight: 700;
   font-size: 1.5rem;
   color: #1e293b;
-  background: linear-gradient(135deg, #f8fafc 0%, #f0f4f8 100%);
+  background: var(--color-light);
   border-bottom: 1px solid #e2e8f0;
   padding: 24px !important;
 }
