@@ -1,4 +1,4 @@
-import { FiArrowLeft, FiArrowRight, FiBriefcase, FiCheckCircle, FiEdit, FiPlus, FiSettings } from 'react-icons/fi';
+import { FiArrowLeft, FiArrowRight, FiBriefcase, FiCheckCircle, FiEdit, FiPlus, FiSettings, FiZap } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserOrganizations, createOrganization, switchOrganization } from '../../network/api';
@@ -31,6 +31,7 @@ import {
 import { getOption } from '../../utils/FormHelper';
 import { getOrganizationById } from '../../network/api/organizationApi';
 import { getSession } from '../../utils/cacheHelper';
+import styles from './SetupPage.module.css';
 
 const SetupPage = () => {
   const [currentOrg, setCurrentOrg] = useState(null);
@@ -41,6 +42,9 @@ const SetupPage = () => {
   const [creating, setCreating] = useState(false);
   const [errors, setErrors] = useState({});
   const [switchingOrg, setSwitchingOrg] = useState(false);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [selectedOrgForDetails, setSelectedOrgForDetails] = useState(null);
+  const [loadingOrgDetails, setLoadingOrgDetails] = useState(false);
   
   const { successPopup, errorPopup } = useStore();
   const navigate = useNavigate();
@@ -207,6 +211,24 @@ const SetupPage = () => {
     }
   };
 
+  const handleViewOrgDetails = async (orgId) => {
+    setLoadingOrgDetails(true);
+    try {
+      const response = await getOrganizationById(orgId);
+      if (response.status === 200) {
+        setSelectedOrgForDetails(response.data);
+        setDetailsModalOpen(true);
+      } else {
+        errorPopup('Failed to load organization details');
+      }
+    } catch (error) {
+      console.error('Error fetching organization details:', error);
+      errorPopup('Failed to load organization details');
+    } finally {
+      setLoadingOrgDetails(false);
+    }
+  };
+
   const handleSwitchOrganization = async (orgId) => {
   setSwitchingOrg(true);
   try {
@@ -280,6 +302,7 @@ const SetupPage = () => {
                 required
                 error={!!errors.name}
                 helperText={errors.name}
+                className={styles.formField}
               />
             </Grid>
             <Grid item xs={12}>
@@ -290,6 +313,7 @@ const SetupPage = () => {
                 value={formData.businessName}
                 onChange={handleChange}
                 placeholder="Legal business name"
+                className={styles.formField}
               />
             </Grid>
             <Grid item xs={12}>
@@ -302,6 +326,7 @@ const SetupPage = () => {
                 multiline
                 rows={3}
                 placeholder="Tell us about your organization"
+                className={styles.formField}
               />
             </Grid>
             <Grid item xs={12}>
@@ -312,6 +337,7 @@ const SetupPage = () => {
                 value={formData.tagline}
                 onChange={handleChange}
                 placeholder="Your organization's motto"
+                className={styles.formField}
               />
             </Grid>
           </Grid>
@@ -329,6 +355,7 @@ const SetupPage = () => {
                 onChange={handleChange}
                 error={!!errors.email}
                 helperText={errors.email}
+                className={styles.formField}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -341,6 +368,7 @@ const SetupPage = () => {
                 placeholder="+91-9876543210"
                 error={!!errors.phone}
                 helperText={errors.phone}
+                className={styles.formField}
               />
             </Grid>
             <Grid item xs={12}>
@@ -353,6 +381,7 @@ const SetupPage = () => {
                 placeholder="https://yourcompany.com"
                 error={!!errors.website}
                 helperText={errors.website}
+                className={styles.formField}
               />
             </Grid>
             <Grid item xs={12}>
@@ -365,6 +394,7 @@ const SetupPage = () => {
                 multiline
                 rows={2}
                 placeholder="Street address, building, etc."
+                className={styles.formField}
               />
             </Grid>
             <Grid item xs={12} md={4}>
@@ -374,6 +404,7 @@ const SetupPage = () => {
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
+                className={styles.formField}
               />
             </Grid>
             <Grid item xs={12} md={4}>
@@ -401,6 +432,7 @@ const SetupPage = () => {
                 onChange={handleChange}
                 error={!!errors.pinCode}
                 helperText={errors.pinCode}
+                className={styles.formField}
               />
             </Grid>
           </Grid>
@@ -418,6 +450,7 @@ const SetupPage = () => {
                 placeholder="https://example.com/logo.png"
                 error={!!errors.logoUrl}
                 helperText={errors.logoUrl}
+                className={styles.formField}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -430,6 +463,7 @@ const SetupPage = () => {
                 placeholder="yourcompany.com"
                 error={!!errors.domain}
                 helperText={errors.domain || "Either domain or subdomain is required"}
+                className={styles.formField}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -442,6 +476,7 @@ const SetupPage = () => {
                 placeholder="yourcompany"
                 error={!!errors.subdomain}
                 helperText={errors.subdomain}
+                className={styles.formField}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -455,6 +490,7 @@ const SetupPage = () => {
                 InputLabelProps={{ shrink: true }}
                 error={!!errors.brandPrimaryColor}
                 helperText={errors.brandPrimaryColor}
+                className={styles.formField}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -468,6 +504,7 @@ const SetupPage = () => {
                 InputLabelProps={{ shrink: true }}
                 error={!!errors.brandAccentColor}
                 helperText={errors.brandAccentColor}
+                className={styles.formField}
               />
             </Grid>
           </Grid>
@@ -489,188 +526,168 @@ const SetupPage = () => {
 
   return (
     <PageAnimate>
-      <div className="w-full p-6">
-        <div className="mb-8">
-          <Typography variant="h4" className="font-bold text-gray-800 mb-2">
-            Organization Setup
-          </Typography>
-          <Typography variant="body1" color="textSecondary">
-            Manage your organizations and create new ones
-          </Typography>
+      <div className={styles.container}>
+        {/* Header Section */}
+        <div className={styles.headerSection}>
+          <div className={styles.headerContent}>
+            <div className={styles.titleGroup}>
+              <Typography variant="h3" className={styles.mainTitle}>
+                Organization Hub
+              </Typography>
+              <Typography variant="subtitle1" className={styles.subtitle}>
+                Manage and organize your business spaces
+              </Typography>
+            </div>
+            <div className={styles.headerIcon}>
+              <FiZap size={40} />
+            </div>
+          </div>
         </div>
 
         {/* Current Organization */}
-{currentOrg && (
-  <div className="mb-8">
-    <Typography variant="h5" className="font-semibold mb-4">
-      Current Organization
-    </Typography>
-    <Card className="shadow-md rounded-2xl">
-      <CardContent>
-        <div className="flex items-center gap-6">
-          <Avatar
-            src={currentOrg.logoUrl}
-            alt={`${currentOrg.name} logo`}
-            sx={{ width: 72, height: 72 }}
-          >
-            <FiBriefcase sx={{ fontSize: 36 }} />
-          </Avatar>
-
-          <div className="flex-1">
-            <Typography variant="h5" className="font-bold">
-              {currentOrg.name}
+        {currentOrg && (
+          <div className={styles.sectionWrapper}>
+            <Typography variant="h5" className={styles.sectionTitle}>
+              Current Organization
             </Typography>
-            {currentOrg.businessName && (
-              <Typography variant="subtitle1" color="textSecondary">
-                {currentOrg.businessName}
-              </Typography>
-            )}
-            {currentOrg.tagline && (
-              <Typography variant="body2" className="italic text-gray-600 mt-1">
-                "{currentOrg.tagline}"
-              </Typography>
-            )}
+            <Card className={styles.currentOrgCard}>
+              <CardContent>
+                <div className={styles.currentOrgContent}>
+                  <Avatar
+                    src={currentOrg.logoUrl}
+                    alt={`${currentOrg.name} logo`}
+                    className={styles.avatarLarge}
+                  >
+                    <FiBriefcase size={40} />
+                  </Avatar>
 
-            <div className="flex gap-2 mt-3">
-              <Chip
-                label={currentOrg.subscriptionStatus || 'trial'}
-                color={getStatusColor(currentOrg.subscriptionStatus)}
-                size="small"
-                className="capitalize"
-              />
-              {currentOrg.domain && (
-                <Chip
-                  label={`${currentOrg.subdomain}.${currentOrg.domain}`}
-                  size="small"
-                  variant="outlined"
-                />
-              )}
-            </div>
+                  <div className={styles.orgDetails}>
+                    <Typography variant="h5" className={styles.orgName}>
+                      {currentOrg.name}
+                    </Typography>
+                    {currentOrg.businessName && (
+                      <Typography variant="subtitle2" className={styles.businessName}>
+                        {currentOrg.businessName}
+                      </Typography>
+                    )}
+                    {currentOrg.tagline && (
+                      <Typography variant="body2" className={styles.tagline}>
+                        "{currentOrg.tagline}"
+                      </Typography>
+                    )}
+
+                    <div className={styles.chipsContainer}>
+                      <Chip
+                        label={currentOrg.subscriptionStatus || 'trial'}
+                        color={getStatusColor(currentOrg.subscriptionStatus)}
+                        size="small"
+                        className={styles.chip}
+                      />
+                      {currentOrg.domain && (
+                        <Chip
+                          label={`${currentOrg.subdomain}.${currentOrg.domain}`}
+                          size="small"
+                          variant="outlined"
+                          className={styles.chip}
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={styles.actionButtons}>
+                    <Button
+                      variant="contained"
+                      startIcon={<FiEdit />}
+                      onClick={() => navigate('/organization/edit')}
+                      className={styles.actionBtn}
+                    >
+                      Edit Organization
+                    </Button>
+                  </div>
+                </div>
+
+                {/* View Details Button */}
+                <Box className={styles.detailsSection}>
+                  <Button
+                    variant="text"
+                    onClick={() => handleViewOrgDetails(currentOrg.id)}
+                    disabled={loadingOrgDetails}
+                    className={styles.viewDetailsBtn}
+                  >
+                    {loadingOrgDetails ? 'Loading details...' : 'View more details'}
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
           </div>
-
-          <div className="flex gap-2">
-            {session?.orgs && session.orgs.length > 1 && (
-              <Button
-                variant="outlined"
-                startIcon={<FiSettings />}
-                onClick={() => navigate('/organization-selector')}
-                sx={{ mr: 1 }}
-              >
-                Switch Organization
-              </Button>
-            )}
-            <Button
-              variant="outlined"
-              startIcon={<FiEdit />}
-              onClick={() => navigate('/organization/edit')}
-            >
-              Edit
-            </Button>
-          </div>
-        </div>
-
-        {/* Collapsible details */}
-        <Box mt={3}>
-          <details className="text-sm">
-            <summary className="cursor-pointer text-primary-600 font-medium">
-              View more details
-            </summary>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 text-gray-700">
-              {currentOrg.email && (
-                <div>
-                  <Typography variant="caption" color="textSecondary">Email</Typography>
-                  <Typography variant="body2">{currentOrg.email}</Typography>
-                </div>
-              )}
-              {currentOrg.phone && (
-                <div>
-                  <Typography variant="caption" color="textSecondary">Phone</Typography>
-                  <Typography variant="body2">{currentOrg.phone}</Typography>
-                </div>
-              )}
-              {currentOrg.addressLine && (
-                <div className="md:col-span-2">
-                  <Typography variant="caption" color="textSecondary">Address</Typography>
-                  <Typography variant="body2">
-                    {currentOrg.addressLine}, {currentOrg.city}, {currentOrg.state} {currentOrg.pinCode}
-                  </Typography>
-                </div>
-              )}
-              {currentOrg.createdAt && (
-                <div>
-                  <Typography variant="caption" color="textSecondary">Created</Typography>
-                  <Typography variant="body2">
-                    {new Date(currentOrg.createdAt).toLocaleDateString()}
-                  </Typography>
-                </div>
-              )}
-              {currentOrg.about && (
-                <div className="md:col-span-2">
-                  <Typography variant="caption" color="textSecondary">About</Typography>
-                  <Typography variant="body2">{currentOrg.about}</Typography>
-                </div>
-              )}
-            </div>
-          </details>
-        </Box>
-      </CardContent>
-    </Card>
-  </div>
-)}
+        )}
 
         {/* Other Organizations */}
         {otherOrgs.length > 0 && (
-          <div className="mb-8">
-            <Typography variant="h5" className="font-semibold mb-4">
+          <div className={styles.sectionWrapper}>
+            <Typography variant="h5" className={styles.sectionTitle}>
               Other Organizations
             </Typography>
             <Grid container spacing={3}>
               {otherOrgs.map((org) => (
                 <Grid item xs={12} md={6} lg={4} key={org.id}>
-                  <Card className="h-full">
-                    <CardContent>
-                      <div className="flex items-center gap-3 mb-3">
+                  <Card className={styles.otherOrgCard}>
+                    <CardContent className={styles.otherOrgCardContent}>
+                      <div className={styles.otherOrgHeader}>
                         <Avatar
                           src={org.logoUrl}
                           alt={org.name}
-                          sx={{ width: 50, height: 50 }}
+                          className={styles.avatarMedium}
                         >
                           <FiBriefcase />
                         </Avatar>
-                        <div className="flex-1">
-                          <Typography variant="h6" className="font-bold">
+                        <div className={styles.otherOrgInfo}>
+                          <Typography variant="h6" className={styles.otherOrgName}>
                             {org.name}
                           </Typography>
-                          <Typography variant="body2" color="textSecondary">
+                          <Typography variant="caption" className={styles.otherOrgDomain}>
                             {org.domain ? `${org.subdomain}.${org.domain}` : org.subdomain}
                           </Typography>
                         </div>
                       </div>
-                      <div className="flex gap-2 mb-3">
+                      <div className={styles.otherOrgChips}>
                         <Chip 
                           label={org.role || 'member'} 
                           color="primary" 
                           size="small"
-                          className="capitalize"
+                          className={styles.chip}
                         />
                         <Chip 
                           label={org.subscriptionStatus || 'active'} 
                           color={getStatusColor(org.subscriptionStatus)}
                           size="small"
+                          className={styles.chip}
                         />
                       </div>
-                      <Typography variant="body2" color="textSecondary">
-                        Status: {org.isActive ? 'Active' : 'Inactive'}
+                      <Typography variant="caption" className={styles.statusText}>
+                        {org.isActive ? '🟢 Active' : '⚫ Inactive'}
                       </Typography>
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={() => handleSwitchOrganization(org.id)}
-                        disabled={switchingOrg}
-                        sx={{ mt: 1 }}
-                      >
-                        {switchingOrg ? 'Switching...' : 'Switch to this org'}
-                      </Button>
+                      <div className={styles.orgCardButtons}>
+                        <Button
+                          fullWidth
+                          variant="text"
+                          size="small"
+                          onClick={() => handleViewOrgDetails(org.id)}
+                          disabled={loadingOrgDetails}
+                          className={styles.detailsBtn}
+                        >
+                          {loadingOrgDetails ? 'Loading...' : 'View Details'}
+                        </Button>
+                        <Button
+                          fullWidth
+                          variant="outlined"
+                          onClick={() => handleSwitchOrganization(org.id)}
+                          disabled={switchingOrg}
+                          className={styles.switchBtn}
+                        >
+                          {switchingOrg ? 'Switching...' : 'Switch to this org'}
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 </Grid>
@@ -680,24 +697,26 @@ const SetupPage = () => {
         )}
 
         {/* Create New Organization */}
-        <div>
-          <Typography variant="h5" className="font-semibold mb-4">
+        <div className={styles.sectionWrapper}>
+          <Typography variant="h5" className={styles.sectionTitle}>
             Create New Organization
           </Typography>
-          <Card>
-            <CardContent className="text-center py-8">
-              <FiBriefcase size={60} style={{ color: 'gray', marginBottom: 16 }} />
-              <Typography variant="h6" className="mb-2">
+          <Card className={styles.createCard}>
+            <CardContent className={styles.createCardContent}>
+              <div className={styles.createIcon}>
+                <FiPlus size={56} />
+              </div>
+              <Typography variant="h5" className={styles.createTitle}>
                 Add Another Organization
               </Typography>
-              <Typography variant="body1" color="textSecondary" className="mb-4">
-                Create a new organization to manage multiple businesses
+              <Typography variant="body1" className={styles.createSubtitle}>
+                Expand your workspace and manage multiple businesses seamlessly
               </Typography>
               <Button
                 variant="contained"
-                startIcon={<FiPlus />}
-                onClick={() => setCreateDialogOpen(true)}
                 size="large"
+                onClick={() => setCreateDialogOpen(true)}
+                className={styles.createBtn}
               >
                 Create Organization
               </Button>
@@ -711,11 +730,16 @@ const SetupPage = () => {
           onClose={() => !creating && setCreateDialogOpen(false)}
           maxWidth="md" 
           fullWidth
+          PaperProps={{
+            className: styles.dialog
+          }}
         >
-          <DialogTitle>Create New Organization</DialogTitle>
-          <DialogContent>
-            <Box sx={{ mt: 2 }}>
-              <Stepper activeStep={activeStep} className="mb-6">
+          <DialogTitle className={styles.dialogTitle}>
+            Create New Organization
+          </DialogTitle>
+          <DialogContent className={styles.dialogContent}>
+            <Box className={styles.dialogBody}>
+              <Stepper activeStep={activeStep} className={styles.stepper}>
                 {steps.map((label) => (
                   <Step key={label}>
                     <StepLabel>{label}</StepLabel>
@@ -723,13 +747,13 @@ const SetupPage = () => {
                 ))}
               </Stepper>
 
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" className={styles.stepTitle} gutterBottom>
                 {steps[activeStep]}
               </Typography>
               {renderStepContent(activeStep)}
             </Box>
           </DialogContent>
-          <DialogActions>
+          <DialogActions className={styles.dialogActions}>
             <Button 
               onClick={() => setCreateDialogOpen(false)}
               disabled={creating}
@@ -737,7 +761,7 @@ const SetupPage = () => {
               Cancel
             </Button>
             
-            <div className="flex gap-2">
+            <div className={styles.dialogButtons}>
               {activeStep > 0 && (
                 <Button
                   onClick={handleBack}
@@ -768,6 +792,366 @@ const SetupPage = () => {
                 </Button>
               )}
             </div>
+          </DialogActions>
+        </Dialog>
+
+        {/* Organization Details Modal */}
+        <Dialog
+          open={detailsModalOpen}
+          onClose={() => setDetailsModalOpen(false)}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{
+            className: styles.detailsDialog
+          }}
+        >
+          <DialogTitle className={styles.detailsDialogTitle}>
+            <div className={styles.detailsDialogHeader}>
+              <div className={styles.detailsDialogTitleText}>
+                <Typography variant="h5" className={styles.detailsDialogMainTitle}>
+                  {selectedOrgForDetails?.name}
+                </Typography>
+                <Typography variant="caption" className={styles.detailsDialogSubtitle}>
+                  Organization Details
+                </Typography>
+              </div>
+              {selectedOrgForDetails?.logoUrl && (
+                <Avatar
+                  src={selectedOrgForDetails.logoUrl}
+                  alt={selectedOrgForDetails.name}
+                  className={styles.detailsDialogAvatar}
+                >
+                  <FiBriefcase />
+                </Avatar>
+              )}
+            </div>
+          </DialogTitle>
+          <DialogContent className={styles.detailsDialogContent}>
+            {loadingOrgDetails ? (
+              <Box display="flex" justifyContent="center" alignItems="center" py={4}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <Box className={styles.detailsModalGrid}>
+                {/* Basic Information */}
+                {selectedOrgForDetails?.businessName && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Business Name
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.businessName}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.tagline && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Tagline
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.tagline}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.email && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Email
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.email}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.phone && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Phone
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.phone}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.website && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Website
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.website}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.gstin && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      GSTIN
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.gstin}
+                    </Typography>
+                  </div>
+                )}
+
+                {/* Address Information */}
+                {selectedOrgForDetails?.addressLine && (
+                  <div className={`${styles.detailsModalItem} ${styles.fullWidth}`}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Address
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.addressLine}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.city && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      City
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.city}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.state && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      State
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.state}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.country && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Country
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.country}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.pinCode && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      PIN Code
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.pinCode}
+                    </Typography>
+                  </div>
+                )}
+
+                {/* Domain & Subdomain */}
+                {selectedOrgForDetails?.domain && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Domain
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.domain}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.subdomain && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Subdomain
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.subdomain}
+                    </Typography>
+                  </div>
+                )}
+
+                {/* Subscription Details */}
+                {selectedOrgForDetails?.subscriptionPlan && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Plan
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.subscriptionPlan}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.subscriptionStatus && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Subscription Status
+                    </Typography>
+                    <Chip
+                      label={selectedOrgForDetails.subscriptionStatus}
+                      color={getStatusColor(selectedOrgForDetails.subscriptionStatus)}
+                      size="small"
+                      className={styles.statusChipModal}
+                    />
+                  </div>
+                )}
+                {selectedOrgForDetails?.trialEndsAt && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Trial Ends At
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {new Date(selectedOrgForDetails.trialEndsAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.maxUsers && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Max Users
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.maxUsers}
+                    </Typography>
+                  </div>
+                )}
+
+                {/* Branding */}
+                {selectedOrgForDetails?.brandPrimaryColor && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Primary Color
+                    </Typography>
+                    <div className={styles.colorDisplay}>
+                      <div 
+                        className={styles.colorBox}
+                        style={{ backgroundColor: selectedOrgForDetails.brandPrimaryColor }}
+                      />
+                      <Typography variant="body2" className={styles.detailsModalValue}>
+                        {selectedOrgForDetails.brandPrimaryColor}
+                      </Typography>
+                    </div>
+                  </div>
+                )}
+                {selectedOrgForDetails?.brandAccentColor && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Accent Color
+                    </Typography>
+                    <div className={styles.colorDisplay}>
+                      <div 
+                        className={styles.colorBox}
+                        style={{ backgroundColor: selectedOrgForDetails.brandAccentColor }}
+                      />
+                      <Typography variant="body2" className={styles.detailsModalValue}>
+                        {selectedOrgForDetails.brandAccentColor}
+                      </Typography>
+                    </div>
+                  </div>
+                )}
+                {selectedOrgForDetails?.timezone && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Timezone
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.timezone}
+                    </Typography>
+                  </div>
+                )}
+
+                {/* Status */}
+                {selectedOrgForDetails?.isActive !== undefined && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Status
+                    </Typography>
+                    <Chip
+                      label={selectedOrgForDetails.isActive ? 'Active' : 'Inactive'}
+                      color={selectedOrgForDetails.isActive ? 'success' : 'default'}
+                      size="small"
+                      className={styles.statusChipModal}
+                    />
+                  </div>
+                )}
+
+                {/* Metadata */}
+                {selectedOrgForDetails?.createdAt && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Created
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {new Date(selectedOrgForDetails.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.updatedAt && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Last Updated
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {new Date(selectedOrgForDetails.updatedAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.createdBy && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Created By
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.createdBy}
+                    </Typography>
+                  </div>
+                )}
+                {selectedOrgForDetails?.updatedBy && (
+                  <div className={styles.detailsModalItem}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      Updated By
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.updatedBy}
+                    </Typography>
+                  </div>
+                )}
+
+                {/* About */}
+                {selectedOrgForDetails?.about && (
+                  <div className={`${styles.detailsModalItem} ${styles.fullWidth}`}>
+                    <Typography variant="caption" className={styles.detailsModalLabel}>
+                      About
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailsModalValue}>
+                      {selectedOrgForDetails.about}
+                    </Typography>
+                  </div>
+                )}
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions className={styles.detailsDialogActions}>
+            <Button
+              onClick={() => setDetailsModalOpen(false)}
+              variant="contained"
+            >
+              Close
+            </Button>
           </DialogActions>
         </Dialog>
       </div>

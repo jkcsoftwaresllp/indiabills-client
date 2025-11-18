@@ -149,6 +149,15 @@ const Sidebar = () => {
     setExpandedGroup(expandedGroup === groupName ? null : groupName);
   };
 
+  // Handle logout - show dialog only for admin, direct logout for others
+  const handleLogoutClick = () => {
+    if (userRole === "admin") {
+      setLogoutDialog(true);
+    } else {
+      handleLogoutAll();
+    }
+  };
+
   return (
     <div className={`${styles.sidebar} ${collapse ? styles.collapsed : ""}`}>
       {/* Logo Section */}
@@ -241,10 +250,10 @@ const Sidebar = () => {
             <button className={styles.menuItem} onClick={() => navigate("/settings")}>
               Settings
             </button>
-            {/* NEW: Logout triggers dialog */}
+            {/* Logout - shows dialog for admin, direct logout for others */}
             <button
               className={styles.menuItem}
-              onClick={() => setLogoutDialog(true)}
+              onClick={handleLogoutClick}
             >
               Logout
             </button>
