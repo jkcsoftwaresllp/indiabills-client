@@ -9,7 +9,6 @@ const colDefs = [
     headerName: "ID", 
     width: 50,
     checkboxSelection: true,
-    headerCheckboxSelection: false,
     cellRenderer: (params) => (
       <p>
         <span className="text-blue-950">#</span>
@@ -20,14 +19,14 @@ const colDefs = [
   { field: "name", headerName: "Warehouse Name", filter: true, editable: true },
   { field: "code", headerName: "Code", editable: true },
   { field: "capacity", headerName: "Capacity", editable: true },
-  { field: "managerName", headerName: "Manager", editable: true, cellStyle: { textTransform: 'capitalize' } },
-  { field: "managerPhone", headerName: "Manager Phone", editable: true },
-  { field: "addressLine", headerName: "Address", editable: true },
+  { field: "manager_name", headerName: "Manager", editable: true, cellStyle: { textTransform: 'capitalize' } },
+  { field: "manager_phone", headerName: "Manager Phone", editable: true },
+  { field: "address_line", headerName: "Address", editable: true },
   { field: "city", headerName: "City", editable: true, cellStyle: { textTransform: 'capitalize' } },
   { field: "state", headerName: "State", editable: true, cellStyle: { textTransform: 'capitalize' } },
-  { field: "pinCode", headerName: "Pin Code", editable: true },
+  { field: "pin_code", headerName: "Pin Code", editable: true },
   { 
-    field: "isActive", 
+    field: "is_active", 
     headerName: "Status", 
     cellRenderer: (params) => (
       <span className={`py-1 px-3 rounded-full text-xs ${params.value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
@@ -35,8 +34,8 @@ const colDefs = [
       </span>
     )
   },
-  { field: "createdAt", headerName: "Created At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
-  { field: "updatedAt", headerName: "Updated At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
+  { field: "created_at", headerName: "Created At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
+  { field: "updated_at", headerName: "Updated At", valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
 ];
 
 const ViewWarehouses = () => {

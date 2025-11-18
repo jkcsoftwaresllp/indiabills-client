@@ -119,8 +119,7 @@ const ViewInventory = () => {
       field: "id",
       headerName: "ID",
       width: 50,
-      checkboxSelection: true,
-      headerCheckboxSelection: false,
+      // checkboxSelection: true,
       cellRenderer: (params) => (
         <p>
           <span className="text-blue-950">#</span>
@@ -137,13 +136,13 @@ const ViewInventory = () => {
     { field: "code", headerName: "Code", editable: true },
     { field: "capacity", headerName: "Capacity", editable: true },
     {
-      field: "managerName",
+      field: "manager_name",
       headerName: "Manager",
       editable: true,
       cellStyle: { textTransform: "capitalize" },
     },
-    { field: "managerPhone", headerName: "Manager Phone", editable: true },
-    { field: "addressLine", headerName: "Address", editable: true },
+    { field: "manager_phone", headerName: "Manager Phone", editable: true },
+    { field: "address_line", headerName: "Address", editable: true },
     {
       field: "city",
       headerName: "City",
@@ -156,9 +155,9 @@ const ViewInventory = () => {
       editable: true,
       cellStyle: { textTransform: "capitalize" },
     },
-    { field: "pinCode", headerName: "Pin Code", editable: true },
+    { field: "pin_code", headerName: "Pin Code", editable: true },
     {
-      field: "isActive",
+      field: "is_active",
       headerName: "Status",
       cellRenderer: (params) => (
         <span
@@ -173,12 +172,12 @@ const ViewInventory = () => {
       ),
     },
     {
-      field: "createdAt",
+      field: "created_at",
       headerName: "Created At",
       valueFormatter: ({ value }) => new Date(value).toLocaleDateString(),
     },
     {
-      field: "updatedAt",
+      field: "updated_at",
       headerName: "Updated At",
       valueFormatter: ({ value }) => new Date(value).toLocaleDateString(),
     },
