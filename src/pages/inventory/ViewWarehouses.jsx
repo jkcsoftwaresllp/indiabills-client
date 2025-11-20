@@ -8,7 +8,7 @@ const colDefs = [
     field: "id", 
     headerName: "ID", 
     width: 50,
-    checkboxSelection: true,
+    // checkboxSelection: true,
     cellRenderer: (params) => (
       <p>
         <span className="text-blue-950">#</span>

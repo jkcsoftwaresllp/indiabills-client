@@ -718,6 +718,7 @@ const ViewInventory = () => {
             title="Warehouses"
             url="/internal/warehouses"
             initialColDefs={warehouseColDefs}
+            idField="id"
             menuOptions={warehouseMenuOptions}
           />
         )}
