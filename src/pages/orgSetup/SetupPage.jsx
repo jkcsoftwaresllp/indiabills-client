@@ -215,7 +215,9 @@ const SetupPage = () => {
     setLoadingOrgDetails(true);
     try {
       const response = await getOrganizationById(orgId);
+      console.log('[ORG_DETAILS] API Response:', response);
       if (response.status === 200) {
+        console.log('[ORG_DETAILS] Data received:', response.data);
         setSelectedOrgForDetails(response.data);
         setDetailsModalOpen(true);
       } else {
@@ -577,12 +579,14 @@ const SetupPage = () => {
                     )}
 
                     <div className={styles.chipsContainer}>
-                      <Chip
-                        label={currentOrg.subscriptionStatus || 'trial'}
-                        color={getStatusColor(currentOrg.subscriptionStatus)}
-                        size="small"
-                        className={styles.chip}
-                      />
+                      {currentOrg.subscription?.status && (
+                        <Chip
+                          label={currentOrg.subscription.status}
+                          color={getStatusColor(currentOrg.subscription.status)}
+                          size="small"
+                          className={styles.chip}
+                        />
+                      )}
                       {currentOrg.domain && (
                         <Chip
                           label={`${currentOrg.subdomain}.${currentOrg.domain}`}
@@ -970,53 +974,113 @@ const SetupPage = () => {
                 )}
 
                 {/* Subscription Details */}
-                {selectedOrgForDetails?.subscriptionPlan && (
-                  <div className={styles.detailsModalItem}>
-                    <Typography variant="caption" className={styles.detailsModalLabel}>
-                      Plan
+                <div className={`${styles.detailsModalItem} ${styles.fullWidth}`}>
+                  <Typography variant="caption" className={styles.detailsModalLabel}>
+                    Subscription
+                  </Typography>
+                  {selectedOrgForDetails?.subscription ? (
+                    <>
+                      {selectedOrgForDetails.subscription.planId && (
+                        <div className={styles.detailsModalItem}>
+                          <Typography variant="caption" className={styles.detailsModalLabel}>
+                            Plan ID
+                          </Typography>
+                          <Typography variant="body2" className={styles.detailsModalValue}>
+                            {selectedOrgForDetails.subscription.planId}
+                          </Typography>
+                        </div>
+                      )}
+                      {selectedOrgForDetails.subscription.status && (
+                        <div className={styles.detailsModalItem}>
+                          <Typography variant="caption" className={styles.detailsModalLabel}>
+                            Status
+                          </Typography>
+                          <Chip
+                            label={selectedOrgForDetails.subscription.status}
+                            color={getStatusColor(selectedOrgForDetails.subscription.status)}
+                            size="small"
+                            className={styles.statusChipModal}
+                          />
+                        </div>
+                      )}
+                      {selectedOrgForDetails.subscription.cycle && (
+                        <div className={styles.detailsModalItem}>
+                          <Typography variant="caption" className={styles.detailsModalLabel}>
+                            Billing Cycle
+                          </Typography>
+                          <Typography variant="body2" className={styles.detailsModalValue}>
+                            {selectedOrgForDetails.subscription.cycle}
+                          </Typography>
+                        </div>
+                      )}
+                      {selectedOrgForDetails.subscription.startDate && (
+                        <div className={styles.detailsModalItem}>
+                          <Typography variant="caption" className={styles.detailsModalLabel}>
+                            Start Date
+                          </Typography>
+                          <Typography variant="body2" className={styles.detailsModalValue}>
+                            {new Date(selectedOrgForDetails.subscription.startDate).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </Typography>
+                        </div>
+                      )}
+                      {selectedOrgForDetails.subscription.endDate && (
+                        <div className={styles.detailsModalItem}>
+                          <Typography variant="caption" className={styles.detailsModalLabel}>
+                            End Date
+                          </Typography>
+                          <Typography variant="body2" className={styles.detailsModalValue}>
+                            {new Date(selectedOrgForDetails.subscription.endDate).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </Typography>
+                        </div>
+                      )}
+                      {selectedOrgForDetails.subscription.totalAmount && (
+                        <div className={styles.detailsModalItem}>
+                          <Typography variant="caption" className={styles.detailsModalLabel}>
+                            Total Amount
+                          </Typography>
+                          <Typography variant="body2" className={styles.detailsModalValue}>
+                            ₹{selectedOrgForDetails.subscription.totalAmount}
+                          </Typography>
+                        </div>
+                      )}
+                      {selectedOrgForDetails.subscription.amountPaid && (
+                        <div className={styles.detailsModalItem}>
+                          <Typography variant="caption" className={styles.detailsModalLabel}>
+                            Amount Paid
+                          </Typography>
+                          <Typography variant="body2" className={styles.detailsModalValue}>
+                            ₹{selectedOrgForDetails.subscription.amountPaid}
+                          </Typography>
+                        </div>
+                      )}
+                      {selectedOrgForDetails.subscription.paymentStatus && (
+                        <div className={styles.detailsModalItem}>
+                          <Typography variant="caption" className={styles.detailsModalLabel}>
+                            Payment Status
+                          </Typography>
+                          <Chip
+                            label={selectedOrgForDetails.subscription.paymentStatus}
+                            color={selectedOrgForDetails.subscription.paymentStatus === 'paid' ? 'success' : 'warning'}
+                            size="small"
+                            className={styles.statusChipModal}
+                          />
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <Typography variant="body2" className={styles.detailsModalValue} sx={{ color: 'error.main', fontWeight: 600 }}>
+                      No active subscription
                     </Typography>
-                    <Typography variant="body2" className={styles.detailsModalValue}>
-                      {selectedOrgForDetails.subscriptionPlan}
-                    </Typography>
-                  </div>
-                )}
-                {selectedOrgForDetails?.subscriptionStatus && (
-                  <div className={styles.detailsModalItem}>
-                    <Typography variant="caption" className={styles.detailsModalLabel}>
-                      Subscription Status
-                    </Typography>
-                    <Chip
-                      label={selectedOrgForDetails.subscriptionStatus}
-                      color={getStatusColor(selectedOrgForDetails.subscriptionStatus)}
-                      size="small"
-                      className={styles.statusChipModal}
-                    />
-                  </div>
-                )}
-                {selectedOrgForDetails?.trialEndsAt && (
-                  <div className={styles.detailsModalItem}>
-                    <Typography variant="caption" className={styles.detailsModalLabel}>
-                      Trial Ends At
-                    </Typography>
-                    <Typography variant="body2" className={styles.detailsModalValue}>
-                      {new Date(selectedOrgForDetails.trialEndsAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </Typography>
-                  </div>
-                )}
-                {selectedOrgForDetails?.maxUsers && (
-                  <div className={styles.detailsModalItem}>
-                    <Typography variant="caption" className={styles.detailsModalLabel}>
-                      Max Users
-                    </Typography>
-                    <Typography variant="body2" className={styles.detailsModalValue}>
-                      {selectedOrgForDetails.maxUsers}
-                    </Typography>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {/* Branding */}
                 {selectedOrgForDetails?.brandPrimaryColor && (
