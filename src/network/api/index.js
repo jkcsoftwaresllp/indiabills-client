@@ -16,7 +16,7 @@ import { uploadUserImage } from './userApi';
 // import { updateOrganizationById } from './organizationApi';
 import { checkSession } from './authApi';
 import { addToCart, removeFromCart, updateCartItem, getCart, checkoutCart } from './cartApi';
-import { getPayments, updatePaymentStatus, createPayment, getInvoice } from './paymentsApi';
+import { getPayments, getPaymentById, updatePaymentStatus, createPayment, getInvoice } from './paymentsApi';
 import { toggleWishlist, getWishlist, clearWishlist } from './wishlistApi';
 import { getSubscriptionPlans, getSubscriptionPlan, createSubscriptionOrder, verifySubscriptionPayment, getSubscriptionHistory } from './subscriptionApi';
 
@@ -382,9 +382,10 @@ export {
   checkoutCart,
   // Payment APIs
   getPayments,
+  getPaymentById,
   updatePaymentStatus,
   createPayment,
-   getInvoice,
+  getInvoice,
    // Wishlist APIs
    toggleWishlist,
    getWishlist,

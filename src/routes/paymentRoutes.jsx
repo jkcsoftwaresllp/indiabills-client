@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
 
 const ViewPayments = lazy(() => import('../pages/payments/ViewPayments'));
+const PaymentDetails = lazy(() => import('../pages/payments/PaymentDetails'));
 
 const PaymentRoutes = () => {
   return [
@@ -12,6 +13,16 @@ const PaymentRoutes = () => {
       element={
         <ProtectedRoute
           element={ViewPayments}
+          roles={['admin', 'manager', 'operator']}
+        />
+      }
+    />,
+    <Route
+      key="payment-details"
+      path="/payments/:paymentId"
+      element={
+        <ProtectedRoute
+          element={PaymentDetails}
           roles={['admin', 'manager', 'operator']}
         />
       }

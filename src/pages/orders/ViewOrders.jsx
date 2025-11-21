@@ -115,9 +115,9 @@ const ViewOrders = () => {
   const filteredOrders = orders.filter(order => {
     const term = searchTerm.toLowerCase();
     return (
-      order.customerName.toLowerCase().includes(term) ||
-      order.orderId.toString().includes(term) ||
-      order.invoiceNumber.toString().includes(term)
+      (order.customerName?.toLowerCase() || '').includes(term) ||
+      (order.orderId?.toString() || '').includes(term) ||
+      (order.invoiceNumber?.toString() || '').includes(term)
     );
   });
 

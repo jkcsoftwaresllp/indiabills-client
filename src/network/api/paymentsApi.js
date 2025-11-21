@@ -1,12 +1,23 @@
 import serverInstance from './api-config';
 
-// Get payments with optional status filter
+// Get all payments with pagination and optional filters
 export async function getPayments(options = {}) {
   try {
     const params = new URLSearchParams();
-    if (options.status && options.status !== 'all') params.append('status', options.status);
-    if (options.limit) params.append('limit', options.limit);
-    if (options.offset) params.append('offset', options.offset);
+    
+    // Add pagination parameters
+    const page = options.page || 1;
+    const limit = options.limit || 20;
+    params.append('page', page);
+    params.append('limit', limit);
+    
+    // Add optional filters
+    if (options.status && options.status !== 'all') {
+      params.append('status', options.status);
+    }
+    if (options.offset) {
+      params.append('offset', options.offset);
+    }
 
     const response = await serverInstance.get(`/internal/payments?${params}`);
     return {
@@ -19,6 +30,24 @@ export async function getPayments(options = {}) {
       status: error.response?.status || 500,
       data: null,
       error: error.response?.data?.message || 'Failed to fetch payments',
+    };
+  }
+}
+
+// Get a specific payment by ID
+export async function getPaymentById(paymentId) {
+  try {
+    const response = await serverInstance.get(`/internal/payments/${paymentId}`);
+    return {
+      status: response.status,
+      data: response.data,
+    };
+  } catch (error) {
+    console.error('Failed to fetch payment:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: null,
+      error: error.response?.data?.message || 'Failed to fetch payment',
     };
   }
 }
