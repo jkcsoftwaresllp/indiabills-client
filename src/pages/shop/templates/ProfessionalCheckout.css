@@ -234,6 +234,25 @@
   text-align: right;
 }
 
+.remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #c42032;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-size: 1.1rem;
+}
+
+.remove-btn:hover {
+  background: rgba(196, 32, 50, 0.1);
+  color: #a01928;
+}
+
 /* Addresses */
 .addresses-list {
   display: flex;
@@ -691,6 +710,11 @@
     width: 100%;
     text-align: left;
     order: 3;
+  }
+
+  .remove-btn {
+    order: 4;
+    margin-top: 0.5rem;
   }
 }
 

@@ -17,12 +17,13 @@ import {
   FiTruck,
   FiCreditCard,
   FiMinus,
+  FiTrash2,
 } from "react-icons/fi";
 import "./ProfessionalCheckout.css";
 
 const ProfessionalCheckout = () => {
   const { errorPopup, successPopup } = useStore();
-  const { cartItems, checkout, loading: cartLoading, loadCart } = useCart();
+  const { cartItems, checkout, loading: cartLoading, loadCart, removeItemFromCart } = useCart();
   const navigate = useNavigate();
   const { getRoute } = useRoutes();
 
@@ -121,6 +122,11 @@ const ProfessionalCheckout = () => {
       const newQty = Math.max(1, current + change);
       return { ...prev, [productId]: newQty };
     });
+  };
+
+  // Handle remove item from cart
+  const handleRemoveFromCart = async (productId) => {
+    await removeItemFromCart(productId);
   };
 
   // Handle add address
@@ -359,43 +365,50 @@ const ProfessionalCheckout = () => {
               <div className="step-content">
                 <h2>Order Summary</h2>
                 <div className="cart-items">
-                  {cartItems.map((item) => (
-                    <div key={item.product_id} className="cart-item">
-                      <div className="item-info">
-                        <h3>{item.name}</h3>
-                        <p className="item-price">₹{item.price_at_addition}</p>
-                      </div>
-                      <div className="quantity-control">
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.product_id, -1)
-                          }
-                        >
-                          <FiMinus />
-                        </button>
-                        <input
-                          type="number"
-                          value={quantities[item.product_id] || item.quantity}
-                          readOnly
-                        />
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.product_id, 1)
-                          }
-                        >
-                          <FiPlus />
-                        </button>
-                      </div>
-                      <div className="item-total">
-                        ₹
-                        {(
-                          item.price_at_addition *
-                          (quantities[item.product_id] || item.quantity)
-                        ).toFixed(2)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                   {cartItems.map((item) => (
+                     <div key={item.product_id} className="cart-item">
+                       <div className="item-info">
+                         <h3>{item.name}</h3>
+                         <p className="item-price">₹{item.price_at_addition}</p>
+                       </div>
+                       <div className="quantity-control">
+                         <button
+                           onClick={() =>
+                             updateQuantity(item.product_id, -1)
+                           }
+                         >
+                           <FiMinus />
+                         </button>
+                         <input
+                           type="number"
+                           value={quantities[item.product_id] || item.quantity}
+                           readOnly
+                         />
+                         <button
+                           onClick={() =>
+                             updateQuantity(item.product_id, 1)
+                           }
+                         >
+                           <FiPlus />
+                         </button>
+                       </div>
+                       <div className="item-total">
+                         ₹
+                         {(
+                           item.price_at_addition *
+                           (quantities[item.product_id] || item.quantity)
+                         ).toFixed(2)}
+                       </div>
+                       <button
+                         className="remove-btn"
+                         onClick={() => handleRemoveFromCart(item.product_id)}
+                         title="Remove item from cart"
+                       >
+                         <FiTrash2 />
+                       </button>
+                     </div>
+                   ))}
+                 </div>
 
                 <div className="step-actions">
                   <button className="btn-primary" onClick={() => setCurrentStep(2)}>
