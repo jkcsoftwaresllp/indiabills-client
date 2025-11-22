@@ -7,9 +7,10 @@ import {
   FiThumbsUp,
   FiTool,
   FiBox,
+  FiZap,
 } from "react-icons/fi";
 import DataGrid from "../../components/FormComponent/DataGrid";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   TextField,
   Button,
@@ -44,6 +45,7 @@ import {
   deleteWarehouse,
   getProducts,
   getSuppliers,
+  updateBatch,
 } from "../../network/api";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import InventoryTable from "./InventoryTable";
@@ -57,7 +59,9 @@ import {
 import MouseHoverPopover from "../../components/core/Explain";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import { AddCircleRounded } from '@mui/icons-material';
+import { AddCircleRounded } from "@mui/icons-material";
+import DetailsModal from "../../components/core/DetailsModal";
+import QuickEditModal from "../../components/core/QuickEditModal";
 
 const ViewInventory = () => {
   const navigate = useNavigate();
@@ -104,6 +108,12 @@ const ViewInventory = () => {
   const [invoiceNumberSearch, setInvoiceNumberSearch] = useState("");
   const [activeTab, setActiveTab] = useState(0); // 0: Batches, 1: Warehouses
 
+  // Batch edit and details states
+  const [selectedBatchRows, setSelectedBatchRows] = useState([]);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [selectedBatchData, setSelectedBatchData] = useState(null);
+  const [quickEditOpen, setQuickEditOpen] = useState(false);
+
   const handleOpenModal = (subBatches) => {
     setSelectedSubBatches(subBatches);
     setIsModalOpen(true);
@@ -112,6 +122,29 @@ const ViewInventory = () => {
   const handleCloseModal = () => {
     setSelectedSubBatches(null);
     setIsModalOpen(false);
+  };
+
+  const handleBatchRowClicked = (rowData) => {
+    setSelectedBatchData(rowData);
+    setDetailsOpen(true);
+  };
+
+  const handleBatchSelectionChanged = (event) => {
+    const selected = event.api.getSelectedRows();
+    console.log("Batch selection changed:", selected);
+    setSelectedBatchRows(selected);
+  };
+
+  const handleBatchQuickEdit = () => {
+    if (selectedBatchRows.length === 0) {
+      alert("Please select a batch to edit");
+      return;
+    }
+    if (selectedBatchRows.length > 1) {
+      alert("Please select only one batch to edit");
+      return;
+    }
+    setQuickEditOpen(true);
   };
 
   const warehouseColDefs = [
@@ -195,11 +228,11 @@ const ViewInventory = () => {
         </p>
       ),
     },
-    { headerName: "Batch Number", field: "batchNumber", width: 150 },
-    { headerName: "Invoice Number", field: "invoiceNumber", width: 150 },
+    { headerName: "Batch Number", field: "batchNumber", width: 150, editable: true },
+    { headerName: "Invoice Number", field: "invoiceNumber", width: 150, editable: true },
     { headerName: "Product Name", field: "productName", width: 200 },
-    { headerName: "Quantity", field: "quantity", width: 100 },
-    { headerName: "Remaining", field: "remainingQuantity", width: 100 },
+    { headerName: "Quantity", field: "quantity", width: 100, editable: true },
+    { headerName: "Remaining", field: "remainingQuantity", width: 100, editable: true },
     {
       headerName: "Sub Batches",
       field: "subBatches",
@@ -232,6 +265,7 @@ const ViewInventory = () => {
       headerName: "Entry",
       field: "entryDate",
       width: 210,
+      editable: true,
       valueFormatter: ({ value }) => {
         if (!value) return "";
         const date = new Date(value);
@@ -247,6 +281,7 @@ const ViewInventory = () => {
       headerName: "Pass",
       field: "qualityPass",
       width: 80,
+      editable: true,
       cellRenderer: (params) => {
         switch (params.value) {
           case "ok":
@@ -264,13 +299,14 @@ const ViewInventory = () => {
       headerName: "Status",
       field: "status",
       width: 150,
+      editable: true,
       cellRenderer: (params) => (
         <span className="py-px px-5 bg-emerald-50 border border-emerald-300 rounded-xl capitalize text-sm text-emerald-800">
           {params.value}
         </span>
       ),
     },
-    { headerName: "Supplier Name", field: "supplierName" },
+    { headerName: "Supplier Name", field: "supplierName", editable: true },
   ];
 
   useEffect(() => {
@@ -344,15 +380,19 @@ const ViewInventory = () => {
 
   const proceed = !!(selectedWarehouse && pCount > 0 && sCount > 0);
 
-  const filteredEntries = entries.filter((entry) => {
-    const batchNumberMatch = entry.batchNumber
-      .toLowerCase()
-      .includes(batchNumberSearch.toLowerCase());
-    const invoiceNumberMatch = entry.invoiceNumber
-      .toLowerCase()
-      .includes(invoiceNumberSearch.toLowerCase());
-    return batchNumberMatch && invoiceNumberMatch;
-  });
+  const filteredEntries = useMemo(
+    () =>
+      entries.filter((entry) => {
+        const batchNumberMatch = entry.batchNumber
+          .toLowerCase()
+          .includes(batchNumberSearch.toLowerCase());
+        const invoiceNumberMatch = entry.invoiceNumber
+          .toLowerCase()
+          .includes(invoiceNumberSearch.toLowerCase());
+        return batchNumberMatch && invoiceNumberMatch;
+      }),
+    [entries, batchNumberSearch, invoiceNumberSearch]
+  );
 
   if (loading) {
     return (
@@ -509,6 +549,32 @@ const ViewInventory = () => {
                     <MouseHoverPopover
                       triggerElement={
                         <button
+                          onClick={handleBatchQuickEdit}
+                          className={`transition ease-in-out p-2 w-fit bg-primary rounded-full ${
+                            selectedBatchRows.length === 0
+                              ? "text-slate-200"
+                              : "text-amber-500 -translate-y-1 shadow-lg"
+                          }`}
+                          disabled={selectedBatchRows.length === 0}
+                        >
+                          <FiZap size={20} />
+                        </button>
+                      }
+                      popoverContent={
+                        <span className="text-xs">
+                          {" "}
+                          Quick Edit{" "}
+                          {selectedBatchRows.length > 0
+                            ? `(${selectedBatchRows.length} selected)`
+                            : ""}{" "}
+                        </span>
+                      }
+                    />
+                  </Grid>
+                  <Grid item>
+                    <MouseHoverPopover
+                      triggerElement={
+                        <button
                           onClick={() => transferBatch()}
                           className={`transition text-slate-300 ease-in-out p-2 w-fit bg-primary rounded-full`}
                         >
@@ -588,6 +654,8 @@ const ViewInventory = () => {
                           menuOptions={batchMenuOptions}
                           rowData={filteredEntries}
                           colDefs={colDefs}
+                          onRowClicked={handleBatchRowClicked}
+                          onSelectionChanged={handleBatchSelectionChanged}
                         />
                       ) : (
                         <div className="h-full grid place-items-center">
@@ -786,6 +854,74 @@ const ViewInventory = () => {
             </Button>
           </DialogActions>
         </Dialog>
+
+        <DetailsModal
+          open={detailsOpen}
+          onClose={() => {
+            setDetailsOpen(false);
+            setSelectedBatchData(null);
+          }}
+          data={selectedBatchData}
+          columns={colDefs}
+          title="Batch"
+        />
+
+        <QuickEditModal
+          open={quickEditOpen}
+          onClose={() => {
+            setQuickEditOpen(false);
+            setSelectedBatchRows([]);
+          }}
+          data={selectedBatchRows[0]}
+          columns={colDefs}
+          onSave={async (updatedData) => {
+            try {
+              // Map front-end field names to API field names
+              const apiPayload = {
+                batchCode: updatedData.batchNumber,
+                quantity: updatedData.quantity,
+                remainingQuantity: updatedData.remainingQuantity,
+              };
+              
+              // Call the edit batch API
+              const status = await updateBatch(updatedData.batchId, apiPayload);
+              
+              if (status === 200 || status === 204) {
+                successPopup("Batch updated successfully");
+                setSelectedBatchRows([]);
+                setQuickEditOpen(false);
+                // Refresh batch data after save
+                if (selectedWarehouse) {
+                  fetchProducts(selectedWarehouse.id);
+                }
+              } else {
+                errorPopup("Failed to update batch");
+              }
+            } catch (error) {
+              console.error("Update failed:", error);
+              errorPopup("Failed to update batch");
+            }
+          }}
+          onDelete={async (data) => {
+            try {
+              const response = await deleteBatch(data?.batchId);
+              if (response === 200) {
+                successPopup("Deleted successfully");
+                setSelectedBatchRows([]);
+                setQuickEditOpen(false);
+                if (selectedWarehouse) {
+                  fetchProducts(selectedWarehouse.id);
+                }
+              } else {
+                errorPopup("Failed to delete");
+              }
+            } catch (error) {
+              console.error("Delete failed:", error);
+              errorPopup("Failed to delete");
+            }
+          }}
+          title="Batch"
+        />
       </Container>
     </PageAnimate>
   );
