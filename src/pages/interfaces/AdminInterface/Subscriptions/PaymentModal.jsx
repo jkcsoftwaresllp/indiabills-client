@@ -60,8 +60,7 @@ const PaymentModal = ({ open, onClose, paymentData, onSuccess }) => {
                razorpay_payment_id: response.razorpay_payment_id,
                razorpay_order_id: response.razorpay_order_id,
                razorpay_signature: response.razorpay_signature,
-               cycle: paymentData.cycle,
-               amountPaid: paymentData.partialAmount
+               cycle: paymentData.cycle
              });
            } else {
              verifyResponse = await verifySubscriptionPayment({
@@ -148,7 +147,7 @@ const PaymentModal = ({ open, onClose, paymentData, onSuccess }) => {
                     Full Plan Amount:
                   </Typography>
                   <Typography variant="body2" sx={{ mb: 2, color: '#64748b' }}>
-                    ₹{((paymentData?.partialAmount + (paymentData?.remainingAmount || 0)) / 100).toLocaleString()}
+                    ₹{(paymentData?.partialAmount + (paymentData?.remainingAmount || 0)).toLocaleString()}
                   </Typography>
 
                   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 3 }}>
@@ -157,7 +156,7 @@ const PaymentModal = ({ open, onClose, paymentData, onSuccess }) => {
                         Being Paid
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: 700, mt: 0.5, color: '#1e40af' }}>
-                        ₹{(paymentData?.partialAmount / 100).toLocaleString()}
+                        ₹{paymentData?.partialAmount.toLocaleString()}
                       </Typography>
                     </Box>
                     <Box sx={{ p: 1.5, bgcolor: '#fff7ed', borderRadius: 1, border: '1px solid #fed7aa' }}>
@@ -165,7 +164,7 @@ const PaymentModal = ({ open, onClose, paymentData, onSuccess }) => {
                         Remaining
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: 700, mt: 0.5, color: '#92400e' }}>
-                        ₹{((paymentData?.remainingAmount || (paymentData?.plan?.price_yearly - paymentData?.partialAmount)) / 100).toLocaleString()}
+                        ₹{(paymentData?.remainingAmount || (paymentData?.plan?.price_yearly - paymentData?.partialAmount)).toLocaleString()}
                       </Typography>
                     </Box>
                   </Box>

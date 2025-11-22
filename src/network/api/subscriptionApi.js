@@ -96,10 +96,10 @@ export async function getSubscriptionHistory() {
   }
 }
 
-// Get current active subscription
+// Get current active subscription (returns active_subscription in data)
 export async function getCurrentSubscription() {
   try {
-    const response = await serverInstance.get('/internal/subscriptions/current');
+    const response = await serverInstance.get('/internal/subscriptions/');
     return {
       status: response.status,
       data: response.data
@@ -113,11 +113,11 @@ export async function getCurrentSubscription() {
   }
 }
 
-// Create partial payment order
+// Create partial payment order (uses same endpoint as full payment with amount parameter)
 export async function createPartialPaymentOrder(planId, amount, cycle) {
   try {
     const response = await serverInstance.post(
-      `/internal/subscriptions/plans/${planId}/create-partial-order`,
+      `/internal/subscriptions/plans/${planId}/create-order`,
       { amount, cycle }
     );
     return {
@@ -133,17 +133,16 @@ export async function createPartialPaymentOrder(planId, amount, cycle) {
   }
 }
 
-// Verify partial payment
+// Verify partial payment (uses same endpoint as full payment verification)
 export async function verifyPartialPayment(paymentData) {
   try {
     const response = await serverInstance.post(
-      `/internal/subscriptions/plans/${paymentData.planId}/verify-partial-payment`,
+      `/internal/subscriptions/plans/${paymentData.planId}/verify-payment`,
       {
         razorpay_payment_id: paymentData.razorpay_payment_id,
         razorpay_order_id: paymentData.razorpay_order_id,
         razorpay_signature: paymentData.razorpay_signature,
-        cycle: paymentData.cycle,
-        amountPaid: paymentData.amountPaid
+        cycle: paymentData.cycle
       }
     );
     return {

@@ -75,7 +75,8 @@ const SubscriptionPlans = () => {
     try {
       const response = await getCurrentSubscription();
       if (response.status === 200 && response.data.success) {
-        setCurrentSubscription(response.data.data || null);
+        // New API returns active_subscription in data
+        setCurrentSubscription(response.data.data?.active_subscription || null);
       }
     } catch (err) {
       console.error("Error fetching current subscription:", err);
@@ -132,10 +133,10 @@ const SubscriptionPlans = () => {
     setOrderError(null);
 
     try {
-      // Amount comes in paise from dialog (e.g., 500000 for ₹5000)
+      // Amount comes in rupees from dialog (e.g., 5000 for ₹5000)
       const response = await createPartialPaymentOrder(
         selectedPlan.id,
-        amount, // Already in paise
+        amount, // In rupees
         selectedCycle
       );
 
@@ -169,13 +170,12 @@ const SubscriptionPlans = () => {
     setOrderError(null);
 
     try {
-      // Get price based on cycle and convert to paise (rupees * 100)
+      // Get price based on cycle (in rupees)
       const priceInRupees = cycle === "yearly" 
         ? selectedPlan.price_yearly 
         : selectedPlan.price_monthly;
-      const priceInPaise = Math.round(priceInRupees * 100);
 
-      const response = await createSubscriptionOrder(selectedPlan.id, cycle, priceInPaise);
+      const response = await createSubscriptionOrder(selectedPlan.id, cycle, priceInRupees);
       
       if (response.status === 200 && response.data.success) {
         setPaymentData({
@@ -614,7 +614,7 @@ const SubscriptionPlans = () => {
         open={partialAmountDialog}
         onClose={() => setPartialAmountDialog(false)}
         onConfirm={handlePartialAmountConfirm}
-        fullAmount={(selectedPlan?.price_yearly || 0) * 100}
+        fullAmount={selectedPlan?.price_yearly || 0}
         isRemainingPayment={false}
       />
 

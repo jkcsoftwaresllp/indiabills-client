@@ -262,7 +262,7 @@ const SubscriptionHistory = () => {
                       fontSize: "1.1rem",
                     }}
                   >
-                    ₹{(subscription.amount_paid / 100).toLocaleString()}
+                    ₹{subscription.amount_paid.toLocaleString()}
                   </TableCell>
                   <TableCell align="center">
                     <Chip
@@ -533,7 +533,7 @@ const SubscriptionHistory = () => {
                     letterSpacing: "-0.02em",
                   }}
                 >
-                  ₹{(selectedSubscription.amount_paid / 100).toLocaleString()}
+                  ₹{selectedSubscription.amount_paid.toLocaleString()}
                 </Typography>
               </Box>
 
