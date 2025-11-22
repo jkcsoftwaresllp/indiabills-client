@@ -99,10 +99,10 @@ const SubscriptionPlans = () => {
   };
 
   const isSubscriptionActive = (planId) => {
+    // If currentSubscription exists, it's active by definition (from active_subscription in API)
     return (
       currentSubscription &&
-      currentSubscription.plan_id === planId &&
-      currentSubscription.subscription_status?.toLowerCase() === "active"
+      currentSubscription.plan_id === planId
     );
   };
 
@@ -282,19 +282,18 @@ const SubscriptionPlans = () => {
           }}
         >
           {plans.map((plan, idx) => {
-            const isFeatured =
-              idx === 1 || idx === Math.floor(plans.length / 2);
-            const isCurrentPlan = isSubscriptionActive(plan.id);
-            const isOtherPlanActive =
-              currentSubscription &&
-              currentSubscription.subscription_status?.toLowerCase() ===
-                "active" &&
-              !isCurrentPlan;
-            const shouldGreyOut = isOtherPlanActive && !canRenewSubscription();
-            const buttonDisabled =
-              (isOtherPlanActive && !canRenewSubscription()) || isCurrentPlan;
+             const isFeatured =
+               idx === 1 || idx === Math.floor(plans.length / 2);
+             const isCurrentPlan = isSubscriptionActive(plan.id);
+             // If currentSubscription exists, it's active by definition
+             const isOtherPlanActive =
+               currentSubscription &&
+               !isCurrentPlan;
+             const shouldGreyOut = isOtherPlanActive && !canRenewSubscription();
+             const buttonDisabled =
+               (isOtherPlanActive && !canRenewSubscription()) || isCurrentPlan;
 
-            return (
+             return (
               <Card
                 sx={{
                   height: "630px",
