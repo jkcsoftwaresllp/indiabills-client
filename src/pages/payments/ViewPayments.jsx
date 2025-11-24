@@ -81,6 +81,22 @@ const colDefs = (onViewPayment) => [
     valueFormatter: ({ value }) =>
       value ? new Date(value).toLocaleDateString() : "—",
   },
+  {
+    field: "confirmation_note",
+    headerName: "Note",
+    width: 200,
+    cellRenderer: (params) => {
+      const status = params.data?.payment_status;
+      if (status === "pending") {
+        return (
+          <span className="text-xs text-amber-700 font-semibold">
+            Awaiting Admin Confirmation
+          </span>
+        );
+      }
+      return "—";
+    },
+  },
 ];
 
 const ViewPayments = () => {
@@ -165,11 +181,17 @@ const ViewPayments = () => {
       const result = await updatePaymentStatus({
         payment_id: selectedPayment.id,
         payment_status: newStatus,
+        confirmation_status: newStatus === "paid" ? "confirmed" : "pending",
       });
       if (result.status === 200) {
+        const message =
+          newStatus === "paid"
+            ? "Payment confirmed! Invoice has been generated and customer notified."
+            : `Payment status updated to ${newStatus}`;
+
         setSnackbar({
           open: true,
-          message: "Payment status updated successfully",
+          message: message,
           severity: "success",
         });
         setOpenDialog(false);

@@ -220,12 +220,21 @@ const ProfessionalCheckout = () => {
         return;
       }
 
-      const orderId = result.data?.order_id || Date.now();
+      // Extract actual data from double-nested response
+      const actualData = result.data?.data || result.data || result;
+      const orderId = actualData.order_id;
+      const customerId = actualData.customer_id;
+
+      if (!orderId || !customerId) {
+        errorPopup("Error: Missing order information from checkout");
+        return;
+      }
 
       // Create payment record
       try {
         const paymentData = {
           order_id: orderId,
+          customer_id: customerId,
           payment_method: selectedPaymentMethod,
           payment_status: "pending",
           amount: total,

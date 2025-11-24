@@ -1,4 +1,4 @@
-import { FiCheck, FiClock, FiEdit } from 'react-icons/fi';
+import { FiCheck, FiClock, FiEdit, FiX } from "react-icons/fi";
 import { useEffect, useRef, useState } from "react";
 import { Avatar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -39,21 +39,58 @@ export const EachOrder = ({
       switch (currentStatus) {
         case "shipped":
           return [
-            { label: "Cancel", onClick: () => handleChangeOrderStatus(order.orderId, "cancelled") },
-            { label: "Fulfilled", onClick: () => handleChangeOrderStatus(order.orderId, "fulfilled") },
+            {
+              label: "Cancel",
+              onClick: () =>
+                handleChangeOrderStatus(order.orderId, "cancelled"),
+            },
+            {
+              label: "Fulfilled",
+              onClick: () =>
+                handleChangeOrderStatus(order.orderId, "fulfilled"),
+            },
           ];
         case "returned":
-          return [{ label: "Shipped", onClick: () => handleChangeOrderStatus(order.orderId, "shipped") }];
+          return [
+            {
+              label: "Shipped",
+              onClick: () => handleChangeOrderStatus(order.orderId, "shipped"),
+            },
+          ];
         case "fulfilled":
-          return [{ label: "Returned", onClick: () => handleChangeOrderStatus(order.orderId, "returned") }];
+          return [
+            {
+              label: "Returned",
+              onClick: () => handleChangeOrderStatus(order.orderId, "returned"),
+            },
+          ];
         case "cancelled":
-          return [{ label: "Shipped", onClick: () => handleChangeOrderStatus(order.orderId, "shipped") }];
+          return [
+            {
+              label: "Shipped",
+              onClick: () => handleChangeOrderStatus(order.orderId, "shipped"),
+            },
+          ];
         case "pending":
           return [
-            { label: "Ship", onClick: () => handleChangeOrderStatus(order.orderId, "shipped") },
-            { label: "Cancel", onClick: () => handleChangeOrderStatus(order.orderId, "cancelled") },
-            { label: "Fulfill", onClick: () => handleChangeOrderStatus(order.orderId, "fulfilled") },
-            { label: "Return", onClick: () => handleChangeOrderStatus(order.orderId, "returned") },
+            {
+              label: "Ship",
+              onClick: () => handleChangeOrderStatus(order.orderId, "shipped"),
+            },
+            {
+              label: "Cancel",
+              onClick: () =>
+                handleChangeOrderStatus(order.orderId, "cancelled"),
+            },
+            {
+              label: "Fulfill",
+              onClick: () =>
+                handleChangeOrderStatus(order.orderId, "fulfilled"),
+            },
+            {
+              label: "Return",
+              onClick: () => handleChangeOrderStatus(order.orderId, "returned"),
+            },
           ];
         default:
           return [];
@@ -61,14 +98,25 @@ export const EachOrder = ({
     };
 
     const items = [
-      { label: "View Invoice", onClick: () => navigate(`/invoice/${order.orderId}`) },
+      {
+        label: "View Invoice",
+        onClick: () => navigate(`/invoice/${order.orderId}`),
+      },
       { label: "View Timeline", onClick: () => setIsTimelineModalOpen(true) },
       { label: "Edit", onClick: () => navigate(`/orders/${order.orderId}`) },
       {
-        label: order.paymentStatus === "pending" ? "Mark Payment" : "Unmark Payment",
-        onClick: () => handleMarkPayment(order.orderId, order.paymentStatus !== "paid" ? "paid" : "pending"),
+        label:
+          order.paymentStatus === "pending" ? "Mark Payment" : "Unmark Payment",
+        onClick: () =>
+          handleMarkPayment(
+            order.orderId,
+            order.paymentStatus !== "paid" ? "paid" : "pending"
+          ),
       },
-      { label: "Change Status", subItems: getAvailableStatusSubItems(order.orderStatus) },
+      {
+        label: "Change Status",
+        subItems: getAvailableStatusSubItems(order.orderStatus),
+      },
     ];
 
     setContextMenu({ x, y, items });
@@ -80,7 +128,7 @@ export const EachOrder = ({
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!(event.target).closest(".context-menu")) {
+      if (!event.target.closest(".context-menu")) {
         handleCloseContextMenu();
       }
     };
@@ -162,7 +210,9 @@ export const EachOrder = ({
               </span>
             </div>
             <div className="flex items-center justify-between mb-1">
-              <h1 className="text-black text-xl font-bold">Order #{order.orderId}</h1>
+              <h1 className="text-black text-xl font-bold">
+                Order #{order.orderId}
+              </h1>
             </div>
             <div className="flex items-center justify-between mb-1">
               <h1 className="text-black text-md font-light">{`${initials}-${order.invoiceNumber}`}</h1>
@@ -171,7 +221,9 @@ export const EachOrder = ({
               <p className="text-lg text-green-700 mb-2 font-medium">
                 ₹ {parseFloat(order.totalAmount).toFixed(2)}
               </p>
-              <p className="text-gray-600 mt-1">{formatDate(order.invoiceDate)}</p>
+              <p className="text-gray-600 mt-1">
+                {formatDate(order.invoiceDate)}
+              </p>
             </div>
             <div className="flex items-center gap-2 text-gray-700 m-2">
               <div className="flex items-center">
@@ -194,22 +246,42 @@ export const EachOrder = ({
           <section
             id="Payment"
             className={`flex mt-2 w-full justify-center items-center ${
-              order.paymentStatus === "paid" ? "text-emerald-500" : "text-amber-700"
+              order.paymentStatus === "paid"
+                ? "text-emerald-500"
+                : order.paymentStatus === "pending"
+                ? "text-amber-700"
+                : "text-red-500"
             }`}
           >
             {order.paymentStatus === "paid" ? (
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center w-full px-4">
                 <p className="flex flex-col rotate-90">|||</p>
                 <span className="mx-2">
                   <FiCheck />
                 </span>
+                <span className="text-xs font-semibold">Confirmed</span>
                 <p className="flex flex-col rotate-90">|||</p>
               </div>
-            ) : (
-              <div className="flex justify-between">
+            ) : order.paymentStatus === "pending" ? (
+              <div className="flex justify-between items-center w-full px-4">
                 <p className="flex flex-col rotate-90">|||</p>
                 <span className="mx-2">
                   <FiClock />
+                </span>
+                <span className="text-xs font-semibold">
+                  Awaiting Confirmation
+                </span>
+                <p className="flex flex-col rotate-90">|||</p>
+              </div>
+            ) : (
+              <div className="flex justify-between items-center w-full px-4">
+                <p className="flex flex-col rotate-90">|||</p>
+                <span className="mx-2">
+                  <FiX />
+                </span>
+                <span className="text-xs font-semibold">
+                  {order.paymentStatus?.charAt(0).toUpperCase() +
+                    order.paymentStatus?.slice(1)}
                 </span>
                 <p className="flex flex-col rotate-90">|||</p>
               </div>

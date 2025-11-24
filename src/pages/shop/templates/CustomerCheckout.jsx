@@ -1,4 +1,4 @@
-import { FiArrowLeft, FiCreditCard, FiFileText, FiPlus } from 'react-icons/fi';
+import { FiArrowLeft, FiCreditCard, FiFileText, FiPlus } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import PageAnimate from "../../../components/Animate/PageAnimate";
 import { useStore } from "../../../store/store";
@@ -76,7 +76,7 @@ const CustomerCheckout = () => {
     cvv: "",
     cardType: "",
     bankName: "",
-    paymentStatus: "done",
+    paymentStatus: "pending",
   });
 
   const [orderData, setOrderData] = useState({
@@ -304,59 +304,87 @@ const CustomerCheckout = () => {
 
     const orderId = result.data?.order_id || Date.now();
 
-    // Create payment record with status pending
+    // Create payment record with full details and status pending
     try {
+      // Build payment data with all details
       const paymentData = {
         order_id: orderId,
-        customer_id: isNewCustomer ? null : selectedCustomer?.id, // Assuming selectedCustomer has id
-        payment_method: paymentMethod || "cash",
-        payment_status: "pending",
+        customer_id: isNewCustomer ? null : selectedCustomer?.id,
+        payment_method: selectedPaymentMethod || "cash",
+        payment_status: "pending", // Always pending - awaiting confirmation
         amount: totalCost,
-        payment_date: new Date().toISOString().split('T')[0],
-        // Add other payment details if available
+        payment_date: new Date().toISOString().split("T")[0],
       };
 
-      const result = await createPayment(paymentData);
-
-      if (result.status !== 201) {
-        console.error('Failed to create payment record:', result.error);
+      // Add payment method-specific details
+      if (selectedPaymentMethod === "upi") {
+        paymentData.upi = payment.upi;
+      } else if (selectedPaymentMethod === "card") {
+        paymentData.card_number = payment.cardNumber;
+        paymentData.card_holder_name = payment.cardHolderName;
+        paymentData.expiry_date = payment.expiryDate;
+        paymentData.cvv = payment.cvv;
+        paymentData.card_type = payment.cardType;
+        paymentData.bank_name = payment.bankName;
       }
+
+      const paymentResponse = await createPayment(paymentData);
+
+      if (paymentResponse.status !== 201) {
+        console.error(
+          "Failed to create payment record:",
+          paymentResponse.error
+        );
+        // Don't fail the order placement if payment record fails
+        errorPopup(
+          "Order placed but payment recording failed. Please contact support."
+        );
+      }
+
+      // Extract invoice info from response
+      const invoiceNumber = paymentResponse.data?.data?.invoice?.invoice_number;
+      const invoiceId = paymentResponse.data?.data?.invoice?.id;
+      const paymentId = paymentResponse.data?.data?.payment_id;
+
+      successPopup("Order placed! Payment awaiting confirmation.");
+
+      // Store order in localStorage for customer portal with complete info
+      const newOrder = {
+        orderId: orderId,
+        paymentId: paymentId,
+        invoiceNumber: invoiceNumber || invoiceData.invoiceNumber,
+        invoiceId: invoiceId,
+        customerName: isNewCustomer
+          ? newCustomer.customerName
+          : selectedCustomer?.name,
+        orderDate: new Date().toISOString(),
+        totalAmount: totalCost.toString(),
+        orderStatus: ship ? "shipped" : "pending",
+        paymentStatus: "pending", // Pending confirmation
+        paymentMethod: selectedPaymentMethod || "cash",
+        items: products.map((product) => ({
+          orderItemId: Date.now() + Math.random(),
+          itemId: product.itemId,
+          itemName: product.itemName,
+          quantity: product.quantity,
+          salePrice: product.salePrice,
+          variants: JSON.stringify({}),
+        })),
+      };
+
+      const existingOrders = JSON.parse(
+        localStorage.getItem("customerOrders") || "[]"
+      );
+      localStorage.setItem(
+        "customerOrders",
+        JSON.stringify([newOrder, ...existingOrders])
+      );
+
+      navigate(getRoute("/orders"));
     } catch (error) {
-      console.error('Error creating payment:', error);
+      console.error("Error creating payment:", error);
+      errorPopup("Payment submission failed. Please try again.");
     }
-
-    successPopup("Order placed successfully! Payment is pending confirmation.");
-
-    // Store order in localStorage for customer portal
-    const newOrder = {
-      orderId: orderId,
-      invoiceNumber: invoiceData.invoiceNumber,
-      customerName: isNewCustomer
-        ? newCustomer.customerName
-        : selectedCustomer?.name,
-      orderDate: new Date().toISOString(),
-      totalAmount: totalCost.toString(),
-      orderStatus: ship ? "shipped" : "pending",
-      paymentStatus: "pending", // Changed to pending
-      items: products.map((product) => ({
-        orderItemId: Date.now() + Math.random(),
-        itemId: product.itemId,
-        itemName: product.itemName,
-        quantity: product.quantity,
-        salePrice: product.salePrice,
-        variants: JSON.stringify({}),
-      })),
-    };
-
-    const existingOrders = JSON.parse(
-      localStorage.getItem("customerOrders") || "[]"
-    );
-    localStorage.setItem(
-      "customerOrders",
-      JSON.stringify([newOrder, ...existingOrders])
-    );
-
-    navigate(getRoute("/orders"));
   };
 
   const [open, setOpen] = useState(false);
