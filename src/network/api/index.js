@@ -4,7 +4,7 @@ import { getTransportPartners, createTransportPartner, updateTransportPartner, d
 import { getInventoryMovements, getInventoryMovementById, createInventoryMovement } from './inventoryMovementsApi';
 import { getInventoryStock, getInventoryStockById, createInventoryStock } from './inventoryStockApi';
 import { getReconciliations, getReconciliationById, createReconciliation, getReconciliationDetails, addReconciliationDetails, updateReconciliationStatus } from './reconciliationsApi';
-import { getBatches, getBatchById, createBatch, updateBatch, deleteBatch, getBatchesByWarehouse } from './batchesApi';
+import { getBatches, getBatchById, createBatch, updateBatch, deleteBatch, getBatchesByWarehouse, transferBatch } from './batchesApi';
 import { getCustomers, getCustomerById, createCustomer, updateCustomer, deleteCustomer, getCustomerProfile, getCustomerProfileById } from './customersApi';
 import { ownerSignup, createOrganization, getOrganization, updateOrganization, getOrganizationById } from './organizationApi';
 import { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier } from './suppliersApi';
@@ -327,6 +327,7 @@ export {
   updateBatch,
   deleteBatch,
   getBatchesByWarehouse,
+  transferBatch,
   // Customer APIs
   getCustomers,
   getCustomerById,

@@ -150,3 +150,14 @@ export async function getBatchesByWarehouse(warehouseId) {
     return [];
   }
 }
+
+// Transfer batch
+export async function transferBatch(transferData) {
+  try {
+    const response = await serverInstance.post('/internal/batches/transfer', transferData);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to transfer batch:', error.response || error);
+    throw error;
+  }
+}

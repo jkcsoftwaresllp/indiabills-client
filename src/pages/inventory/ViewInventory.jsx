@@ -62,6 +62,7 @@ import { useNavigate } from "react-router-dom";
 import { AddCircleRounded } from "@mui/icons-material";
 import DetailsModal from "../../components/core/DetailsModal";
 import QuickEditModal from "../../components/core/QuickEditModal";
+import TransferBatchModal from "./TransferBatchModal";
 
 const ViewInventory = () => {
   const navigate = useNavigate();
@@ -90,8 +91,17 @@ const ViewInventory = () => {
     setActiveTab(1); // Switch to Warehouses tab
   };
 
-  const transferBatch = () => {
-    alert("Transfer batch feature (work in progress)");
+  const [transferModalOpen, setTransferModalOpen] = useState(false);
+
+  const handleTransferBatch = () => {
+    setTransferModalOpen(true);
+  };
+
+  const handleTransferSuccess = () => {
+    // Refresh the batches data
+    if (selectedWarehouse) {
+      fetchProducts(selectedWarehouse.id);
+    }
   };
 
   const [warehouses, setWarehouses] = useState([]);
@@ -575,7 +585,7 @@ const ViewInventory = () => {
                     <MouseHoverPopover
                       triggerElement={
                         <button
-                          onClick={() => transferBatch()}
+                          onClick={handleTransferBatch}
                           className={`transition text-slate-300 ease-in-out p-2 w-fit bg-primary rounded-full`}
                         >
                           <FiRefreshCw size={20} />
@@ -867,64 +877,74 @@ const ViewInventory = () => {
         />
 
         <QuickEditModal
-          open={quickEditOpen}
-          onClose={() => {
-            setQuickEditOpen(false);
-            setSelectedBatchRows([]);
-          }}
-          data={selectedBatchRows[0]}
-          columns={colDefs}
-          onSave={async (updatedData) => {
-            try {
-              // Map front-end field names to API field names
-              const apiPayload = {
-                batchCode: updatedData.batchNumber,
-                quantity: updatedData.quantity,
-                remainingQuantity: updatedData.remainingQuantity,
-              };
-              
-              // Call the edit batch API
-              const status = await updateBatch(updatedData.batchId, apiPayload);
-              
-              if (status === 200 || status === 204) {
-                successPopup("Batch updated successfully");
-                setSelectedBatchRows([]);
-                setQuickEditOpen(false);
-                // Refresh batch data after save
-                if (selectedWarehouse) {
-                  fetchProducts(selectedWarehouse.id);
-                }
-              } else {
-                errorPopup("Failed to update batch");
-              }
-            } catch (error) {
-              console.error("Update failed:", error);
-              errorPopup("Failed to update batch");
-            }
-          }}
-          onDelete={async (data) => {
-            try {
-              const response = await deleteBatch(data?.batchId);
-              if (response === 200) {
-                successPopup("Deleted successfully");
-                setSelectedBatchRows([]);
-                setQuickEditOpen(false);
-                if (selectedWarehouse) {
-                  fetchProducts(selectedWarehouse.id);
-                }
-              } else {
-                errorPopup("Failed to delete");
-              }
-            } catch (error) {
-              console.error("Delete failed:", error);
-              errorPopup("Failed to delete");
-            }
-          }}
-          title="Batch"
-        />
-      </Container>
-    </PageAnimate>
-  );
-};
+           open={quickEditOpen}
+           onClose={() => {
+             setQuickEditOpen(false);
+             setSelectedBatchRows([]);
+           }}
+           data={selectedBatchRows[0]}
+           columns={colDefs}
+           onSave={async (updatedData) => {
+             try {
+               // Map front-end field names to API field names
+               const apiPayload = {
+                 batchCode: updatedData.batchNumber,
+                 quantity: updatedData.quantity,
+                 remainingQuantity: updatedData.remainingQuantity,
+               };
+               
+               // Call the edit batch API
+               const status = await updateBatch(updatedData.batchId, apiPayload);
+               
+               if (status === 200 || status === 204) {
+                 successPopup("Batch updated successfully");
+                 setSelectedBatchRows([]);
+                 setQuickEditOpen(false);
+                 // Refresh batch data after save
+                 if (selectedWarehouse) {
+                   fetchProducts(selectedWarehouse.id);
+                 }
+               } else {
+                 errorPopup("Failed to update batch");
+               }
+             } catch (error) {
+               console.error("Update failed:", error);
+               errorPopup("Failed to update batch");
+             }
+           }}
+           onDelete={async (data) => {
+             try {
+               const response = await deleteBatch(data?.batchId);
+               if (response === 200) {
+                 successPopup("Deleted successfully");
+                 setSelectedBatchRows([]);
+                 setQuickEditOpen(false);
+                 if (selectedWarehouse) {
+                   fetchProducts(selectedWarehouse.id);
+                 }
+               } else {
+                 errorPopup("Failed to delete");
+               }
+             } catch (error) {
+               console.error("Delete failed:", error);
+               errorPopup("Failed to delete");
+             }
+           }}
+           title="Batch"
+         />
 
-export default ViewInventory;
+        <TransferBatchModal
+          open={transferModalOpen}
+          onClose={() => setTransferModalOpen(false)}
+          warehouses={warehouses}
+          selectedWarehouse={selectedWarehouse}
+          onSuccess={handleTransferSuccess}
+          errorPopup={errorPopup}
+          successPopup={successPopup}
+        />
+        </Container>
+        </PageAnimate>
+        );
+        };
+        
+        export default ViewInventory;
