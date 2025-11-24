@@ -117,6 +117,21 @@
   height: 32px;
   border-radius: 50%;
   margin-right: 8px;
+  object-fit: cover;
+}
+
+.avatarFallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.75rem;
+  color: white;
 }
 
 .userDetails {
@@ -156,9 +171,19 @@
   cursor: pointer;
   font-size: 0.875rem;
   transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .menuItem:hover {
   background-color: #334155;
   color: #ffffff;
+}
+
+.menuIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }

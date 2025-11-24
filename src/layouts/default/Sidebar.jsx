@@ -1,4 +1,4 @@
-import { FiBarChart2, FiBriefcase, FiLogOut, FiSettings, FiShoppingCart, FiTool } from 'react-icons/fi';
+import { FiBarChart2, FiBriefcase, FiLogOut, FiSettings, FiShoppingCart, FiTool, FiRefreshCw, FiHelpCircle, FiArrowRightCircle } from 'react-icons/fi';
 import { useState } from "react";
 import { getSession } from "../../utils/cacheHelper";
 import { useStore } from "../../store/store";
@@ -251,11 +251,28 @@ const Sidebar = () => {
       {/* User Section */}
       <div className={styles.userSection}>
         <div className={styles.userInfo} onClick={toggleUserMenu}>
-          <img
-            src={`${getBaseURL()}/${session.avatar}`}
-            alt="User Avatar"
-            className={styles.avatar}
-          />
+          {session.avatar ? (
+            <img
+              src={`${getBaseURL()}/${session.avatar}`}
+              alt="User Avatar"
+              className={styles.avatar}
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextElementSibling.style.display = 'flex';
+              }}
+            />
+          ) : null}
+          <div
+            className={styles.avatarFallback}
+            style={session.avatar ? { display: 'none' } : {}}
+          >
+            {session.name
+              .split(' ')
+              .slice(0, 2)
+              .map((n) => n[0])
+              .join('')
+              .toUpperCase()}
+          </div>
           <div className={styles.userDetails}>
             <p className={styles.userName}>{session.name}</p>
             <p className={styles.userRole}>{session.role}</p>
@@ -264,24 +281,22 @@ const Sidebar = () => {
 
         {showUserMenu && (
           <div className={styles.userMenu}>
-            {session.role === "admin" && (
-              <button className={styles.menuItem} onClick={openAudit}>
-                Audit
+            {session.orgs && session.orgs.length > 1 && (
+              <button className={styles.menuItem} onClick={handleSwitchOrganization}>
+                <FiArrowRightCircle className={styles.menuIcon} />
+                Switch Organization
               </button>
             )}
-            {session.orgs && session.orgs.length > 1 && (
-            <button className={styles.menuItem} onClick={handleSwitchOrganization}>
-            <FiSettings style={{ marginRight: '8px' }} />
-            Switch Organization
-            </button>
-            )}
             <button className={styles.menuItem} onClick={() => window.location.reload()}>
+              <FiRefreshCw className={styles.menuIcon} />
               Refresh
             </button>
             <button className={styles.menuItem} onClick={() => navigate("/help")}>
+              <FiHelpCircle className={styles.menuIcon} />
               Get Help
             </button>
             <button className={styles.menuItem} onClick={() => navigate("/settings")}>
+              <FiSettings className={styles.menuIcon} />
               Settings
             </button>
             {/* Logout - shows dialog for admin, direct logout for others */}
@@ -289,6 +304,7 @@ const Sidebar = () => {
               className={styles.menuItem}
               onClick={handleLogoutClick}
             >
+              <FiLogOut className={styles.menuIcon} />
               Logout
             </button>
           </div>
