@@ -133,6 +133,12 @@ const ViewPayments = () => {
     setSearchTerm(event.target.value);
   };
 
+  const handleStatusFilterChange = (e) => {
+    setStatusFilter(e.target.value);
+    setSearchTerm(""); // Reset search when changing status filter
+    setPagination({ ...pagination, page: 1 }); // Reset to page 1
+  };
+
   const fetchPayments = async () => {
     setLoading(true);
     try {
@@ -288,7 +294,7 @@ const ViewPayments = () => {
           />
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={handleStatusFilterChange}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary text-sm"
           >
             <option value="all">All</option>

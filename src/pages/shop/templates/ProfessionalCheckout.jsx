@@ -239,6 +239,11 @@ const ProfessionalCheckout = () => {
           payment_status: "pending",
           amount: total,
           payment_date: new Date().toISOString().split("T")[0],
+          upi: selectedPaymentMethod === "upi" ? payment.upi : undefined,
+          card_number: selectedPaymentMethod === "card" ? payment.cardNumber : undefined,
+          card_holder_name: selectedPaymentMethod === "card" ? payment.cardHolderName : undefined,
+          expiry_date: selectedPaymentMethod === "card" ? payment.expiryDate : undefined,
+          cvv: selectedPaymentMethod === "card" ? payment.cvv : undefined,
         };
 
         await createPayment(paymentData);

@@ -19,7 +19,10 @@ export async function getPayments(options = {}) {
       params.append('offset', options.offset);
     }
 
-    const response = await serverInstance.get(`/internal/payments?${params}`);
+    const url = `/internal/payments?${params}`;
+    console.log('Fetching payments with URL:', url, 'Options:', options);
+    const response = await serverInstance.get(url);
+    console.log('Payments response:', response.data);
     return {
       status: response.status,
       data: response.data,
@@ -55,13 +58,17 @@ export async function getPaymentById(paymentId) {
 // Update payment status
 export async function updatePaymentStatus(paymentData) {
   try {
+    console.log('Sending payment status update:', paymentData);
     const response = await serverInstance.patch('/internal/payments/status', paymentData);
+    console.log('Payment status update response:', response);
     return {
       status: response.status,
       data: response.data,
     };
   } catch (error) {
-    console.error('Failed to update payment status:', error.response);
+    console.error('Failed to update payment status. Status:', error.response?.status);
+    console.error('Error response data:', error.response?.data);
+    console.error('Full error:', error);
     return {
       status: error.response?.status || 500,
       data: null,
