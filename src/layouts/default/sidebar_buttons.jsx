@@ -21,21 +21,16 @@ import {
 
 export default [
   {
-    group: "Dashboard",
-    items: [
-      {
-        to: "/",
-        icon: <FiGrid />,
-        label: "Dashboard",
-        roles: ["admin", "operator"],
-      },
-      {
-        to: "/reports",
-        icon: <FiBarChart2 />,
-        label: "Reports",
-        roles: ["admin"],
-      },
-    ],
+    to: "/",
+    icon: <FiGrid />,
+    label: "Dashboard",
+    roles: ["admin", "operator"],
+  },
+  {
+    to: "/reports",
+    icon: <FiBarChart2 />,
+    label: "Reports",
+    roles: ["admin"],
   },
   {
     group: "Management",
@@ -137,9 +132,6 @@ export default [
     ],
   },
   {
-    group: "Setup Dashboard",
-    items: [
-      {
         to: "/setup-page",
         icon: <FiSettings />,
         label: "Setup",
@@ -150,7 +142,5 @@ export default [
         icon: <FiTrendingUp />,
         label: "Subscription",
         roles: ["admin"],
-      },
-    ],
   },
 ];

@@ -46,11 +46,24 @@ const Sidebar = () => {
   const userRole = session.role;
 
   const filteredGroups = buttons
-    .map((group) => ({
-      ...group,
-      items: group.items.filter((button) => button.roles.includes(userRole)),
-    }))
-    .filter((group) => group.items.length > 0);
+    .map((item) => {
+      // Handle independent items
+      if (!item.group) {
+        return item.roles.includes(userRole) ? item : null;
+      }
+      // Handle grouped items
+      return {
+        ...item,
+        items: item.items.filter((button) => button.roles.includes(userRole)),
+      };
+    })
+    .filter((item) => {
+      if (!item) return false;
+      // For independent items, just check if they exist
+      if (item.to) return true;
+      // For groups, check if they have items
+      return item.items.length > 0;
+    });
 
   const handleItemClick = (path) => {
     navigate(path);
@@ -182,36 +195,57 @@ const Sidebar = () => {
 
       {/* Navigation */}
       <nav className={styles.nav}>
-        {filteredGroups.map((group) => (
-          <div key={group.group} className={styles.group}>
-            <button
-              className={styles.groupTitle}
-              onClick={() => toggleGroup(group.group)}
-            >
-              <span className={styles.groupIcon}>
-                {groupIcons[group.group] || <FiSettings />}
-              </span>
-              {group.group}
-            </button>
-            {expandedGroup === group.group && (
-              <ul>
-                {group.items.map((button) => (
-                  <li key={button.label}>
-                    <button
-                      className={`${styles.navItem} ${
-                        selectedPath === button.to ? styles.active : ""
-                      }`}
-                      onClick={() => handleItemClick(button.to)}
-                    >
-                      <span className={styles.icon}>{button.icon}</span>
-                      {button.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
+        {filteredGroups.map((item) => {
+          // Render independent item (no group) - styled as a group with single item
+          if (item.to && !item.group) {
+            return (
+              <div key={item.label} className={styles.group}>
+                <button
+                  className={`${styles.groupTitle} ${
+                    selectedPath === item.to ? styles.active : ""
+                  }`}
+                  onClick={() => handleItemClick(item.to)}
+                >
+                  <span className={styles.groupIcon}>
+                    {item.icon}
+                  </span>
+                  {item.label}
+                </button>
+              </div>
+            );
+          }
+          // Render grouped items
+          return (
+            <div key={item.group} className={styles.group}>
+              <button
+                className={styles.groupTitle}
+                onClick={() => toggleGroup(item.group)}
+              >
+                <span className={styles.groupIcon}>
+                  {groupIcons[item.group] || <FiSettings />}
+                </span>
+                {item.group}
+              </button>
+              {expandedGroup === item.group && (
+                <ul>
+                  {item.items.map((button) => (
+                    <li key={button.label}>
+                      <button
+                        className={`${styles.navItem} ${
+                          selectedPath === button.to ? styles.active : ""
+                        }`}
+                        onClick={() => handleItemClick(button.to)}
+                      >
+                        <span className={styles.icon}>{button.icon}</span>
+                        {button.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          );
+        })}
       </nav>
 
       {/* User Section */}
