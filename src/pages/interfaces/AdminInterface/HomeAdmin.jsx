@@ -1,13 +1,114 @@
+import { FiUsers, FiSettings, FiBarChart2, FiLayers } from 'react-icons/fi';
+import { useAuth } from '../../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { getStuff } from "../../../network/api";
 
 const HomeAdmin = () => {
-  return <div>TODO : Dashboard need to implement</div>;
-};
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-const HomeAdmin1 = () => {
-  const [dashboardData, setDashboardData] = useState(null);
+  const adminRoutes = [
+    {
+      title: 'User Management',
+      description: 'Manage system users and roles',
+      icon: <FiUsers size={48} style={{ color: '#3b82f6' }} />,
+      path: '/users',
+      color: 'bg-blue-50 hover:bg-blue-100',
+    },
+    {
+      title: 'Organization Setup',
+      description: 'Configure organization settings and preferences',
+      icon: <FiSettings size={48} style={{ color: '#10b981' }} />,
+      path: '/setup-page',
+      color: 'bg-green-50 hover:bg-green-100',
+    },
+    {
+      title: 'Reports & Analytics',
+      description: 'View comprehensive business analytics and reports',
+      icon: <FiBarChart2 size={48} style={{ color: '#f59e0b' }} />,
+      path: '/reports',
+      color: 'bg-yellow-50 hover:bg-yellow-100',
+    },
+    {
+      title: 'Subscriptions',
+      description: 'Manage subscription plans and billing',
+      icon: <FiLayers size={48} style={{ color: '#ef4444' }} />,
+      path: '/subscriptions',
+      color: 'bg-red-50 hover:bg-red-100',
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Admin Dashboard
+          </h1>
+          <p className="text-gray-600">
+            Welcome back, {user?.name || 'Administrator'}! Here's an overview of your administrative tools.
+          </p>
+        </div>
+
+        {/* Dashboard Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {adminRoutes.map((route, index) => (
+            <div
+              key={index}
+              onClick={() => navigate(route.path)}
+              className={`cursor-pointer rounded-lg p-6 shadow-sm border border-gray-200 transition-all duration-200 ${route.color} transform hover:scale-105`}
+            >
+              <div className="flex items-center mb-4">
+                {route.icon}
+                <div className="ml-4">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {route.title}
+                  </h3>
+                </div>
+              </div>
+              <p className="text-gray-600 text-sm">
+                {route.description}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mt-12 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Quick Actions
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <button
+              onClick={() => navigate('/users/add')}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Add New User
+            </button>
+            <button
+              onClick={() => navigate('/reports')}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              View Reports
+            </button>
+            <button
+              onClick={() => navigate('/subscriptions')}
+              className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors"
+            >
+              Manage Subscriptions
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+  };
+  
+  const HomeAdmin1 = () => {
+   const [dashboardData, setDashboardData] = useState(null);
   const [fiscalData, setFiscalData] = useState(null);
   const [topProductSales, setTopProductSales] = useState([]);
   const [topCustomers, setTopCustomers] = useState([]);
