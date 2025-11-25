@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { FiGrid, FiBox, FiFileText, FiShoppingCart, FiHeart, FiUser, FiHelpCircle, FiLogOut, FiRefreshCw } from 'react-icons/fi';
 import { getSession } from '../../utils/cacheHelper';
 import { useStore } from '../../store/store';
 import logo from '../../assets/IndiaBills_logo.png';
@@ -10,50 +11,40 @@ import styles from '../default/Sidebar.module.css';
 
 const customerButtons = [
   {
-    group: 'Dashboard',
-    items: [
-      {
-        to: '/customer',
-        icon: '🏠',
-        label: 'Dashboard',
-      },
-      {
-        to: '/customer/orders',
-        icon: '📦',
-        label: 'My Orders',
-      },
-      {
-        to: '/customer/invoices',
-        icon: '🧾',
-        label: 'My Invoices',
-      },
-      {
-        to: '/customer/cart',
-        icon: '🛒',
-        label: 'Shopping Cart',
-      },
-      {
-        to: '/customer/wishlist',
-        icon: '💝',
-        label: 'Wishlist',
-      },
-    ],
+    to: '/customer',
+    icon: <FiGrid />,
+    label: 'Dashboard',
   },
   {
-    group: 'Account',
-    items: [
-      {
-        to: '/customer/profile',
-        icon: '👤',
-        label: 'Profile',
-      },
-      {
-        to: '/customer/support',
-        icon: '🎧',
-        label: 'Support',
-      },
-    ],
+    to: '/customer/orders',
+    icon: <FiBox />,
+    label: 'My Orders',
   },
+  {
+    to: '/customer/invoices',
+    icon: <FiFileText />,
+    label: 'My Invoices',
+  },
+  {
+    to: '/customer/cart',
+    icon: <FiShoppingCart />,
+    label: 'Shopping Cart',
+  },
+  {
+    to: '/customer/wishlist',
+    icon: <FiHeart />,
+    label: 'Wishlist',
+  },
+  {
+    to: '/customer/profile',
+    icon: <FiUser />,
+    label: 'Profile',
+  },
+  // {
+  //   to: '/customer/support',
+  //   icon: <FiHelpCircle />,
+  //   label: 'Support',
+  // },
 ];
 
 const CustomerSidebar = () => {
@@ -64,7 +55,6 @@ const CustomerSidebar = () => {
   const [selectedPath, setSelectedPath] = useState(null);
   const [logoFetched, setLogoFetched] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [expandedGroup, setExpandedGroup] = useState('Dashboard');
 
   useEffect(() => {
     if (
@@ -86,6 +76,7 @@ const CustomerSidebar = () => {
   const handleItemClick = (path) => {
     navigate(path);
     setSelectedPath(path);
+    setShowUserMenu(false); // Close user menu when clicking on any item
   };
 
   const handleLogout = () => {
@@ -99,14 +90,6 @@ const CustomerSidebar = () => {
 
   const toggleUserMenu = () => {
     setShowUserMenu(!showUserMenu);
-  };
-
-  const toggleGroup = (groupName) => {
-    if (expandedGroup === groupName) {
-      setExpandedGroup(null);
-    } else {
-      setExpandedGroup(groupName);
-    }
   };
 
   return (
@@ -131,45 +114,47 @@ const CustomerSidebar = () => {
       </div>
 
       <nav className={styles.nav}>
-        {customerButtons.map((group) => (
-          <div key={group.group} className={styles.group}>
+        {customerButtons.map((item) => (
+          <div key={item.label} className={styles.group}>
             <button
-              className={styles.groupTitle}
-              onClick={() => toggleGroup(group.group)}
+              className={`${styles.groupTitle} ${
+                selectedPath === item.to ? styles.active : ''
+              }`}
+              onClick={() => handleItemClick(item.to)}
             >
               <span className={styles.groupIcon}>
-                {group.group === 'Dashboard' ? '📊' : '⚙️'}
+                {item.icon}
               </span>
-              {group.group}
+              {item.label}
             </button>
-            {expandedGroup === group.group && (
-              <ul>
-                {group.items.map((button) => (
-                  <li key={button.label}>
-                    <button
-                      className={`${styles.navItem} ${
-                        selectedPath === button.to ? styles.active : ''
-                      }`}
-                      onClick={() => handleItemClick(button.to)}
-                    >
-                      <span className={styles.icon}>{button.icon}</span>
-                      {button.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
         ))}
       </nav>
 
       <div className={styles.userSection}>
         <div className={styles.userInfo} onClick={toggleUserMenu}>
-          <img
-            src={`${getBaseURL()}/${session.avatar}`}
-            alt="User Avatar"
-            className={styles.avatar}
-          />
+          {session.avatar ? (
+            <img
+              src={`${getBaseURL()}/${session.avatar}`}
+              alt="User Avatar"
+              className={styles.avatar}
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextElementSibling.style.display = 'flex';
+              }}
+            />
+          ) : null}
+          <div
+            className={styles.avatarFallback}
+            style={session.avatar ? { display: 'none' } : {}}
+          >
+            {session.name
+              .split(' ')
+              .slice(0, 2)
+              .map((n) => n[0])
+              .join('')
+              .toUpperCase()}
+          </div>
           <div className={styles.userDetails}>
             <p className={styles.userName}>{session.name}</p>
             <p className={styles.userRole}>{session.role}</p>
@@ -182,15 +167,18 @@ const CustomerSidebar = () => {
               className={styles.menuItem}
               onClick={() => window.location.reload()}
             >
+              <FiRefreshCw className={styles.menuIcon} />
               Refresh
             </button>
             <button
               className={styles.menuItem}
               onClick={() => navigate('/customer/support')}
             >
+              <FiHelpCircle className={styles.menuIcon} />
               Get Help
             </button>
             <button className={styles.menuItem} onClick={handleLogout}>
+              <FiLogOut className={styles.menuIcon} />
               Logout
             </button>
           </div>

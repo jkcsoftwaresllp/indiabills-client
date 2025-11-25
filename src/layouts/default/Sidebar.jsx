@@ -156,6 +156,9 @@ const Sidebar = () => {
 
   const toggleUserMenu = () => {
     setShowUserMenu(!showUserMenu);
+    if (!showUserMenu) {
+      setExpandedGroup(null); // Close any open group when opening user menu
+    }
   };
 
   const toggleGroup = (groupName) => {
@@ -317,34 +320,115 @@ const Sidebar = () => {
         onClose={() => setLogoutDialog(false)}
         maxWidth="xs"
         fullWidth
+        PaperProps={{
+          sx: {
+            backgroundColor: "#1e293b",
+            backgroundImage: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+            color: "#ffffff",
+            borderRadius: "12px",
+            border: "1px solid rgba(148, 163, 184, 0.2)",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+          }
+        }}
       >
-        <DialogTitle>Logout Options</DialogTitle>
-        <DialogContent>
-          <Typography variant="body1" gutterBottom>
+        <DialogTitle
+          sx={{
+            fontSize: "1.25rem",
+            fontWeight: "600",
+            borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+            color: "#f1f5f9"
+          }}
+        >
+          Logout Options
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            paddingTop: "1.5rem",
+            paddingBottom: "1.5rem"
+          }}
+        >
+          <Typography 
+            variant="body1" 
+            gutterBottom
+            sx={{
+              color: "#cbd5e1",
+              marginBottom: "1.5rem",
+              fontSize: "0.95rem"
+            }}
+          >
             How would you like to logout?
           </Typography>
-          <div style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             <Button
               variant="outlined"
               onClick={handleLogoutOrg}
               startIcon={<FiSettings />}
               fullWidth
+              sx={{
+                borderColor: "rgba(148, 163, 184, 0.5)",
+                color: "#94a3b8",
+                textTransform: "none",
+                fontSize: "0.95rem",
+                fontWeight: "500",
+                padding: "0.75rem 1rem",
+                borderRadius: "8px",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  borderColor: "#64748b",
+                  backgroundColor: "rgba(100, 116, 139, 0.1)",
+                  color: "#cbd5e1"
+                }
+              }}
             >
               Logout from Current Organization
             </Button>
             <Button
               variant="contained"
-              color="error"
               onClick={handleLogoutAll}
               startIcon={<FiLogOut />}
               fullWidth
+              sx={{
+                background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+                color: "#ffffff",
+                textTransform: "none",
+                fontSize: "0.95rem",
+                fontWeight: "600",
+                padding: "0.75rem 1rem",
+                borderRadius: "8px",
+                transition: "all 0.3s ease",
+                boxShadow: "0 4px 15px rgba(239, 68, 68, 0.3)",
+                "&:hover": {
+                  background: "linear-gradient(135deg, #dc2626 0%, #991b1b 100%)",
+                  boxShadow: "0 8px 25px rgba(239, 68, 68, 0.4)"
+                }
+              }}
             >
               Logout from All Organizations
             </Button>
           </div>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setLogoutDialog(false)}>Cancel</Button>
+        <DialogActions
+          sx={{
+            borderTop: "1px solid rgba(148, 163, 184, 0.2)",
+            padding: "1rem"
+          }}
+        >
+          <Button 
+            onClick={() => setLogoutDialog(false)}
+            sx={{
+              color: "#94a3b8",
+              textTransform: "none",
+              fontSize: "0.95rem",
+              fontWeight: "500",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                backgroundColor: "rgba(148, 163, 184, 0.1)",
+                color: "#cbd5e1"
+              }
+            }}
+          >
+            Cancel
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

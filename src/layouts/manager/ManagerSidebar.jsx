@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { FiGrid, FiUsers, FiCreditCard, FiBox, FiList, FiTool, FiTag, FiTruck, FiRefreshCw, FiBarChart2, FiSearch, FiHelpCircle, FiLogOut } from 'react-icons/fi';
 import { getSession } from '../../utils/cacheHelper';
 import { useStore } from '../../store/store';
 import logo from '../../assets/IndiaBills_logo.png';
@@ -11,69 +12,69 @@ import styles from '../default/Sidebar.module.css';
 const managerMenuItems = [
   {
     to: '/manager',
-    icon: '🏠',
+    icon: <FiGrid />,
     label: 'Dashboard',
   },
   {
     to: '/manager/customers',
-    icon: '👥',
+    icon: <FiUsers />,
     label: 'Customers',
   },
   {
     to: '/manager/payments',
-    icon: '💳',
+    icon: <FiCreditCard />,
     label: 'Payments',
   },
   {
     to: '/manager/inventory',
-    icon: '📦',
+    icon: <FiBox />,
     label: 'Inventory',
   },
   {
     to: '/manager/products',
-    icon: '🏷️',
+    icon: <FiList />,
     label: 'Products',
   },
   {
     to: '/manager/suppliers',
-    icon: '🏭',
+    icon: <FiTool />,
     label: 'Suppliers',
   },
   {
     to: '/manager/offers',
-    icon: '🎁',
+    icon: <FiTag />,
     label: 'Offers',
   },
   {
     to: '/manager/inventory/movements',
-    icon: '🔄',
+    icon: <FiRefreshCw />,
     label: 'Stock Movements',
   },
   {
     to: '/manager/inventory/stock',
-    icon: '📊',
+    icon: <FiBarChart2 />,
     label: 'Stock Levels',
   },
   {
     to: '/manager/inventory/reconciliations',
-    icon: '🔍',
+    icon: <FiSearch />,
     label: 'Reconciliations',
   },
   {
     to: '/manager/warehouses',
-    icon: '🏢',
+    icon: <FiBox />,
     label: 'Warehouses',
   },
   {
     to: '/manager/transport',
-    icon: '🚛',
+    icon: <FiTruck />,
     label: 'Transport',
   },
-  {
-    to: '/manager/help',
-    icon: '❓',
-    label: 'Help',
-  },
+  // {
+  //   to: '/manager/help',
+  //   icon: <FiHelpCircle />,
+  //   label: 'Help',
+  // },
 ];
 
 const ManagerSidebar = () => {
@@ -161,11 +162,28 @@ const ManagerSidebar = () => {
 
       <div className={styles.userSection}>
         <div className={styles.userInfo} onClick={toggleUserMenu}>
-          <img
-            src={`${getBaseURL()}/${session.avatar}`}
-            alt="User Avatar"
-            className={styles.avatar}
-          />
+          {session.avatar ? (
+            <img
+              src={`${getBaseURL()}/${session.avatar}`}
+              alt="User Avatar"
+              className={styles.avatar}
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextElementSibling.style.display = 'flex';
+              }}
+            />
+          ) : null}
+          <div
+            className={styles.avatarFallback}
+            style={session.avatar ? { display: 'none' } : {}}
+          >
+            {session.name
+              .split(' ')
+              .slice(0, 2)
+              .map((n) => n[0])
+              .join('')
+              .toUpperCase()}
+          </div>
           <div className={styles.userDetails}>
             <p className={styles.userName}>{session.name}</p>
             <p className={styles.userRole}>{session.role}</p>
@@ -178,15 +196,18 @@ const ManagerSidebar = () => {
               className={styles.menuItem}
               onClick={() => window.location.reload()}
             >
+              <FiRefreshCw className={styles.menuIcon} />
               Refresh
             </button>
             <button
               className={styles.menuItem}
               onClick={() => navigate('/manager/help')}
             >
+              <FiHelpCircle className={styles.menuIcon} />
               Get Help
             </button>
             <button className={styles.menuItem} onClick={handleLogout}>
+              <FiLogOut className={styles.menuIcon} />
               Logout
             </button>
           </div>
