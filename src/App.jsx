@@ -5,7 +5,8 @@ import AuditLogTable from "../src/pages/more/audit";
 import { Outlet } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import "./App.css";
-import Header from "./layouts/default/Header";
+import { IconButton, Box } from "@mui/material";
+import { FiMenu } from "react-icons/fi";
 import { checkSetup, getData } from "./network/api/index";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -22,15 +23,22 @@ import ReportsLayout from "./components/reports/ReportsLayout";
 import Setup from "../src/pages/setup/Setup";
 import Login from "../src/pages/user/Login";
 import CustomerLogin from "../src/pages/customer/CustomerLogin";
+import logo from "./assets/IndiaBills_logo.png";
+import { getBaseURL } from "./network/api/api-config";
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation(); // Get the current location
   const session = getSession();
 
-  const { collapse } = useStore();
+  const { collapse, Organization } = useStore();
 
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleMobileMenuToggle = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
 
   useHotkeys("ctrl+shift+p", (e) => {
     e.preventDefault();
@@ -114,6 +122,22 @@ function App() {
     <AuthProvider>
       <HotKeys keyMap={keyMap} handlers={handlers}>
         <div id="appbar" className={styles.appWrapper}>
+          {/* Mobile Header with Menu Button - only for default layout */}
+          {showDefaultLayout && (
+            <Box sx={{ display: { xs: 'flex', sm: 'none' }, alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '0.75rem 1rem', backgroundColor: '#1e293b', borderBottom: '1px solid #334155' }}>
+              <IconButton 
+                onClick={handleMobileMenuToggle}
+                sx={{ color: '#ffffff', position: 'absolute', left: '1rem' }}
+              >
+                <FiMenu size={24} />
+              </IconButton>
+              <img 
+                src={Organization.logo ? `${getBaseURL()}/${Organization.logo}` : logo}
+                alt="Logo"
+                style={{ height: '45px', objectFit: 'contain' }}
+              />
+            </Box>
+          )}
           {showDefaultLayout ? (
             // Default Layout (Sidebar + Content)
             <div className={styles.layoutWrapper}>
@@ -123,7 +147,7 @@ function App() {
                   collapse ? styles.collapsed : ""
                 }`}
               >
-                <Sidebar />
+                <Sidebar mobileOpen={mobileMenuOpen} setMobileOpen={setMobileMenuOpen} />
               </div>
 
               {/* Scrollable Main Content */}

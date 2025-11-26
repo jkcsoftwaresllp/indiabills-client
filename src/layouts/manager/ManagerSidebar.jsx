@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchLogo } from '../../network/api';
 import { getBaseURL } from '../../network/api/api-config';
 import { useAuth } from '../../hooks/useAuth';
+import { useMediaQuery, useTheme } from "@mui/material";
 import styles from '../default/Sidebar.module.css';
 
 const managerMenuItems = [
@@ -77,7 +78,7 @@ const managerMenuItems = [
   // },
 ];
 
-const ManagerSidebar = () => {
+const ManagerSidebar = ({ mobileOpen = false, setMobileOpen = () => {} }) => {
   const { collapse, setCollapse, Organization, setOrganization } = useStore();
   const session = getSession();
   const navigate = useNavigate();
@@ -85,6 +86,17 @@ const ManagerSidebar = () => {
   const [selectedPath, setSelectedPath] = useState(null);
   const [logoFetched, setLogoFetched] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  
+  // Mobile responsive
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));  // sm is 600px
+  
+  // Close mobile menu when navigation happens
+  useEffect(() => {
+    if (mobileOpen && isMobile) {
+      setMobileOpen(false);
+    }
+  }, [selectedPath, isMobile]);
 
   useEffect(() => {
     if (
@@ -122,7 +134,14 @@ const ManagerSidebar = () => {
   };
 
   return (
-    <div className={`${styles.sidebar} ${collapse ? styles.collapsed : ''}`}>
+    <>
+      {/* Mobile overlay backdrop */}
+      <div 
+        className={`${styles.mobileOverlay} ${mobileOpen ? styles.active : ""}`}
+        onClick={() => setMobileOpen(false)}
+      />
+      
+      <div className={`${styles.sidebar} ${collapse ? styles.collapsed : ''} ${isMobile && mobileOpen ? styles.mobileOpen : ""}`}>
       <div className={styles.logoContainer}>
         {Organization.logo ? (
           <img
@@ -213,7 +232,8 @@ const ManagerSidebar = () => {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

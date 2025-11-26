@@ -25,6 +25,16 @@
   width: 80px;
 }
 
+/* Mobile responsive styles - matches MUI breakpoint sm: 600px */
+@media (max-width: 600px) {
+  .sidebarWrapper {
+    width: auto;
+    height: auto;
+    overflow: visible;
+    pointer-events: auto;
+  }
+}
+
 .contentWrapper {
   flex-grow: 1;
   height: 100%;

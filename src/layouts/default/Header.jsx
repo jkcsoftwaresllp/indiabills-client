@@ -1,4 +1,4 @@
-import { FiBriefcase, FiChevronDown, FiHelpCircle, FiLogOut, FiRefreshCw, FiSettings, FiSliders, FiMonitor } from 'react-icons/fi';
+import { FiBriefcase, FiChevronDown, FiHelpCircle, FiLogOut, FiRefreshCw, FiSettings, FiSliders, FiMonitor, FiMenu } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import {
   AppBar,
@@ -33,7 +33,7 @@ import { useNavigate } from 'react-router-dom';
 import DivAnimate from '../../components/Animate/DivAnimate';
 import logo from '../../assets/IndiaBills_logo.png';
 
-const Header = () => {
+const Header = ({ onMobileMenuToggle }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [orgSwitchDialog, setOrgSwitchDialog] = useState(false);
   const [logoutDialog, setLogoutDialog] = useState(false);
@@ -50,6 +50,9 @@ const Header = () => {
   const { logout: authLogout } = useAuth();
   const session = getSession();
   const orgContext = getOrganizationContext();
+  
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));  // sm is 600px, xs is mobile
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -161,9 +164,6 @@ const Header = () => {
 
   const sidebarState = collapse ? 'Expand' : 'Collapse';
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
   if (session === null) {
     return null;
   }
@@ -187,6 +187,16 @@ const Header = () => {
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton 
+                onClick={onMobileMenuToggle}
+                sx={{ 
+                  mr: 1,
+                  display: { xs: 'flex', sm: 'none' },
+                  color: 'inherit'
+                }}
+              >
+                <FiMenu size={24} />
+              </IconButton>
               <img
                 src={orgContext?.logoUrl || Organization.logo || logo}
                 onClick={handleViewOrganization}

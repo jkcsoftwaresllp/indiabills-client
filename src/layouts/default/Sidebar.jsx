@@ -1,5 +1,5 @@
-import { FiBarChart2, FiBriefcase, FiLogOut, FiSettings, FiShoppingCart, FiTool, FiRefreshCw, FiHelpCircle, FiArrowRightCircle } from 'react-icons/fi';
-import { useState } from "react";
+import { FiBarChart2, FiBriefcase, FiLogOut, FiSettings, FiShoppingCart, FiTool, FiRefreshCw, FiHelpCircle, FiArrowRightCircle, FiX } from 'react-icons/fi';
+import { useState, useEffect } from "react";
 import { getSession } from "../../utils/cacheHelper";
 import { useStore } from "../../store/store";
 import logo from "../../assets/IndiaBills_logo.png";
@@ -9,6 +9,7 @@ import { fetchLogo, logout } from "../../network/api";
 import { getBaseURL } from "../../network/api/api-config";
 import { useAuth } from "../../hooks/useAuth";
 import { setTempSession } from "../../utils/authHelper";
+import { useMediaQuery, useTheme } from "@mui/material";
 import styles from "./Sidebar.module.css";
 
 // MUI
@@ -29,7 +30,7 @@ const groupIcons = {
   "Setup Dashboard": <FiSettings />,
 };
 
-const Sidebar = () => {
+const Sidebar = ({ mobileOpen = false, setMobileOpen = () => {} }) => {
   const { collapse, openAudit, Organization, setOrganization } = useStore();
   const session = getSession();
   const navigate = useNavigate();
@@ -37,9 +38,20 @@ const Sidebar = () => {
   const [selectedPath, setSelectedPath] = useState(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [expandedGroup, setExpandedGroup] = useState(null);
-
+  
   // NEW: State for Logout Dialog
   const [logoutDialog, setLogoutDialog] = useState(false);
+  
+  // Mobile responsive
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));  // sm is 600px
+  
+  // Close mobile menu when navigation happens
+  useEffect(() => {
+    if (mobileOpen && isMobile) {
+      setMobileOpen(false);
+    }
+  }, [selectedPath, isMobile]);
 
   if (session === null) return null;
 
@@ -175,7 +187,14 @@ const Sidebar = () => {
   };
 
   return (
-    <div className={`${styles.sidebar} ${collapse ? styles.collapsed : ""}`}>
+    <>
+      {/* Mobile overlay backdrop */}
+      <div 
+        className={`${styles.mobileOverlay} ${mobileOpen ? styles.active : ""}`}
+        onClick={() => setMobileOpen(false)}
+      />
+      
+      <div className={`${styles.sidebar} ${collapse ? styles.collapsed : ""} ${isMobile && mobileOpen ? styles.mobileOpen : ""}`}>
       {/* Logo Section */}
       <div className={styles.logoContainer}>
         {Organization.logo ? (
@@ -431,7 +450,8 @@ const Sidebar = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+      </div>
+    </>
   );
 };
 
