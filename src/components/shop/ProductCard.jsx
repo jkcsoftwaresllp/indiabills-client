@@ -17,6 +17,7 @@ import { motion } from 'framer-motion';
 import { useStore } from '../../store/store';
 import { useRoutes } from '../../hooks/useRoutes';
 import { addToCart, removeFromCart, toggleWishlist } from '../../network/api';
+import { getProductById } from '../../network/api/productsApi';
 
 // --- Component ---
 const ProductCard = ({ product, showCartControls = false }) => {
@@ -28,6 +29,8 @@ const ProductCard = ({ product, showCartControls = false }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedVariants, setSelectedVariants] = useState({});
   const [error, setError] = useState('');
+  const [purchasePrice, setPurchasePrice] = useState(null);
+  const [loadingPrice, setLoadingPrice] = useState(false);
 
   const productId = product.itemId || product.id;
   const cartItem = cartItems.find(item => item.product_id === productId);
@@ -45,6 +48,18 @@ const ProductCard = ({ product, showCartControls = false }) => {
       setSelectedVariants({});
     }
   }, [cartItem]);
+
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      setLoadingPrice(true);
+      const productDetails = await getProductById(productId);
+      if (productDetails?.purchase_price) {
+        setPurchasePrice(productDetails.purchase_price);
+      }
+      setLoadingPrice(false);
+    };
+    fetchProductDetails();
+  }, [productId]);
 
   const handleConfirm = async () => {
     if (quantity <= 0) return setError('Quantity must be greater than zero');
@@ -120,7 +135,7 @@ const ProductCard = ({ product, showCartControls = false }) => {
             </div>
             <div className="text-right">
               <Typography variant="h6" className="text-blue-600 font-bold">
-                ₹{formatNumber(product.salePrice)}
+                ₹{formatNumber(purchasePrice || 0)}
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 (Inc. GST)

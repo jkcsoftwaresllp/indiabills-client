@@ -9,6 +9,7 @@ import {
   createCustomerAddress,
 } from "../../../network/api/customersApi";
 import { createPayment } from "../../../network/api";
+import { getProductById } from "../../../network/api/productsApi";
 import {
   FiArrowLeft,
   FiCheck,
@@ -57,6 +58,7 @@ const ProfessionalCheckout = () => {
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [quantities, setQuantities] = useState({});
+  const [productDetails, setProductDetails] = useState({});
 
   // Initialize quantities from cart items
   useEffect(() => {
@@ -93,6 +95,29 @@ const ProfessionalCheckout = () => {
     initializeCheckout();
   }, []);
 
+  // Fetch product details for all cart items
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      const details = {};
+      for (const item of cartItems) {
+        const product = await getProductById(item.product_id);
+        if (product) {
+          const taxPercentage = (product.taxes?.cgst || 0) + (product.taxes?.sgst || 0) + (product.taxes?.cess || 0);
+          details[item.product_id] = {
+            purchase_price: product.purchase_price,
+            tax: taxPercentage,
+            taxes: product.taxes,
+          };
+        }
+      }
+      setProductDetails(details);
+    };
+
+    if (cartItems.length > 0) {
+      fetchProductDetails();
+    }
+  }, [cartItems]);
+
   // Calculate totals
   const calculateTotals = () => {
     let subtotal = 0;
@@ -100,11 +125,13 @@ const ProfessionalCheckout = () => {
 
     cartItems.forEach((item) => {
       const qty = quantities[item.product_id] || item.quantity;
-      const itemTotal = item.price_at_addition * qty;
+      const price = productDetails[item.product_id]?.purchase_price || item.price_at_addition;
+      const itemTotal = price * qty;
       subtotal += itemTotal;
 
-      // Simple tax calculation (adjust as needed)
-      const tax = (itemTotal * 0.18) / 100;
+      // Use fetched tax percentage from API
+      const taxPercentage = productDetails[item.product_id]?.tax || 0;
+      const tax = (itemTotal * taxPercentage) / 100;
       taxes += tax;
     });
 
@@ -379,49 +406,52 @@ const ProfessionalCheckout = () => {
               <div className="step-content">
                 <h2>Order Summary</h2>
                 <div className="cart-items">
-                   {cartItems.map((item) => (
-                     <div key={item.product_id} className="cart-item">
-                       <div className="item-info">
-                         <h3>{item.name}</h3>
-                         <p className="item-price">₹{item.price_at_addition}</p>
-                       </div>
-                       <div className="quantity-control">
+                   {cartItems.map((item) => {
+                     const price = productDetails[item.product_id]?.purchase_price || item.price_at_addition;
+                     return (
+                       <div key={item.product_id} className="cart-item">
+                         <div className="item-info">
+                           <h3>{item.name}</h3>
+                           <p className="item-price">₹{price}</p>
+                         </div>
+                         <div className="quantity-control">
+                           <button
+                             onClick={() =>
+                               updateQuantity(item.product_id, -1)
+                             }
+                           >
+                             <FiMinus />
+                           </button>
+                           <input
+                             type="number"
+                             value={quantities[item.product_id] || item.quantity}
+                             readOnly
+                           />
+                           <button
+                             onClick={() =>
+                               updateQuantity(item.product_id, 1)
+                             }
+                           >
+                             <FiPlus />
+                           </button>
+                         </div>
+                         <div className="item-total">
+                           ₹
+                           {(
+                             price *
+                             (quantities[item.product_id] || item.quantity)
+                           ).toFixed(2)}
+                         </div>
                          <button
-                           onClick={() =>
-                             updateQuantity(item.product_id, -1)
-                           }
+                           className="remove-btn"
+                           onClick={() => handleRemoveFromCart(item.product_id)}
+                           title="Remove item from cart"
                          >
-                           <FiMinus />
-                         </button>
-                         <input
-                           type="number"
-                           value={quantities[item.product_id] || item.quantity}
-                           readOnly
-                         />
-                         <button
-                           onClick={() =>
-                             updateQuantity(item.product_id, 1)
-                           }
-                         >
-                           <FiPlus />
+                           <FiTrash2 />
                          </button>
                        </div>
-                       <div className="item-total">
-                         ₹
-                         {(
-                           item.price_at_addition *
-                           (quantities[item.product_id] || item.quantity)
-                         ).toFixed(2)}
-                       </div>
-                       <button
-                         className="remove-btn"
-                         onClick={() => handleRemoveFromCart(item.product_id)}
-                         title="Remove item from cart"
-                       >
-                         <FiTrash2 />
-                       </button>
-                     </div>
-                   ))}
+                     );
+                   })}
                  </div>
 
                 <div className="step-actions">
@@ -767,23 +797,26 @@ const ProfessionalCheckout = () => {
             </div>
 
             <div className="summary-items">
-              {cartItems.map((item) => (
-                <div key={item.product_id} className="summary-item">
-                  <div>
-                    <p className="item-name">{item.name}</p>
-                    <p className="item-qty">
-                      Qty: {quantities[item.product_id] || item.quantity}
+              {cartItems.map((item) => {
+                const price = productDetails[item.product_id]?.purchase_price || item.price_at_addition;
+                return (
+                  <div key={item.product_id} className="summary-item">
+                    <div>
+                      <p className="item-name">{item.name}</p>
+                      <p className="item-qty">
+                        Qty: {quantities[item.product_id] || item.quantity}
+                      </p>
+                    </div>
+                    <p className="item-cost">
+                      ₹
+                      {(
+                        price *
+                        (quantities[item.product_id] || item.quantity)
+                      ).toFixed(2)}
                     </p>
                   </div>
-                  <p className="item-cost">
-                    ₹
-                    {(
-                      item.price_at_addition *
-                      (quantities[item.product_id] || item.quantity)
-                    ).toFixed(2)}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="summary-divider"></div>
@@ -794,7 +827,7 @@ const ProfessionalCheckout = () => {
                 <span>₹{subtotal.toFixed(2)}</span>
               </div>
               <div className="calc-row">
-                <span>Tax (18%)</span>
+                <span>Tax</span>
                 <span>₹{taxes.toFixed(2)}</span>
               </div>
               <div className="calc-row shipping">
