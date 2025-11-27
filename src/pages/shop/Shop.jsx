@@ -167,46 +167,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRoutes } from '../../hooks/useRoutes';
 import { useCart } from '../../hooks/useCart';
-
-// 👇 Mocked getData function with demo products and announcement
-const getData = async (endpoint) => {
-  if (endpoint === "/shop/products") {
-    // Get products from the actual products API
-    try {
-      const { getProducts } = await import('../../network/api');
-      const products = await getProducts();
-      return products.map(product => ({
-        id: product.id,
-        itemId: product.id,
-        itemName: product.name,
-        price: product.salePrice,
-        salePrice: product.salePrice,
-        description: product.description,
-        manufacturer: product.manufacturer,
-        currentQuantity: 100, // Mock quantity for now
-        imageUrl: "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
-        cgst: 9,
-        sgst: 9,
-        cess: 0,
-        hsn: product.barcode || '',
-        unitMRP: product.unitMRP,
-        dimensions: product.dimensions,
-        weight: product.weight,
-        reorderLevel: product.reorderLevel
-      }));
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      return [];
-    }
-  } else if (endpoint === "channel/announcements/shop") {
-    return [
-      {
-        message: "⚡ Summer Sale! Get 20% off on selected items until July 31st.",
-      },
-    ];
-  }
-  return [];
-};
+import { getProducts } from '../../network/api';
+import { getShopAnnouncements } from '../../network/api/channelApi';
+import { socket } from '../../network/websocket';
 
 const ShopPage = () => {
   const [products, setProducts] = useState([]);
@@ -219,13 +182,30 @@ const ShopPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getData('channel/announcements/shop');
-      if (data.length > 0) {
-        setAnnouncement(data[0]);
+    const fetchAnnouncements = async () => {
+      try {
+        const response = await getShopAnnouncements();
+        if (response.status === 200 && response.data.length > 0) {
+          setAnnouncement(response.data[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching announcements:', error);
       }
     };
-    fetchData().then();
+    fetchAnnouncements();
+
+    // Listen for real-time announcements
+    const handleNewAnnouncement = (announcement) => {
+      if (announcement.location === 'shop') {
+        setAnnouncement(announcement);
+      }
+    };
+
+    socket.on('newAnnouncement', handleNewAnnouncement);
+
+    return () => {
+      socket.off('newAnnouncement', handleNewAnnouncement);
+    };
   }, []);
 
   const ShowCart = () => {
@@ -237,13 +217,38 @@ const ShopPage = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getData('/shop/products');
-      if (data.length > 0) {
-        setProducts(data);
+    const fetchProducts = async () => {
+      try {
+        const products = await getProducts();
+        const mappedProducts = products.map(product => ({
+          id: product.id,
+          itemId: product.id,
+          itemName: product.name,
+          price: product.salePrice,
+          salePrice: product.salePrice,
+          description: product.description,
+          manufacturer: product.manufacturer,
+          currentQuantity: 100, // Mock quantity for now
+          imageUrl: "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
+          cgst: 9,
+          sgst: 9,
+          cess: 0,
+          hsn: product.barcode || '',
+          unitMRP: product.unitMRP,
+          dimensions: product.dimensions,
+          weight: product.weight,
+          reorderLevel: product.reorderLevel
+        }));
+        if (mappedProducts.length > 0) {
+          setProducts(mappedProducts);
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchData().then(() => setIsLoading(false));
+    fetchProducts();
   }, []);
 
   const [searchFieldByName, setSearchFieldByName] = useState('');

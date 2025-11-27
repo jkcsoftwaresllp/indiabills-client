@@ -15,6 +15,7 @@ import { getUsers, getUserById, getUserByUsername, getUsersByRole, createUser, u
 import { uploadUserImage } from './userApi';
 // import { updateOrganizationById } from './organizationApi';
 import { checkSession } from './authApi';
+import { getAnnouncements, createAnnouncement, getShopAnnouncements, getChannelAnnouncements, getNotes, createNote } from './channelApi';
 import { addToCart, removeFromCart, updateCartItem, getCart, checkoutCart } from './cartApi';
 import { getPayments, getPaymentById, updatePaymentStatus, createPayment, getInvoice } from './paymentsApi';
 import { toggleWishlist, getWishlist, clearWishlist } from './wishlistApi';
@@ -397,4 +398,11 @@ export {
    createSubscriptionOrder,
    verifySubscriptionPayment,
    getSubscriptionHistory,
+   // Channel APIs
+   getAnnouncements,
+   createAnnouncement,
+   getShopAnnouncements,
+   getChannelAnnouncements,
+   getNotes,
+   createNote,
 };

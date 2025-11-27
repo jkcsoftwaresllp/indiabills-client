@@ -1,0 +1,89 @@
+.notification-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.notification-card {
+  min-height: 100px;
+  max-height: 300px;
+  overflow-y: auto;
+  pointer-events: auto;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.notification-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e2938;
+  word-break: break-word;
+}
+
+.notification-message {
+  margin: 8px 0 4px 0;
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.notification-meta {
+  margin: 4px 0 0 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .notification-panel {
+    max-width: calc(100% - 20px);
+    right: 10px;
+    left: 10px;
+    top: 10px;
+  }
+
+  .notification-card {
+    max-height: 250px;
+  }
+
+  .notification-title {
+    font-size: 0.95rem;
+  }
+
+  .notification-message {
+    font-size: 0.9rem;
+  }
+}
+
+/* Scrollbar styling */
+.notification-card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notification-card::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.notification-card::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}

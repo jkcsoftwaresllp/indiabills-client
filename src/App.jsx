@@ -25,6 +25,7 @@ import Login from "../src/pages/user/Login";
 import CustomerLogin from "../src/pages/customer/CustomerLogin";
 import logo from "./assets/IndiaBills_logo.png";
 import { getBaseURL } from "./network/api/api-config";
+import NotificationPanel from "./components/Notifications/NotificationPanel";
 
 function App() {
   const navigate = useNavigate();
@@ -176,6 +177,9 @@ function App() {
           open={isCommandPaletteOpen}
           onClose={handleCloseCommandPalette}
         />
+        
+        {/* Notification Panel */}
+        {session && <NotificationPanel />}
       </HotKeys>
     </AuthProvider>
   );

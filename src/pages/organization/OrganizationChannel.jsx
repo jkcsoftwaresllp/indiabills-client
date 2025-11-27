@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { getData, postData, deleteUser } from "../../network/api";
 import { getUsersByRole } from "../../network/api/userApi";
+import { getAnnouncements, createAnnouncement, getNotes, createNote } from "../../network/api/channelApi";
 import { useStore } from "../../store/store";
 import {
   TextField,
@@ -51,7 +51,7 @@ const OrganizationChannel = () => {
     users: [],
     createdAt: "",
   });
-  const roles = ["admin", "operator", "reporter", "customer", "delivery"];
+  const roles = ["admin", "manager", "operator", "customer"];
   const [users, setUsers] = useState([]);
 
   const { successPopup, errorPopup } = useStore();
@@ -81,8 +81,10 @@ const OrganizationChannel = () => {
   const fetchAnnouncements = async () => {
     try {
       // Fetch all announcements
-      const data = await getData("/channel/announcements");
-      setAnnouncements(data);
+      const response = await getAnnouncements();
+      if (response.status === 200) {
+        setAnnouncements(response.data);
+      }
     } catch (error) {
       console.error("Error fetching announcements:", error);
     }
@@ -110,8 +112,10 @@ const OrganizationChannel = () => {
 
   const fetchNotes = async () => {
     try {
-      const data = await getData("/channel/notes");
-      setNotes(data);
+      const response = await getNotes();
+      if (response.status === 200) {
+        setNotes(response.data);
+      }
     } catch (error) {
       console.error("Error fetching notes:", error);
     }
@@ -144,37 +148,53 @@ const OrganizationChannel = () => {
 
   const handleCreateAnnouncement = async () => {
     try {
-      const result = await postData(
-        "/channel/announcement/create",
-        newAnnouncement
-      );
-      if (result === 201) {
+      const response = await createAnnouncement(newAnnouncement);
+      if (response.status === 201) {
         successPopup("Announcement created!");
         setOpenDialog(false);
+        setNewAnnouncement({
+          id: 0,
+          title: "",
+          message: "",
+          expiryDate: "",
+          createdAt: "",
+          location: "shop",
+        });
         fetchAnnouncements();
       } else {
         errorPopup("Error creating announcement");
       }
     } catch (error) {
       console.error("Error creating announcement:", error);
+      errorPopup("Error creating announcement");
     }
   };
 
   const handleCreateNote = async () => {
     try {
-      const result = await postData("/channel/note/create", {
+      const response = await createNote({
         ...newNote,
         target,
       });
-      if (result === 201) {
+      if (response.status === 201) {
         successPopup("Note created successfully");
         setOpenDialog(false);
+        setNewNote({
+          id: 0,
+          title: "",
+          message: "",
+          roles: [],
+          users: [],
+          createdAt: "",
+        });
+        setTarget("role");
         fetchNotes();
       } else {
         errorPopup("Error creating note");
       }
     } catch (error) {
       console.error("Error creating note:", error);
+      errorPopup("Error creating note");
     }
   };
 
