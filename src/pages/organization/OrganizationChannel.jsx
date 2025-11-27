@@ -56,6 +56,8 @@ const OrganizationChannel = () => {
 
   const { successPopup, errorPopup } = useStore();
 
+  const { currentOrganization } = useStore();
+
   useEffect(() => {
     fetchAnnouncements();
     fetchNotes();
@@ -76,7 +78,7 @@ const OrganizationChannel = () => {
       socket.off("newAnnouncement", handleNewAnnouncement);
       socket.off("newNote", handleNewNote);
     };
-  }, []);
+  }, [currentOrganization]);
 
   const fetchAnnouncements = async () => {
     try {
@@ -305,14 +307,14 @@ const OrganizationChannel = () => {
                         />
                       </div>
                       <p className="text-slate-700 mb-3">{item.message}</p>
-                      {item.expiryDate && (
-                        <p className="text-sm text-slate-500">
-                          ⏰ Expires on:{" "}
-                          <span className="font-semibold">
-                            {new Date(item.expiryDate).toLocaleDateString()}
-                          </span>
-                        </p>
-                      )}
+                       {(item.expiryDate || item.expiry) && (
+                         <p className="text-sm text-slate-500">
+                           ⏰ Expires on:{" "}
+                           <span className="font-semibold">
+                             {new Date(item.expiryDate || item.expiry).toLocaleDateString()}
+                           </span>
+                         </p>
+                       )}
                     </CardContent>
                   </Card>
                 ))
