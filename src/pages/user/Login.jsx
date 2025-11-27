@@ -99,7 +99,7 @@ const LoginPage = () => {
         return;
       }
 
-      const { token, user, caseType } = response.data;
+      const { token, user, caseType, subscription } = response.data;
 
       // Store token for API requests
       localStorage.setItem('token', token);
@@ -108,7 +108,7 @@ const LoginPage = () => {
       switch (caseType) {
         case 'NO_ORG':
           // User has no organizations - redirect to setup
-          setTempSession({ token, user });
+          setTempSession({ token, user, subscription });
           successPopup("Welcome! Let's set up your first organization.");
           navigate("/organization/setup");
           break;
@@ -123,14 +123,16 @@ const LoginPage = () => {
             role: user.activeOrg.role.toLowerCase(),
             token: token,
             organizationId: user.activeOrg.orgId,
-            orgs: user.orgs
+            orgs: user.orgs,
+            subscription: subscription
           };
           
           setSession(singleOrgSession);
           setOrganizationContext({
             id: user.activeOrg?.orgId,
             name: user.orgs?.[0]?.name || 'Organization',
-            role: user.activeOrg?.role?.toLowerCase() || 'customer'
+            role: user.activeOrg?.role?.toLowerCase() || 'customer',
+            subscription: subscription
           });
           authLogin(singleOrgSession);
           successPopup(`Welcome back, ${user.name}!`);
@@ -147,7 +149,7 @@ const LoginPage = () => {
 
         case 'MULTI_ORG':
           // User has multiple organizations - show selector
-          setTempSession({ token, user });
+          setTempSession({ token, user, subscription });
           successPopup("Please select an organization to continue.");
           navigate("/organization-selector");
           break;

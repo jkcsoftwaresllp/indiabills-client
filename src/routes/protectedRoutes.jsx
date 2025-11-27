@@ -28,7 +28,7 @@ const ProtectedRoute = ({ element: Component, roles, ...rest }) => {
         const response = await checkSession();
         if (response.status === 200 && response.data.valid) {
           // Session is valid, update user data if needed
-          const { user: serverUser, activeOrg } = response.data;
+          const { user: serverUser, activeOrg, subscription } = response.data;
           
           // Update session with fresh data from server
           const updatedSession = {
@@ -40,7 +40,8 @@ const ProtectedRoute = ({ element: Component, roles, ...rest }) => {
             role: activeOrg?.role?.toLowerCase() || currentSession.role,
             organizationId: activeOrg?.orgId || currentSession.organizationId,
             orgs: serverUser.orgs || currentSession.orgs,
-            token: token
+            token: token,
+            subscription: subscription
           };
           
           setSession(updatedSession);
@@ -55,7 +56,8 @@ const ProtectedRoute = ({ element: Component, roles, ...rest }) => {
                 domain: orgData.domain,
                 subdomain: orgData.subdomain,
                 logoUrl: orgData.logoUrl,
-                role: activeOrg.role.toLowerCase()
+                role: activeOrg.role.toLowerCase(),
+                subscription: subscription
               });
             }
           }

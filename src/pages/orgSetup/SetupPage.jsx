@@ -236,7 +236,7 @@ const SetupPage = () => {
   try {
   const response = await switchOrganization(orgId);
   if (response.status === 200) {
-  const { token, activeOrg, user } = response.data;
+  const { token, activeOrg, user, subscription } = response.data;
   
   // Update session with new organization context
   const currentSession = getSession();
@@ -246,7 +246,8 @@ const SetupPage = () => {
   role: activeOrg.role.toLowerCase(),
   organizationId: activeOrg.orgId,
   token: token,
-  orgs: user?.orgs || currentSession?.orgs || []
+  orgs: user?.orgs || currentSession?.orgs || [],
+  subscription: subscription
   };
           
           setSession(updatedSession);
@@ -260,7 +261,8 @@ const SetupPage = () => {
               domain: orgData.domain,
               subdomain: orgData.subdomain,
               logoUrl: orgData.logoUrl,
-              role: activeOrg.role.toLowerCase()
+              role: activeOrg.role.toLowerCase(),
+              subscription: subscription
             });
           }
           

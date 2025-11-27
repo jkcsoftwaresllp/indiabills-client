@@ -54,26 +54,28 @@ const OrganizationSelector = () => {
         return;
       }
       const response = await switchOrganization(org.id);
-      if (response.status === 200) {
-        const { token, activeOrg } = response.data;
-        const finalSession = {
-          id: tempSession.user.id,
-          name: tempSession.user.name,
-          email: tempSession.user.email,
-          username: tempSession.user.username,
-          role: activeOrg.role.toLowerCase(),
-          token: token,
-          organizationId: activeOrg.orgId,
-          orgs: tempSession.user.orgs,
-        };
-        setOrganizationContext({
-          id: org.id,
-          name: org.name,
-          domain: org.domain,
-          subdomain: org.subdomain,
-          logoUrl: org.logoUrl,
-          role: activeOrg.role.toLowerCase()
-        });
+       if (response.status === 200) {
+         const { token, activeOrg, subscription } = response.data;
+         const finalSession = {
+           id: tempSession.user.id,
+           name: tempSession.user.name,
+           email: tempSession.user.email,
+           username: tempSession.user.username,
+           role: activeOrg.role.toLowerCase(),
+           token: token,
+           organizationId: activeOrg.orgId,
+           orgs: tempSession.user.orgs,
+           subscription: subscription
+         };
+         setOrganizationContext({
+           id: org.id,
+           name: org.name,
+           domain: org.domain,
+           subdomain: org.subdomain,
+           logoUrl: org.logoUrl,
+           role: activeOrg.role.toLowerCase(),
+           subscription: subscription
+         });
         setSession(finalSession);
         login(finalSession);
         clearTempSession();
