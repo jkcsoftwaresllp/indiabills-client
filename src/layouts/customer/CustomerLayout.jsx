@@ -4,6 +4,7 @@ import { IconButton, Box } from '@mui/material';
 import { FiMenu } from 'react-icons/fi';
 import CustomerSidebar from './CustomerSidebar';
 import Popup from '../../components/core/Popup';
+import NotificationPanel from '../../components/Notifications/NotificationPanel';
 import styles from '../../App.module.css';
 import { useStore } from '../../store/store';
 import ReportsLayout from '../../components/reports/ReportsLayout';
@@ -55,6 +56,7 @@ const CustomerLayout = () => {
           <Popup />
         </div>
       </div>
+      <NotificationPanel />
     </div>
   );
 };
