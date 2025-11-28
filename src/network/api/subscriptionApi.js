@@ -113,12 +113,15 @@ export async function getCurrentSubscription() {
   }
 }
 
-// Create partial payment order (uses same endpoint as full payment with amount parameter)
-export async function createPartialPaymentOrder(planId, amount, cycle) {
+// Create partial payment order for pending subscription
+export async function createPartialPaymentOrder(subscriptionId, amount) {
   try {
     const response = await serverInstance.post(
-      `/internal/subscriptions/plans/${planId}/create-order`,
-      { amount, cycle }
+      `/internal/subscriptions/payments/partial`,
+      { 
+        subscription_id: subscriptionId, 
+        amount 
+      }
     );
     return {
       status: response.status,
@@ -154,6 +157,25 @@ export async function verifyPartialPayment(paymentData) {
     return {
       status: error.response?.status || 500,
       data: error.response?.data || { message: 'Failed to verify partial payment' }
+    };
+  }
+}
+
+// Get remaining amount for a plan subscription
+export async function getRemainingAmount(planId) {
+  try {
+    const response = await serverInstance.get(
+      `/internal/subscriptions/remaining/${planId}`
+    );
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Failed to fetch remaining amount:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Failed to fetch remaining amount' }
     };
   }
 }

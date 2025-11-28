@@ -1,6 +1,15 @@
 import { useState, useEffect } from "react";
 import { getUsersByRole } from "../../network/api/userApi";
-import { getAnnouncements, createAnnouncement, getNotes, createNote } from "../../network/api/channelApi";
+import {
+  getAnnouncements,
+  createAnnouncement,
+  getNotes,
+  createNote,
+  updateAnnouncement,
+  deleteAnnouncement,
+  updateNote,
+  deleteNote,
+} from "../../network/api/channelApi";
 import { useStore } from "../../store/store";
 import {
   TextField,
@@ -53,6 +62,8 @@ const OrganizationChannel = () => {
   });
   const roles = ["admin", "manager", "operator", "customer"];
   const [users, setUsers] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const [editingType, setEditingType] = useState(null);
 
   const { successPopup, errorPopup } = useStore();
 
@@ -71,12 +82,46 @@ const OrganizationChannel = () => {
       setNotes((prev) => [...prev, { ...note }]);
     };
 
+    const handleAnnouncementUpdated = (announcement) => {
+      setAnnouncements((prev) =>
+        prev.map((item) =>
+          item.announcementId === announcement.announcementId
+            ? announcement
+            : item
+        )
+      );
+    };
+
+    const handleAnnouncementDeleted = ({ announcementId }) => {
+      setAnnouncements((prev) =>
+        prev.filter((item) => item.announcementId !== announcementId)
+      );
+    };
+
+    const handleNoteUpdated = (note) => {
+      setNotes((prev) =>
+        prev.map((item) => (item.notesId === note.notesId ? note : item))
+      );
+    };
+
+    const handleNoteDeleted = ({ notesId }) => {
+      setNotes((prev) => prev.filter((item) => item.notesId !== notesId));
+    };
+
     socket.on("newAnnouncement", handleNewAnnouncement);
     socket.on("newNote", handleNewNote);
+    socket.on("announcementUpdated", handleAnnouncementUpdated);
+    socket.on("announcementDeleted", handleAnnouncementDeleted);
+    socket.on("noteUpdated", handleNoteUpdated);
+    socket.on("noteDeleted", handleNoteDeleted);
 
     return () => {
       socket.off("newAnnouncement", handleNewAnnouncement);
       socket.off("newNote", handleNewNote);
+      socket.off("announcementUpdated", handleAnnouncementUpdated);
+      socket.off("announcementDeleted", handleAnnouncementDeleted);
+      socket.off("noteUpdated", handleNoteUpdated);
+      socket.off("noteDeleted", handleNoteDeleted);
     };
   }, [currentOrganization]);
 
@@ -208,6 +253,128 @@ const OrganizationChannel = () => {
     }
   };
 
+  const handleEditAnnouncement = (item) => {
+    setNewAnnouncement({
+      ...item,
+      expiryDate: item.expiryDate || item.expiry || "",
+    });
+    setEditingId(item.announcementId);
+    setEditingType("announcement");
+    setNewItemType("announcement");
+    setOpenDialog(true);
+  };
+
+  const handleEditNote = (item) => {
+    setNewNote({
+      title: item.title,
+      message: item.message,
+      roles: item.roles || [],
+      users: item.users || [],
+    });
+    setEditingId(item.notesId);
+    setEditingType("note");
+    setTarget(item.roles && item.roles.length > 0 ? "role" : "user");
+    setNewItemType("note");
+    setOpenDialog(true);
+  };
+
+  const handleUpdateAnnouncement = async () => {
+    try {
+      const response = await updateAnnouncement(editingId, {
+        title: newAnnouncement.title,
+        message: newAnnouncement.message,
+        expiryDate: newAnnouncement.expiryDate,
+        location: newAnnouncement.location,
+      });
+      if (response.status === 200) {
+        successPopup("Announcement updated!");
+        setOpenDialog(false);
+        setEditingId(null);
+        setNewAnnouncement({
+          id: 0,
+          title: "",
+          message: "",
+          expiryDate: "",
+          createdAt: "",
+          location: "shop",
+        });
+        fetchAnnouncements();
+      } else {
+        errorPopup("Error updating announcement");
+      }
+    } catch (error) {
+      console.error("Error updating announcement:", error);
+      errorPopup("Error updating announcement");
+    }
+  };
+
+  const handleDeleteAnnouncement = async (announcementId) => {
+    if (window.confirm("Are you sure you want to delete this announcement?")) {
+      try {
+        const response = await deleteAnnouncement(announcementId);
+        if (response.status === 200) {
+          successPopup("Announcement deleted!");
+          fetchAnnouncements();
+        } else {
+          errorPopup("Error deleting announcement");
+        }
+      } catch (error) {
+        console.error("Error deleting announcement:", error);
+        errorPopup("Error deleting announcement");
+      }
+    }
+  };
+
+  const handleUpdateNote = async () => {
+    try {
+      const response = await updateNote(editingId, {
+        title: newNote.title,
+        message: newNote.message,
+        status: "posted",
+        roles: target === "role" ? newNote.roles : undefined,
+        users: target === "user" ? newNote.users : undefined,
+        target,
+      });
+      if (response.status === 200) {
+        successPopup("Note updated!");
+        setOpenDialog(false);
+        setEditingId(null);
+        setNewNote({
+          id: 0,
+          title: "",
+          message: "",
+          roles: [],
+          users: [],
+          createdAt: "",
+        });
+        setTarget("role");
+        fetchNotes();
+      } else {
+        errorPopup("Error updating note");
+      }
+    } catch (error) {
+      console.error("Error updating note:", error);
+      errorPopup("Error updating note");
+    }
+  };
+
+  const handleDeleteNote = async (notesId) => {
+    if (window.confirm("Are you sure you want to delete this note?")) {
+      try {
+        const response = await deleteNote(notesId);
+        if (response.status === 200) {
+          successPopup("Note deleted!");
+          fetchNotes();
+        } else {
+          errorPopup("Error deleting note");
+        }
+      } catch (error) {
+        console.error("Error deleting note:", error);
+        errorPopup("Error deleting note");
+      }
+    }
+  };
+
   return (
     <PageAnimate>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 md:p-10">
@@ -307,14 +474,52 @@ const OrganizationChannel = () => {
                         />
                       </div>
                       <p className="text-slate-700 mb-3">{item.message}</p>
-                       {(item.expiryDate || item.expiry) && (
-                         <p className="text-sm text-slate-500">
-                           ⏰ Expires on:{" "}
-                           <span className="font-semibold">
-                             {new Date(item.expiryDate || item.expiry).toLocaleDateString()}
-                           </span>
-                         </p>
-                       )}
+                      {(item.expiryDate || item.expiry) && (
+                        <p className="text-sm text-slate-500">
+                          ⏰ Expires on:{" "}
+                          <span className="font-semibold">
+                            {new Date(
+                              item.expiryDate || item.expiry
+                            ).toLocaleDateString()}
+                          </span>
+                        </p>
+                      )}
+                      {user.role === "admin" && (
+                        <div className="flex gap-2 mt-4">
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => handleEditAnnouncement(item)}
+                            sx={{
+                              color: "#1e2938",
+                              borderColor: "#1e2938",
+                              "&:hover": {
+                                backgroundColor: "rgba(30, 41, 56, 0.05)",
+                              },
+                              textTransform: "none",
+                            }}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() =>
+                              handleDeleteAnnouncement(item.announcementId)
+                            }
+                            sx={{
+                              color: "#c42032",
+                              borderColor: "#c42032",
+                              "&:hover": {
+                                backgroundColor: "rgba(196, 32, 50, 0.05)",
+                              },
+                              textTransform: "none",
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))
@@ -404,25 +609,61 @@ const OrganizationChannel = () => {
                         </div>
                       </div>
 
-                      {/* Dismiss Button */}
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        startIcon={<FiX />}
-                        onClick={() => handleDismissNote(item.id)}
-                        sx={{
-                          borderColor: "#e5e7eb",
-                          color: "#6b7280",
-                          "&:hover": {
-                            borderColor: "#c42032",
-                            color: "#c42032",
-                            backgroundColor: "rgba(196, 32, 50, 0.05)",
-                          },
-                          textTransform: "none",
-                        }}
-                      >
-                        Dismiss
-                      </Button>
+                      {/* Dismiss/Action Buttons */}
+                      <div className="flex gap-2 flex-wrap">
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          startIcon={<FiX />}
+                          onClick={() => handleDismissNote(item.id)}
+                          sx={{
+                            borderColor: "#e5e7eb",
+                            color: "#6b7280",
+                            "&:hover": {
+                              borderColor: "#c42032",
+                              color: "#c42032",
+                              backgroundColor: "rgba(196, 32, 50, 0.05)",
+                            },
+                            textTransform: "none",
+                          }}
+                        >
+                          Dismiss
+                        </Button>
+                        {user.role === "admin" && (
+                          <>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              onClick={() => handleEditNote(item)}
+                              sx={{
+                                color: "#1e2938",
+                                borderColor: "#1e2938",
+                                "&:hover": {
+                                  backgroundColor: "rgba(30, 41, 56, 0.05)",
+                                },
+                                textTransform: "none",
+                              }}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              onClick={() => handleDeleteNote(item.notesId)}
+                              sx={{
+                                color: "#c42032",
+                                borderColor: "#c42032",
+                                "&:hover": {
+                                  backgroundColor: "rgba(196, 32, 50, 0.05)",
+                                },
+                                textTransform: "none",
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
                 ))
@@ -452,7 +693,7 @@ const OrganizationChannel = () => {
               <DialogTitle
                 sx={{ fontWeight: 700, fontSize: "1.25rem", color: "#1e2938" }}
               >
-                📢 Create Announcement
+                📢 {editingId ? "Edit Announcement" : "Create Announcement"}
               </DialogTitle>
               <DialogContent sx={{ pt: 3 }}>
                 <TextField
@@ -531,13 +772,28 @@ const OrganizationChannel = () => {
               </DialogContent>
               <DialogActions sx={{ p: 2 }}>
                 <Button
-                  onClick={() => setOpenDialog(false)}
+                  onClick={() => {
+                    setOpenDialog(false);
+                    setEditingId(null);
+                    setNewAnnouncement({
+                      id: 0,
+                      title: "",
+                      message: "",
+                      expiryDate: "",
+                      createdAt: "",
+                      location: "shop",
+                    });
+                  }}
                   sx={{ color: "#6b7280", textTransform: "none" }}
                 >
                   Cancel
                 </Button>
                 <Button
-                  onClick={handleCreateAnnouncement}
+                  onClick={
+                    editingId
+                      ? handleUpdateAnnouncement
+                      : handleCreateAnnouncement
+                  }
                   variant="contained"
                   sx={{
                     backgroundColor: "#c42032",
@@ -546,7 +802,7 @@ const OrganizationChannel = () => {
                     fontWeight: 600,
                   }}
                 >
-                  Create
+                  {editingId ? "Update" : "Create"}
                 </Button>
               </DialogActions>
             </>
@@ -555,7 +811,7 @@ const OrganizationChannel = () => {
               <DialogTitle
                 sx={{ fontWeight: 700, fontSize: "1.25rem", color: "#1e2938" }}
               >
-                📝 Create Note
+                📝 {editingId ? "Edit Note" : "Create Note"}
               </DialogTitle>
               <DialogContent sx={{ pt: 3 }}>
                 <TextField
@@ -635,66 +891,112 @@ const OrganizationChannel = () => {
                       renderValue={(selected) =>
                         (Array.isArray(users) ? users : [])
                           .filter((user) => selected.includes(user.userId))
-                          .map((user) => `${user.first_name} ${user.last_name} (${user.role})`)
+                          .map(
+                            (user) =>
+                              `${user.first_name} ${user.last_name} (${user.role})`
+                          )
                           .join(", ")
                       }
                     >
-                      {Array.isArray(users) && users.map((user) => (
-                       <MenuItem key={user.userId} value={user.userId} sx={{ display: "block" }}>
-                         <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
-                           <Checkbox
-                             checked={newNote.users?.includes(user.userId)}
-                             style={{ marginRight: 8 }}
-                           />
-                           <Avatar
-                             src={
-                               user.avatar
-                                 ? `${getBaseURL()}/${user.avatar}`
-                                 : `${getBaseURL()}/default.webp`
-                             }
-                             alt={user.username}
-                             sx={{ width: 32, height: 32, marginRight: 1 }}
-                           />
-                           <div style={{ flex: 1, minWidth: 0 }}>
-                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-                               <span style={{ fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                  {user.first_name} {user.last_name}
-                                </span>
-                                <span
-                                 style={{
-                                   fontSize: "0.75rem",
-                                   padding: "2px 8px",
-                                   backgroundColor: "#f3f4f6",
-                                   borderRadius: "4px",
-                                   textTransform: "capitalize",
-                                   fontWeight: 500,
-                                   color: "#666",
-                                   whiteSpace: "nowrap",
-                                 }}
+                      {Array.isArray(users) &&
+                        users.map((user) => (
+                          <MenuItem
+                            key={user.userId}
+                            value={user.userId}
+                            sx={{ display: "block" }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                width: "100%",
+                              }}
+                            >
+                              <Checkbox
+                                checked={newNote.users?.includes(user.userId)}
+                                style={{ marginRight: 8 }}
+                              />
+                              <Avatar
+                                src={
+                                  user.avatar
+                                    ? `${getBaseURL()}/${user.avatar}`
+                                    : `${getBaseURL()}/default.webp`
+                                }
+                                alt={user.username}
+                                sx={{ width: 32, height: 32, marginRight: 1 }}
+                              />
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    gap: 8,
+                                  }}
                                 >
-                                  {user.role}
-                                </span>
-                             </div>
-                             <div style={{ fontSize: "0.85rem", color: "#999", marginTop: 2 }}>
-                                @{user.username} • #{user.userId}
+                                  <span
+                                    style={{
+                                      fontWeight: 500,
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                    }}
+                                  >
+                                    {user.first_name} {user.last_name}
+                                  </span>
+                                  <span
+                                    style={{
+                                      fontSize: "0.75rem",
+                                      padding: "2px 8px",
+                                      backgroundColor: "#f3f4f6",
+                                      borderRadius: "4px",
+                                      textTransform: "capitalize",
+                                      fontWeight: 500,
+                                      color: "#666",
+                                      whiteSpace: "nowrap",
+                                    }}
+                                  >
+                                    {user.role}
+                                  </span>
+                                </div>
+                                <div
+                                  style={{
+                                    fontSize: "0.85rem",
+                                    color: "#999",
+                                    marginTop: 2,
+                                  }}
+                                >
+                                  @{user.username} • #{user.userId}
+                                </div>
                               </div>
                             </div>
-                         </div>
-                       </MenuItem>
-                      ))}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </FormControl>
                 )}
               </DialogContent>
               <DialogActions sx={{ p: 2 }}>
                 <Button
-                  onClick={() => setOpenDialog(false)}
+                  onClick={() => {
+                    setOpenDialog(false);
+                    setEditingId(null);
+                    setNewNote({
+                      id: 0,
+                      title: "",
+                      message: "",
+                      roles: [],
+                      users: [],
+                      createdAt: "",
+                    });
+                    setTarget("role");
+                  }}
                   sx={{ color: "#6b7280", textTransform: "none" }}
                 >
                   Cancel
                 </Button>
                 <Button
-                  onClick={handleCreateNote}
+                  onClick={editingId ? handleUpdateNote : handleCreateNote}
                   variant="contained"
                   sx={{
                     backgroundColor: "#1e2938",
@@ -703,7 +1005,7 @@ const OrganizationChannel = () => {
                     fontWeight: 600,
                   }}
                 >
-                  Create
+                  {editingId ? "Update" : "Create"}
                 </Button>
               </DialogActions>
             </>

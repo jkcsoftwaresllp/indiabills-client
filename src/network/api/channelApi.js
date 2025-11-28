@@ -97,3 +97,67 @@ export async function createNote(noteData) {
     };
   }
 }
+
+export async function updateAnnouncement(announcementId, announcementData) {
+  try {
+    const response = await serverInstance.patch(`/channel/announcements/${announcementId}`, announcementData);
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Failed to update announcement:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Failed to update announcement' }
+    };
+  }
+}
+
+export async function deleteAnnouncement(announcementId) {
+  try {
+    const response = await serverInstance.delete(`/channel/announcements/${announcementId}`);
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Failed to delete announcement:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Failed to delete announcement' }
+    };
+  }
+}
+
+export async function updateNote(notesId, noteData) {
+  try {
+    const response = await serverInstance.patch(`/channel/note/${notesId}`, noteData);
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Failed to update note:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Failed to update note' }
+    };
+  }
+}
+
+export async function deleteNote(notesId) {
+  try {
+    const response = await serverInstance.delete(`/channel/note/${notesId}`);
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Failed to delete note:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Failed to delete note' }
+    };
+  }
+}

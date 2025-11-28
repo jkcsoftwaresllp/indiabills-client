@@ -19,9 +19,14 @@ import {
   DialogContent,
   DialogActions,
   Card,
+  TextField,
 } from "@mui/material";
 import { Info, Download } from "@mui/icons-material";
-import { getSubscriptionHistory } from "../../../../network/api/subscriptionApi";
+import {
+  getSubscriptionHistory,
+  createPartialPaymentOrder,
+} from "../../../../network/api/subscriptionApi";
+import PaymentModal from "./PaymentModal";
 
 const SubscriptionHistory = () => {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -29,6 +34,12 @@ const SubscriptionHistory = () => {
   const [error, setError] = useState(null);
   const [selectedSubscription, setSelectedSubscription] = useState(null);
   const [detailsDialog, setDetailsDialog] = useState(false);
+  const [paymentDialog, setPaymentDialog] = useState(false);
+  const [paymentAmount, setPaymentAmount] = useState("");
+  const [processingPayment, setProcessingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentData, setPaymentData] = useState(null);
 
   useEffect(() => {
     fetchHistory();
@@ -55,9 +66,84 @@ const SubscriptionHistory = () => {
     }
   };
 
+  const getRemainingAmount = (subscription) => {
+    return (subscription.total_amount || 0) - (subscription.amount_paid || 0);
+  };
+
+  const canPayRemaining = (subscription) => {
+    const remaining = getRemainingAmount(subscription);
+    return (
+      remaining > 0 && subscription.subscription_status === "pending_payment"
+    );
+  };
+
   const handleViewDetails = (subscription) => {
     setSelectedSubscription(subscription);
     setDetailsDialog(true);
+  };
+
+  const handlePayRemainingClick = (subscription) => {
+    setSelectedSubscription(subscription);
+    setPaymentAmount("");
+    setPaymentError(null);
+    setPaymentDialog(true);
+  };
+
+  const handlePayRemaining = async () => {
+    if (!selectedSubscription) return;
+
+    const remaining = getRemainingAmount(selectedSubscription);
+    const amount = parseFloat(paymentAmount);
+
+    if (!amount || amount <= 0) {
+      setPaymentError("Enter a valid amount");
+      return;
+    }
+
+    if (amount > remaining) {
+      setPaymentError(
+        `Amount cannot exceed remaining balance of ₹${remaining.toLocaleString()}`
+      );
+      return;
+    }
+
+    setProcessingPayment(true);
+    setPaymentError(null);
+
+    try {
+      const response = await createPartialPaymentOrder(
+        selectedSubscription.subscription_id,
+        amount
+      );
+
+      if (response.status === 200 && response.data.success) {
+        setPaymentData({
+          ...response.data.data,
+          planId: selectedSubscription.plan_id,
+          cycle: selectedSubscription.cycle,
+          isPartialPayment: true,
+          partialAmount: amount,
+        });
+        setPaymentDialog(false);
+        setShowPaymentModal(true);
+      } else {
+        setPaymentError(
+          response.data.message || "Failed to create payment order"
+        );
+      }
+    } catch (err) {
+      setPaymentError("Error creating payment order");
+      console.error(err);
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPaymentModal(false);
+    setPaymentData(null);
+    setSelectedSubscription(null);
+    fetchHistory();
   };
 
   const getStatusColor = (status) => {
@@ -278,27 +364,57 @@ const SubscriptionHistory = () => {
                     />
                   </TableCell>
                   <TableCell align="center">
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={() => handleViewDetails(subscription)}
+                    <Box
                       sx={{
-                        borderColor: "primary.main",
-                        color: "primary.main",
-                        fontWeight: 600,
-                        textTransform: "none",
-                        borderRadius: 0.75,
-                        fontSize: "0.8rem",
-                        transition: "all 0.3s ease",
-                        "&:hover": {
-                          borderColor: "primary.main",
-                          backgroundColor: "rgba(30, 41, 56, 0.08)",
-                          transform: "translateY(-2px)",
-                        },
+                        display: "flex",
+                        gap: 0.5,
+                        justifyContent: "center",
                       }}
                     >
-                      View
-                    </Button>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => handleViewDetails(subscription)}
+                        sx={{
+                          borderColor: "primary.main",
+                          color: "primary.main",
+                          fontWeight: 600,
+                          textTransform: "none",
+                          borderRadius: 0.75,
+                          fontSize: "0.8rem",
+                          transition: "all 0.3s ease",
+                          "&:hover": {
+                            borderColor: "primary.main",
+                            backgroundColor: "rgba(30, 41, 56, 0.08)",
+                            transform: "translateY(-2px)",
+                          },
+                        }}
+                      >
+                        View
+                      </Button>
+                      {canPayRemaining(subscription) && (
+                        <Button
+                          variant="contained"
+                          size="small"
+                          onClick={() => handlePayRemainingClick(subscription)}
+                          sx={{
+                            background:
+                              "linear-gradient(135deg, #f59e0b, #d97706)",
+                            fontWeight: 600,
+                            textTransform: "none",
+                            borderRadius: 0.75,
+                            fontSize: "0.8rem",
+                            transition: "all 0.3s ease",
+                            "&:hover": {
+                              transform: "translateY(-2px)",
+                              boxShadow: "0 4px 8px rgba(245, 158, 11, 0.3)",
+                            },
+                          }}
+                        >
+                          Pay
+                        </Button>
+                      )}
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))}
@@ -306,6 +422,154 @@ const SubscriptionHistory = () => {
           </Table>
         </TableContainer>
       )}
+
+      {/* Payment Dialog */}
+      <Dialog
+        open={paymentDialog}
+        onClose={() => !processingPayment && setPaymentDialog(false)}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 1.75,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            background:
+              "linear-gradient(90deg, var(--color-primary), var(--color-accent))",
+            color: "white",
+            fontWeight: 800,
+            fontSize: "1.1rem",
+          }}
+        >
+          Pay Remaining Amount
+        </DialogTitle>
+        <DialogContent sx={{ py: 2 }}>
+          {selectedSubscription && (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <Box sx={{ pt: 1 }}>
+                <Typography
+                  variant="caption"
+                  color="textSecondary"
+                  sx={{ fontWeight: 700 }}
+                >
+                  Plan: {selectedSubscription.plan_name}
+                </Typography>
+              </Box>
+
+              <Box
+                sx={{
+                  p: 1.5,
+                  background: "#f9fafb",
+                  borderRadius: 1,
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 2,
+                }}
+              >
+                <Box>
+                  <Typography
+                    variant="caption"
+                    color="textSecondary"
+                    sx={{ fontWeight: 700 }}
+                  >
+                    Total Amount
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 700, fontSize: "1.1rem" }}
+                  >
+                    ₹{(selectedSubscription.total_amount || 0).toLocaleString()}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography
+                    variant="caption"
+                    color="textSecondary"
+                    sx={{ fontWeight: 700 }}
+                  >
+                    Already Paid
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: "1.1rem",
+                      color: "success.main",
+                    }}
+                  >
+                    ₹{(selectedSubscription.amount_paid || 0).toLocaleString()}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box
+                sx={{
+                  p: 1.5,
+                  background: "#fef3c7",
+                  borderRadius: 1,
+                  border: "1px solid #fcd34d",
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  color="textSecondary"
+                  sx={{ fontWeight: 700 }}
+                >
+                  Remaining Amount
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 900, color: "#d97706" }}
+                >
+                  ₹{getRemainingAmount(selectedSubscription).toLocaleString()}
+                </Typography>
+              </Box>
+
+              {paymentError && (
+                <Alert severity="error" sx={{ fontSize: "0.85rem" }}>
+                  {paymentError}
+                </Alert>
+              )}
+
+              <TextField
+                label="Payment Amount"
+                type="number"
+                value={paymentAmount}
+                onChange={(e) => setPaymentAmount(e.target.value)}
+                placeholder="Enter amount"
+                inputProps={{
+                  min: 0,
+                  max: getRemainingAmount(selectedSubscription),
+                  step: 100,
+                }}
+                fullWidth
+                size="small"
+                disabled={processingPayment}
+              />
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 1.5, gap: 1 }}>
+          <Button
+            onClick={() => setPaymentDialog(false)}
+            disabled={processingPayment}
+            sx={{ textTransform: "none", fontWeight: 600 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handlePayRemaining}
+            disabled={processingPayment}
+            sx={{ textTransform: "none", fontWeight: 600 }}
+          >
+            {processingPayment ? "Processing..." : "Continue to Payment"}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Details Dialog */}
       <Dialog
@@ -505,37 +769,109 @@ const SubscriptionHistory = () => {
               </Box>
 
               <Box
-                sx={{
-                  p: 2,
-                  background:
-                    "linear-gradient(135deg, rgba(30, 41, 56, 0.08), rgba(196, 32, 50, 0.08))",
-                  borderRadius: 1.5,
-                  border: "2px solid primary.main",
-                }}
+                sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}
               >
-                <Typography
-                  variant="caption"
-                  color="textSecondary"
+                <Box
                   sx={{
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.06em",
+                    p: 2,
+                    background:
+                      "linear-gradient(135deg, rgba(30, 41, 56, 0.08), rgba(196, 32, 50, 0.08))",
+                    borderRadius: 1.5,
+                    border: "2px solid primary.main",
                   }}
                 >
-                  Amount Paid
-                </Typography>
-                <Typography
-                  variant="h5"
+                  <Typography
+                    variant="caption"
+                    color="textSecondary"
+                    sx={{
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.06em",
+                    }}
+                  >
+                    Total Amount
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 900,
+                      color: "primary.main",
+                      mt: 0.5,
+                      letterSpacing: "-0.02em",
+                    }}
+                  >
+                    ₹{(selectedSubscription.total_amount || 0).toLocaleString()}
+                  </Typography>
+                </Box>
+
+                <Box
                   sx={{
-                    fontWeight: 900,
-                    color: "primary.main",
-                    mt: 0.5,
-                    letterSpacing: "-0.02em",
+                    p: 2,
+                    background:
+                      "linear-gradient(135deg, rgba(30, 41, 56, 0.08), rgba(196, 32, 50, 0.08))",
+                    borderRadius: 1.5,
+                    border: "2px solid primary.main",
                   }}
                 >
-                  ₹{selectedSubscription.amount_paid.toLocaleString()}
-                </Typography>
+                  <Typography
+                    variant="caption"
+                    color="textSecondary"
+                    sx={{
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.06em",
+                    }}
+                  >
+                    Amount Paid
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 900,
+                      color: "success.main",
+                      mt: 0.5,
+                      letterSpacing: "-0.02em",
+                    }}
+                  >
+                    ₹{(selectedSubscription.amount_paid || 0).toLocaleString()}
+                  </Typography>
+                </Box>
               </Box>
+
+              {getRemainingAmount(selectedSubscription) > 0 && (
+                <Box
+                  sx={{
+                    p: 2,
+                    background:
+                      "linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.1))",
+                    borderRadius: 1.5,
+                    border: "2px solid #f59e0b",
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    color="textSecondary"
+                    sx={{
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.06em",
+                    }}
+                  >
+                    Remaining Amount
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 900,
+                      color: "#d97706",
+                      mt: 0.5,
+                      letterSpacing: "-0.02em",
+                    }}
+                  >
+                    ₹{getRemainingAmount(selectedSubscription).toLocaleString()}
+                  </Typography>
+                </Box>
+              )}
 
               <Box
                 sx={{
@@ -672,6 +1008,16 @@ const SubscriptionHistory = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Payment Modal */}
+      {showPaymentModal && paymentData && (
+        <PaymentModal
+          open={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          paymentData={paymentData}
+          onSuccess={handlePaymentSuccess}
+        />
+      )}
     </Box>
   );
 };

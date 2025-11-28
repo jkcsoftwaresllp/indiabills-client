@@ -46,6 +46,7 @@ const SubscriptionPlans = () => {
   const [paymentTypeDialog, setPaymentTypeDialog] = useState(false);
   const [partialAmountDialog, setPartialAmountDialog] = useState(false);
   const [currentPaymentType, setCurrentPaymentType] = useState(null);
+  const [remainingAmount, setRemainingAmount] = useState(null);
 
   useEffect(() => {
     fetchPlans();
@@ -100,10 +101,7 @@ const SubscriptionPlans = () => {
 
   const isSubscriptionActive = (planId) => {
     // If currentSubscription exists, it's active by definition (from active_subscription in API)
-    return (
-      currentSubscription &&
-      currentSubscription.plan_id === planId
-    );
+    return currentSubscription && currentSubscription.plan_id === planId;
   };
 
   const handleSelectPlan = (plan) => {
@@ -112,7 +110,7 @@ const SubscriptionPlans = () => {
     setPaymentTypeDialog(true);
   };
 
-  const handlePaymentTypeSelect = (paymentType) => {
+  const handlePaymentTypeSelect = async (paymentType) => {
     setCurrentPaymentType(paymentType);
     setPaymentTypeDialog(false);
 
@@ -120,24 +118,60 @@ const SubscriptionPlans = () => {
       // Proceed to full payment - show cycle selection then payment
       setCycleDialog(true);
     } else {
-      // Show partial amount dialog
-      setPartialAmountDialog(true);
+      // For partial payment, first create subscription order (pending_payment status)
+      // Then show partial amount dialog
+      setProcessingOrder(true);
+      setOrderError(null);
+
+      try {
+        if (!selectedPlan) return;
+
+        // Get price based on cycle (in rupees)
+        const priceInRupees =
+          selectedCycle === "yearly"
+            ? selectedPlan.price_yearly
+            : selectedPlan.price_monthly;
+
+        // Create the pending subscription order
+        const response = await createSubscriptionOrder(
+          selectedPlan.id,
+          selectedCycle,
+          priceInRupees
+        );
+
+        if (response.status === 200 && response.data.success) {
+          // Now show partial amount dialog with the full plan price as max
+          setRemainingAmount({
+            total_amount: priceInRupees,
+            amount_paid: 0,
+            remaining: priceInRupees,
+            subscription_id: response.data.data.subscription_id, // Store for later
+          });
+          setPartialAmountDialog(true);
+        } else {
+          setOrderError(response.data.message || "Failed to create subscription order");
+        }
+      } catch (err) {
+        setOrderError("Error creating subscription order");
+        console.error(err);
+      } finally {
+        setProcessingOrder(false);
+      }
     }
   };
 
   const handlePartialAmountConfirm = async (amount) => {
-    if (!selectedPlan) return;
+    if (!remainingAmount?.subscription_id) return;
 
     setPartialAmountDialog(false);
     setProcessingOrder(true);
     setOrderError(null);
 
     try {
-      // Amount comes in rupees from dialog (e.g., 5000 for ₹5000)
+      // Create partial payment order for the pending subscription
       const response = await createPartialPaymentOrder(
-        selectedPlan.id,
-        amount, // In rupees
-        selectedCycle
+        remainingAmount.subscription_id,
+        amount // In rupees
       );
 
       if (response.status === 200 && response.data.success) {
@@ -164,19 +198,24 @@ const SubscriptionPlans = () => {
 
   const handleCycleSelect = async (cycle) => {
     if (!selectedPlan) return;
-    
+
     setCycleDialog(false);
     setProcessingOrder(true);
     setOrderError(null);
 
     try {
       // Get price based on cycle (in rupees)
-      const priceInRupees = cycle === "yearly" 
-        ? selectedPlan.price_yearly 
-        : selectedPlan.price_monthly;
+      const priceInRupees =
+        cycle === "yearly"
+          ? selectedPlan.price_yearly
+          : selectedPlan.price_monthly;
 
-      const response = await createSubscriptionOrder(selectedPlan.id, cycle, priceInRupees);
-      
+      const response = await createSubscriptionOrder(
+        selectedPlan.id,
+        cycle,
+        priceInRupees
+      );
+
       if (response.status === 200 && response.data.success) {
         setPaymentData({
           ...response.data.data,
@@ -282,18 +321,16 @@ const SubscriptionPlans = () => {
           }}
         >
           {plans.map((plan, idx) => {
-             const isFeatured =
-               idx === 1 || idx === Math.floor(plans.length / 2);
-             const isCurrentPlan = isSubscriptionActive(plan.id);
-             // If currentSubscription exists, it's active by definition
-             const isOtherPlanActive =
-               currentSubscription &&
-               !isCurrentPlan;
-             const shouldGreyOut = isOtherPlanActive && !canRenewSubscription();
-             const buttonDisabled =
-               (isOtherPlanActive && !canRenewSubscription()) || isCurrentPlan;
+            const isFeatured =
+              idx === 1 || idx === Math.floor(plans.length / 2);
+            const isCurrentPlan = isSubscriptionActive(plan.id);
+            // If currentSubscription exists, it's active by definition
+            const isOtherPlanActive = currentSubscription && !isCurrentPlan;
+            const shouldGreyOut = isOtherPlanActive && !canRenewSubscription();
+            const buttonDisabled =
+              (isOtherPlanActive && !canRenewSubscription()) || isCurrentPlan;
 
-             return (
+            return (
               <Card
                 sx={{
                   height: "630px",
@@ -611,10 +648,17 @@ const SubscriptionPlans = () => {
       {/* Partial Amount Dialog */}
       <PartialAmountDialog
         open={partialAmountDialog}
-        onClose={() => setPartialAmountDialog(false)}
+        onClose={() => {
+          setPartialAmountDialog(false);
+          setRemainingAmount(null);
+        }}
         onConfirm={handlePartialAmountConfirm}
-        fullAmount={selectedPlan?.price_yearly || 0}
-        isRemainingPayment={false}
+        fullAmount={
+          remainingAmount?.remaining || selectedPlan?.price_yearly || 0
+        }
+        isRemainingPayment={!!remainingAmount}
+        remainingAmount={remainingAmount}
+        loading={false}
       />
 
       {/* Cycle Selection Dialog */}
