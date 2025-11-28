@@ -56,7 +56,7 @@ const EditOrganization = () => {
     };
 
     fetchOrganization();
-  }, [errorPopup, navigate, orgContext]);
+  }, [orgContext?.id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -383,7 +383,7 @@ const EditOrganization = () => {
             </Grid>
 
             {/* Brand Colors */}
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <Card>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>Brand Colors</Typography>
@@ -417,7 +417,7 @@ const EditOrganization = () => {
                   </Grid>
                 </CardContent>
               </Card>
-            </Grid>
+            </Grid> */}
           </Grid>
 
           <Box mt={4} display="flex" justifyContent="center">

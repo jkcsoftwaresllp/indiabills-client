@@ -218,13 +218,13 @@ const ManagerSidebar = ({ mobileOpen = false, setMobileOpen = () => {} }) => {
               <FiRefreshCw className={styles.menuIcon} />
               Refresh
             </button>
-            <button
+            {/* <button
               className={styles.menuItem}
               onClick={() => navigate('/manager/help')}
             >
               <FiHelpCircle className={styles.menuIcon} />
               Get Help
-            </button>
+            </button> */}
             <button className={styles.menuItem} onClick={handleLogout}>
               <FiLogOut className={styles.menuIcon} />
               Logout

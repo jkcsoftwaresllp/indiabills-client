@@ -26,7 +26,8 @@ import {
   MenuItem,
   Stepper,
   Step,
-  StepLabel
+  StepLabel,
+  Alert
 } from '@mui/material';
 import { getOption } from '../../utils/FormHelper';
 import { getOrganizationById } from '../../network/api/organizationApi';
@@ -201,14 +202,18 @@ const SetupPage = () => {
         setErrors({});
         fetchOrganizations(); // Refresh the list
       } else {
-        errorPopup(response.data?.message || 'Failed to create organization');
+        const errorMessage = response.data?.message || 'Failed to create organization';
+        setErrors({ submit: errorMessage });
+        errorPopup(errorMessage);
       }
-    } catch (error) {
+      } catch (error) {
       console.error('Error creating organization:', error);
-      errorPopup('Failed to create organization');
-    } finally {
+      const errorMessage = error?.response?.data?.message || error.message || 'Failed to create organization';
+      setErrors({ submit: errorMessage });
+      errorPopup(errorMessage);
+      } finally {
       setCreating(false);
-    }
+      }
   };
 
   const handleViewOrgDetails = async (orgId) => {
@@ -299,7 +304,7 @@ const SetupPage = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Organization Name"
+                label="Organization Name *"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
@@ -460,7 +465,7 @@ const SetupPage = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Domain"
+                label="Domain *"
                 name="domain"
                 value={formData.domain}
                 onChange={handleChange}
@@ -483,7 +488,7 @@ const SetupPage = () => {
                 className={styles.formField}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
                 label="Primary Color"
@@ -510,7 +515,7 @@ const SetupPage = () => {
                 helperText={errors.brandAccentColor}
                 className={styles.formField}
               />
-            </Grid>
+            </Grid> */}
           </Grid>
         );
       default:
@@ -591,7 +596,7 @@ const SetupPage = () => {
                       )}
                       {currentOrg.domain && (
                         <Chip
-                          label={`${currentOrg.subdomain}.${currentOrg.domain}`}
+                          label={currentOrg.subdomain ? `${currentOrg.subdomain}.${currentOrg.domain}` : currentOrg.domain}
                           size="small"
                           variant="outlined"
                           className={styles.chip}
@@ -745,6 +750,12 @@ const SetupPage = () => {
           </DialogTitle>
           <DialogContent className={styles.dialogContent}>
             <Box className={styles.dialogBody}>
+              {errors.submit && (
+                <Alert severity="error" sx={{ mb: 3 }}>
+                  {errors.submit}
+                </Alert>
+              )}
+              
               <Stepper activeStep={activeStep} className={styles.stepper}>
                 {steps.map((label) => (
                   <Step key={label}>
@@ -1085,7 +1096,7 @@ const SetupPage = () => {
                 </div>
 
                 {/* Branding */}
-                {selectedOrgForDetails?.brandPrimaryColor && (
+                {/* {selectedOrgForDetails?.brandPrimaryColor && (
                   <div className={styles.detailsModalItem}>
                     <Typography variant="caption" className={styles.detailsModalLabel}>
                       Primary Color
@@ -1117,6 +1128,7 @@ const SetupPage = () => {
                     </div>
                   </div>
                 )}
+                */}
                 {selectedOrgForDetails?.timezone && (
                   <div className={styles.detailsModalItem}>
                     <Typography variant="caption" className={styles.detailsModalLabel}>

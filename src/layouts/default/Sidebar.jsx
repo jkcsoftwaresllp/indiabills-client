@@ -313,14 +313,14 @@ const Sidebar = ({ mobileOpen = false, setMobileOpen = () => {} }) => {
               <FiRefreshCw className={styles.menuIcon} />
               Refresh
             </button>
-            <button className={styles.menuItem} onClick={() => navigate("/help")}>
+            {/* <button className={styles.menuItem} onClick={() => navigate("/help")}>
               <FiHelpCircle className={styles.menuIcon} />
               Get Help
-            </button>
-            <button className={styles.menuItem} onClick={() => navigate("/settings")}>
+            </button> */}
+            {/* <button className={styles.menuItem} onClick={() => navigate("/settings")}>
               <FiSettings className={styles.menuIcon} />
               Settings
-            </button>
+            </button> */}
             {/* Logout - shows dialog for admin, direct logout for others */}
             <button
               className={styles.menuItem}
