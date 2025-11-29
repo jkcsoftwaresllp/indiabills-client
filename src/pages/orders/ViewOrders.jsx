@@ -13,8 +13,7 @@ import { useStore } from "../../store/store";
 import { IconButton, InputBase, MenuItem, Select } from "@mui/material";
 import { EachOrder } from "./EachOrder";
 import PageAnimate from "../../components/Animate/PageAnimate";
-import axios from "axios";
-import { getPayments } from "../../network/api";
+import { getCustomerOrders } from "../../network/api";
 
 const safeParse = (jsonString) => {
   try {
@@ -25,66 +24,57 @@ const safeParse = (jsonString) => {
   }
 };
 
-// Get orders from localStorage or API
-const getOrdersData = () => {
-  const storedOrders = localStorage.getItem("customerOrders");
-  if (storedOrders) {
-    return JSON.parse(storedOrders);
-  }
-  return [];
-};
+// Transform API response to match frontend format
+const transformOrderData = (apiOrders) => {
+  return apiOrders.map((order) => ({
+    // Core order fields
+    orderId: order.id,
+    orderNumber: order.order_number,
+    orderDate: order.order_date,
+    orderStatus: order.order_status,
 
-// Fetch payment status for orders from backend API
-const fetchPaymentStatuses = async (orders) => {
-  try {
-    const paymentsResult = await getPayments({
-      limit: 1000, // Fetch all payments
-      page: 1,
-    });
+    // Customer details
+    customerId: order.customer_id,
+    customerName: order.customer_name,
+    customerPhone: order.customer_phone,
 
-    let payments = [];
-    if (paymentsResult.status === 200) {
-      if (paymentsResult.data?.data?.data) {
-        payments = paymentsResult.data.data.data;
-      } else if (Array.isArray(paymentsResult.data)) {
-        payments = paymentsResult.data;
-      }
-    }
+    // Payment details
+    paymentStatus: order.payment_status,
+    paymentStatusDisplay:
+      order.payment_status === "unpaid" || order.payment_status === "pending"
+        ? "Awaiting Confirmation"
+        : order.payment_status || "unpaid",
 
-    // Map payment data to orders
-    const paymentMap = {};
-    payments.forEach((payment) => {
-      paymentMap[payment.order_id] = {
-        paymentId: payment.id,
-        paymentStatus: payment.payment_status, // pending, paid, failed, refunded
-        paymentMethod: payment.payment_method,
-        paymentDate: payment.payment_date,
-        invoiceNumber: payment.invoice_number,
-      };
-    });
+    // Monetary fields
+    totalAmount: order.total_amount,
+    discountOnOrder: order.discount_on_order,
+    shippingCost: order.shipping_cost,
 
-    // Merge payment data with orders
-    return orders.map((order) => ({
-      ...order,
-      paymentId: paymentMap[order.orderId]?.paymentId,
-      paymentStatus:
-        paymentMap[order.orderId]?.paymentStatus ||
-        order.paymentStatus ||
-        "pending",
-      paymentMethod: paymentMap[order.orderId]?.paymentMethod,
-      paymentDate: paymentMap[order.orderId]?.paymentDate,
-      // Show "Pending - Awaiting Confirmation" if pending
-      paymentStatusDisplay:
-        paymentMap[order.orderId]?.paymentStatus === "pending"
-          ? "Pending - Awaiting Confirmation"
-          : paymentMap[order.orderId]?.paymentStatus ||
-            order.paymentStatus ||
-            "pending",
-    }));
-  } catch (error) {
-    console.error("Error fetching payment statuses:", error);
-    return orders; // Return original orders if fetch fails
-  }
+    // Address details
+    billingAddressId: order.billing_address_id,
+    shippingAddressId: order.shipping_address_id,
+    billingAddress: order.billing_address,
+    shippingAddress: order.shipping_address,
+
+    // Shipping details
+    shippingDate: order.shipping_date,
+
+    // Additional details
+    invoiceNumber: order.order_number, // Using order_number as invoice number
+    invoiceDate: order.order_date,
+    notes: order.notes || "",
+
+    // Organization & audit info
+    organizationId: order.organization_id,
+    isActive: order.is_active,
+    createdBy: order.created_by,
+    createdAt: order.created_at,
+    updatedBy: order.updated_by,
+    updatedAt: order.updated_at,
+
+    // Items array
+    items: Array.isArray(order.items) ? order.items : [],
+  }));
 };
 
 const ViewOrders = () => {
@@ -99,32 +89,62 @@ const ViewOrders = () => {
   const { successPopup, errorPopup } = useStore();
 
   useEffect(() => {
-    // Load orders from localStorage or API
+    // Fetch orders from API
     const timeout = setTimeout(async () => {
-      const ordersData = getOrdersData();
-      const parsed = ordersData.map((order) => ({
-        ...order,
-        items: order.items.map((item) => ({
-          ...item,
-          variants: safeParse(item.variants),
-        })),
-      }));
+      try {
+        const response = await getCustomerOrders({
+          limit: 100,
+          offset: 0,
+        });
 
-      // Fetch latest payment statuses from backend
-      const ordersWithPaymentStatus = await fetchPaymentStatuses(parsed);
+        if (response.status === 200 && response.data) {
+          console.log("API Response:", response.data);
+          // Handle both possible response structures
+          let apiOrders = [];
+          if (Array.isArray(response.data)) {
+            apiOrders = response.data;
+          } else if (response.data.data && Array.isArray(response.data.data)) {
+            apiOrders = response.data.data;
+          } else if (
+            response.data.data &&
+            Array.isArray(response.data.data.data)
+          ) {
+            apiOrders = response.data.data.data;
+          }
 
-      setOrders(ordersWithPaymentStatus);
+          if (!Array.isArray(apiOrders)) {
+            console.warn("Unexpected API response structure:", response.data);
+            apiOrders = [];
+          }
 
-      const initialTimelineCollapsed = ordersWithPaymentStatus.reduce(
-        (acc, order) => {
-          acc[order.orderId] = true;
-          return acc;
-        },
-        {}
-      );
-      setTimelineCollapsed(initialTimelineCollapsed);
+          const transformedOrders = transformOrderData(apiOrders);
 
-      setLoading(false);
+          // Parse variants if they exist
+          const parsed = transformedOrders.map((order) => ({
+            ...order,
+            items: (order.items || []).map((item) => ({
+              ...item,
+              variants: safeParse(item.variants),
+            })),
+          }));
+
+          setOrders(parsed);
+
+          const initialTimelineCollapsed = parsed.reduce((acc, order) => {
+            acc[order.orderId] = true;
+            return acc;
+          }, {});
+          setTimelineCollapsed(initialTimelineCollapsed);
+        } else {
+          console.error("Failed to fetch orders:", response.error);
+          setOrders([]);
+        }
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        setOrders([]);
+      } finally {
+        setLoading(false);
+      }
     }, 300);
 
     return () => clearTimeout(timeout);
@@ -268,16 +288,20 @@ const ViewOrders = () => {
 
         {/* Order Cards */}
         {sortedOrders.length === 0 ? (
-          <div className="container mx-auto p-4">
-            <h6 className="text-lg">No orders matched your search</h6>
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <p className="text-lg text-slate-600 font-medium">
+                No orders found
+              </p>
+              <p className="text-sm text-slate-500 mt-1">
+                No orders matched your search criteria
+              </p>
+            </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {sortedOrders.map((order) => (
-              <div
-                key={order.orderId}
-                className="border bg-card-bg flex flex-col h-64 rounded-lg p-4 shadow-lg relative"
-              >
+              <div key={order.orderId} className="h-96">
                 <EachOrder
                   initials={initials}
                   order={order}

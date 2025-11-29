@@ -20,6 +20,7 @@ import { addToCart, removeFromCart, updateCartItem, getCart, checkoutCart } from
 import { getPayments, getPaymentById, updatePaymentStatus, createPayment, getInvoice } from './paymentsApi';
 import { toggleWishlist, getWishlist, clearWishlist } from './wishlistApi';
 import { getSubscriptionPlans, getSubscriptionPlan, createSubscriptionOrder, verifySubscriptionPayment, getSubscriptionHistory } from './subscriptionApi';
+import { getCustomerOrders, getCustomerOrderById } from './ordersApi';
 
 async function getStuff(path) {
   try {
@@ -405,4 +406,7 @@ export {
    getChannelAnnouncements,
    getNotes,
    createNote,
+   // Order APIs
+   getCustomerOrders,
+   getCustomerOrderById,
 };
