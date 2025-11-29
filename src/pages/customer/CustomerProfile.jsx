@@ -23,7 +23,7 @@ import {
   IconButton,
 } from "@mui/material";
 import {
-  getCustomerProfileById,
+  getCustomerProfile,
   updateCustomerSelf,
   getCustomerAddresses,
   createCustomerAddress,
@@ -78,16 +78,9 @@ const CustomerProfile = () => {
   // Load profile and addresses on component mount
   useEffect(() => {
     const loadData = async () => {
-      const currentSession = getSessions();
-      if (!currentSession?.id) {
-        setProfileError("Session not found. Please log in again.");
-        setLoading(false);
-        return;
-      }
-
       try {
         const [profile, addressList] = await Promise.all([
-          getCustomerProfileById(currentSession.id),
+          getCustomerProfile(),
           getCustomerAddresses(),
         ]);
 
@@ -163,12 +156,7 @@ const CustomerProfile = () => {
     // Reset to original data - reload from API
     const loadData = async () => {
       try {
-        const currentSession = getSessions();
-        if (!currentSession?.id) {
-          errorPopup("Session expired. Please log in again.");
-          return;
-        }
-        const profile = await getCustomerProfileById(currentSession.id);
+        const profile = await getCustomerProfile();
         if (profile) {
           setProfileData({
             first_name: profile.first_name || "",
