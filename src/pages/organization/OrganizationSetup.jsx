@@ -146,7 +146,7 @@ const OrganizationSetup = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Organization Name"
+                label="Organization Name *"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
@@ -296,7 +296,7 @@ const OrganizationSetup = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Domain"
+                label="Domain *"
                 name="domain"
                 value={formData.domain}
                 onChange={handleChange}
@@ -317,7 +317,8 @@ const OrganizationSetup = () => {
                 helperText={errors.subdomain}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            {/* Color customization fields - commented out for future use */}
+            {/* <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
                 label="Primary Color"
@@ -342,7 +343,7 @@ const OrganizationSetup = () => {
                 error={!!errors.brandAccentColor}
                 helperText={errors.brandAccentColor}
               />
-            </Grid>
+            </Grid> */}
           </Grid>
         );
       default:

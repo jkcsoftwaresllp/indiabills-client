@@ -83,11 +83,15 @@ function getOption(itemName) {
       return ["mg", "g"];
     case "state":
       return [
+        "Andaman and Nicobar Islands",
         "Andhra Pradesh",
         "Arunachal Pradesh",
         "Assam",
         "Bihar",
+        "Chandigarh",
         "Chhattisgarh",
+        "Dadra and Nagar Haveli and Daman and Diu",
+        "Delhi",
         "Goa",
         "Gujarat",
         "Haryana",
@@ -96,6 +100,8 @@ function getOption(itemName) {
         "Jharkhand",
         "Karnataka",
         "Kerala",
+        "Ladakh",
+        "Lakshadweep",
         "Madhya Pradesh",
         "Maharashtra",
         "Manipur",
@@ -104,6 +110,7 @@ function getOption(itemName) {
         "Nagaland",
         "Odisha",
         "Punjab",
+        "Puducherry",
         "Rajasthan",
         "Sikkim",
         "Tamil Nadu",

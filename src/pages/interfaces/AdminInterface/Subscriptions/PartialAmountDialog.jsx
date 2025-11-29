@@ -47,9 +47,9 @@ const PartialAmountDialog = ({
       return;
     }
 
-    if (parsedAmount >= maxAmount) {
+    if (parsedAmount > maxAmount) {
       setError(
-        `Amount must be less than ₹${maxAmount.toLocaleString("en-IN")}`
+        `Amount must be less than or equal to ₹${maxAmount.toLocaleString("en-IN")}`
       );
       return;
     }
@@ -219,7 +219,7 @@ const PartialAmountDialog = ({
                   {isRemainingPayment ? "Max Payment" : "Max Amount"}
                 </Typography>
                 <Typography variant="body2" sx={{ fontWeight: 700, mt: 0.3 }}>
-                  ₹{(maxAmount - 1).toLocaleString("en-IN")}
+                  ₹{maxAmount.toLocaleString("en-IN")}
                 </Typography>
               </Box>
             </Box>
@@ -235,7 +235,7 @@ const PartialAmountDialog = ({
               fullWidth
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              inputProps={{ step: "1", min: minAmount, max: maxAmount - 1 }}
+              inputProps={{ step: "1", min: minAmount, max: maxAmount }}
               placeholder="Enter amount in rupees"
               variant="outlined"
               helperText="Enter amount in rupees (e.g., 1000 for ₹1000)"

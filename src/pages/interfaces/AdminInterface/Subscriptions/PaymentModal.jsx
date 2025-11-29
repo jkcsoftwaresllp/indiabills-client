@@ -147,7 +147,7 @@ const PaymentModal = ({ open, onClose, paymentData, onSuccess }) => {
                     Full Plan Amount:
                   </Typography>
                   <Typography variant="body2" sx={{ mb: 2, color: '#64748b' }}>
-                    ₹{(paymentData?.partialAmount + (paymentData?.remainingAmount || 0)).toLocaleString()}
+                    ₹{(paymentData?.totalAmount || 0).toLocaleString()}
                   </Typography>
 
                   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 3 }}>
@@ -161,11 +161,11 @@ const PaymentModal = ({ open, onClose, paymentData, onSuccess }) => {
                     </Box>
                     <Box sx={{ p: 1.5, bgcolor: '#fff7ed', borderRadius: 1, border: '1px solid #fed7aa' }}>
                       <Typography variant="caption" color="#92400e" sx={{ fontWeight: 600 }}>
-                        Remaining
+                        Amount That Will Remain
                       </Typography>
                       <Typography variant="body2" sx={{ fontWeight: 700, mt: 0.5, color: '#92400e' }}>
-                        ₹{(paymentData?.remainingAmount || (paymentData?.plan?.price_yearly - paymentData?.partialAmount)).toLocaleString()}
-                      </Typography>
+                         ₹{(((paymentData?.totalAmount || 0) - (paymentData?.amountPaid || 0)) - (paymentData?.partialAmount || 0)).toLocaleString()}
+                       </Typography>
                     </Box>
                   </Box>
                 </>

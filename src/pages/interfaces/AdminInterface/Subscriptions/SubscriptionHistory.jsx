@@ -123,6 +123,8 @@ const SubscriptionHistory = () => {
           cycle: selectedSubscription.cycle,
           isPartialPayment: true,
           partialAmount: amount,
+          totalAmount: selectedSubscription.total_amount,
+          amountPaid: selectedSubscription.amount_paid,
         });
         setPaymentDialog(false);
         setShowPaymentModal(true);
