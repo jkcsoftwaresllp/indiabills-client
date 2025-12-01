@@ -26,11 +26,49 @@ const AddCustomers = () => {
     }
   }, [page]);
 
+  const validateSlideFields = useCallback(() => {
+    if (page === 1) {
+      // Validate first slide (Basic Information)
+      const requiredFields = ["first_name", "last_name", "email", "phone", "password", "confirm_password"];
+      for (const field of requiredFields) {
+        if (!formData[field] || formData[field].toString().trim() === "") {
+          const fieldLabel = field.replace(/_/g, " ").charAt(0).toUpperCase() + field.replace(/_/g, " ").slice(1);
+          errorPopup(`${fieldLabel} is required`);
+          return false;
+        }
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        errorPopup("Invalid email format");
+        return false;
+      }
+
+      // Validate phone format
+      if (!formData.phone || formData.phone.replace(/\D/g, '').length < 10) {
+        errorPopup("Invalid phone number format");
+        return false;
+      }
+
+      // Validate password match
+      if (formData.password !== formData.confirm_password) {
+        errorPopup("Password and confirm password do not match");
+        return false;
+      }
+
+      return true;
+    }
+    return true;
+  }, [page, formData, errorPopup]);
+
   const nextPage = useCallback(() => {
     if (page < 2) {
-      setPage(page + 1);
+      if (validateSlideFields()) {
+        setPage(page + 1);
+      }
     }
-  }, [page]);
+  }, [page, validateSlideFields]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -44,6 +82,18 @@ const AddCustomers = () => {
     if (!validateForm("customers", formData)) {
       errorPopup(`Complete all required fields before submitting!`);
       return;
+    }
+
+    // Business type conditional validation
+    if (formData.customer_type === "business") {
+      if (!formData.business_name || formData.business_name.trim() === "") {
+        errorPopup("Business Name is required for business customers");
+        return;
+      }
+      if (!formData.gstin || formData.gstin.trim() === "") {
+        errorPopup("GSTIN is required for business customers");
+        return;
+      }
     }
 
     // Validate email format
@@ -85,7 +135,10 @@ const AddCustomers = () => {
       const status = await createCustomer(finalData);
       if (status === 201 || status === 200) {
         successPopup("Customer registered successfully!");
-        navigate("/customers");
+        // Add a small delay to ensure server processes the request
+        setTimeout(() => {
+          navigate("/customers");
+        }, 500);
       } else {
         errorPopup("Failed to register the customer");
       }
@@ -250,6 +303,8 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage })
 BasicPage.displayName = "BasicPage";
 
 const BusinessPage = React.memo(({ formData, handleChange, setFormData }) => {
+   const isBusinessCustomer = formData.customer_type === "business";
+
    return (
      <MultiPageAnimate>
        <div className="p-8 flex flex-col items-center gap-8 idms-bg">
@@ -265,18 +320,20 @@ const BusinessPage = React.memo(({ formData, handleChange, setFormData }) => {
           <InputBox
             name="business_name"
             type="string"
-            label="Business Name"
+            label={`Business Name${isBusinessCustomer ? " *" : ""}`}
             placeholder={"Business Name"}
             value={formData.business_name}
             onChange={handleChange}
+            required={isBusinessCustomer}
           />
           <InputBox
             name="gstin"
             type="text"
-            label="GSTIN"
+            label={`GSTIN${isBusinessCustomer ? " *" : ""}`}
             placeholder={"GSTIN"}
             value={formData.gstin}
             onChange={handleChange}
+            required={isBusinessCustomer}
           />
           <InputBox
             name="fssai_number"

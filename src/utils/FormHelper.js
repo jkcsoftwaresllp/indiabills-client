@@ -188,6 +188,7 @@ function getRequiredField(title) {
        "password",
        "confirm_password",
        "customer_type",
+       // Note: business_name and gstin are conditionally required based on customer_type
       ];
 
     case "transports":
