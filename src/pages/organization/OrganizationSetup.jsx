@@ -1,13 +1,17 @@
-import { FiArrowLeft, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createFirstTimeOrganization } from '../../network/api/organizationApi';
-import { useStore } from '../../store/store';
-import { getTempSession, clearTempSession, validateOrganizationData } from '../../utils/authHelper';
-import PageAnimate from '../../components/Animate/PageAnimate';
-import logo from '../../assets/IndiaBills_logo.png';
-import bg from '../../assets/bglogo.png';
-import styles from '../user/Login.module.css';
+import { FiArrowLeft, FiArrowRight, FiCheckCircle } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createFirstTimeOrganization } from "../../network/api/organizationApi";
+import { useStore } from "../../store/store";
+import {
+  getTempSession,
+  clearTempSession,
+  validateOrganizationData,
+} from "../../utils/authHelper";
+import PageAnimate from "../../components/Animate/PageAnimate";
+import logo from "../../assets/IndiaBills_logo.png";
+import bg from "../../assets/bglogo.png";
+import styles from "../user/Login.module.css";
 import {
   Card,
   CardContent,
@@ -23,9 +27,9 @@ import {
   Stepper,
   Step,
   StepLabel,
-  CircularProgress
-} from '@mui/material';
-import { getOption } from '../../utils/FormHelper';
+  CircularProgress,
+} from "@mui/material";
+import { getOption } from "../../utils/FormHelper";
 
 const OrganizationSetup = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -35,48 +39,48 @@ const OrganizationSetup = () => {
   const { successPopup, errorPopup } = useStore();
 
   const [formData, setFormData] = useState({
-    name: '',
-    businessName: '',
-    about: '',
-    tagline: '',
-    domain: '',
-    subdomain: '',
-    logoUrl: '',
-    phone: '',
-    email: '',
-    website: '',
-    addressLine: '',
-    city: '',
-    state: '',
-    country: 'India',
-    pinCode: '',
-    brandPrimaryColor: '#1e2938',
-    brandAccentColor: '#c42032'
+    name: "",
+    businessName: "",
+    about: "",
+    tagline: "",
+    domain: "",
+    subdomain: "",
+    logoUrl: "",
+    phone: "",
+    email: "",
+    website: "",
+    addressLine: "",
+    city: "",
+    state: "",
+    country: "India",
+    pinCode: "",
+    brandPrimaryColor: "#1e2938",
+    brandAccentColor: "#c42032",
   });
 
-  const steps = ['Basic Information', 'Contact & Address', 'Branding & Domain'];
+  const steps = ["Basic Information", "Contact & Address", "Branding & Domain"];
 
   useEffect(() => {
     // Check if user has temp session
     const tempSession = getTempSession();
     if (!tempSession) {
-      errorPopup('Session expired. Please login again.');
-      navigate('/login');
+      errorPopup("Session expired. Please login again.");
+      navigate("/login");
     }
   }, [navigate, errorPopup]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     // Clear error for this field
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
@@ -86,29 +90,29 @@ const OrganizationSetup = () => {
     if (activeStep === 0) {
       // Validate basic info
       if (!formData.name) {
-        setErrors({ name: 'Organization name is required' });
+        setErrors({ name: "Organization name is required" });
         return;
       }
     }
-    
-    setActiveStep(prev => prev + 1);
+
+    setActiveStep((prev) => prev + 1);
   };
 
   const handleBack = () => {
-    setActiveStep(prev => prev - 1);
+    setActiveStep((prev) => prev - 1);
   };
 
   const handleBackToLogin = () => {
     clearTempSession();
-    navigate('/login');
+    navigate("/login");
   };
 
   const handleSubmit = async () => {
     const validation = validateOrganizationData(formData);
-    
+
     if (!validation.isValid) {
       setErrors(validation.errors);
-      errorPopup('Please fix the validation errors');
+      errorPopup("Please fix the validation errors");
       return;
     }
 
@@ -116,23 +120,26 @@ const OrganizationSetup = () => {
     try {
       const tempSession = getTempSession();
       if (!tempSession?.token) {
-        errorPopup('Session expired. Please login again.');
-        navigate('/login');
+        errorPopup("Session expired. Please login again.");
+        navigate("/login");
         return;
       }
 
-      const response = await createFirstTimeOrganization(formData, tempSession.token);
-      
+      const response = await createFirstTimeOrganization(
+        formData,
+        tempSession.token
+      );
+
       if (response.status === 200 || response.status === 201) {
-        successPopup('Organization created successfully! Please login again.');
+        successPopup("Organization created successfully! Please login again.");
         clearTempSession();
-        navigate('/login');
+        navigate("/login");
       } else {
-        errorPopup(response.data?.message || 'Failed to create organization');
+        errorPopup(response.data?.message || "Failed to create organization");
       }
     } catch (error) {
-      console.error('Error creating organization:', error);
-      errorPopup('Failed to create organization');
+      console.error("Error creating organization:", error);
+      errorPopup("Failed to create organization");
     } finally {
       setLoading(false);
     }
@@ -302,7 +309,9 @@ const OrganizationSetup = () => {
                 onChange={handleChange}
                 placeholder="yourcompany.com"
                 error={!!errors.domain}
-                helperText={errors.domain || "Either domain or subdomain is required"}
+                helperText={
+                  errors.domain || "Either domain or subdomain is required"
+                }
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -352,60 +361,117 @@ const OrganizationSetup = () => {
   };
 
   return (
-    <div className={styles.container} style={{ backgroundImage: `url(${bg})` }}>
-      <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-lg shadow-xl p-8 w-full max-w-4xl">
-        <div className="text-center mb-8">
-          <img src={logo} alt="IndiaBills Logo" className="w-32 mx-auto mb-4" />
-          <Typography variant="h4" className="font-bold text-gray-800 mb-2">
+    <div
+      className={styles.container}
+      style={{
+        backgroundImage: `url(${bg})`,
+        height: "auto",
+        minHeight: "100vh",
+        position: "relative",
+        overflow: "auto",
+      }}
+    >
+      <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-lg shadow-xl p-4 sm:p-6 md:p-8 w-full max-w-2xl sm:max-w-3xl md:max-w-4xl mx-auto my-4 sm:my-6">
+        <div className="text-center mb-6 sm:mb-8">
+          <img
+            src={logo}
+            alt="IndiaBills Logo"
+            className="w-24 sm:w-28 md:w-32 mx-auto mb-3 sm:mb-4"
+          />
+          <Typography
+            variant="h5"
+            sm={{ variant: "h4" }}
+            className="font-bold text-gray-800 mb-1 sm:mb-2 text-xl sm:text-2xl"
+          >
             Set Up Your Organization
           </Typography>
-          <Typography variant="body1" color="textSecondary">
+          <Typography
+            variant="body2"
+            sm={{ variant: "body1" }}
+            color="textSecondary"
+            className="text-xs sm:text-sm"
+          >
             Let's create your first organization to get started
           </Typography>
         </div>
 
-        <Stepper activeStep={activeStep} className="mb-8">
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
+        <Box className="mb-6 sm:mb-8 overflow-x-auto">
+          <Stepper activeStep={activeStep} orientation="horizontal">
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
+                  <span className="hidden sm:inline">{label}</span>
+                  <span className="sm:hidden text-xs">
+                    {label.split(" ")[0]}
+                  </span>
+                </StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+        </Box>
 
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
+        <Card sx={{ mb: 3 }}>
+          <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }}
+            >
               {steps[activeStep]}
             </Typography>
             {renderStepContent(activeStep)}
           </CardContent>
         </Card>
 
-        <Box mt={4} display="flex" justifyContent="space-between">
+        <Box
+          mt={3}
+          sm:mt={4}
+          display="flex"
+          flexDirection={{ xs: "column", sm: "row" }}
+          justifyContent={{ xs: "center", sm: "space-between" }}
+          gap={2}
+          sx={{ width: "100%" }}
+        >
           <Button
             onClick={handleBackToLogin}
             disabled={loading}
+            fullWidth={{ xs: true, sm: false }}
+            variant="outlined"
+            sx={{
+              order: { xs: 3, sm: 0 },
+              minWidth: { sm: "120px" },
+            }}
           >
             Back to Login
           </Button>
-          
-          <div className="flex gap-2">
+
+          <Box
+            display="flex"
+            flexDirection={{ xs: "column", sm: "row" }}
+            gap={2}
+            sx={{ width: { xs: "100%", sm: "auto" } }}
+          >
             {activeStep > 0 && (
               <Button
                 onClick={handleBack}
                 startIcon={<FiArrowLeft />}
                 disabled={loading}
+                fullWidth={{ xs: true, sm: false }}
+                variant="outlined"
+                sx={{ minWidth: { sm: "100px" } }}
               >
                 Back
               </Button>
             )}
-            
+
             {activeStep < steps.length - 1 ? (
               <Button
                 variant="contained"
                 onClick={handleNext}
                 endIcon={<FiArrowRight />}
                 disabled={loading}
+                fullWidth={{ xs: true, sm: false }}
+                sx={{ minWidth: { sm: "100px" } }}
               >
                 Next
               </Button>
@@ -415,11 +481,17 @@ const OrganizationSetup = () => {
                 onClick={handleSubmit}
                 startIcon={<FiCheckCircle />}
                 disabled={loading}
+                fullWidth={{ xs: true, sm: false }}
+                sx={{ minWidth: { sm: "180px" } }}
               >
-                {loading ? <CircularProgress size={20} /> : 'Create Organization'}
+                {loading ? (
+                  <CircularProgress size={20} />
+                ) : (
+                  "Create Organization"
+                )}
               </Button>
             )}
-          </div>
+          </Box>
         </Box>
       </div>
     </div>
