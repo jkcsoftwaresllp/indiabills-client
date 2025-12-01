@@ -8,6 +8,8 @@ import {
 } from '@mui/material';
 import SubscriptionPlans from './SubscriptionPlans';
 import SubscriptionHistory from './SubscriptionHistory';
+import PaymentHistory from './PaymentHistory';
+import Invoices from './Invoices';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -101,15 +103,25 @@ const SubscriptionsPage = () => {
               }}
             >
               <Tab 
-                label="Available Plans" 
-                id="subscription-tab-0" 
-                aria-controls="subscription-tabpanel-0"
-              />
-              <Tab 
-                label="Subscription History" 
-                id="subscription-tab-1" 
-                aria-controls="subscription-tabpanel-1"
-              />
+                 label="Available Plans" 
+                 id="subscription-tab-0" 
+                 aria-controls="subscription-tabpanel-0"
+               />
+               <Tab 
+                 label="Subscription History" 
+                 id="subscription-tab-1" 
+                 aria-controls="subscription-tabpanel-1"
+               />
+               <Tab 
+                 label="Payment History" 
+                 id="subscription-tab-2" 
+                 aria-controls="subscription-tabpanel-2"
+               />
+               <Tab 
+                 label="Invoices" 
+                 id="subscription-tab-3" 
+                 aria-controls="subscription-tabpanel-3"
+               />
             </Tabs>
           </Box>
 
@@ -118,6 +130,12 @@ const SubscriptionsPage = () => {
           </TabPanel>
           <TabPanel value={tabValue} index={1} sx={{ py: 1.25 }}>
             <SubscriptionHistory />
+          </TabPanel>
+          <TabPanel value={tabValue} index={2} sx={{ py: 1.25 }}>
+            <PaymentHistory />
+          </TabPanel>
+          <TabPanel value={tabValue} index={3} sx={{ py: 1.25 }}>
+            <Invoices />
           </TabPanel>
         </Box>
       </Container>

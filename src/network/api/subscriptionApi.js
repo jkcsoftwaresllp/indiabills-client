@@ -179,3 +179,54 @@ export async function getRemainingAmount(planId) {
     };
   }
 }
+
+// Get subscription payments list
+export async function getSubscriptionPayments() {
+  try {
+    const response = await serverInstance.get('/internal/subscriptions/payments');
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Failed to fetch subscription payments:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Failed to fetch subscription payments' }
+    };
+  }
+}
+
+// Get payment invoices list
+export async function getPaymentInvoices() {
+  try {
+    const response = await serverInstance.get('/internal/subscriptions/payments');
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Failed to fetch payment invoices:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Failed to fetch payment invoices' }
+    };
+  }
+}
+
+// Get subscription invoices list
+export async function getSubscriptionInvoices() {
+  try {
+    const response = await serverInstance.get('/internal/subscriptions/history');
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Failed to fetch subscription invoices:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Failed to fetch subscription invoices' }
+    };
+  }
+}
