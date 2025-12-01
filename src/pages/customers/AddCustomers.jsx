@@ -46,6 +46,25 @@ const AddCustomers = () => {
       return;
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      errorPopup("Invalid email format");
+      return;
+    }
+
+    // Validate phone format
+    if (!formData.phone || formData.phone.replace(/\D/g, '').length < 10) {
+      errorPopup("Invalid phone number format");
+      return;
+    }
+
+    // Validate password match
+    if (formData.password !== formData.confirm_password) {
+      errorPopup("Password and confirm password do not match");
+      return;
+    }
+
     let avatar = "";
     if (image) {
       const ImageData = await renameAndOptimize(formData.first_name, image);
@@ -68,10 +87,11 @@ const AddCustomers = () => {
         successPopup("Customer registered successfully!");
         navigate("/customers");
       } else {
-        errorPopup("Failed to register the customer :(");
+        errorPopup("Failed to register the customer");
       }
     } catch (error) {
-      errorPopup(error.message || "Failed to register the customer :(");
+      const errorMessage = error?.message || "Failed to register the customer";
+      errorPopup(errorMessage);
     }
   };
 
@@ -149,78 +169,78 @@ const AddCustomers = () => {
 export default AddCustomers;
 
 const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage }) => {
-  return (
-    <MultiPageAnimate>
-      <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-        <main className="grid grid-cols-2 gap-6">
-          <InputBox
-            name="first_name"
-            type="string"
-            label="First Name"
-            placeholder={""}
-            value={formData.first_name}
-            onChange={handleChange}
-            required
-          />
-          <InputBox
-            name="last_name"
-            type="string"
-            label="Last Name"
-            placeholder={""}
-            value={formData.last_name}
-            onChange={handleChange}
-            required
-          />
-          <InputBox
-            name="middle_name"
-            type="string"
-            label="Middle Name"
-            placeholder={""}
-            value={formData.middle_name}
-            onChange={handleChange}
-          />
-          <ImageUpload setImage={setImage} />
-          <MobileField
-            label={"Phone"}
-            name={"phone"}
-            setData={setFormData}
-            data={formData}
-            required
-          />
-          <InputBox
-            name="email"
-            type="email"
-            label="Email"
-            placeholder={"example@domain.com"}
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <Dropdown
-            name={"gender"}
-            label="Gender"
-            options={["male", "female", "other", "prefer_not_to_say"]}
-            selectedData={formData}
-            setValue={setFormData}
-          />
-          <InputBox
-            name="password"
-            type="password"
-            label="Password"
-            placeholder={"Password"}
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <InputBox
-            name="confirm_password"
-            type="password"
-            label="Confirm Password"
-            placeholder={"Confirm Password"}
-            value={formData.confirm_password}
-            onChange={handleChange}
-            required
-          />
+   return (
+     <MultiPageAnimate>
+       <div className="p-8 flex flex-col items-center gap-8 idms-bg">
+         <main className="grid grid-cols-2 gap-6">
+           <InputBox
+             name="first_name"
+             type="string"
+             label="First Name *"
+             placeholder={""}
+             value={formData.first_name}
+             onChange={handleChange}
+             required
+           />
+           <InputBox
+             name="last_name"
+             type="string"
+             label="Last Name *"
+             placeholder={""}
+             value={formData.last_name}
+             onChange={handleChange}
+             required
+           />
+           <InputBox
+             name="middle_name"
+             type="string"
+             label="Middle Name"
+             placeholder={""}
+             value={formData.middle_name}
+             onChange={handleChange}
+           />
+           <ImageUpload setImage={setImage} />
+           <MobileField
+             label={"Phone *"}
+             name={"phone"}
+             setData={setFormData}
+             data={formData}
+             required
+           />
+           <InputBox
+             name="email"
+             type="email"
+             label="Email *"
+             placeholder={"example@domain.com"}
+             value={formData.email}
+             onChange={handleChange}
+             required
+           />
+           <Dropdown
+             name={"gender"}
+             label="Gender"
+             options={["male", "female", "other", "prefer_not_to_say"]}
+             selectedData={formData}
+             setValue={setFormData}
+           />
+           <InputBox
+             name="password"
+             type="password"
+             label="Password *"
+             placeholder={"Password"}
+             value={formData.password}
+             onChange={handleChange}
+             required
+           />
+           <InputBox
+             name="confirm_password"
+             type="password"
+             label="Confirm Password *"
+             placeholder={"Confirm Password"}
+             value={formData.confirm_password}
+             onChange={handleChange}
+             required
+           />
         </main>
       </div>
     </MultiPageAnimate>
@@ -230,18 +250,18 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage })
 BasicPage.displayName = "BasicPage";
 
 const BusinessPage = React.memo(({ formData, handleChange, setFormData }) => {
-  return (
-    <MultiPageAnimate>
-      <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-        <main className="grid grid-cols-2 gap-6">
-          <Dropdown
-            name={"customer_type"}
-            label="Customer Type"
-            options={["individual", "business"]}
-            selectedData={formData}
-            setValue={setFormData}
-            required
-          />
+   return (
+     <MultiPageAnimate>
+       <div className="p-8 flex flex-col items-center gap-8 idms-bg">
+         <main className="grid grid-cols-2 gap-6">
+           <Dropdown
+             name={"customer_type"}
+             label="Customer Type *"
+             options={["individual", "business"]}
+             selectedData={formData}
+             setValue={setFormData}
+             required
+           />
           <InputBox
             name="business_name"
             type="string"

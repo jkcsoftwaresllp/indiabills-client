@@ -41,7 +41,8 @@ export async function createOffer(offerData) {
     return response.status;
   } catch (error) {
     console.error("Failed to create offer:", error?.response || error);
-    return error.response?.status || 500;
+    const errorMessage = error.response?.data?.message || error.message || 'Failed to create offer';
+    throw new Error(errorMessage);
   }
 }
 

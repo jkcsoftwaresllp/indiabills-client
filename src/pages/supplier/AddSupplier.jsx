@@ -58,14 +58,24 @@ const AddSuppliers = () => {
 	};
 
 	const submit = async () => {
-		createSupplier(formData).then((status) => {
+		// Validate required field
+		if (!formData.name?.trim()) {
+			errorPopup("Supplier name is required");
+			return;
+		}
+
+		try {
+			const status = await createSupplier(formData);
 			if (status === 201 || status === 200) {
 				successPopup("Supplier registered successfully!");
 				navigate('/suppliers');
 			} else {
-				errorPopup("Failed to register the supplier :(");
+				errorPopup("Failed to register the supplier");
 			}
-		});
+		} catch (error) {
+			const errorMessage = error?.message || "Failed to register the supplier";
+			errorPopup(errorMessage);
+		}
 	};
 
 	const steps = ["Basic Info", "Address & Financial", "Payment Details"];
@@ -110,7 +120,7 @@ const BasicPage = React.memo(({ formData, handleChange }) => {
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="name" type="string" label="Supplier Name" placeholder={"Supplier Name"} value={formData.name} onChange={handleChange} />
+					<InputBox name="name" type="string" label="Supplier Name *" placeholder={"Supplier Name"} value={formData.name} onChange={handleChange} required />
 					<InputBox name="businessName" type="string" label="Business Name" placeholder={"Business Name"} value={formData.businessName} onChange={handleChange} />
 					<InputBox name="contactPerson" type="string" label="Contact Person" placeholder={"Contact Person"} value={formData.contactPerson} onChange={handleChange} />
 					<InputBox name="email" type="string" label="Email" placeholder={"example@domain.com"} value={formData.email} onChange={handleChange} />

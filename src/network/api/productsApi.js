@@ -30,7 +30,8 @@ export async function createProduct(productData) {
     return response.status;
   } catch (error) {
     console.error('Failed to create product:', error.response);
-    return error.response?.status || 500;
+    const errorMessage = error.response?.data?.message || error.response?.data?.errors?.join(', ') || error.message || 'Failed to create product';
+    throw new Error(errorMessage);
   }
 }
 

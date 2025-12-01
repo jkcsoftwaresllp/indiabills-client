@@ -48,6 +48,40 @@ const AddOffer = () => {
 	};
 
 	const submit = async () => {
+  // Validate required fields
+  if (!formData.name?.trim()) {
+    errorPopup("Offer name is required");
+    return;
+  }
+  if (!formData.offerType) {
+    errorPopup("Offer type is required");
+    return;
+  }
+  if (!formData.startDate) {
+    errorPopup("Start date is required");
+    return;
+  }
+  if (!formData.endDate) {
+    errorPopup("End date is required");
+    return;
+  }
+  if (formData.discountValue === '' || formData.discountValue === null || formData.discountValue === undefined) {
+    errorPopup("Discount value is required for this offer type");
+    return;
+  }
+  if (!formData.discountType) {
+    errorPopup("Discount type is required");
+    return;
+  }
+
+  // Validate date range
+  const startDate = new Date(formData.startDate);
+  const endDate = new Date(formData.endDate);
+  if (startDate >= endDate) {
+    errorPopup("Start date must be before end date");
+    return;
+  }
+
   const payload = {
     name: formData.name.trim(),
     description: formData.description?.trim() || "",
@@ -56,18 +90,23 @@ const AddOffer = () => {
     discount_value: Number(formData.discountValue) || 0,
     max_discount_amount: Number(formData.maxDiscountAmount) || 0,
     min_order_amount: Number(formData.minOrderAmount) || 0,
-    start_date: new Date(formData.startDate).toISOString(),
-    end_date: new Date(formData.endDate).toISOString(),
+    start_date: startDate.toISOString(),
+    end_date: endDate.toISOString(),
     is_active: Boolean(formData.isActive),
   };
 
-  const status = await createOffer(payload);
+  try {
+    const status = await createOffer(payload);
 
-  if (status === 201 || status === 200) {
-    successPopup("Offer created successfully!");
-    navigate('/offers');
-  } else {
-    errorPopup("Failed to create the offer :(");
+    if (status === 201 || status === 200) {
+      successPopup("Offer created successfully!");
+      navigate('/offers');
+    } else {
+      errorPopup("Failed to create the offer");
+    }
+  } catch (error) {
+    const errorMessage = error?.message || "Failed to create the offer";
+    errorPopup(errorMessage);
   }
 };
 
@@ -113,11 +152,11 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData }) => {
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<InputBox name="name" type="string" label="Offer Name" placeholder={"Summer Sale"} value={formData.name} onChange={handleChange} />
+					<InputBox name="name" type="string" label="Offer Name *" placeholder={"Summer Sale"} value={formData.name} onChange={handleChange} required />
 					<InputBox name="description" type="string" label="Description" placeholder={"Offer description"} value={formData.description} onChange={handleChange} />
-					<Dropdown name={"offerType"} label="Offer Type" options={["product_discount", "order_discount", "shipping_discount"]} selectedData={formData} setValue={setFormData} />
-					<InputBox name="startDate" type="date" label="Start Date" value={formData.startDate} onChange={handleChange} />
-					<InputBox name="endDate" type="date" label="End Date" value={formData.endDate} onChange={handleChange} />
+					<Dropdown name={"offerType"} label="Offer Type *" options={["product_discount", "order_discount", "shipping_discount"]} selectedData={formData} setValue={setFormData} required />
+					<InputBox name="startDate" type="date" label="Start Date *" value={formData.startDate} onChange={handleChange} required />
+					<InputBox name="endDate" type="date" label="End Date *" value={formData.endDate} onChange={handleChange} required />
 				</main>
 			</div>
 		</MultiPageAnimate>
@@ -131,8 +170,8 @@ const DiscountPage = React.memo(({ formData, handleChange, setFormData }) => {
 		<MultiPageAnimate>
 			<div className="p-8 flex flex-col items-center gap-8 idms-bg">
 				<main className="grid grid-cols-2 gap-6">
-					<Dropdown name={"discountType"} label="Discount Type" options={["percentage", "fixed"]} selectedData={formData} setValue={setFormData} />
-					<InputBox name="discountValue" type="number" label="Discount Value" placeholder={"10"} value={formData.discountValue} onChange={handleChange} />
+					<Dropdown name={"discountType"} label="Discount Type *" options={["percentage", "fixed"]} selectedData={formData} setValue={setFormData} required />
+					<InputBox name="discountValue" type="number" label="Discount Value *" placeholder={"10"} value={formData.discountValue} onChange={handleChange} required />
 					<InputBox name="maxDiscountAmount" type="number" label="Maximum Discount Amount" placeholder={"1000"} value={formData.maxDiscountAmount} onChange={handleChange} />
 					<InputBox name="minOrderAmount" type="number" label="Minimum Order Amount" placeholder={"500"} value={formData.minOrderAmount} onChange={handleChange} />
 				</main>

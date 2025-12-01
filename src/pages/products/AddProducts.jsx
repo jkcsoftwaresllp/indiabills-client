@@ -317,32 +317,32 @@ useEffect(() => {
 export default AddProducts;
 
 const BasicPage = React.memo(({ formData, handleChange, categories }) => {
-  return (
-    <MultiPageAnimate>
-      <div className="flex flex-col w-full items-center rounded-xl">
-        <main className="flex flex-col gap-4 w-2/3 mt-8">
-          <TextInput
-            label={"Product Name"}
-            name={"itemName"}
-            placeholder={"Enter Product Name"}
-            value={formData?.itemName}
-            onChange={handleChange}
-          />
-          <BigTextInput
-            label={"Product Description"}
-            name={"description"}
-            placeholder={"Describe the product"}
-            value={formData?.description}
-            onChange={handleChange}
-          />
-          <TextInput
-            name={"manufacturer"}
-            label="Manufacturer"
-            maxLength={100}
-            placeholder={"Company behind the product"}
-            value={formData?.manufacturer}
-            onChange={(e) => handleChange?.(e)}
-          />
+   return (
+     <MultiPageAnimate>
+       <div className="flex flex-col w-full items-center rounded-xl">
+         <main className="flex flex-col gap-4 w-2/3 mt-8">
+           <TextInput
+             label={"Product Name *"}
+             name={"itemName"}
+             placeholder={"Enter Product Name"}
+             value={formData?.itemName}
+             onChange={handleChange}
+           />
+           <BigTextInput
+             label={"Product Description"}
+             name={"description"}
+             placeholder={"Describe the product"}
+             value={formData?.description}
+             onChange={handleChange}
+           />
+           <TextInput
+             name={"manufacturer"}
+             label="Manufacturer *"
+             maxLength={100}
+             placeholder={"Company behind the product"}
+             value={formData?.manufacturer}
+             onChange={(e) => handleChange?.(e)}
+           />
 
           <CollapsableSection title={"More Details"}>
             <DropdownInput
@@ -440,15 +440,16 @@ const InventoryPage = React.memo(
             <InputBox
               name="unitMRP"
               type="number"
-              label="Unit MRP"
+              label="Unit MRP *"
               placeholder={"₹"}
               value={formData?.unitMRP}
               onChange={(e) => handleChange?.(e)}
+              required
             />
             <InputBox
               name="salePrice"
               type="number"
-              label="Sale Rate"
+              label="Sale Rate *"
               placeholder={"₹"}
               value={formData?.salePrice}
               onChange={(e) => handleChange?.(e)}
@@ -549,7 +550,7 @@ const InventoryPage = React.memo(
             <InputBox
               name="purchasePrice"
               type="number"
-              label="Purchase Price"
+              label="Purchase Price *"
               placeholder={"₹"}
               value={formData?.purchasePrice}
               onChange={(e) => handleChange?.(e)}
