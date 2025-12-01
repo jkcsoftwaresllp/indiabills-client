@@ -22,7 +22,7 @@ const InventoryRoutes = () => {
       element={
         <ProtectedRoute
           element={ViewInventory}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -32,7 +32,7 @@ const InventoryRoutes = () => {
       element={
         <ProtectedRoute
           element={AddInventory}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -42,7 +42,7 @@ const InventoryRoutes = () => {
       element={
         <ProtectedRoute
           element={EditInventory}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -52,7 +52,7 @@ const InventoryRoutes = () => {
       element={
         <ProtectedRoute
           element={ViewWarehouses}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -62,7 +62,7 @@ const InventoryRoutes = () => {
       element={
         <ProtectedRoute
           element={AddWarehouse}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -72,7 +72,7 @@ const InventoryRoutes = () => {
       element={
         <ProtectedRoute
           element={InspectWarehouse}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -82,7 +82,7 @@ const InventoryRoutes = () => {
       element={
         <ProtectedRoute
           element={EditWarehouse}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -92,7 +92,7 @@ const InventoryRoutes = () => {
       element={
         <ProtectedRoute
           element={ViewInventoryStock}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -102,7 +102,7 @@ const InventoryRoutes = () => {
       element={
         <ProtectedRoute
           element={AddInventoryStock}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -112,7 +112,7 @@ const InventoryRoutes = () => {
       element={
         <ProtectedRoute
           element={ViewInventoryMovements}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -122,7 +122,7 @@ const InventoryRoutes = () => {
       element={
         <ProtectedRoute
           element={AddInventoryMovement}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />

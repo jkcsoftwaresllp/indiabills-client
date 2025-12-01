@@ -15,7 +15,7 @@ const ProductRoutes = () => {
       element={
         <ProtectedRoute
           element={ProductList}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -25,7 +25,7 @@ const ProductRoutes = () => {
       element={
         <ProtectedRoute
           element={AddProducts}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -35,7 +35,7 @@ const ProductRoutes = () => {
       element={
         <ProtectedRoute
           element={InspectProduct}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -45,7 +45,7 @@ const ProductRoutes = () => {
       element={
         <ProtectedRoute
           element={EditProduct}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />

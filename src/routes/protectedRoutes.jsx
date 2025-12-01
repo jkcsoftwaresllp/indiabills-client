@@ -47,8 +47,8 @@ const ProtectedRoute = ({ element: Component, roles, ...rest }) => {
           setSession(updatedSession);
           
           // Update organization context if activeOrg exists
-          if (activeOrg) {
-            const orgData = serverUser.orgs?.find(org => org.orgId === activeOrg.orgId);
+          if (activeOrg && serverUser.orgs) {
+            const orgData = serverUser.orgs.find(org => org.orgId === activeOrg.orgId);
             if (orgData) {
               setOrganizationContext({
                 id: activeOrg.orgId,
@@ -60,6 +60,22 @@ const ProtectedRoute = ({ element: Component, roles, ...rest }) => {
                 subscription: subscription
               });
             }
+          } else if (!activeOrg && serverUser.orgs && serverUser.orgs.length === 1) {
+            // If no activeOrg but user has exactly one org, set it as active
+            const singleOrg = serverUser.orgs[0];
+            setOrganizationContext({
+              id: singleOrg.orgId,
+              name: singleOrg.name || 'Organization',
+              domain: singleOrg.domain,
+              subdomain: singleOrg.subdomain,
+              logoUrl: singleOrg.logoUrl,
+              role: singleOrg.role?.toLowerCase() || 'admin',
+              subscription: subscription
+            });
+            // Also update the session with the activeOrg
+            updatedSession.role = singleOrg.role?.toLowerCase() || 'admin';
+            updatedSession.organizationId = singleOrg.orgId;
+            setSession(updatedSession);
           }
           
           setSessionValid(true);
@@ -70,9 +86,14 @@ const ProtectedRoute = ({ element: Component, roles, ...rest }) => {
         }
       } catch (error) {
         console.error('Session validation failed:', error);
-        // On error, clear session and redirect to login
-        localStorage.clear();
-        setSessionValid(false);
+        // Only clear on 401 Unauthorized - for other errors, allow with current session
+        if (error.response?.status === 401 || error.status === 401) {
+          localStorage.clear();
+          setSessionValid(false);
+        } else {
+          // For network errors or other issues, proceed with current session
+          setSessionValid(true);
+        }
       } finally {
         setLoading(false);
       }
@@ -100,6 +121,7 @@ const ProtectedRoute = ({ element: Component, roles, ...rest }) => {
   }
 
   if (!roles.includes(user.role)) {
+    console.warn(`Access denied: User role '${user.role}' not in allowed roles [${roles.join(', ')}]`);
     return <Navigate to="/" />;
   }
 

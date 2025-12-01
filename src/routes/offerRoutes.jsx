@@ -15,7 +15,7 @@ const OfferRoutes = () => {
       element={
         <ProtectedRoute
           element={OfferList}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -25,7 +25,7 @@ const OfferRoutes = () => {
       element={
         <ProtectedRoute
           element={AddOffer}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -35,7 +35,7 @@ const OfferRoutes = () => {
       element={
         <ProtectedRoute
           element={InspectOffer}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -45,7 +45,7 @@ const OfferRoutes = () => {
       element={
         <ProtectedRoute
           element={EditOffer}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />

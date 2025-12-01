@@ -14,7 +14,7 @@ const InvoiceRoutes = () => {
       element={
         <ProtectedRoute
           element={Invoices}
-          roles={['admin', 'operators', 'customer']}
+          roles={['admin', 'operator', 'customer']}
         />
       }
     />,
@@ -24,7 +24,7 @@ const InvoiceRoutes = () => {
       element={
         <ProtectedRoute
           element={EditInvoice}
-          roles={['admin', 'operators', 'customer']}
+          roles={['admin', 'operator', 'customer']}
         />
       }
     />,
@@ -34,7 +34,7 @@ const InvoiceRoutes = () => {
       element={
         <ProtectedRoute
           element={InvoicePage}
-          roles={['admin', 'operators', 'customer']}
+          roles={['admin', 'operator', 'customer']}
         />
       }
     />

@@ -219,7 +219,9 @@ const ShopPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        console.log('Fetching products for shop page...');
         const products = await getProducts();
+        console.log('Products fetched successfully:', products.length);
         const mappedProducts = products.map(product => ({
           id: product.id,
           itemId: product.id,

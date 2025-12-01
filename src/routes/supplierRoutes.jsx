@@ -15,7 +15,7 @@ const SupplierRoutes = () => {
       element={
         <ProtectedRoute
           element={ViewSuppliers}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -25,7 +25,7 @@ const SupplierRoutes = () => {
       element={
         <ProtectedRoute
           element={AddSuppliers}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -35,7 +35,7 @@ const SupplierRoutes = () => {
       element={
         <ProtectedRoute
           element={InspectSupplier}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />,
@@ -45,7 +45,7 @@ const SupplierRoutes = () => {
       element={
         <ProtectedRoute
           element={EditSupplier}
-          roles={['admin', 'operators']}
+          roles={['admin', 'operator']}
         />
       }
     />

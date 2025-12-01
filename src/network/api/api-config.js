@@ -82,15 +82,30 @@ serverInstance.interceptors.response.use(
   (response) => response, // pass successful responses
   (error) => {
     if (error.response && error.response.status === 401) {
-      console.warn("Session expired or unauthorized. Redirecting to /login...");
-
-      // Clear stored sessions
-      localStorage.removeItem("session");
-      localStorage.removeItem("organizationContext");
-      localStorage.removeItem("tempUserSession");
-
-      // Redirect to login page
-      window.location.href = "/login";
+      const message = error.response.data?.message || '';
+      
+      // Only auto-logout if it's an expired/invalid token or no token provided
+      const isTokenError = 
+        message.includes('No token provided') ||
+        message.includes('Invalid or expired session') ||
+        message.includes('invalid token') ||
+        message.includes('blacklisted') ||
+        error.response.data?.valid === false;
+      
+      if (isTokenError) {
+        console.warn("Session expired or invalid token. Redirecting to /login...");
+        
+        // Clear stored sessions
+        localStorage.removeItem("session");
+        localStorage.removeItem("organizationContext");
+        localStorage.removeItem("tempUserSession");
+        
+        // Redirect to login page
+        window.location.href = "/login";
+      } else {
+        // For permission-denied 401s, just log and let the calling function handle it
+        console.warn(`Access denied to ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
+      }
     }
 
     return Promise.reject(error);

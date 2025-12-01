@@ -13,7 +13,7 @@ const OrderRoutes = () => {
       element={
         <ProtectedRoute
           element={ViewOrders}
-          roles={['admin', 'operators', 'delivery']}
+          roles={['admin', 'operator', 'delivery']}
         />
       }
     />,
@@ -23,7 +23,7 @@ const OrderRoutes = () => {
       element={
         <ProtectedRoute
           element={InspectOrder}
-          roles={['admin', 'operators', 'customer']}
+          roles={['admin', 'operator', 'customer']}
         />
       }
     />

@@ -14,7 +14,7 @@ const ShopRoutes = () => {
       element={
         <ProtectedRoute
           element={Shop}
-          roles={['admin', 'operators', 'customer']}
+          roles={['admin', 'operator', 'customer']}
         />
       }
     />,
@@ -24,7 +24,7 @@ const ShopRoutes = () => {
       element={
         <ProtectedRoute
           element={PlaceOrder}
-          roles={['admin', 'operators', 'customer']}
+          roles={['admin', 'operator', 'customer']}
         />
       }
     />,
@@ -34,7 +34,7 @@ const ShopRoutes = () => {
       element={
         <ProtectedRoute
           element={PaymentGateway}
-          roles={['admin', 'operators', 'customer']}
+          roles={['admin', 'operator', 'customer']}
         />
       }
     />
