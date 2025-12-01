@@ -212,7 +212,10 @@ const ViewData = ({
   } else {
   const currentPath = window.location.pathname;
   console.log('Current Path:', currentPath);
-  if (currentPath.startsWith('/operator/')) {
+  if (currentPath.startsWith('/manager/')) {
+  navigate(`${currentPath}/add`);
+  }
+  else if (currentPath.startsWith('/operator/')) {
   navigate(`${currentPath}/add`);
   }
   else if (currentPath.startsWith('/products')) {

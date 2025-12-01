@@ -6,6 +6,13 @@ import SpinnerFullPage from '../pages/more/spinner';
 // Manager Dashboard
 import ManagerDashboard from '../pages/manager/ManagerDashboard';
 
+// Manager Operator Components
+const ManagerViewOperators = lazy(() => import('../pages/manager/ManagerViewOperators'));
+
+// User Components
+const AddUser = lazy(() => import('../pages/user/AddUser'));
+const InspectUser = lazy(() => import('../pages/user/InspectUser'));
+
 // Reused components from existing pages
 const ViewInventory = lazy(() => import('../pages/inventory/ViewInventory'));
 const AddInventory = lazy(() => import('../pages/inventory/AddInventory'));
@@ -102,6 +109,11 @@ const ManagerRoutes = () => {
           <Route path="customers/edit/:customerId" element={<EditCustomer />} />
           <Route path="customers/address/add/:customerId" element={<AddCustomerAddress />} />
           <Route path="customers/address/:addressId" element={<EditCustomerAddress />} />
+
+          {/* Operators Routes */}
+          <Route path="operators" element={<ManagerViewOperators />} />
+          <Route path="operators/add" element={<AddUser />} />
+          <Route path="operators/:userID" element={<InspectUser />} />
 
           {/* Transport Routes */}
           <Route path="transport" element={<ViewTransport />} />

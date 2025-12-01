@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FiGrid, FiUsers, FiCreditCard, FiBox, FiList, FiTool, FiTag, FiTruck, FiRefreshCw, FiBarChart2, FiSearch, FiHelpCircle, FiLogOut } from 'react-icons/fi';
+import { FiGrid, FiUsers, FiCreditCard, FiBox, FiList, FiTool, FiTag, FiTruck, FiRefreshCw, FiBarChart2, FiSearch, FiHelpCircle, FiLogOut, FiUserCheck } from 'react-icons/fi';
 import { getSession } from '../../utils/cacheHelper';
 import { useStore } from '../../store/store';
 import logo from '../../assets/IndiaBills_logo.png';
@@ -17,19 +17,14 @@ const managerMenuItems = [
     label: 'Dashboard',
   },
   {
+    to: '/manager/operators',
+    icon: <FiUserCheck />,
+    label: 'Operators',
+  },
+  {
     to: '/manager/customers',
     icon: <FiUsers />,
     label: 'Customers',
-  },
-  {
-    to: '/manager/payments',
-    icon: <FiCreditCard />,
-    label: 'Payments',
-  },
-  {
-    to: '/manager/inventory',
-    icon: <FiBox />,
-    label: 'Inventory',
   },
   {
     to: '/manager/products',
@@ -42,9 +37,29 @@ const managerMenuItems = [
     label: 'Suppliers',
   },
   {
+    to: '/manager/warehouses',
+    icon: <FiBox />,
+    label: 'Warehouses',
+  },
+  {
+    to: '/manager/inventory',
+    icon: <FiBox />,
+    label: 'Inventory',
+  },
+  {
+    to: '/manager/payments',
+    icon: <FiCreditCard />,
+    label: 'Payments',
+  },
+  {
     to: '/manager/offers',
     icon: <FiTag />,
     label: 'Offers',
+  },
+  {
+    to: '/manager/transport',
+    icon: <FiTruck />,
+    label: 'Transport',
   },
   {
     to: '/manager/inventory/movements',
@@ -60,16 +75,6 @@ const managerMenuItems = [
     to: '/manager/inventory/reconciliations',
     icon: <FiSearch />,
     label: 'Reconciliations',
-  },
-  {
-    to: '/manager/warehouses',
-    icon: <FiBox />,
-    label: 'Warehouses',
-  },
-  {
-    to: '/manager/transport',
-    icon: <FiTruck />,
-    label: 'Transport',
   },
   // {
   //   to: '/manager/help',
