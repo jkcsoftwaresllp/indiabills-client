@@ -153,7 +153,7 @@ const OrganizationSetup = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Organization Name *"
+                label="Organization Name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
@@ -303,7 +303,7 @@ const OrganizationSetup = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Domain *"
+                label="Domain"
                 name="domain"
                 value={formData.domain}
                 onChange={handleChange}

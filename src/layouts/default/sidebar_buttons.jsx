@@ -41,12 +41,12 @@ export default [
         label: "Channel",
         roles: ["admin", "operator", "reporter", "delivery"],
       },
-      {
-        to: "/audit/log",
-        icon: <FiBook />,
-        label: "Audit Log",
-        roles: ["admin"],
-      },
+      // {
+      //   to: "/audit/log",
+      //   icon: <FiBook />,
+      //   label: "Audit Log",
+      //   roles: ["admin"],
+      // },
       {
         to: "/users",
         icon: <FiUsers />,

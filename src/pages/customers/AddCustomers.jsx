@@ -229,7 +229,7 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage })
            <InputBox
              name="first_name"
              type="string"
-             label="First Name *"
+             label="First Name"
              placeholder={""}
              value={formData.first_name}
              onChange={handleChange}
@@ -238,7 +238,7 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage })
            <InputBox
              name="last_name"
              type="string"
-             label="Last Name *"
+             label="Last Name"
              placeholder={""}
              value={formData.last_name}
              onChange={handleChange}
@@ -263,7 +263,7 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage })
            <InputBox
              name="email"
              type="email"
-             label="Email *"
+             label="Email"
              placeholder={"example@domain.com"}
              value={formData.email}
              onChange={handleChange}
@@ -279,7 +279,7 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage })
            <InputBox
              name="password"
              type="password"
-             label="Password *"
+             label="Password"
              placeholder={"Password"}
              value={formData.password}
              onChange={handleChange}
@@ -288,7 +288,7 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage })
            <InputBox
              name="confirm_password"
              type="password"
-             label="Confirm Password *"
+             label="Confirm Password"
              placeholder={"Confirm Password"}
              value={formData.confirm_password}
              onChange={handleChange}
