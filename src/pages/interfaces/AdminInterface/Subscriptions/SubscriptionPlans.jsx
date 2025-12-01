@@ -324,11 +324,12 @@ const SubscriptionPlans = () => {
             const isFeatured =
               idx === 1 || idx === Math.floor(plans.length / 2);
             const isCurrentPlan = isSubscriptionActive(plan.id);
+            const isInRenewalWindow = isCurrentPlan && canRenewSubscription();
             // If currentSubscription exists, it's active by definition
             const isOtherPlanActive = currentSubscription && !isCurrentPlan;
             const shouldGreyOut = isOtherPlanActive && !canRenewSubscription();
             const buttonDisabled =
-              (isOtherPlanActive && !canRenewSubscription()) || isCurrentPlan;
+              (isOtherPlanActive && !canRenewSubscription()) || (isCurrentPlan && !isInRenewalWindow);
 
             return (
               <Card
@@ -569,7 +570,7 @@ const SubscriptionPlans = () => {
                       variant={
                         isFeatured && !isCurrentPlan ? "contained" : "outlined"
                       }
-                      color={isCurrentPlan ? "success" : "primary"}
+                      color={isInRenewalWindow ? "primary" : isCurrentPlan ? "success" : "primary"}
                       fullWidth
                       onClick={() => handleSelectPlan(plan)}
                       disabled={buttonDisabled || processingOrder}
@@ -581,9 +582,9 @@ const SubscriptionPlans = () => {
                         textTransform: "none",
                         borderRadius: 1.2,
                         transition: "all 0.3s ease",
-                        backgroundColor: isCurrentPlan ? "#10b981" : undefined,
-                        borderColor: isCurrentPlan ? "#10b981" : undefined,
-                        color: isCurrentPlan ? "white" : undefined,
+                        backgroundColor: isInRenewalWindow ? undefined : isCurrentPlan ? "#10b981" : undefined,
+                        borderColor: isInRenewalWindow ? undefined : isCurrentPlan ? "#10b981" : undefined,
+                        color: isInRenewalWindow ? undefined : isCurrentPlan ? "white" : undefined,
                         "&:hover:not(:disabled)": {
                           boxShadow:
                             isFeatured && !isCurrentPlan
@@ -592,7 +593,9 @@ const SubscriptionPlans = () => {
                         },
                       }}
                     >
-                      {isCurrentPlan
+                      {isInRenewalWindow
+                        ? "Renew"
+                        : isCurrentPlan
                         ? "✓ Current Plan"
                         : processingOrder
                         ? "Processing..."
