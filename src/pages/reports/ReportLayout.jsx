@@ -1,17 +1,25 @@
-import { FiChevronDown, FiChevronUp, FiColumns, FiDownload } from 'react-icons/fi';
+import {
+  FiChevronDown,
+  FiChevronUp,
+  FiColumns,
+  FiDownload,
+  FiFilter,
+  FiRefreshCw,
+} from "react-icons/fi";
 import { useEffect, useState } from "react";
 import {
-  Container,
   Typography,
   CircularProgress,
   Paper,
-  Grid,
   TextField,
   Button,
   Collapse,
   Breadcrumbs,
   Link,
   IconButton,
+  Box,
+  Tooltip,
+  Chip,
 } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import { getReport } from "../../network/api";
@@ -21,7 +29,6 @@ import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Papa from "papaparse";
-import MouseHoverPopover from "../../components/core/Explain";
 import ColumnSelector from "../../components/FormComponent/ColumnSelector";
 import Modal from "../../components/core/ModalMaker";
 import { useStore } from "../../store/store";
@@ -44,6 +51,7 @@ const ReportLayout = ({
   const [endDate, setEndDate] = useState(`${currentYear}-12-31`);
   const [chartOpen, setChartOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filterApplied, setFilterApplied] = useState(false);
   const [selectedColumns, setSelectedColumns] = useState(() => {
     if (title === "Sales Report") {
       return columnDefs.reduce((acc, col) => {
@@ -117,6 +125,7 @@ const ReportLayout = ({
 
   const handleFilter = () => {
     setLoading(true);
+    setFilterApplied(true);
     loadData();
   };
 
@@ -145,10 +154,9 @@ const ReportLayout = ({
       const dateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
       if (typeof value === "string" && dateRegex.test(value)) {
         const date = new Date(value);
-        return `${date
-          .getDate()
-          .toString()
-          .padStart(2, "0")}/${(date.getMonth() + 1)
+        return `${date.getDate().toString().padStart(2, "0")}/${(
+          date.getMonth() + 1
+        )
           .toString()
           .padStart(2, "0")}/${date.getFullYear()}`;
       }
@@ -266,135 +274,378 @@ const ReportLayout = ({
     .filter(Boolean);
 
   return (
-    <div style={{ padding: '0', height: '100%', overflow: 'hidden' }}>
-      <div style={{ padding: '16px', height: '100%', overflow: 'auto' }}>
-        <Breadcrumbs aria-label="breadcrumb" className="mb-4">
-        <Link
-          color="inherit"
-          onClick={() => navigate("/")}
-          style={{ cursor: "pointer" }}
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        overflow: "hidden",
+        bgcolor: "#f8fafc",
+      }}
+    >
+      {/* Header Section */}
+      <Box
+        sx={{
+          bgcolor: "#ffffff",
+          borderBottom: "1px solid #e2e8f0",
+          px: { xs: 2, sm: 3 },
+          py: { xs: 1.5, sm: 2 },
+        }}
+      >
+        <Breadcrumbs
+          aria-label="breadcrumb"
+          sx={{
+            mb: 1.5,
+            "& .MuiBreadcrumbs-separator": {
+              mx: { xs: 0.5, sm: 1 },
+            },
+          }}
         >
-          Home
-        </Link>
-        <Link
-          color="inherit"
-          onClick={() => navigate("/reports")}
-          style={{ cursor: "pointer" }}
+          <Link
+            color="inherit"
+            onClick={() => navigate("/")}
+            sx={{
+              cursor: "pointer",
+              fontSize: { xs: "0.75rem", sm: "0.875rem" },
+              "&:hover": { textDecoration: "underline" },
+            }}
+          >
+            Home
+          </Link>
+          <Link
+            color="inherit"
+            onClick={() => navigate("/reports")}
+            sx={{
+              cursor: "pointer",
+              fontSize: { xs: "0.75rem", sm: "0.875rem" },
+              "&:hover": { textDecoration: "underline" },
+            }}
+          >
+            Reports
+          </Link>
+          <Typography
+            sx={{
+              fontSize: { xs: "0.75rem", sm: "0.875rem" },
+              color: "#64748b",
+              fontWeight: 500,
+            }}
+          >
+            {title}
+          </Typography>
+        </Breadcrumbs>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+          }}
         >
-          Reports
-        </Link>
-        <Typography color="textPrimary">{title}</Typography>
-      </Breadcrumbs>
-      <Typography variant="h4" gutterBottom>
-        {title}
-      </Typography>
-      <Grid container spacing={3} className="mb-4">
-        <Grid item xs={12} sm={5} md={4}>
+          <Box>
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 700,
+                color: "#0f172a",
+                mb: 0.5,
+                fontSize: { xs: "1.25rem", sm: "1.5rem", md: "2rem" },
+              }}
+            >
+              {title}
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                color: "#64748b",
+              }}
+            >
+              {data.length > 0 && `Showing ${data.length} records`}
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Filters Section */}
+      <Box
+        sx={{
+          bgcolor: "#ffffff",
+          px: { xs: 2, sm: 3 },
+          py: { xs: 2, sm: 3 },
+          borderBottom: "1px solid #e2e8f0",
+          overflowX: "auto",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            gap: { xs: 1, sm: 2 },
+            alignItems: "flex-end",
+            flexWrap: { xs: "wrap", sm: "nowrap" },
+          }}
+        >
           <TextField
             label="Start Date"
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            fullWidth
-            InputLabelProps={{
-              shrink: true,
+            sx={{
+              width: { xs: "calc(50% - 8px)", sm: "180px" },
+              minWidth: "140px",
             }}
+            InputLabelProps={{ shrink: true }}
+            size="small"
+            variant="outlined"
           />
-        </Grid>
-        <Grid item xs={12} sm={5} md={4}>
           <TextField
             label="End Date"
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            fullWidth
-            InputLabelProps={{
-              shrink: true,
+            sx={{
+              width: { xs: "calc(50% - 8px)", sm: "180px" },
+              minWidth: "140px",
             }}
+            InputLabelProps={{ shrink: true }}
+            size="small"
+            variant="outlined"
           />
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={2}
-          md={4}
-          style={{ display: "flex", alignItems: "flex-end" }}
-        >
           <Button
             variant="contained"
-            color="primary"
             onClick={handleFilter}
-            fullWidth
+            startIcon={<FiFilter size={16} />}
+            sx={{
+              height: "40px",
+              textTransform: "none",
+              fontWeight: 600,
+              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+              whiteSpace: "nowrap",
+              width: { xs: "100%", sm: "auto" },
+              "&:hover": {
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+              },
+            }}
           >
-            Apply
+            Apply Filter
           </Button>
-        </Grid>
-      </Grid>
-      {loading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-          <CircularProgress />
-        </div>
-      ) : data.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          <Typography variant="h6">No data found</Typography>
-        </div>
-      ) : (
-        <>
-          <Grid container spacing={2} className="mb-2">
-            <Grid item>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={handleExportPDF}
-                aria-label="Export to PDF"
-                startIcon={<FiDownload />}
-              >
-                Export to PDF
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={handleExportCSV}
-                aria-label="Export to CSV"
-                startIcon={<FiDownload />}
-              >
-                Export to CSV
-              </Button>
-            </Grid>
-            <Grid item>
-              <IconButton
-                onClick={() => setIsModalOpen(true)}
-                aria-label="Select Columns"
-              >
-                <FiColumns />
-              </IconButton>
-            </Grid>
-          </Grid>
-          {renderChart && (
-            <Button
-              onClick={toggleChart}
-              startIcon={chartOpen ? <FiChevronUp /> : <FiChevronDown />}
-              className="mb-2"
-            >
-              {chartOpen ? "Hide Chart" : "Show Chart"}
-            </Button>
+          {filterApplied && (
+            <Chip
+              label="Filter Applied"
+              size="small"
+              variant="outlined"
+              sx={{ height: "32px", fontSize: "0.65rem" }}
+            />
           )}
-          <Collapse in={chartOpen}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Paper elevation={3} className="p-4">
-                  {renderChart && renderChart(data)}
+        </Box>
+      </Box>
+
+      {/* Content Section */}
+      <Box
+        sx={{
+          flex: 1,
+          overflow: "auto",
+          px: { xs: 2, sm: 3 },
+          py: { xs: 2, sm: 3 },
+        }}
+      >
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "400px",
+            }}
+          >
+            <Box sx={{ textAlign: "center" }}>
+              <CircularProgress sx={{ mb: 2 }} />
+              <Typography sx={{ color: "#64748b", fontSize: "0.875rem" }}>
+                Loading report...
+              </Typography>
+            </Box>
+          </Box>
+        ) : data.length === 0 ? (
+          <Paper
+            sx={{
+              p: { xs: 3, sm: 6 },
+              textAlign: "center",
+              bgcolor: "#f1f5f9",
+              border: "none",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                color: "#64748b",
+                mb: 1,
+                fontSize: { xs: "1rem", sm: "1.25rem" },
+              }}
+            >
+              No data found
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                color: "#94a3b8",
+              }}
+            >
+              Try adjusting your filters or selecting a different date range
+            </Typography>
+          </Paper>
+        ) : (
+          <Box>
+            {/* Action Bar */}
+            <Box
+              sx={{
+                display: "flex",
+                gap: { xs: 1, sm: 1.5 },
+                mb: 2,
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
+            >
+              <Tooltip title="Refresh data">
+                <IconButton
+                  size="small"
+                  onClick={handleFilter}
+                  sx={{
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "6px",
+                    padding: { xs: "6px", sm: "8px" },
+                    "&:hover": { bgcolor: "#f1f5f9" },
+                  }}
+                >
+                  <FiRefreshCw size={16} />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Export as PDF">
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={handleExportPDF}
+                  startIcon={<FiDownload size={14} />}
+                  sx={{
+                    textTransform: "none",
+                    borderColor: "#e2e8f0",
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    padding: { xs: "4px 8px", sm: "6px 12px" },
+                    "&:hover": { borderColor: "#cbd5e1", bgcolor: "#f8fafc" },
+                  }}
+                >
+                  PDF
+                </Button>
+              </Tooltip>
+
+              <Tooltip title="Export as CSV">
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={handleExportCSV}
+                  startIcon={<FiDownload size={14} />}
+                  sx={{
+                    textTransform: "none",
+                    borderColor: "#e2e8f0",
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    padding: { xs: "4px 8px", sm: "6px 12px" },
+                    "&:hover": { borderColor: "#cbd5e1", bgcolor: "#f8fafc" },
+                  }}
+                >
+                  CSV
+                </Button>
+              </Tooltip>
+
+              <Tooltip title="Select columns">
+                <IconButton
+                  onClick={() => setIsModalOpen(true)}
+                  size="small"
+                  sx={{
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "6px",
+                    padding: { xs: "6px", sm: "8px" },
+                    "&:hover": { bgcolor: "#f1f5f9" },
+                  }}
+                >
+                  <FiColumns size={16} />
+                </IconButton>
+              </Tooltip>
+
+              <Box sx={{ flex: 1, display: { xs: "none", sm: "block" } }} />
+
+              {renderChart && (
+                <Button
+                  size="small"
+                  onClick={toggleChart}
+                  startIcon={
+                    chartOpen ? (
+                      <FiChevronUp size={14} />
+                    ) : (
+                      <FiChevronDown size={14} />
+                    )
+                  }
+                  sx={{
+                    textTransform: "none",
+                    color: "#0f172a",
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    padding: { xs: "4px 8px", sm: "6px 12px" },
+                    "&:hover": { bgcolor: "#f1f5f9" },
+                  }}
+                >
+                  {chartOpen ? "Hide" : "Show"} Chart
+                </Button>
+              )}
+            </Box>
+
+            {/* Chart Section */}
+            {renderChart && (
+              <Collapse in={chartOpen}>
+                <Paper
+                  sx={{
+                    p: { xs: 2, sm: 3 },
+                    mb: 3,
+                    bgcolor: "#ffffff",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "8px",
+                    overflowX: "auto",
+                  }}
+                >
+                  {renderChart(data)}
                 </Paper>
-              </Grid>
-            </Grid>
-          </Collapse>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <div
+              </Collapse>
+            )}
+
+            {/* Data Table */}
+            <Paper
+              sx={{
+                overflow: "hidden",
+                borderRadius: "8px",
+                border: "1px solid #e2e8f0",
+                bgcolor: "#ffffff",
+              }}
+            >
+              <Box
                 className="ag-theme-quartz"
-                style={{ height: 600, width: "100%" }}
+                sx={{
+                  height: { xs: 300, sm: 400, md: 600 },
+                  width: "100%",
+                  "& .ag-header": {
+                    bgcolor: "#f8fafc",
+                    borderBottom: "1px solid #e2e8f0",
+                  },
+                  "& .ag-header-cell": {
+                    fontWeight: 600,
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    color: "#475569",
+                  },
+                  "& .ag-row": {
+                    borderBottom: "1px solid #f1f5f9",
+                  },
+                  "& .ag-row:hover": {
+                    bgcolor: "#f8fafc",
+                  },
+                  "& .ag-cell": {
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    color: "#334155",
+                  },
+                }}
               >
                 <AgGridReact
                   rowData={Array.isArray(data) ? data : []}
@@ -402,38 +653,40 @@ const ReportLayout = ({
                   pagination={true}
                   paginationPageSize={20}
                   pinnedBottomRowData={totalFields ? [totalsRow] : null}
+                  domLayout="autoHeight"
                 />
-              </div>
-            </Grid>
-          </Grid>
-          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-            <ColumnSelector
-              columns={columnDefs.flatMap((col) => {
-                if (col.children) {
+              </Box>
+            </Paper>
+
+            {/* Column Selector Modal */}
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+              <ColumnSelector
+                columns={columnDefs.flatMap((col) => {
+                  if (col.children) {
+                    return [
+                      ...col.children.map((child) => ({
+                        field: child.field,
+                        headerName: `${col.headerName} - ${child.headerName}`,
+                        editable: child.editable || false,
+                      })),
+                    ];
+                  }
                   return [
-                    ...col.children.map((child) => ({
-                      field: child.field,
-                      headerName: `${col.headerName} - ${child.headerName}`,
-                      editable: child.editable || false,
-                    })),
+                    {
+                      field: col.field,
+                      headerName: col.headerName,
+                      editable: col.editable || false,
+                    },
                   ];
-                }
-                return [
-                  {
-                    field: col.field,
-                    headerName: col.headerName,
-                    editable: col.editable || false,
-                  },
-                ];
-              })}
-              selectedColumns={selectedColumns}
-              onColumnChange={handleColumnChange}
-            />
-          </Modal>
-        </>
-      )}
-      </div>
-    </div>
+                })}
+                selectedColumns={selectedColumns}
+                onColumnChange={handleColumnChange}
+              />
+            </Modal>
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 };
 
