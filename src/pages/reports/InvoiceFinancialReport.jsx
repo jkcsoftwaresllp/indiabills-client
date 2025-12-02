@@ -3,14 +3,20 @@ import { getAllInvoiceFinancialReportAPI } from '../../network/api';
 
 const InvoiceFinancialReport = () => {
   const columnDefs = [
+    { headerName: 'Invoice ID', field: 'invoiceId' },
     { headerName: 'Invoice Number', field: 'invoiceNumber' },
-    { headerName: 'Date', field: 'date', valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : '' },
+    { headerName: 'Invoice Date', field: 'invoiceDate', valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : '' },
     { headerName: 'Customer Name', field: 'customerName', filter: true },
-    { headerName: 'Subtotal', field: 'subtotal' },
-    { headerName: 'Discount', field: 'discount' },
-    { headerName: 'Tax Amount', field: 'taxAmount' },
-    { headerName: 'Shipping', field: 'shipping' },
+    { headerName: 'Phone', field: 'phone' },
+    { headerName: 'Email', field: 'email' },
     { headerName: 'Total Amount', field: 'totalAmount' },
+    { headerName: 'Tax Amount', field: 'taxAmount' },
+    { headerName: 'Discount', field: 'discount' },
+    { headerName: 'Shipping Cost', field: 'shippingCost' },
+    { headerName: 'Total Paid', field: 'totalPaid' },
+    { headerName: 'Total Returned', field: 'totalReturned' },
+    { headerName: 'Total Due', field: 'totalDue' },
+    { headerName: 'Status', field: 'status' },
     { headerName: 'Payment Status', field: 'paymentStatus' },
   ];
 

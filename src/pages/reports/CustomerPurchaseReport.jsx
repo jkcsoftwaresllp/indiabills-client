@@ -15,12 +15,13 @@ const CustomerPurchaseReport = () => {
   const url = "/reports/customer-purchase";
 
   const columnDefs = [
-    { headerName: "Customer ID", field: "customerId" },
-    { headerName: "Customer Name", field: "customerName" },
-    { headerName: "Total Orders", field: "totalOrders" },
-    { headerName: "Total Purchases", field: "totalPurchases" },
-    { headerName: "Total Amount", field: "totalAmount" },
-    { headerName: "Average Order Value", field: "averageOrderValue" },
+    { headerName: "Customer ID", field: "customer_id" },
+    { headerName: "Customer Name", field: "customer_name" },
+    { headerName: "Phone", field: "phone" },
+    { headerName: "Total Orders", field: "total_orders" },
+    { headerName: "Total Spent", field: "total_spent" },
+    { headerName: "Total Points Earned", field: "total_points" },
+    { headerName: "Current Loyalty Points", field: "current_points" },
   ];
 
   const renderCustomerChart = (data) => (
@@ -30,15 +31,15 @@ const CustomerPurchaseReport = () => {
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="customerName" />
+        <XAxis dataKey="customer_name" />
         <YAxis />
         <Tooltip formatter={(value) => `₹${value}`} />
         <Legend />
-        <Bar dataKey="totalPurchases" fill="#8884d8" name="Total Purchases" />
+        <Bar dataKey="total_spent" fill="#8884d8" name="Total Spent" />
         <Bar
-          dataKey="averageOrderValue"
+          dataKey="total_orders"
           fill="#82ca9d"
-          name="Average Order Value"
+          name="Total Orders"
         />
       </BarChart>
     </ResponsiveContainer>

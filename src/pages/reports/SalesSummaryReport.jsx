@@ -13,26 +13,23 @@ import { getSalesSummaryReport } from '../../network/api';
 
 const SalesSummaryReport = () => {
   const columnDefs = [
-    { headerName: 'Date', field: 'date' },
-    { headerName: 'Item', field: 'itemName' },
-    { headerName: 'Total Sales', field: 'totalSales' },
-    { headerName: 'Total Orders', field: 'totalOrders' },
-    { headerName: 'Average Order Value', field: 'averageOrderValue' },
-    { headerName: 'Total Returns', field: 'totalReturns' },
+    { headerName: 'Total Orders', field: 'total_orders' },
+    { headerName: 'Total Revenue', field: 'total_revenue' },
+    { headerName: 'Total Paid', field: 'total_paid' },
+    { headerName: 'Total Unpaid', field: 'total_unpaid' },
   ];
 
   const renderChart = (data) => (
     <ResponsiveContainer width="100%" height={400}>
       <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
+        <XAxis dataKey="total_orders" />
         <YAxis />
         <Tooltip />
         <Legend />
-        <Line type="monotone" dataKey="totalSales" stroke="#8884d8" />
-        <Line type="monotone" dataKey="totalOrders" stroke="#82ca9d" />
-        <Line type="monotone" dataKey="averageOrderValue" stroke="#ffc658" />
-        <Line type="monotone" dataKey="totalReturns" stroke="#ff7300" />
+        <Line type="monotone" dataKey="total_revenue" stroke="#8884d8" name="Revenue" />
+        <Line type="monotone" dataKey="total_paid" stroke="#82ca9d" name="Paid" />
+        <Line type="monotone" dataKey="total_unpaid" stroke="#ff7300" name="Unpaid" />
       </LineChart>
     </ResponsiveContainer>
   );

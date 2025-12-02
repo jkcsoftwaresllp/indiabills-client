@@ -6,12 +6,16 @@ const StockSalesSummaryReport = () => {
   const [rate] = useState('all'); // Default rate, can be customized
 
   const columnDefs = [
-    { headerName: 'Product ID', field: 'productId' },
-    { headerName: 'Product Name', field: 'productName', filter: true },
-    { headerName: 'Current Stock', field: 'currentStock' },
-    { headerName: 'Total Sales', field: 'totalSales' },
-    { headerName: 'Stock Value', field: 'stockValue' },
-    { headerName: 'Sales Value', field: 'salesValue' },
+    { headerName: 'Item ID', field: 'itemId' },
+    { headerName: 'Item Name', field: 'itemName', filter: true },
+    { headerName: 'Opening Quantity', field: 'openingQuantity' },
+    { headerName: 'Opening Amount', field: 'openingAmount' },
+    { headerName: 'In Quantity', field: 'inQuantity' },
+    { headerName: 'In Amount', field: 'inAmount' },
+    { headerName: 'Out Quantity', field: 'outQuantity' },
+    { headerName: 'Out Amount', field: 'outAmount' },
+    { headerName: 'Closing Quantity', field: 'closingQuantity' },
+    { headerName: 'Closing Amount', field: 'closingAmount' },
     { headerName: 'Rate', field: 'rate' },
   ];
 

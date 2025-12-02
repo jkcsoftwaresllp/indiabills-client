@@ -4,7 +4,8 @@ import serverInstance from "./api-config";
 export async function getSalesSummaryReport(params = {}) {
   try {
     const response = await serverInstance.get("/reports/sales-summary", { params });
-    return response.data;
+    // Backend returns a single object, wrap in array for ReportLayout compatibility
+    return Array.isArray(response.data) ? response.data : [response.data];
   } catch (error) {
     console.error("Failed to fetch sales summary report:", error.response);
     return [];

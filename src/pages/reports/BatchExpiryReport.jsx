@@ -3,13 +3,16 @@ import { getBatchExpiryReportAPI } from '../../network/api';
 
 const BatchExpiryReport = () => {
   const columnDefs = [
-    { headerName: 'Batch ID', field: 'batchId' },
-    { headerName: 'Product Name', field: 'productName', filter: true },
-    { headerName: 'Batch Number', field: 'batchNumber' },
-    { headerName: 'Expiry Date', field: 'expiryDate', valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : '' },
-    { headerName: 'Quantity', field: 'quantity' },
-    { headerName: 'Days Until Expiry', field: 'daysUntilExpiry' },
-    { headerName: 'Status', field: 'status' },
+    { headerName: 'Product ID', field: 'product_id' },
+    { headerName: 'Product Name', field: 'product_name', filter: true },
+    { headerName: 'SKU', field: 'sku' },
+    { headerName: 'Batch Number', field: 'batch_number' },
+    { headerName: 'Expiry Date', field: 'expiry_date', valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : '' },
+    { headerName: 'Warehouse Name', field: 'warehouse_name' },
+    { headerName: 'Available Quantity', field: 'available_quantity' },
+    { headerName: 'Days to Expiry', field: 'days_to_expiry' },
+    { headerName: 'Expiry Status', field: 'expiry_status' },
+    { headerName: 'Updated Date', field: 'updated_at', valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : '' },
   ];
 
   return (

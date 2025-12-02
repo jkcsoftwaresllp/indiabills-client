@@ -3,12 +3,12 @@ import { getCurrentStockValuationReport } from '../../network/api';
 
 const StockValuationReport = () => {
   const columnDefs = [
-    { headerName: 'Product ID', field: 'productId' },
-    { headerName: 'Product Name', field: 'productName', filter: true },
-    { headerName: 'Current Stock', field: 'currentStock' },
-    { headerName: 'Unit Cost', field: 'unitCost' },
-    { headerName: 'Total Valuation', field: 'totalValuation' },
-    { headerName: 'Warehouse', field: 'warehouse' },
+    { headerName: 'Product ID', field: 'product_id' },
+    { headerName: 'Product Name', field: 'product_name', filter: true },
+    { headerName: 'Warehouse ID', field: 'warehouse_id' },
+    { headerName: 'Warehouse Name', field: 'warehouse_name' },
+    { headerName: 'Current Stock', field: 'current_stock' },
+    { headerName: 'Stock Value', field: 'stock_value' },
   ];
 
   return (
