@@ -1,8 +1,9 @@
 import ReportLayout from './ReportLayout';
+import { getRevenueReportAPI } from '../../network/api';
 
 const RevenueReport = () => {
     const columnDefs = [
-        { headerName: 'Date of Sale', field: 'dateOfSale', valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
+        { headerName: 'Date of Sale', field: 'dateOfSale', valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : '' },
         { headerName: 'Invoice Number', field: 'invoiceNumber' },
         { headerName: 'Product ID', field: 'productId' },
         { headerName: 'Product Name', field: 'productName', filter: true },
@@ -20,6 +21,7 @@ const RevenueReport = () => {
       title="Revenue Report"
       url={"/reports/revenue"}
       columnDefs={columnDefs}
+      fetchFunction={getRevenueReportAPI}
     />
   );
 };

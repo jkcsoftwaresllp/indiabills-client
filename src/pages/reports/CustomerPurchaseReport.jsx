@@ -9,9 +9,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import ReportLayout from "./ReportLayout";
+import { getCustomerPurchaseReportAPI } from "../../network/api";
 
 const CustomerPurchaseReport = () => {
-  const url = "/reports/customerpurchase";
+  const url = "/reports/customer-purchase";
 
   const columnDefs = [
     { headerName: "Customer ID", field: "customerId" },
@@ -49,6 +50,7 @@ const CustomerPurchaseReport = () => {
       url={url}
       columnDefs={columnDefs}
       renderChart={renderCustomerChart}
+      fetchFunction={getCustomerPurchaseReportAPI}
     />
   );
 };

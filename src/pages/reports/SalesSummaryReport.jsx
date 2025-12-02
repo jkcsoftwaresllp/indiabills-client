@@ -1,5 +1,3 @@
-// SalesSummary.tsx
-
 import {
   LineChart,
   Line,
@@ -11,10 +9,9 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import ReportLayout from './ReportLayout';
+import { getSalesSummaryReport } from '../../network/api';
 
-const SalesSummary = () => {
-  const url = '/reports/sales/summary';
-
+const SalesSummaryReport = () => {
   const columnDefs = [
     { headerName: 'Date', field: 'date' },
     { headerName: 'Item', field: 'itemName' },
@@ -24,7 +21,7 @@ const SalesSummary = () => {
     { headerName: 'Total Returns', field: 'totalReturns' },
   ];
 
-  const renderSalesChart = (data) => (
+  const renderChart = (data) => (
     <ResponsiveContainer width="100%" height={400}>
       <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
@@ -43,11 +40,12 @@ const SalesSummary = () => {
   return (
     <ReportLayout
       title="Sales Summary Report"
-      url={url}
+      url="/reports/sales-summary"
       columnDefs={columnDefs}
-      renderChart={renderSalesChart}
+      renderChart={renderChart}
+      fetchFunction={getSalesSummaryReport}
     />
   );
 };
 
-export default SalesSummary;
+export default SalesSummaryReport;

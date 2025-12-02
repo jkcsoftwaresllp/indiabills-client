@@ -1,22 +1,29 @@
 import { lazy } from 'react';
 import { Route } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
-import StockIssuesReport from '../pages/reports/StockIssueReport';
-import RevenueReport from '../pages/reports/RevenueReport';
-import PMSReport from '../pages/reports/PMSReport';
 
+// Lazy load all report components
 const ViewReports = lazy(() => import('../pages/reports/ViewReports'));
-const StockLevelReport = lazy(() => import('../pages/reports/StockLevelReport'));
-const SupplierPerformance = lazy(() => import('../pages/reports/SupplierPerformance'));
-const SalesSummary = lazy(() => import('../pages/reports/SalesSummary'));
-const Invoice = lazy(() => import('../pages/reports/InvoiceReport'));
+const SalesSummaryReport = lazy(() => import('../pages/reports/SalesSummaryReport'));
+const SalesByProductReport = lazy(() => import('../pages/reports/SalesByProductReport'));
 const CustomerPurchaseReport = lazy(() => import('../pages/reports/CustomerPurchaseReport'));
-const CreditReport = lazy(() => import('../pages/reports/CreditReport'));
-const HSNReport = lazy(() => import('../pages/reports/hsn'));
-const ExpenseReport = lazy(() => import('../pages/reports/ExpenseReport'));
+const ProfitabilityReport = lazy(() => import('../pages/reports/ProfitabilityReport'));
+const StockValuationReport = lazy(() => import('../pages/reports/StockValuationReport'));
+const LowStockReport = lazy(() => import('../pages/reports/LowStockReport'));
+const BatchExpiryReport = lazy(() => import('../pages/reports/BatchExpiryReport'));
+const StockMovementAuditReport = lazy(() => import('../pages/reports/StockMovementAuditReport'));
+const SupplierCostReport = lazy(() => import('../pages/reports/SupplierCostReport'));
+const DeliveryEfficiencyReport = lazy(() => import('../pages/reports/DeliveryEfficiencyReport'));
+const PMSSalesReport = lazy(() => import('../pages/reports/PMSSalesReport'));
+const RevenueReport = lazy(() => import('../pages/reports/RevenueReport'));
+const GSTComplianceReport = lazy(() => import('../pages/reports/GSTComplianceReport'));
+const HSNSummaryReport = lazy(() => import('../pages/reports/HSNSummaryReport'));
+const StockSalesSummaryReport = lazy(() => import('../pages/reports/StockSalesSummaryReport'));
+const InvoiceFinancialReport = lazy(() => import('../pages/reports/InvoiceFinancialReport'));
 
 const ReportRoutes = () => {
   return [
+    // Main Reports Page
     <Route
       key="reports"
       path="/reports"
@@ -27,49 +34,35 @@ const ReportRoutes = () => {
         />
       }
     />,
+    
+    // Sales Summary Report
     <Route
-      key="reports-stocklevel"
-      path="/reports/stocklevel"
+      key="reports-sales-summary"
+      path="/reports/sales-summary"
       element={
         <ProtectedRoute
-          element={StockLevelReport}
+          element={SalesSummaryReport}
           roles={['admin', 'reporter']}
         />
       }
     />,
+    
+    // Sales by Product Report
     <Route
-      key="reports-supplierperformance"
-      path="/reports/supplierperformance"
+      key="reports-sales-by-product"
+      path="/reports/sales-by-product"
       element={
         <ProtectedRoute
-          element={SupplierPerformance}
+          element={SalesByProductReport}
           roles={['admin', 'reporter']}
         />
       }
     />,
+    
+    // Customer Purchase Report
     <Route
-      key="reports-salessummary"
-      path="/reports/salessummary"
-      element={
-        <ProtectedRoute
-          element={SalesSummary}
-          roles={['admin', 'reporter']}
-        />
-      }
-    />,
-    <Route
-      key="reports-invoice"
-      path="/reports/invoice"
-      element={
-        <ProtectedRoute
-          element={Invoice}
-          roles={['admin', 'reporter']}
-        />
-      }
-    />,
-    <Route
-      key="reports-customerpurchase"
-      path="/reports/customerpurchase"
+      key="reports-customer-purchase"
+      path="/reports/customer-purchase"
       element={
         <ProtectedRoute
           element={CustomerPurchaseReport}
@@ -77,46 +70,104 @@ const ReportRoutes = () => {
         />
       }
     />,
+    
+    // Profitability Report
     <Route
-      key="reports-credits"
-      path="/reports/credits"
+      key="reports-profitability"
+      path="/reports/profitability"
       element={
         <ProtectedRoute
-          element={CreditReport}
+          element={ProfitabilityReport}
           roles={['admin', 'reporter']}
         />
       }
     />,
+    
+    // Stock Valuation Report
     <Route
-      key="reports-hsn"
-      path="/reports/hsn"
+      key="reports-stock-valuation"
+      path="/reports/stock-valuation"
       element={
         <ProtectedRoute
-          element={HSNReport}
+          element={StockValuationReport}
           roles={['admin', 'reporter']}
         />
       }
     />,
+    
+    // Low Stock Report
     <Route
-      key="reports-stockissue"
-      path="/reports/stockissue"
+      key="reports-low-stock"
+      path="/reports/low-stock"
       element={
         <ProtectedRoute
-          element={StockIssuesReport}
+          element={LowStockReport}
           roles={['admin', 'reporter']}
         />
       }
     />,
+    
+    // Batch Expiry Report
     <Route
-      key="reports-expenses"
-      path="/reports/expenses"
+      key="reports-batch-expiry"
+      path="/reports/batch-expiry"
       element={
         <ProtectedRoute
-          element={ExpenseReport}
+          element={BatchExpiryReport}
           roles={['admin', 'reporter']}
         />
       }
     />,
+    
+    // Stock Movement Audit Report
+    <Route
+      key="reports-stock-movement-audit"
+      path="/reports/stock-movement-audit"
+      element={
+        <ProtectedRoute
+          element={StockMovementAuditReport}
+          roles={['admin', 'reporter']}
+        />
+      }
+    />,
+    
+    // Supplier Cost Report
+    <Route
+      key="reports-supplier-cost"
+      path="/reports/supplier-cost"
+      element={
+        <ProtectedRoute
+          element={SupplierCostReport}
+          roles={['admin', 'reporter']}
+        />
+      }
+    />,
+    
+    // Delivery Efficiency Report
+    <Route
+      key="reports-delivery-efficiency"
+      path="/reports/delivery-efficiency"
+      element={
+        <ProtectedRoute
+          element={DeliveryEfficiencyReport}
+          roles={['admin', 'reporter']}
+        />
+      }
+    />,
+    
+    // PMS Sales Report
+    <Route
+      key="reports-pms-sales"
+      path="/reports/pms-sales"
+      element={
+        <ProtectedRoute
+          element={PMSSalesReport}
+          roles={['admin', 'reporter']}
+        />
+      }
+    />,
+    
+    // Revenue Report
     <Route
       key="reports-revenue"
       path="/reports/revenue"
@@ -127,16 +178,54 @@ const ReportRoutes = () => {
         />
       }
     />,
+    
+    // GST Compliance Report
     <Route
-      key="reports-pms"
-      path="/reports/pms"
+      key="reports-gst-compliance"
+      path="/reports/gst-compliance"
       element={
         <ProtectedRoute
-          element={PMSReport}
+          element={GSTComplianceReport}
           roles={['admin', 'reporter']}
         />
       }
-    />
+    />,
+    
+    // HSN Summary Report
+    <Route
+      key="reports-hsn-summary"
+      path="/reports/hsn-summary"
+      element={
+        <ProtectedRoute
+          element={HSNSummaryReport}
+          roles={['admin', 'reporter']}
+        />
+      }
+    />,
+    
+    // Stock & Sales Summary Report
+    <Route
+      key="reports-stock-sales-summary"
+      path="/reports/stock-sales-summary"
+      element={
+        <ProtectedRoute
+          element={StockSalesSummaryReport}
+          roles={['admin', 'reporter']}
+        />
+      }
+    />,
+    
+    // Invoice Financial Report
+    <Route
+      key="reports-invoice-financial"
+      path="/reports/invoice-financial"
+      element={
+        <ProtectedRoute
+          element={InvoiceFinancialReport}
+          roles={['admin', 'reporter']}
+        />
+      }
+    />,
   ];
 };
 

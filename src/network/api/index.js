@@ -21,6 +21,24 @@ import { getPayments, getPaymentById, updatePaymentStatus, createPayment, getInv
 import { toggleWishlist, getWishlist, clearWishlist } from './wishlistApi';
 import { getSubscriptionPlans, getSubscriptionPlan, createSubscriptionOrder, verifySubscriptionPayment, getSubscriptionHistory } from './subscriptionApi';
 import { getCustomerOrders, getCustomerOrderById } from './ordersApi';
+import {
+  getSalesSummaryReport,
+  getSalesByProductReport,
+  getCustomerPurchaseReportAPI,
+  getProfitabilityReportAPI,
+  getCurrentStockValuationReport,
+  getLowStockReportAPI,
+  getBatchExpiryReportAPI,
+  getStockMovementAuditReport,
+  getSupplierPurchaseCostReport,
+  getDeliveryEfficiencyReportAPI,
+  getPmsSalesReportAPI,
+  getRevenueReportAPI,
+  getGSTComplianceReportAPI,
+  getHSNSummaryReportAPI,
+  getStockAndSalesSummaryReport,
+  getAllInvoiceFinancialReportAPI,
+} from './reportApis';
 
 async function getStuff(path) {
   try {
@@ -409,4 +427,21 @@ export {
    // Order APIs
    getCustomerOrders,
    getCustomerOrderById,
+   // Report APIs
+   getSalesSummaryReport,
+   getSalesByProductReport,
+   getCustomerPurchaseReportAPI,
+   getProfitabilityReportAPI,
+   getCurrentStockValuationReport,
+   getLowStockReportAPI,
+   getBatchExpiryReportAPI,
+   getStockMovementAuditReport,
+   getSupplierPurchaseCostReport,
+   getDeliveryEfficiencyReportAPI,
+   getPmsSalesReportAPI,
+   getRevenueReportAPI,
+   getGSTComplianceReportAPI,
+   getHSNSummaryReportAPI,
+   getStockAndSalesSummaryReport,
+   getAllInvoiceFinancialReportAPI,
 };

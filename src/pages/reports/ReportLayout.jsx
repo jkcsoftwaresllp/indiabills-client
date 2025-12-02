@@ -34,6 +34,7 @@ const ReportLayout = ({
   columnDefs,
   renderChart = null,
   totalFields,
+  fetchFunction,
 }) => {
   const currentYear = new Date().getFullYear();
   const [totalsRow, setTotalsRow] = useState({});
@@ -76,7 +77,14 @@ const ReportLayout = ({
 
   const loadData = async () => {
     try {
-      const response = await getReport(url, { startDate, endDate });
+      let response;
+      if (fetchFunction) {
+        // Use the provided fetch function
+        response = await fetchFunction({ startDate, endDate });
+      } else {
+        // Fallback to generic getReport
+        response = await getReport(url, { startDate, endDate });
+      }
       setData(response);
       if (totalFields) computeTotals(response);
     } catch (error) {
