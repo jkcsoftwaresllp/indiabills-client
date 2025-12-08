@@ -118,13 +118,13 @@ const reportCategories = [
         icon: <FiTrendingUp />,
         path: '/reports/profitability',
       },
-      {
-        key: 'delivery-efficiency',
-        title: 'Delivery Efficiency',
-        description: 'Monitor delivery performance.',
-        icon: <FiZap />,
-        path: '/reports/delivery-efficiency',
-      },
+      // {
+      //   key: 'delivery-efficiency',
+      //   title: 'Delivery Efficiency',
+      //   description: 'Monitor delivery performance.',
+      //   icon: <FiZap />,
+      //   path: '/reports/delivery-efficiency',
+      // },
       {
         key: 'pms-sales',
         title: 'PMS Sales Report',

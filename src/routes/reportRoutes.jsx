@@ -13,7 +13,7 @@ const LowStockReport = lazy(() => import('../pages/reports/LowStockReport'));
 const BatchExpiryReport = lazy(() => import('../pages/reports/BatchExpiryReport'));
 const StockMovementAuditReport = lazy(() => import('../pages/reports/StockMovementAuditReport'));
 const SupplierCostReport = lazy(() => import('../pages/reports/SupplierCostReport'));
-const DeliveryEfficiencyReport = lazy(() => import('../pages/reports/DeliveryEfficiencyReport'));
+// const DeliveryEfficiencyReport = lazy(() => import('../pages/reports/DeliveryEfficiencyReport'));
 const PMSSalesReport = lazy(() => import('../pages/reports/PMSSalesReport'));
 const RevenueReport = lazy(() => import('../pages/reports/RevenueReport'));
 const GSTComplianceReport = lazy(() => import('../pages/reports/GSTComplianceReport'));
@@ -142,18 +142,18 @@ const ReportRoutes = () => {
         />
       }
     />,
-    
+
     // Delivery Efficiency Report
-    <Route
-      key="reports-delivery-efficiency"
-      path="/reports/delivery-efficiency"
-      element={
-        <ProtectedRoute
-          element={DeliveryEfficiencyReport}
-          roles={['admin', 'reporter']}
-        />
-      }
-    />,
+    // <Route
+    //   key="reports-delivery-efficiency"
+    //   path="/reports/delivery-efficiency"
+    //   element={
+    //     <ProtectedRoute
+    //       element={DeliveryEfficiencyReport}
+    //       roles={['admin', 'reporter']}
+    //     />
+    //   }
+    // />,
     
     // PMS Sales Report
     <Route

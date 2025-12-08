@@ -101,15 +101,15 @@ export async function getSupplierPurchaseCostReport(params = {}) {
 }
 
 // Delivery Efficiency Report
-export async function getDeliveryEfficiencyReportAPI(params = {}) {
-  try {
-    const response = await serverInstance.get("/reports/delivery-efficiency", { params });
-    return response.data;
-  } catch (error) {
-    console.error("Failed to fetch delivery efficiency report:", error.response);
-    return [];
-  }
-}
+// export async function getDeliveryEfficiencyReportAPI(params = {}) {
+//   try {
+//     const response = await serverInstance.get("/reports/delivery-efficiency", { params });
+//     return response.data;
+//   } catch (error) {
+//     console.error("Failed to fetch delivery efficiency report:", error.response);
+//     return [];
+//   }
+// }
 
 // PMS Sales Report
 export async function getPmsSalesReportAPI(params = {}) {

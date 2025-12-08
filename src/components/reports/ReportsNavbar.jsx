@@ -116,13 +116,13 @@ const reports = [
     path: "/reports/profitability",
     category: "profitability",
   },
-  {
-    key: "delivery-efficiency",
-    title: "Delivery Efficiency",
-    icon: <FiZap />,
-    path: "/reports/delivery-efficiency",
-    category: "profitability",
-  },
+  // {
+  //   key: "delivery-efficiency",
+  //   title: "Delivery Efficiency",
+  //   icon: <FiZap />,
+  //   path: "/reports/delivery-efficiency",
+  //   category: "profitability",
+  // },
   {
     key: "pms-sales",
     title: "PMS Sales",
