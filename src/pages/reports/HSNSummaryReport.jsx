@@ -5,7 +5,7 @@ const HSNSummaryReport = () => {
   const columnDefs = [
     { headerName: 'HSN Code', field: 'hsn' },
     { headerName: 'Description', field: 'description', filter: true },
-    { headerName: 'UQC', field: 'uqc' },
+    { headerName: 'UPC', field: 'upc' },
     { headerName: 'Total Quantity', field: 'total_quantity' },
     { headerName: 'Total Value', field: 'total_value' },
     { headerName: 'Total CGST', field: 'total_cgst' },

@@ -5,7 +5,6 @@ const SalesByProductReport = () => {
   const columnDefs = [
     { headerName: 'Product ID', field: 'product_id' },
     { headerName: 'Product Name', field: 'product_name', filter: true },
-    { headerName: 'Category Name', field: 'category_name' },
     { headerName: 'Total Quantity', field: 'total_quantity' },
     { headerName: 'Total Sales', field: 'total_sales' },
   ];

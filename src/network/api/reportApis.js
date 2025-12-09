@@ -62,7 +62,10 @@ export async function getLowStockReportAPI(params = {}) {
     const response = await serverInstance.get("/reports/low-stock", { params });
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch low stock report:", error.response);
+    if (error.response?.status === 404) {
+      return [];
+    }
+    console.error("Failed to fetch low stock report:", error.message);
     return [];
   }
 }
@@ -73,7 +76,10 @@ export async function getBatchExpiryReportAPI(params = {}) {
     const response = await serverInstance.get("/reports/batch-expiry", { params });
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch batch expiry report:", error.response);
+    if (error.response?.status === 404) {
+      return [];
+    }
+    console.error("Failed to fetch batch expiry report:", error.message);
     return [];
   }
 }
@@ -84,7 +90,10 @@ export async function getStockMovementAuditReport(params = {}) {
     const response = await serverInstance.get("/reports/stock-movement-audit", { params });
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch stock movement audit report:", error.response);
+    if (error.response?.status === 404) {
+      return [];
+    }
+    console.error("Failed to fetch stock movement audit report:", error.message);
     return [];
   }
 }
@@ -117,7 +126,10 @@ export async function getPmsSalesReportAPI(params = {}) {
     const response = await serverInstance.get("/reports/sales/pms", { params });
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch PMS sales report:", error.response);
+    if (error.response?.status === 404) {
+      return [];
+    }
+    console.error("Failed to fetch PMS sales report:", error.message);
     return [];
   }
 }
@@ -128,7 +140,10 @@ export async function getRevenueReportAPI(params = {}) {
     const response = await serverInstance.get("/reports/revenue", { params });
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch revenue report:", error.response);
+    if (error.response?.status === 404) {
+      return [];
+    }
+    console.error("Failed to fetch revenue report:", error.message);
     return [];
   }
 }
@@ -161,7 +176,10 @@ export async function getStockAndSalesSummaryReport(rate, data = {}) {
     const response = await serverInstance.post(`/reports/stocks/rate/${rate}`, data);
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch stock and sales summary report:", error.response);
+    if (error.response?.status === 404) {
+      return [];
+    }
+    console.error("Failed to fetch stock and sales summary report:", error.message);
     return [];
   }
 }
@@ -172,7 +190,10 @@ export async function getAllInvoiceFinancialReportAPI(data = {}) {
     const response = await serverInstance.post("/reports/invoices/financial", data);
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch invoice financial report:", error.response);
+    if (error.response?.status === 404) {
+      return [];
+    }
+    console.error("Failed to fetch invoice financial report:", error.message);
     return [];
   }
 }

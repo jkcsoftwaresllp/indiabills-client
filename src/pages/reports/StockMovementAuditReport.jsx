@@ -15,7 +15,7 @@ const StockMovementAuditReport = () => {
     { headerName: 'SKU', field: 'sku' },
     { headerName: 'Warehouse ID', field: 'warehouse_id' },
     { headerName: 'Warehouse Name', field: 'warehouse_name' },
-    { headerName: 'Updated By', field: 'updated_by' },
+    { headerName: 'Updated By', field: 'user_name' },
   ];
 
   return (
