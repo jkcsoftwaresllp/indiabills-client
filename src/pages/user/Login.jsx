@@ -5,7 +5,6 @@ import { useStore } from "../../store/store";
 import { useAuth } from "../../hooks/useAuth";
 import { setSession, setTempSession, setOrganizationContext } from "../../utils/authHelper";
 import logo from "../../assets/IndiaBills_logo.png";
-import bg from "../../assets/bglogo.png";
 import styles from "./Login.module.css";
 import Popup from "../../components/core/Popup";
 
@@ -180,86 +179,133 @@ const LoginPage = () => {
   return (
     <>
       <Popup />
-      <div
-        className={styles.container}
-        style={{
-          backgroundImage: `url(${bg})`,
-        }}
-      >
-        <form onSubmit={handleLogin} className={styles.loginForm}>
-        <div className={styles.header}>
-          <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
-          <h2 className="text-white text-xl font-semibold mb-2">
-            Login Portal
-          </h2>
-          <p className={styles.quote}>{quote}</p>
-        </div>
-
-        <div className={styles.formFields}>
-          <div className={styles.inputGroup}>
-            <label htmlFor="email" className={styles.label}>
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              className={styles.input}
-              onChange={handleInputChange}
-              placeholder="Enter your email"
-              value={data.email}
-              required
-              disabled={loading}
-            />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <label htmlFor="password" className={styles.label}>
-              Password
-            </label>
-            <div className={styles.passwordContainer}>
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                className={styles.input}
-                onChange={handleInputChange}
-                placeholder="Enter your password"
-                value={data.password}
-                required
-                disabled={loading}
-              />
-              <button
-                type="button"
-                className={styles.passwordToggle}
-                onClick={togglePasswordVisibility}
-                aria-label="Toggle password visibility"
-                disabled={loading}
-              >
-                {showPassword ? "👁️" : "👁️‍🗨️"}
-              </button>
+      <div className={styles.container}>
+        <div className={styles.backgroundGradient}></div>
+        
+        <div className={styles.contentWrapper}>
+          {/* Left Section - Branding */}
+          <div className={styles.brandingSection}>
+            <div className={styles.brandingContent}>
+              <img src={logo} alt="IndiaBills Logo" className={styles.brandingLogo} />
+              <h1 className={styles.brandTitle}>IndiaBills</h1>
+              <p className={styles.brandSubtitle}>Business Management Platform</p>
+              <div className={styles.featuresList}>
+                <div className={styles.feature}>
+                  <span className={styles.featureIcon}>✓</span>
+                  <span>Easy Invoicing</span>
+                </div>
+                <div className={styles.feature}>
+                  <span className={styles.featureIcon}>✓</span>
+                  <span>Smart Analytics</span>
+                </div>
+                <div className={styles.feature}>
+                  <span className={styles.featureIcon}>✓</span>
+                  <span>Secure & Reliable</span>
+                </div>
+              </div>
+              <p className={styles.quoteText}>{quote}</p>
             </div>
           </div>
-        </div>
 
-        <button 
-          type="submit" 
-          className={styles.loginButton}
-          disabled={loading}
-        >
-          {loading ? "Logging in..." : "Login to Portal"}
-        </button>
+          {/* Right Section - Login Form */}
+          <form onSubmit={handleLogin} className={styles.loginForm}>
+            <div className={styles.formHeader}>
+              <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
+              <h2 className={styles.formTitle}>Welcome Back</h2>
+              <p className={styles.formSubtitle}>Sign in to your account to continue</p>
+            </div>
 
-        <div className={styles.signupPrompt}>
-          <p className={styles.signupText}>
-            Don't have an account?{" "}
-            <Link to="/register" className={styles.signupLink}>
-              Sign up here
+            <div className={styles.formFields}>
+              <div className={styles.inputGroup}>
+                <label htmlFor="email" className={styles.label}>
+                  Email Address
+                </label>
+                <div className={styles.inputWrapper}>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    className={styles.input}
+                    onChange={handleInputChange}
+                    placeholder="you@example.com"
+                    value={data.email}
+                    required
+                    disabled={loading}
+                  />
+                  <span className={styles.inputIcon}>✉</span>
+                </div>
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label htmlFor="password" className={styles.label}>
+                  Password
+                </label>
+                <div className={styles.inputWrapper}>
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    className={styles.input}
+                    onChange={handleInputChange}
+                    placeholder="Enter your password"
+                    value={data.password}
+                    required
+                    disabled={loading}
+                  />
+                  <button
+                    type="button"
+                    className={styles.passwordToggle}
+                    onClick={togglePasswordVisibility}
+                    aria-label="Toggle password visibility"
+                    disabled={loading}
+                  >
+                    {showPassword ? "👁" : "👁‍🗨"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.rememberMe}>
+              <input
+                type="checkbox"
+                id="remember"
+                className={styles.checkbox}
+                disabled={loading}
+              />
+              <label htmlFor="remember" className={styles.checkboxLabel}>
+                Remember me
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              className={`${styles.loginButton} ${loading ? styles.loading : ''}`}
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span className={styles.spinner}></span>
+                  Signing in...
+                </>
+              ) : (
+                "Sign In"
+              )}
+            </button>
+
+            <div className={styles.divider}>
+              <span>Don't have an account?</span>
+            </div>
+
+            <Link to="/register" className={styles.signupButton}>
+              Create New Account
             </Link>
-          </p>
+
+            <p className={styles.footerText}>
+              Need help? <Link to="#" className={styles.helpLink}>Contact support</Link>
+            </p>
+          </form>
         </div>
-      </form>
-    </div>
+      </div>
     </>
   );
 };

@@ -110,11 +110,12 @@ function App() {
   };
 
   // Determine if we should show the default layout (sidebar, header, etc.)
-  // Exclude: /customer/* (customer portal), /operator/*, /manager/*, /setup, /login, /organization/setup
+  // Exclude: /customer/* (customer portal), /operator/*, /manager/*, /setup, /login, /register, /organization/setup
   // Include: /customers (admin customer management - note the 's' at end)
   const showDefaultLayout =
     location.pathname !== "/setup" &&
     location.pathname !== "/login" &&
+    location.pathname !== "/register" &&
     location.pathname !== "/organization/setup" &&
     !/^\/customer(\/|$)/.test(location.pathname) &&
     !location.pathname.startsWith("/operator") &&
