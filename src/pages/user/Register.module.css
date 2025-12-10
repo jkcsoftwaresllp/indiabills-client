@@ -131,6 +131,10 @@
   font-size: 2.5rem;
   flex-shrink: 0;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  color: rgba(22, 163, 74, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .benefitText h3 {
@@ -145,6 +149,31 @@
   color: rgba(255, 255, 255, 0.6);
   margin: 0;
   line-height: 1.5;
+}
+
+/* Back Button */
+.backButton {
+  position: fixed;
+  top: 2rem;
+  left: 2rem;
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(22, 163, 74, 0.9);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.backButton:hover {
+  color: rgba(22, 163, 74, 1);
+  gap: 0.75rem;
+}
+
+.backButton svg {
+  font-size: 1.2rem;
 }
 
 /* Register Form */
@@ -273,11 +302,11 @@
   cursor: not-allowed;
 }
 
-.inputIcon {
+.fieldIcon {
   position: absolute;
   left: 1rem;
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.5);
   pointer-events: none;
 }
 
@@ -305,46 +334,7 @@
   cursor: not-allowed;
 }
 
-.terms {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
-}
 
-.checkbox {
-  width: 1.1rem;
-  height: 1.1rem;
-  cursor: pointer;
-  accent-color: rgba(196, 32, 50, 0.8);
-  border-radius: 0.25rem;
-  margin-top: 0.2rem;
-  flex-shrink: 0;
-}
-
-.checkbox:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.termsLabel {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.6);
-  line-height: 1.5;
-  cursor: pointer;
-}
-
-.termsLink {
-  color: rgba(196, 32, 50, 0.8);
-  text-decoration: none;
-  transition: color 0.3s ease;
-  font-weight: 500;
-}
-
-.termsLink:hover {
-  color: rgba(196, 32, 50, 1);
-  text-decoration: underline;
-}
 
 .registerButton {
   width: 100%;
@@ -419,7 +409,7 @@
 
 .scrollIndicator {
   position: fixed;
-  bottom: 2rem;
+  bottom: 5rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -431,7 +421,7 @@
 
 .scrollArrow {
   font-size: 2rem;
-  color: rgba(22, 163, 74, 0.9);
+  color: rgba(96, 165, 250, 0.8);
   animation: bounce 2s ease-in-out infinite;
   display: block;
   line-height: 1;
@@ -495,6 +485,10 @@
   }
 
   .scrollIndicator {
+    display: none;
+  }
+
+  .backButton {
     display: none;
   }
 }

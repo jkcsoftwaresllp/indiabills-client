@@ -5,6 +5,7 @@ import { ownerSignup } from "../../network/api";
 import logo from "../../assets/IndiaBills_logo.png";
 import styles from "./Register.module.css";
 import Popup from "../../components/core/Popup";
+import { MdOutlineMail, MdOutlinePhone, MdVisibility, MdVisibilityOff, MdCheckCircle, MdLock, MdArrowBack, MdOutlinePerson } from "react-icons/md";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -144,6 +145,11 @@ const Register = () => {
       <div className={styles.container}>
         <div className={styles.backgroundGradient}></div>
 
+        <Link to="/login" className={styles.backButton}>
+          <MdArrowBack />
+          Back to Login
+        </Link>
+
         <div className={styles.contentWrapper}>
           {/* Left Section - Features */}
           <div className={styles.featuresSection}>
@@ -153,32 +159,38 @@ const Register = () => {
               <p className={styles.featuresSubtitle}>Start managing your business today</p>
               <div className={styles.benefitsList}>
                 <div className={styles.benefit}>
-                  <div className={styles.benefitIcon}>📊</div>
-                  <div className={styles.benefitText}>
-                    <h3>Smart Dashboard</h3>
-                    <p>Real-time insights into your business</p>
+                    <div className={styles.benefitIcon}>
+                      <MdCheckCircle />
+                    </div>
+                    <div className={styles.benefitText}>
+                      <h3>Smart Dashboard</h3>
+                      <p>Real-time insights into your business</p>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.benefit}>
-                  <div className={styles.benefitIcon}>🔒</div>
-                  <div className={styles.benefitText}>
-                    <h3>Secure & Trusted</h3>
-                    <p>Bank-level security for your data</p>
+                  <div className={styles.benefit}>
+                    <div className={styles.benefitIcon}>
+                      <MdCheckCircle />
+                    </div>
+                    <div className={styles.benefitText}>
+                      <h3>Secure & Trusted</h3>
+                      <p>Bank-level security for your data</p>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.benefit}>
-                  <div className={styles.benefitIcon}>⚡</div>
-                  <div className={styles.benefitText}>
-                    <h3>Fast & Easy</h3>
-                    <p>Simple setup, powerful features</p>
+                  <div className={styles.benefit}>
+                    <div className={styles.benefitIcon}>
+                      <MdCheckCircle />
+                    </div>
+                    <div className={styles.benefitText}>
+                      <h3>Fast & Easy</h3>
+                      <p>Simple setup, powerful features</p>
+                    </div>
                   </div>
-                </div>
               </div>
             </div>
           </div>
 
           {/* Right Section - Registration Form */}
-          <form onSubmit={handleRegister} className={styles.registerForm} ref={formRef}>
+           <form onSubmit={handleRegister} className={styles.registerForm} ref={formRef}>
             <div className={styles.formHeader}>
               <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
               <h2 className={styles.formTitle}>Create Account</h2>
@@ -188,29 +200,31 @@ const Register = () => {
             <div className={styles.formFields}>
               <div className={styles.nameRow}>
                 <div className={styles.inputGroup}>
-                  <label htmlFor="firstName" className={styles.label}>
-                    First Name
-                  </label>
-                  <div className={styles.inputWrapper}>
-                    <input
-                      id="firstName"
-                      name="firstName"
-                      type="text"
-                      className={styles.input}
-                      onChange={handleInputChange}
-                      placeholder="John"
-                      value={data.firstName}
-                      required
-                      disabled={loading}
-                    />
+                    <label htmlFor="firstName" className={styles.label}>
+                      First Name
+                    </label>
+                    <div className={styles.inputWrapper}>
+                      <MdOutlinePerson className={styles.fieldIcon} />
+                      <input
+                        id="firstName"
+                        name="firstName"
+                        type="text"
+                        className={styles.input}
+                        onChange={handleInputChange}
+                        placeholder="John"
+                        value={data.firstName}
+                        required
+                        disabled={loading}
+                      />
+                    </div>
                   </div>
-                </div>
 
                 <div className={styles.inputGroup}>
                   <label htmlFor="lastName" className={styles.label}>
                     Last Name
                   </label>
                   <div className={styles.inputWrapper}>
+                    <MdOutlinePerson className={styles.fieldIcon} />
                     <input
                       id="lastName"
                       name="lastName"
@@ -231,6 +245,7 @@ const Register = () => {
                   Email Address
                 </label>
                 <div className={styles.inputWrapper}>
+                  <MdOutlineMail className={styles.fieldIcon} />
                   <input
                     id="email"
                     name="email"
@@ -242,7 +257,6 @@ const Register = () => {
                     required
                     disabled={loading}
                   />
-                  <span className={styles.inputIcon}>✉</span>
                 </div>
               </div>
 
@@ -251,6 +265,7 @@ const Register = () => {
                   Phone Number
                 </label>
                 <div className={styles.inputWrapper}>
+                  <MdOutlinePhone className={styles.fieldIcon} />
                   <input
                     id="phone"
                     name="phone"
@@ -262,7 +277,6 @@ const Register = () => {
                     required
                     disabled={loading}
                   />
-                  <span className={styles.inputIcon}>📱</span>
                 </div>
               </div>
 
@@ -271,6 +285,7 @@ const Register = () => {
                   Password
                 </label>
                 <div className={styles.inputWrapper}>
+                  <MdLock className={styles.fieldIcon} />
                   <input
                     id="password"
                     name="password"
@@ -289,7 +304,7 @@ const Register = () => {
                     aria-label="Toggle password visibility"
                     disabled={loading}
                   >
-                    {showPassword ? "👁" : "👁‍🗨"}
+                    {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
                   </button>
                 </div>
               </div>
@@ -299,6 +314,7 @@ const Register = () => {
                   Confirm Password
                 </label>
                 <div className={styles.inputWrapper}>
+                  <MdLock className={styles.fieldIcon} />
                   <input
                     id="repassword"
                     name="repassword"
@@ -317,24 +333,11 @@ const Register = () => {
                     aria-label="Toggle confirm password visibility"
                     disabled={loading}
                   >
-                    {showrepassword ? "👁" : "👁‍🗨"}
+                    {showrepassword ? <MdVisibilityOff /> : <MdVisibility />}
                   </button>
                 </div>
               </div>
-            </div>
-
-            <div className={styles.terms}>
-              <input
-                type="checkbox"
-                id="terms"
-                className={styles.checkbox}
-                required
-                disabled={loading}
-              />
-              <label htmlFor="terms" className={styles.termsLabel}>
-                I agree to the <Link to="#" className={styles.termsLink}>Terms of Service</Link> and <Link to="#" className={styles.termsLink}>Privacy Policy</Link>
-              </label>
-            </div>
+              </div>
 
             <button
               type="submit"
@@ -363,11 +366,11 @@ const Register = () => {
                 <span className={styles.scrollArrow}>⌄</span>
               </div>
             )}
-          </form>
-        </div>
-      </div>
-    </>
-  );
-};
+            </form>
+            </div>
+            </div>
+            </>
+            );
+            };
 
-export default Register;
+          export default Register;
