@@ -263,7 +263,7 @@ const LoginPage = () => {
                     type="email"
                     className={styles.input}
                     onChange={handleInputChange}
-                    placeholder="you@example.com"
+                    placeholder="Enter your email"
                     value={data.email}
                     required
                     disabled={loading}

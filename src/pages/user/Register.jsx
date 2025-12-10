@@ -211,7 +211,7 @@ const Register = () => {
                         type="text"
                         className={styles.input}
                         onChange={handleInputChange}
-                        placeholder="John"
+                        placeholder="Enter your first name"
                         value={data.firstName}
                         required
                         disabled={loading}
@@ -231,7 +231,7 @@ const Register = () => {
                       type="text"
                       className={styles.input}
                       onChange={handleInputChange}
-                      placeholder="Doe"
+                      placeholder="Enter your last name"
                       value={data.lastName}
                       required
                       disabled={loading}
@@ -252,7 +252,7 @@ const Register = () => {
                     type="email"
                     className={styles.input}
                     onChange={handleInputChange}
-                    placeholder="you@example.com"
+                    placeholder="Enter your email"
                     value={data.email}
                     required
                     disabled={loading}
@@ -272,7 +272,7 @@ const Register = () => {
                     type="tel"
                     className={styles.input}
                     onChange={handleInputChange}
-                    placeholder="+91 9129201920"
+                    placeholder="Enter your phone number"
                     value={data.phone}
                     required
                     disabled={loading}
