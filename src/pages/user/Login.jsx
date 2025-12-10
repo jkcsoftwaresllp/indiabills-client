@@ -7,6 +7,7 @@ import { setSession, setTempSession, setOrganizationContext } from "../../utils/
 import logo from "../../assets/IndiaBills_logo.png";
 import styles from "./Login.module.css";
 import Popup from "../../components/core/Popup";
+import { MdOutlineMail, MdOutlineLock, MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 const quotes = [
   "The best way to get started is to quit talking and begin doing.",
@@ -24,6 +25,9 @@ const LoginPage = () => {
   const [quote, setQuote] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showForgotDialog, setShowForgotDialog] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -63,6 +67,37 @@ const LoginPage = () => {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleForgotPasswordClick = () => {
+    setForgotEmail("");
+    setShowForgotDialog(true);
+  };
+
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!forgotEmail) {
+      errorPopup("Please enter your email address");
+      return;
+    }
+
+    setForgotLoading(true);
+
+    try {
+      // TODO: Replace with actual forgot password API call when backend is ready
+      // const response = await forgotPassword({ email: forgotEmail });
+      
+      // Simulating API response for now
+      successPopup("Password reset link has been sent to your email");
+      setShowForgotDialog(false);
+      setForgotEmail("");
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      errorPopup("Failed to send reset link. Please try again later.");
+    } finally {
+      setForgotLoading(false);
+    }
   };
 
   const handleLogin = async (e) => {
@@ -221,6 +256,7 @@ const LoginPage = () => {
                   Email Address
                 </label>
                 <div className={styles.inputWrapper}>
+                  <MdOutlineMail className={styles.fieldIcon} />
                   <input
                     id="email"
                     name="email"
@@ -232,15 +268,25 @@ const LoginPage = () => {
                     required
                     disabled={loading}
                   />
-                  <span className={styles.inputIcon}>✉</span>
                 </div>
               </div>
 
               <div className={styles.inputGroup}>
-                <label htmlFor="password" className={styles.label}>
-                  Password
-                </label>
+                <div className={styles.passwordLabelWrapper}>
+                  <label htmlFor="password" className={styles.label}>
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    className={styles.forgotPasswordLink}
+                    onClick={handleForgotPasswordClick}
+                    disabled={loading}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
                 <div className={styles.inputWrapper}>
+                  <MdOutlineLock className={styles.fieldIcon} />
                   <input
                     id="password"
                     name="password"
@@ -259,23 +305,11 @@ const LoginPage = () => {
                     aria-label="Toggle password visibility"
                     disabled={loading}
                   >
-                    {showPassword ? "👁" : "👁‍🗨"}
+                    {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
                   </button>
                 </div>
               </div>
-            </div>
-
-            <div className={styles.rememberMe}>
-              <input
-                type="checkbox"
-                id="remember"
-                className={styles.checkbox}
-                disabled={loading}
-              />
-              <label htmlFor="remember" className={styles.checkboxLabel}>
-                Remember me
-              </label>
-            </div>
+              </div>
 
             <button
               type="submit"
@@ -305,6 +339,75 @@ const LoginPage = () => {
             </p>
           </form>
         </div>
+
+        {/* Forgot Password Dialog */}
+        {showForgotDialog && (
+          <div className={styles.dialogOverlay} onClick={() => setShowForgotDialog(false)}>
+            <div className={styles.dialog} onClick={(e) => e.stopPropagation()}>
+              <div className={styles.dialogHeader}>
+                <h3 className={styles.dialogTitle}>Reset Your Password</h3>
+                <button
+                  type="button"
+                  className={styles.closeButton}
+                  onClick={() => setShowForgotDialog(false)}
+                  aria-label="Close dialog"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <p className={styles.dialogDescription}>
+                Enter your email address and we'll send you a link to reset your password.
+              </p>
+
+              <form onSubmit={handleForgotPasswordSubmit} className={styles.dialogForm}>
+                <div className={styles.dialogInputGroup}>
+                  <label htmlFor="forgotEmail" className={styles.label}>
+                    Email Address
+                  </label>
+                  <div className={styles.inputWrapper}>
+                    <MdOutlineMail className={styles.fieldIcon} />
+                    <input
+                      id="forgotEmail"
+                      type="email"
+                      className={styles.input}
+                      placeholder="Enter your email"
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                      required
+                      disabled={forgotLoading}
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.dialogButtons}>
+                  <button
+                    type="button"
+                    className={styles.cancelButton}
+                    onClick={() => setShowForgotDialog(false)}
+                    disabled={forgotLoading}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className={`${styles.submitButton} ${forgotLoading ? styles.loading : ''}`}
+                    disabled={forgotLoading}
+                  >
+                    {forgotLoading ? (
+                      <>
+                        <span className={styles.spinner}></span>
+                        Sending...
+                      </>
+                    ) : (
+                      "Send Reset Link"
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

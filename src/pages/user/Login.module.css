@@ -240,11 +240,11 @@
   cursor: not-allowed;
 }
 
-.inputIcon {
+.fieldIcon {
   position: absolute;
   left: 1rem;
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.5);
   pointer-events: none;
 }
 
@@ -272,21 +272,32 @@
   cursor: not-allowed;
 }
 
-.rememberMe {
+.passwordLabelWrapper {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
-.checkbox {
-  width: 1.1rem;
-  height: 1.1rem;
+.forgotPasswordLink {
+  background: none;
+  border: none;
+  color: rgba(196, 32, 50, 0.8);
   cursor: pointer;
-  accent-color: rgba(196, 32, 50, 0.8);
-  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+  padding: 0;
+  text-decoration: none;
 }
 
-.checkbox:disabled {
+.forgotPasswordLink:hover:not(:disabled) {
+  color: rgba(196, 32, 50, 1);
+}
+
+.forgotPasswordLink:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -406,6 +417,166 @@
 .helpLink:hover {
   color: rgba(196, 32, 50, 1);
   text-decoration: underline;
+}
+
+/* Forgot Password Dialog */
+.dialogOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dialog {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dialogHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.dialogTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease;
+}
+
+.closeButton:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.dialogDescription {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+  margin: 0 0 2rem 0;
+  line-height: 1.5;
+}
+
+.dialogForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dialogInputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dialogButtons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.cancelButton {
+  flex: 1;
+  padding: 0.875rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cancelButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cancelButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submitButton {
+  flex: 1;
+  padding: 0.875rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, rgba(196, 32, 50, 0.9) 0%, rgba(196, 32, 50, 0.7) 100%);
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(196, 32, 50, 1) 0%, rgba(196, 32, 50, 0.8) 100%);
+  box-shadow: 0 10px 30px rgba(196, 32, 50, 0.3);
+}
+
+.submitButton:disabled,
+.submitButton.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 /* Responsive Design */
