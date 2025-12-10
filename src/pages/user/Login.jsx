@@ -7,6 +7,7 @@ import { setSession, setTempSession, setOrganizationContext } from "../../utils/
 import logo from "../../assets/IndiaBills_logo.png";
 import bg from "../../assets/bglogo.png";
 import styles from "./Login.module.css";
+import Popup from "../../components/core/Popup";
 
 const quotes = [
   "The best way to get started is to quit talking and begin doing.",
@@ -82,18 +83,28 @@ const LoginPage = () => {
       });
 
       if (response.status !== 200) {
+        const errorMessage = response.data?.message || response.data?.error || "Login failed";
         switch (response.status) {
+          case 400:
+            errorPopup(errorMessage || "Invalid email or password");
+            break;
           case 401:
-            errorPopup("Invalid email or password");
+            errorPopup(errorMessage || "Invalid email or password");
+            break;
+          case 403:
+            errorPopup(errorMessage || "Your account has been blocked");
             break;
           case 404:
-            errorPopup("User not found");
+            errorPopup(errorMessage || "User not found");
+            break;
+          case 410:
+            errorPopup(errorMessage || "User account has been deleted");
             break;
           case 500:
             errorPopup("Server error. Please try again later.");
             break;
           default:
-            errorPopup("Login failed. Please try again.");
+            errorPopup(errorMessage || "Login failed. Please try again.");
             break;
         }
         return;
@@ -167,13 +178,15 @@ const LoginPage = () => {
   };
 
   return (
-    <div
-      className={styles.container}
-      style={{
-        backgroundImage: `url(${bg})`,
-      }}
-    >
-      <form onSubmit={handleLogin} className={styles.loginForm}>
+    <>
+      <Popup />
+      <div
+        className={styles.container}
+        style={{
+          backgroundImage: `url(${bg})`,
+        }}
+      >
+        <form onSubmit={handleLogin} className={styles.loginForm}>
         <div className={styles.header}>
           <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
           <h2 className="text-white text-xl font-semibold mb-2">
@@ -247,6 +260,7 @@ const LoginPage = () => {
         </div>
       </form>
     </div>
+    </>
   );
 };
 

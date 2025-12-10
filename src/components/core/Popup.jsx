@@ -4,7 +4,7 @@ import { Alert, Snackbar } from "@mui/material";
 import { useStore } from "../../store/store";
 
 const Popup = () => {
-	const { Popup } = useStore();
+	const { Popup, setPopup } = useStore();
 	const [open, setOpen] = useState(false);
 
 	useEffect(() => {
@@ -17,7 +17,7 @@ const Popup = () => {
 		if (reason === 'clickaway') {
 			return;
 		}
-		Popup.active = false;
+		setPopup({ ...Popup, active: false });
 		setOpen(false);
 	};
 

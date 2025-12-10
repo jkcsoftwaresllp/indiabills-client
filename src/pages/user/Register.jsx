@@ -5,6 +5,7 @@ import { ownerSignup } from "../../network/api";
 import logo from "../../assets/IndiaBills_logo.png";
 import bg from "../../assets/bglogo.png";
 import styles from "./Register.module.css";
+import Popup from "../../components/core/Popup";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -82,28 +83,46 @@ const Register = () => {
         phone: data.phone,
       });
 
-      if (response.status === 200 || response.status === 201) {
+      if (response.status === 201 || response.status === 200) {
         successPopup(
-          "Registration successful! Please login with your credentials."
+          response.data?.message || "Registration successful! Please login with your credentials."
         );
-        navigate("/login");
+        setTimeout(() => {
+          navigate("/login");
+        }, 1500);
       } else {
-        errorPopup("Registration failed. Please try again.");
+        const errorMessage = response.data?.message || response.data?.error || "Registration failed";
+        switch (response.status) {
+          case 400:
+            errorPopup(errorMessage || "Invalid input. Please check your details.");
+            break;
+          case 409:
+            errorPopup(errorMessage || "Email already registered. Please login or use a different email.");
+            break;
+          case 500:
+            errorPopup("Server error. Please try again later.");
+            break;
+          default:
+            errorPopup(errorMessage || "Registration failed. Please try again.");
+            break;
+        }
       }
     } catch (error) {
       console.error("Registration error:", error);
-      errorPopup(response.data?.message || "Registration failed. Please try again.");
+      errorPopup("Registration failed. Please check your connection and try again.");
     }
   };
 
   return (
-    <div
-      className={styles.container}
-      style={{
-        backgroundImage: `url(${bg})`,
-      }}
-    >
-      <form onSubmit={handleRegister} className={styles.registerForm}>
+    <>
+      <Popup />
+      <div
+        className={styles.container}
+        style={{
+          backgroundImage: `url(${bg})`,
+        }}
+      >
+        <form onSubmit={handleRegister} className={styles.registerForm}>
         <div className={styles.header}>
           <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
           <h2 className={styles.title}>Create Your Account</h2>
@@ -244,6 +263,7 @@ const Register = () => {
         </div>
       </form>
     </div>
+    </>
   );
 };
 
