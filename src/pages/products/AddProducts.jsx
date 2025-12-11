@@ -1,34 +1,43 @@
-import { FiArrowLeft, FiArrowRight, FiCheckCircle, FiPlus } from 'react-icons/fi';
+import { FiArrowLeft, FiBox, FiDollarSign, FiTag, FiAlertCircle } from 'react-icons/fi';
 import React, { useState, useCallback, useEffect } from "react";
 import MultiPageAnimate from "../../components/Animate/MultiPageAnimate";
-import InputBox from "../../components/FormComponent/InputBox";
-import PageAnimate from "../../components/Animate/PageAnimate";
-import {
-TextField,
-FormControlLabel,
-RadioGroup,
-Radio,
-FormControl,
-FormLabel,
-} from "@mui/material";
+import AddForm from "../../components/FormComponent/AddForm";
 import { createProduct } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import Timeline from "../../components/FormComponent/Timeline";
-import { TextInput } from "../../components/FormComponent/TextInput";
-import { BigTextInput } from "../../components/FormComponent/BigTextInput";
-import { DropdownInput } from "../../components/FormComponent/DropdownInput";
-import { CollapsableSection } from "../../components/FormComponent/CollapsableSection";
+import { CircularProgress } from "@mui/material";
+import styles from './AddProducts.module.css';
 import { getCategoryOptions } from "../../utils/cacheHelper";
 
 const AddProducts = () => {
   const { successPopup, errorPopup } = useStore();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({});
-  const [page, setPage] = useState(1);
-  const [rateType, setRateType] = useState("purchasePriceWithoutTax"); // Toggle between 'purchasePriceWithoutTax' and 'purchaseRate'
+  const [formData, setFormData] = useState({
+    itemName: '',
+    description: '',
+    categoryId: '',
+    manufacturer: '',
+    brand: '',
+    upc: '',
+    hsn: '',
+    dimensions: '',
+    weight: '',
+    unitMRP: '',
+    purchasePrice: '',
+    salePrice: '',
+    reorderLevel: '0',
+    maxStockLevel: '',
+    cgst: '0',
+    sgst: '0',
+    cess: '0',
+    unitOfMeasure: 'pieces',
+    variants: []
+  });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [rateType, setRateType] = useState("purchasePriceWithoutTax");
 
   // Load categories on component mount
   useEffect(() => {
@@ -39,573 +48,721 @@ const AddProducts = () => {
     loadCategories();
   }, []);
 
-  const backPage = useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page]);
+  const validateCurrentStep = useCallback((pageNum) => {
+    const newErrors = {};
 
-  const nextPage = useCallback(() => {
-    if (page < 3) {
-      setPage(page + 1);
+    if (pageNum === 1) {
+      // Step 1: Basic Information
+      if (!formData.itemName?.trim()) newErrors.itemName = 'Product name is required';
+      if (!formData.manufacturer?.trim()) newErrors.manufacturer = 'Manufacturer is required';
+      if (!formData.categoryId) newErrors.categoryId = 'Category is required';
+    } else if (pageNum === 2) {
+      // Step 2: Pricing & Inventory
+      const unitMrp = parseFloat(formData.unitMRP);
+      const purchasePrice = parseFloat(formData.purchasePrice);
+      const salePrice = parseFloat(formData.salePrice);
+
+      if (!formData.unitMRP || isNaN(unitMrp) || unitMrp <= 0) {
+        newErrors.unitMRP = 'Valid Unit MRP is required';
+      }
+      if (!formData.purchasePrice || isNaN(purchasePrice) || purchasePrice <= 0) {
+        newErrors.purchasePrice = 'Valid Purchase Price is required';
+      }
+      if (!formData.salePrice || isNaN(salePrice) || salePrice <= 0) {
+        newErrors.salePrice = 'Valid Sale Price is required';
+      }
+
+      if (unitMrp && purchasePrice && purchasePrice > unitMrp) {
+        newErrors.purchasePrice = 'Cannot exceed Unit MRP';
+      }
+      if (unitMrp && salePrice && salePrice > unitMrp) {
+        newErrors.salePrice = 'Cannot exceed Unit MRP';
+      }
+
+      if (formData.weight && (isNaN(parseFloat(formData.weight)) || parseFloat(formData.weight) <= 0)) {
+        newErrors.weight = 'Weight must be positive';
+      }
     }
-  }, [page]);
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [formData]);
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: type === "number" ? Number(value) : value,
+      [name]: value,
+    }));
+
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const calculatePurchaseRate = (purchasePriceWithoutTax, taxRate) => {
+    return purchasePriceWithoutTax * (1 + taxRate / 100);
+  };
+
+  const calculatePurchasePriceWithoutTax = (purchaseRate, taxRate) => {
+    return purchaseRate / (1 + taxRate / 100);
+  };
+
+  const handleRateTypeChange = (event) => {
+    setRateType(event.target.value);
+    setFormData((prevState) => ({
+      ...prevState,
+      purchasePriceWithoutTax: 0,
+      purchaseRate: 0,
     }));
   };
 
-  const submit = useCallback(() => {
-    // Validate required fields
-    const requiredFields = ['itemName', 'manufacturer', 'unitMRP', 'purchasePrice', 'salePrice'];
-    const missingFields = requiredFields.filter(field => !formData[field]);
-    
-    if (missingFields.length > 0) {
-      errorPopup(`Please fill in required fields: ${missingFields.join(', ')}`);
-      return;
-    }
+  // Calculate purchase rate based on tax changes
+  useEffect(() => {
+    const totalTax = (parseFloat(formData.cgst) || 0) + (parseFloat(formData.sgst) || 0) + (parseFloat(formData.cess) || 0);
 
-    // Validation rules
-    const unitMrp = Number(formData.unitMRP);
-    const purchasePrice = Number(formData.purchasePrice);
-    const salePrice = Number(formData.salePrice);
-    const weight = Number(formData.weight);
-    const reorderLevel = Number(formData.reorderLevel);
-    const maxStockLevel = Number(formData.maxStockLevel);
-
-    // Numeric validation
-    if (unitMrp <= 0 || purchasePrice <= 0 || salePrice <= 0) {
-      errorPopup("Unit MRP, Purchase Price, and Sale Price must be positive numbers!");
-      return;
-    }
-
-    if (purchasePrice > unitMrp || salePrice > unitMrp) {
-      errorPopup("Purchase Price and Sale Price cannot exceed Unit MRP!");
-      return;
-    }
-
-    if (weight && weight <= 0) {
-      errorPopup("Weight must be a positive number!");
-      return;
-    }
-
-    if (reorderLevel < 0 || maxStockLevel < 0) {
-      errorPopup("Reorder Level and Max Stock Level must be non-negative!");
-      return;
-    }
-
-    if (maxStockLevel && reorderLevel && maxStockLevel < reorderLevel) {
-      errorPopup("Max Stock Level must be greater than or equal to Reorder Level!");
-      return;
-    }
-
-    // Unit of measure validation
-    const validUnits = ['pieces', 'kg', 'grams', 'liters', 'ml', 'meters', 'cm', 'boxes', 'packs'];
-    if (formData.unitOfMeasure && !validUnits.includes(formData.unitOfMeasure)) {
-      errorPopup(`Unit of Measure must be one of: ${validUnits.join(', ')}`);
-      return;
-    }
-
-    // Barcode validation (if provided)
-    if (formData.upc && !/^[a-zA-Z0-9-]+$/.test(formData.upc)) {
-      errorPopup("Barcode must only contain letters, numbers, and hyphens!");
-      return;
-    }
-
-    // Map form data to API structure
-    const apiData = {
-    name: formData.itemName,
-    description: formData.description,
-    categoryId: Number(formData.categoryId) || 1,
-    manufacturer: formData.manufacturer,
-    brand: formData.brand || formData.manufacturer,
-    barcode: formData.barcode || formData.upc,
-    dimensions: formData.dimensions,
-    weight: Number(formData.weight) || 0,
-    unitMrp: Number(formData.unitMRP),
-    purchasePrice: Number(formData.purchasePrice),
-    salePrice: Number(formData.salePrice),
-    reorderLevel: Number(formData.reorderLevel) || 0,
-    isActive: true,
-    unitOfMeasure: formData.unitOfMeasure || 'pieces',
-    maxStockLevel: Number(formData.maxStockLevel) || (Number(formData.reorderLevel) * 10),
-    hsn: formData.hsn,
-    upc: formData.upc,
-    taxes: {
-    cgst: Number(formData.cgst) || 0,
-    sgst: Number(formData.sgst) || 0,
-    cess: Number(formData.cess) || 0
-    },
-    variants: formData.variants?.filter(variant => variant.key && variant.key.trim() !== "").map(variant => ({
-        key: variant.key.trim(),
-        values: Array.isArray(variant.values) ? variant.values : variant.values.split(',').map(v => v.trim()).filter(v => v)
-      })) || []
-    };
-
-    createProduct(apiData).then((status) => {
-    if (status === 201 || status === 200) {
-    successPopup("Item added successfully");
-    navigate("/products");
-    } else {
-    errorPopup("Failed to add item");
-    }
-    }).catch((error) => {
-    console.error('Error creating product:', error);
-    errorPopup("Failed to add item");
-    });
-    }, [formData, errorPopup, successPopup, navigate]);
-
-    const handleVariantChange =
-    (index, field) =>
-    (e) => {
-      const newVariants = [...(formData.variants || [])];
-      if (field === "key") {
-        newVariants[index].key = e.target.value;
-      } else {
-        newVariants[index].values = e.target.value.split(",");
-      }
+    if (rateType === "purchasePriceWithoutTax" && formData.purchasePriceWithoutTax) {
+      const calculatedRate = calculatePurchaseRate(
+        parseFloat(formData.purchasePriceWithoutTax),
+        totalTax
+      );
       setFormData((prevState) => ({
         ...prevState,
-        variants: newVariants,
+        purchaseRate: calculatedRate,
       }));
-    };
+    } else if (rateType === "purchaseRate" && formData.purchaseRate) {
+      const calculatedPrice = calculatePurchasePriceWithoutTax(
+        parseFloat(formData.purchaseRate),
+        totalTax
+      );
+      setFormData((prevState) => ({
+        ...prevState,
+        purchasePriceWithoutTax: calculatedPrice,
+      }));
+    }
+  }, [formData.cgst, formData.sgst, formData.cess, formData.purchasePriceWithoutTax, formData.purchaseRate, rateType]);
+
+  const handleVariantChange = (index, field, value) => {
+    const newVariants = [...(formData.variants || [])];
+    if (field === "key") {
+      newVariants[index].key = value;
+    } else {
+      newVariants[index].values = value.split(",").map(v => v.trim()).filter(v => v);
+    }
+    setFormData((prevState) => ({
+      ...prevState,
+      variants: newVariants,
+    }));
+  };
 
   const addVariantRow = () => {
     setFormData((prevState) => ({
       ...prevState,
-      variants: [...(prevState.variants || []), { key: "", values: [""] }],
+      variants: [...(prevState.variants || []), { key: "", values: [] }],
     }));
   };
 
-  const steps = ["Basic", "Inventory", "Variants"];
+  const removeVariant = (index) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      variants: prevState.variants.filter((_, i) => i !== index),
+    }));
+  };
 
-  const calculatePurchaseRate = (purchasePriceWithoutTax, taxRate) => {
-  return purchasePriceWithoutTax * (1 + taxRate / 100);
-};
+  const submit = async () => {
+    if (!validateCurrentStep(2)) {
+      errorPopup("Please fix validation errors!");
+      return;
+    }
 
-const calculatePurchasePriceWithoutTax = (purchaseRate, taxRate) => {
-  return purchaseRate / (1 + taxRate / 100);
-};
+    setIsSubmitting(true);
 
-const handleRateTypeChange = (event) => {
-  setRateType(event.target.value);
-  setFormData((prevState) => ({
-    ...prevState,
-    purchasePriceWithoutTax: 0,
-    purchaseRate: 0,
-  }));
-};
+    try {
+      // Use purchasePriceWithoutTax or purchaseRate based on rateType
+      const purchasePrice = rateType === "purchasePriceWithoutTax" 
+        ? parseFloat(formData.purchasePriceWithoutTax) 
+        : parseFloat(formData.purchaseRate);
 
-useEffect(() => {
-  const totalTax =
-   (formData.cgst || 0) + (formData.sgst || 0) + (formData.cess || 0);
+      const apiData = {
+        name: formData.itemName.trim(),
+        description: formData.description?.trim() || null,
+        categoryId: Number(formData.categoryId) || 1,
+        manufacturer: formData.manufacturer.trim(),
+        brand: formData.brand?.trim() || formData.manufacturer.trim(),
+        barcode: formData.upc?.trim() || null,
+        dimensions: formData.dimensions?.trim() || null,
+        weight: formData.weight ? parseFloat(formData.weight) : null,
+        unitMrp: parseFloat(formData.unitMRP),
+        purchasePrice: purchasePrice,
+        salePrice: parseFloat(formData.salePrice),
+        reorderLevel: parseInt(formData.reorderLevel) || 0,
+        maxStockLevel: parseInt(formData.maxStockLevel) || (parseInt(formData.reorderLevel) * 10),
+        isActive: true,
+        unitOfMeasure: formData.unitOfMeasure || 'pieces',
+        hsn: formData.hsn?.trim() || null,
+        upc: formData.upc?.trim() || null,
+        taxes: {
+          cgst: parseFloat(formData.cgst) || 0,
+          sgst: parseFloat(formData.sgst) || 0,
+          cess: parseFloat(formData.cess) || 0
+        },
+        variants: formData.variants?.filter(v => v.key?.trim())
+          .map(variant => ({
+            key: variant.key.trim(),
+            values: Array.isArray(variant.values) ? variant.values : [variant.values]
+          })) || []
+      };
 
-  switch (rateType) {
-    case "purchasePriceWithoutTax":
-      setFormData((prevState) => ({
-        ...prevState,
-        purchaseRate: calculatePurchaseRate(
-          prevState.purchasePriceWithoutTax || 0,
-           totalTax
-          ),
-      }));
-      break;
-    case "purchaseRate":
-      setFormData((prevState) => ({
-        ...prevState,
-        purchasePriceWithoutTax: calculatePurchasePriceWithoutTax(
-          prevState.purchaseRate || 0,
-           totalTax
-          ),
-      }));
-      break;
-    default:
-      break;
-  }
-}, [
-  formData.cgst,
-  formData.sgst,
-  formData.cess,
-  rateType,
-  formData.purchasePriceWithoutTax,
-  formData.purchaseRate,
-]);
+      const response = await createProduct(apiData);
+
+      if (response.status === 201 || response.status === 200) {
+        successPopup("Product added successfully!");
+        navigate('/products');
+      } else {
+        const errorMessage = response.data?.message || "Failed to add product";
+        errorPopup(errorMessage);
+      }
+    } catch (error) {
+      console.error('Error creating product:', error);
+      errorPopup("Failed to add product");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const steps = ["Basic Info", "Pricing & Stock", "Variants"];
+
+  const pages = [
+    <BasicPage
+      key="basic"
+      formData={formData}
+      handleChange={handleChange}
+      errors={errors}
+      categories={categories}
+    />,
+    <PricingPage
+      key="pricing"
+      formData={formData}
+      handleChange={handleChange}
+      errors={errors}
+      rateType={rateType}
+      handleRateTypeChange={handleRateTypeChange}
+    />,
+    <VariantPage
+      key="variants"
+      formData={formData}
+      handleVariantChange={handleVariantChange}
+      addVariantRow={addVariantRow}
+      removeVariant={removeVariant}
+    />
+  ];
 
   return (
-    <PageAnimate>
-      <div
-        className={"flex flex-col justify-center items-center overflow-scroll"}
-      >
-        <header className="p-4 flex gap-8 w-full items-center justify-center mt-4 mb-8">
-          <button className={"flex items-center"} onClick={() => navigate(-1)}>
-            {" "}
-            <FiArrowLeft />
-          </button>
-          <h1 className="text-2xl lowercase font-extrabold">
-            {" "}
-            add to <span className={"text-rose-600"}> item</span> to catalogue.{" "}
-          </h1>
-        </header>
-
-        <div className="w-full flex justify-center">
-          <div className="flex justify-between">
-            {page >= 2 && (
-              <button
-                className="p-3 flex-grow shadow-xl form-button-nav"
-                onClick={backPage}
-              >
-                {" "}
-                <FiArrowLeft />{" "}
-              </button>
-            )}
-            <Timeline steps={steps} currentStep={page} />
-            {page < 3 && (
-              <button
-                className="p-3 shadow-xl form-button-nav"
-                onClick={nextPage}
-              >
-                {" "}
-                <FiArrowRight />{" "}
-              </button>
-            )}
-            {page === 3 && (
-              <button
-                className="p-3 flex-grow shadow-xl form-button-submit"
-                onClick={submit}
-              >
-                {" "}
-                <FiCheckCircle />{" "}
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className={"h-fit p-4 w-full flex justify-center"}>
-          {page === 1 && (
-            <BasicPage
-              formData={formData}
-              setFormData={setFormData}
-              handleChange={handleChange}
-              categories={categories}
-            />
-          )}
-          {page === 2 && (
-            <InventoryPage
-              formData={formData}
-              handleChange={handleChange}
-              rateType={rateType}
-              handleRateTypeChange={handleRateTypeChange}
-            />
-          )}
-          {page === 3 && (
-            <VariantPage
-              variants={formData.variants}
-              addVariantRow={addVariantRow}
-              handleVariantChange={handleVariantChange}
-            />
-          )}
-        </div>
+    <div style={{ background: '#f8f9fa', minHeight: '100vh' }}>
+      <div style={{ padding: '0.4rem 1.5rem 0rem 1.5rem' }}>
+        <button
+          className={styles.backButton}
+          onClick={() => navigate(-1)}
+          title="Go back"
+        >
+          <FiArrowLeft />
+        </button>
       </div>
-    </PageAnimate>
+      <AddForm
+        title="New Product Setup"
+        steps={steps}
+        pages={pages}
+        formData={formData}
+        handleChange={handleChange}
+        errors={errors}
+        onSubmit={submit}
+        validatePage={validateCurrentStep}
+        isSubmitting={isSubmitting}
+        onError={errorPopup}
+      />
+    </div>
   );
 };
 
 export default AddProducts;
 
-const BasicPage = React.memo(({ formData, handleChange, categories }) => {
-   return (
-     <MultiPageAnimate>
-       <div className="flex flex-col w-full items-center rounded-xl">
-         <main className="flex flex-col gap-4 w-2/3 mt-8">
-           <TextInput
-             label={"Product Name *"}
-             name={"itemName"}
-             placeholder={"Enter Product Name"}
-             value={formData?.itemName}
-             onChange={handleChange}
-           />
-           <BigTextInput
-             label={"Product Description"}
-             name={"description"}
-             placeholder={"Describe the product"}
-             value={formData?.description}
-             onChange={handleChange}
-           />
-           <TextInput
-             name={"manufacturer"}
-             label="Manufacturer *"
-             maxLength={100}
-             placeholder={"Company behind the product"}
-             value={formData?.manufacturer}
-             onChange={(e) => handleChange?.(e)}
-           />
+const BasicPage = React.memo(({ formData, handleChange, errors, categories }) => {
+  const categoryList = categories.length > 0 ? categories : [
+    "Electronics", "Sports", "Home Decorations", "Toys", "Fashion", "Food", "Others"
+  ];
 
-          <CollapsableSection title={"More Details"}>
-            <DropdownInput
-              label={"Category"}
-              name={"category"}
-              value={formData?.category}
+  return (
+    <MultiPageAnimate>
+      <div className={styles.formContent}>
+        <div className={styles.pageHeader}>
+          <FiBox className={styles.pageIcon} />
+          <h1>Basic Information</h1>
+          <p>Let's start with the product basics</p>
+        </div>
+
+        <div className={styles.fieldGrid}>
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <label className={styles.fieldLabel}>Product Name *</label>
+            <input
+              type="text"
+              name="itemName"
+              placeholder="e.g., Nike Air Max Running Shoes"
+              value={formData.itemName}
               onChange={handleChange}
-              required
-              options={[
-                "Electronics",
-                "Sports",
-                "Home Decorations",
-                "Toys",
-                "Fashion",
-                "Food",
-                "Others",
-              ]}
+              className={`${styles.fieldInput} ${errors.itemName ? styles.error : ''}`}
             />
-            <div id="optional" className="mt-2">
-              <div className="flex gap-4 justify-between xs:flex-col">
-                <TextInput
-                  width={"w-2/4"}
-                  label="UPC"
-                  name="upc"
-                  placeholder="xxxxxxxxxx"
-                  value={formData?.upc}
-                  onChange={handleChange}
-                  maxlength={12}
-                />
-                <TextInput
-                  width={"w-2/4"}
-                  label="HSN"
-                  name="hsn"
-                  placeholder="xxxxxxxxxx"
-                  value={formData?.hsn}
-                  onChange={handleChange}
-                  maxlength={12}
-                />
-              </div>
-              <div className="flex gap-4 justify-between xs:flex-col mt-4">
-                <TextInput
-                  width={"w-2/3"}
-                  label="Dimensions"
-                  name="dimensions"
-                  placeholder="Length, Width, Height"
-                  value={formData?.dimensions}
-                  onChange={handleChange}
-                  maxlength={100}
-                />
-                <TextInput
-                  width={"w-1/3"}
-                  label="Weight"
-                  name="weight"
-                  placeholder="0"
-                  endText="g"
-                  value={formData?.weight}
-                  onChange={handleChange}
-                  maxlength={10}
-                />
-              </div>
-            </div>
-          </CollapsableSection>
-        </main>
+            {errors.itemName && <span className={styles.errorMsg}>{errors.itemName}</span>}
+          </div>
+
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <label className={styles.fieldLabel}>Description</label>
+            <textarea
+              name="description"
+              placeholder="Describe your product..."
+              value={formData.description}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${styles.textArea}`}
+              rows="3"
+            />
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Manufacturer *</label>
+            <input
+              type="text"
+              name="manufacturer"
+              placeholder="e.g., Nike Inc."
+              value={formData.manufacturer}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.manufacturer ? styles.error : ''}`}
+            />
+            {errors.manufacturer && <span className={styles.errorMsg}>{errors.manufacturer}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Brand</label>
+            <input
+              type="text"
+              name="brand"
+              placeholder="Brand name"
+              value={formData.brand}
+              onChange={handleChange}
+              className={styles.fieldInput}
+            />
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Category *</label>
+            <select
+              name="categoryId"
+              value={formData.categoryId}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${styles.selectInput} ${errors.categoryId ? styles.error : ''}`}
+            >
+              <option value="">Select a category</option>
+              {categoryList.map((cat, idx) => (
+                <option key={idx} value={idx + 1}>{cat}</option>
+              ))}
+            </select>
+            {errors.categoryId && <span className={styles.errorMsg}>{errors.categoryId}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Unit of Measure</label>
+            <select
+              name="unitOfMeasure"
+              value={formData.unitOfMeasure}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${styles.selectInput}`}
+            >
+              <option value="pieces">Pieces</option>
+              <option value="kg">Kilograms</option>
+              <option value="grams">Grams</option>
+              <option value="liters">Liters</option>
+              <option value="ml">Milliliters</option>
+              <option value="meters">Meters</option>
+              <option value="cm">Centimeters</option>
+              <option value="boxes">Boxes</option>
+              <option value="packs">Packs</option>
+            </select>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Barcode / UPC</label>
+            <input
+              type="text"
+              name="upc"
+              placeholder="e.g., 123456789012"
+              value={formData.upc}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              maxLength="50"
+            />
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>HSN Code</label>
+            <input
+              type="text"
+              name="hsn"
+              placeholder="e.g., 64041100"
+              value={formData.hsn}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              maxLength="12"
+            />
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Dimensions</label>
+            <input
+              type="text"
+              name="dimensions"
+              placeholder="e.g., 30x15x10 cm"
+              value={formData.dimensions}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              maxLength="100"
+            />
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Weight</label>
+            <input
+              type="number"
+              name="weight"
+              placeholder="in grams"
+              value={formData.weight}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.weight ? styles.error : ''}`}
+              min="0"
+              step="0.01"
+            />
+            {errors.weight && <span className={styles.errorMsg}>{errors.weight}</span>}
+          </div>
+        </div>
       </div>
     </MultiPageAnimate>
   );
 });
 
-BasicPage.displayName = "BasicPage";
+BasicPage.displayName = 'BasicPage';
 
-const InventoryPage = React.memo(
-  ({ formData, handleChange, rateType, handleRateTypeChange }) => {
-    return (
-      <MultiPageAnimate>
-        <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-          <div className="flex justify-between w-full gap-4">
-            <InputBox
-              name="reorderLevel"
+const PricingPage = React.memo(({ formData, handleChange, errors, rateType, handleRateTypeChange }) => {
+  return (
+    <MultiPageAnimate>
+      <div className={styles.formContent}>
+        <div className={styles.pageHeader}>
+          <FiDollarSign className={styles.pageIcon} />
+          <h1>Pricing & Inventory</h1>
+          <p>Set prices and stock levels</p>
+        </div>
+
+        <div className={styles.fieldGrid}>
+          {/* Pricing Section */}
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <div className={styles.sectionHeader}>
+              <FiTag size={18} />
+              <h3>Pricing</h3>
+            </div>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Unit MRP *</label>
+            <div className={styles.currencyInput}>
+              <span className={styles.currencySymbol}>₹</span>
+              <input
+                type="number"
+                name="unitMRP"
+                placeholder="0.00"
+                value={formData.unitMRP}
+                onChange={handleChange}
+                className={`${styles.fieldInput} ${errors.unitMRP ? styles.error : ''}`}
+                min="0"
+                step="0.01"
+              />
+            </div>
+            {errors.unitMRP && <span className={styles.errorMsg}>{errors.unitMRP}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Sale Price *</label>
+            <div className={styles.currencyInput}>
+              <span className={styles.currencySymbol}>₹</span>
+              <input
+                type="number"
+                name="salePrice"
+                placeholder="0.00"
+                value={formData.salePrice}
+                onChange={handleChange}
+                className={`${styles.fieldInput} ${errors.salePrice ? styles.error : ''}`}
+                min="0"
+                step="0.01"
+              />
+            </div>
+            {errors.salePrice && <span className={styles.errorMsg}>{errors.salePrice}</span>}
+          </div>
+
+          {/* Taxes Section */}
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <div className={styles.sectionHeader}>
+              <FiAlertCircle size={18} />
+              <h3>Taxes</h3>
+            </div>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>CGST (%)</label>
+            <input
               type="number"
-              label="Reorder Level"
-              placeholder={"0"}
-              value={formData?.reorderLevel}
-              onChange={(e) => handleChange?.(e)}
-            />
-            <InputBox
-              name={"maxStockLevel"}
-              type="number"
-              label="Max Stock Level"
-              placeholder={"100"}
-              value={formData?.maxStockLevel}
-              onChange={(e) => handleChange?.(e)}
+              name="cgst"
+              placeholder="0"
+              value={formData.cgst}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              min="0"
+              max="100"
+              step="0.01"
             />
           </div>
-          <div className="flex justify-between gap-4 w-full">
-            <InputBox
-              name="unitMRP"
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>SGST (%)</label>
+            <input
               type="number"
-              label="Unit MRP *"
-              placeholder={"₹"}
-              value={formData?.unitMRP}
-              onChange={(e) => handleChange?.(e)}
-              required
-            />
-            <InputBox
-              name="salePrice"
-              type="number"
-              label="Sale Rate *"
-              placeholder={"₹"}
-              value={formData?.salePrice}
-              onChange={(e) => handleChange?.(e)}
-              required
-              />
-          </div>
-          <div className="flex justify-between w-full gap-4">
-            <InputBox
-              startText={"%"}
-              name={"cess"}
-              type="number"
-              label="CESS"
-              placeholder={"0"}
-              value={formData?.cess}
-              onChange={(e) => handleChange?.(e)}
-            />
-            <InputBox
-              startText={"%"}
-              name={"cgst"}
-              type="number"
-              label="CGST"
-              placeholder={"0"}
-              value={formData?.cgst}
-              onChange={(e) => handleChange?.(e)}
-            />
-            <InputBox
-              startText={"%"}
-              name={"sgst"}
-              type="number"
-              label="SGST"
-              placeholder={"0"}
-              value={formData?.sgst}
-              onChange={(e) => handleChange?.(e)}
+              name="sgst"
+              placeholder="0"
+              value={formData.sgst}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              min="0"
+              max="100"
+              step="0.01"
             />
           </div>
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Enter Rate Type</FormLabel>
-            <RadioGroup
-              row
-              aria-label="rateType"
-              name="rateType"
-              value={rateType}
-              onChange={handleRateTypeChange}
-            >
-              <FormControlLabel
-               value="purchasePriceWithoutTax"
-               control={<Radio />}
-               label="Without Tax"
-              />
-              <FormControlLabel
-              value="purchaseRate"
-              control={<Radio />}
-              label="With Tax"
-              />
-            </RadioGroup>
-          </FormControl>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>CESS (%)</label>
+            <input
+              type="number"
+              name="cess"
+              placeholder="0"
+              value={formData.cess}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              min="0"
+              max="100"
+              step="0.01"
+            />
+          </div>
+
+          {/* Purchase Price with/without Tax */}
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <label className={styles.fieldLabel}>Purchase Rate Type</label>
+            <div className={styles.rateTypeOptions}>
+              <label className={styles.radioLabel}>
+                <input
+                  type="radio"
+                  name="rateType"
+                  value="purchasePriceWithoutTax"
+                  checked={rateType === "purchasePriceWithoutTax"}
+                  onChange={handleRateTypeChange}
+                />
+                Without Tax
+              </label>
+              <label className={styles.radioLabel}>
+                <input
+                  type="radio"
+                  name="rateType"
+                  value="purchaseRate"
+                  checked={rateType === "purchaseRate"}
+                  onChange={handleRateTypeChange}
+                />
+                With Tax
+              </label>
+            </div>
+          </div>
 
           {rateType === "purchasePriceWithoutTax" && (
             <>
-              <InputBox
-                name="purchasePriceWithoutTax"
-                type="number"
-                label="Purchase Price (without taxes)"
-                placeholder={"₹"}
-                value={formData?.purchasePriceWithoutTax}
-                onChange={(e) => handleChange?.(e)}
-              />
-              <p>
-                {" "}
-                Purchase Rate with Tax:{" "}
-                {formData?.purchaseRate !== undefined
-                  ? formData.purchaseRate.toFixed(2)
-                  : ""}{" "}
-              </p>
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>Purchase Price (Without Tax) *</label>
+                <div className={styles.currencyInput}>
+                  <span className={styles.currencySymbol}>₹</span>
+                  <input
+                    type="number"
+                    name="purchasePriceWithoutTax"
+                    placeholder="0.00"
+                    value={formData.purchasePriceWithoutTax || ''}
+                    onChange={handleChange}
+                    className={styles.fieldInput}
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>Purchase Rate (With Tax)</label>
+                <div className={styles.currencyInput}>
+                  <span className={styles.currencySymbol}>₹</span>
+                  <input
+                    type="text"
+                    placeholder="0.00"
+                    value={formData.purchaseRate !== undefined ? formData.purchaseRate.toFixed(2) : ''}
+                    disabled
+                    className={styles.fieldInput}
+                  />
+                </div>
+                <small className={styles.fieldHint}>Auto-calculated based on taxes</small>
+              </div>
             </>
           )}
+
           {rateType === "purchaseRate" && (
             <>
-              <InputBox
-                name="purchaseRate"
-                type="number"
-                label="Purchase Rate with Taxes"
-                placeholder={"₹"}
-                value={formData?.purchaseRate}
-                onChange={(e) => handleChange?.(e)}
-              />
-              <p>
-                {" "}
-                Purchase Price without Tax:{" "}
-                {formData?.purchasePriceWithoutTax !== undefined
-                  ? formData.purchasePriceWithoutTax.toFixed(2)
-                  : ""}{" "}
-              </p>
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>Purchase Rate (With Tax) *</label>
+                <div className={styles.currencyInput}>
+                  <span className={styles.currencySymbol}>₹</span>
+                  <input
+                    type="number"
+                    name="purchaseRate"
+                    placeholder="0.00"
+                    value={formData.purchaseRate || ''}
+                    onChange={handleChange}
+                    className={styles.fieldInput}
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>Purchase Price (Without Tax)</label>
+                <div className={styles.currencyInput}>
+                  <span className={styles.currencySymbol}>₹</span>
+                  <input
+                    type="text"
+                    placeholder="0.00"
+                    value={formData.purchasePriceWithoutTax !== undefined ? formData.purchasePriceWithoutTax.toFixed(2) : ''}
+                    disabled
+                    className={styles.fieldInput}
+                  />
+                </div>
+                <small className={styles.fieldHint}>Auto-calculated based on taxes</small>
+              </div>
             </>
           )}
-          
-          <div className="flex justify-between gap-4 w-full">
-            <InputBox
-              name="purchasePrice"
+
+          {/* Inventory Section */}
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <div className={styles.sectionHeader}>
+              <FiBox size={18} />
+              <h3>Inventory</h3>
+            </div>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Reorder Level</label>
+            <input
               type="number"
-              label="Purchase Price *"
-              placeholder={"₹"}
-              value={formData?.purchasePrice}
-              onChange={(e) => handleChange?.(e)}
-              required
+              name="reorderLevel"
+              placeholder="10"
+              value={formData.reorderLevel}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              min="0"
             />
-            <InputBox
-              name="unitOfMeasure"
-              type="string"
-              label="Unit of Measure"
-              placeholder={"piece, kg, liter"}
-              value={formData?.unitOfMeasure}
-              onChange={(e) => handleChange?.(e)}
+            <small className={styles.fieldHint}>When stock drops below this, you'll be notified</small>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Max Stock Level</label>
+            <input
+              type="number"
+              name="maxStockLevel"
+              placeholder="100"
+              value={formData.maxStockLevel}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              min="0"
             />
+            <small className={styles.fieldHint}>Maximum stock to maintain</small>
           </div>
         </div>
-      </MultiPageAnimate>
-    );
-  }
-);
+      </div>
+    </MultiPageAnimate>
+  );
+});
 
-InventoryPage.displayName = "InventoryPage";
+PricingPage.displayName = 'PricingPage';
 
-const VariantPage = React.memo(
-  ({ variants, addVariantRow, handleVariantChange }) => {
-    return (
-      <MultiPageAnimate>
-        <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-          <main className="flex flex-col gap-6">
-            <div className="w-full flex flex-col items-center">
-              {variants?.map((variant, index) => (
-                <div key={index} className="flex gap-4 mb-2">
-                  <TextField
-                    label="Key"
-                    value={variant.key}
-                    onChange={handleVariantChange(index, "key")}
-                  />
-                  <TextField
-                    label="Values (comma separated)"
-                    value={variant.values.join(",")}
-                    onChange={handleVariantChange(index, "values")}
-                  />
+const VariantPage = React.memo(({ formData, handleVariantChange, addVariantRow, removeVariant }) => {
+  return (
+    <MultiPageAnimate>
+      <div className={styles.formContent}>
+        <div className={styles.pageHeader}>
+          <FiTag className={styles.pageIcon} />
+          <h1>Product Variants</h1>
+          <p>Add size, color, or other variants (optional)</p>
+        </div>
+
+        <div className={styles.variantsContainer}>
+          {formData.variants && formData.variants.length > 0 ? (
+            <div className={styles.variantsList}>
+              {formData.variants.map((variant, index) => (
+                <div key={index} className={styles.variantCard}>
+                  <div className={styles.variantField}>
+                    <label className={styles.fieldLabel}>Variant Type</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Size, Color, Material"
+                      value={variant.key}
+                      onChange={(e) => handleVariantChange(index, "key", e.target.value)}
+                      className={styles.fieldInput}
+                    />
+                  </div>
+                  <div className={styles.variantField}>
+                    <label className={styles.fieldLabel}>Values (comma-separated)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., S, M, L, XL"
+                      value={variant.values.join(", ")}
+                      onChange={(e) => handleVariantChange(index, "values", e.target.value)}
+                      className={styles.fieldInput}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeVariant(index)}
+                    className={styles.removeBtn}
+                    title="Remove variant"
+                  >
+                    ✕
+                  </button>
                 </div>
               ))}
             </div>
-            <button
-              className="p-3 flex-grow shadow-xl idms-add opacity-70"
-              onClick={addVariantRow}
-            >
-              <FiPlus />
-            </button>
-          </main>
-        </div>
-      </MultiPageAnimate>
-    );
-  }
-);
+          ) : (
+            <div className={styles.emptyState}>
+              <p>No variants added yet</p>
+              <small>Add variants like size, color, or material for your product</small>
+            </div>
+          )}
 
-VariantPage.displayName = "VariantPage";
+          <button
+            type="button"
+            onClick={addVariantRow}
+            className={styles.addVariantBtn}
+          >
+            + Add Variant
+          </button>
+        </div>
+      </div>
+    </MultiPageAnimate>
+  );
+});
+
+VariantPage.displayName = 'VariantPage';
