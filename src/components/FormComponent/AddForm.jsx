@@ -1,181 +1,131 @@
-import { FiCheckCircle } from 'react-icons/fi';
-import { useState } from "react";
-import InputBoxStream from "./InputBoxStream";
-import {
-	groupByCategory,
-	initializeFormData,
-	getOption,
-	renameAndOptimize,
-	getOptionIDProduct,
-} from "../../utils/FormHelper";
-import { addRow, uploadImg } from "../../network/api";
-import DropdownStream from "./DropdownStream";
-import { useStore } from "../../store/store";
-import { useNavigate } from "react-router-dom";
-import ImageUpload from "./ImageUpload";
-import { MuiTelInput } from "mui-tel-input";
+import React, { useState, useCallback } from "react";
+import { FiArrowLeft, FiArrowRight, FiCheckCircle, FiCheck } from 'react-icons/fi';
+import PageAnimate from "../Animate/PageAnimate";
+import MultiPageAnimate from "../Animate/MultiPageAnimate";
+import styles from './AddForm.module.css';
 
-const AddForm = ({ title, metadata }) => {
-	const navigate = useNavigate();
-	const { successPopup, errorPopup } = useStore();
+/**
+ * Reusable AddForm Component
+ * 
+ * Props:
+ * - title: Title to display (e.g., "New Customer", "New User Setup")
+ * - steps: Array of step names
+ * - pages: Array of page components to render
+ * - formData: Current form data object
+ * - handleChange: Function to handle input changes
+ * - errors: Object with field errors
+ * - onSubmit: Function to call on final submission
+ * - onNavigate: (optional) Custom navigation handler
+ * - validatePage: Function to validate current page, returns boolean
+ * - successMessage: Success message to show after submission
+ * - isSubmitting: Boolean to disable submit button during submission
+ */
+const AddForm = React.memo(({
+  title,
+  steps,
+  pages,
+  formData,
+  handleChange,
+  errors,
+  onSubmit,
+  validatePage,
+  isSubmitting = false,
+  onError,
+  successMessage = "Registered successfully!"
+}) => {
+  const [page, setPage] = useState(1);
+  const totalPages = pages.length;
 
-	const [formData, setFormData] = useState(initializeFormData(metadata));
-	const [image, setImage] = useState();
+  const backPage = useCallback(() => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  }, [page]);
 
-	const groupedData = groupByCategory(metadata);
+  const nextPage = useCallback(() => {
+    if (page < totalPages) {
+      if (validatePage(page)) {
+        setPage(page + 1);
+      } else {
+        onError?.("Please fix the errors before proceeding");
+      }
+    }
+  }, [page, totalPages, validatePage, onError]);
 
-	function handleChange(type, target, value) {
-		return function (e) {
-			if (type === "number") {
-				setFormData((prevState) => ({
-					...prevState,
-					[target]: Number(e.target.value),
-				}));
-			} else if (
-				type === "string" ||
-				type === "email" ||
-				type === "password" ||
-				type === "Date" ||
-				type === "date"
-			) {
-				setFormData((prevState) => ({
-					...prevState,
-					[target]: e.target.value,
-				}));
-			} else if (type === "autocomplete") {
-				setFormData((prevState) => ({
-					...prevState,
-					[target]: value,
-				}));
-			} else {
-				console.error("Invalid type encountered: " + type + " for " + target);
-			}
-		};
-	}
+  const handleSubmit = async () => {
+    if (!validatePage(page)) {
+      onError?.("Please fix the validation errors!");
+      return;
+    }
+    await onSubmit?.();
+  };
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
+  return (
+    <PageAnimate>
+      <div className={styles.pageContainer}>
+        <div className={styles.contentWrapper}>
+          <div className={styles.mainContent}>
+            {/* Left Side - Progress & Info */}
+            <div className={styles.leftSide}>
+              <div className={styles.progressCard}>
+                <div className={styles.progressHeader}>
+                  <h2>{title}</h2>
+                  <span className={styles.stepCounter}>{page}/{totalPages}</span>
+                </div>
 
-		if (title === "users") {
-			let workaround = "";
+                <div className={styles.stepsVertical}>
+                  {steps.map((step, idx) => (
+                    <div
+                      key={idx}
+                      className={`${styles.stepItem} ${page === idx + 1 ? styles.active : ''} ${page > idx + 1 ? styles.completed : ''}`}
+                    >
+                      <div className={styles.stepCircle}>
+                        {page > idx + 1 ? <FiCheck /> : idx + 1}
+                      </div>
+                      <span>{step}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
 
-			if (image) {
-				const ImageData = await renameAndOptimize(
-					formData.userName,
-					image
-				);
+            {/* Right Side - Form */}
+            <div className={styles.rightSide}>
+              <div className={styles.formCard}>
+                {pages[page - 1]}
 
-				console.info("image processed:", ImageData);
+                <div className={styles.formFooter}>
+                  {page > 1 && (
+                    <button className={styles.prevBtn} onClick={backPage}>
+                      <FiArrowLeft />
+                      <span>Back</span>
+                    </button>
+                  )}
+                  {page === totalPages ? (
+                    <button
+                      className={styles.submitBtn}
+                      onClick={handleSubmit}
+                      disabled={isSubmitting}
+                    >
+                      <FiCheckCircle />
+                      <span>{isSubmitting ? 'Processing...' : 'Complete Registration'}</span>
+                    </button>
+                  ) : (
+                    <button className={styles.nextBtn} onClick={nextPage}>
+                      <span>Continue</span>
+                      <FiArrowRight />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </PageAnimate>
+  );
+});
 
-				const response = await uploadImg(ImageData.image);
-
-				if (response !== 200) {
-					console.error("Failed to upload the image");
-					return;
-				}
-
-				workaround = ImageData.name;
-			}
-
-			const response = await addRow(`/users/add`, {
-				...formData,
-				["avatar"]: workaround,
-			});
-
-			if (response !== 200) {
-				console.error("Failed to add the user");
-				return;
-			}
-
-			successPopup(`${title} added successfully!`);
-			navigate(`/${title}`);
-			return;
-		}
-
-		if (title === "offers" && formData.productId) {
-			const updatedProductId = getOptionIDProduct(formData.productId);
-			formData.productId = Number(updatedProductId);
-		}
-
-		addRow(`/${title}/add`, formData)
-			.then((res) => {
-				if (res === 200) {
-					successPopup(`${title} added successfully!`);
-					navigate(`/${title}`);
-				} else {
-					errorPopup(`Couldn't add ${title}!`);
-				}
-			})
-			.catch((error) => {
-				errorPopup(`Couldn't add ${title}!`);
-				console.error("An error occurred:", error);
-			});
-	};
-
-	return (
-		<form onSubmit={handleSubmit} className="w-full flex gap-3">
-			<div className="grid grid-cols-3 h-fit grid-row-2 gap-10">
-				{Object.entries(groupedData).map(
-					([category, items]) => (
-						<div className="shadow-md transition flex flex-col min-w-4 h-fit items-center gap-6 border rounded-2xl p-8 backdrop-filter backdrop-blur-lg bg-white bg-opacity-90" key={category} >
-							<h2 className="font-semibold lowercase mb-2">{category}</h2>
-							{items.map((item, index) => {
-								if (item.autocomplete) {
-									const options = getOption(item.name);
-									return (
-										<DropdownStream
-											key={index}
-											field={item}
-											handleChange={handleChange}
-											options={options}
-											required={item.required ? item.required : false}
-										/>
-									);
-								} else {
-									if (item.name === "avatar") {
-										return <ImageUpload key={index} setImage={setImage} />;
-									} else if ((item.name).includes("mobile")) {
-										const field = String(formData[item.name]);
-										return (
-											<MuiTelInput
-												key={index}
-												label={item.label}
-												name={item.name}
-												defaultCountry="IN"
-												onlyCountries={["FR", "IN", "BE", "SA"]}
-												InputProps={{ inputProps: { maxLength: 15 } }}
-												placeholder={"XXXXXXX"}
-												onChange={(value) =>
-													setFormData({ ...formData, [item.name]: value })
-												}
-												value={field}
-											/>
-										);
-									} else {
-										return (
-											<div key={index} className={"idms-transparent-bg w-full"}>
-												<InputBoxStream
-													field={item}
-													required={item.required}
-													value={formData[item.name]}
-													handleChange={handleChange}
-												/>
-											</div>
-										);
-									}
-								}
-							})}
-						</div>
-					)
-				)}
-			</div>
-			<div className="flex justify-center">
-				<button type="submit" className="p-3 m-5 shadow-xl idms-submit">
-					<FiCheckCircle />
-				</button>
-			</div>
-		</form>
-	);
-};
+AddForm.displayName = "AddForm";
 
 export default AddForm;

@@ -1,0 +1,373 @@
+/* AddForm.module.css - Shared styles for reusable form component */
+
+* {
+  box-sizing: border-box;
+}
+
+/* Page Container */
+.pageContainer {
+  min-height: 100vh;
+  background: #f8f9fa;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* Content Wrapper */
+.contentWrapper {
+  width: 100%;
+  max-width: 1400px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Main Content Layout */
+.mainContent {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* Left Side */
+.leftSide {
+  perspective: 1000px;
+}
+
+.progressCard {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f1f3;
+  height: fit-content;
+  position: sticky;
+  top: 0;
+  margin-top: 0;
+  animation: slideInLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.progressHeader h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.stepCounter {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #dc2032;
+  background: rgba(220, 32, 50, 0.08);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+}
+
+/* Vertical Steps */
+.stepsVertical {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: #f9fafb;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.stepItem.active {
+  background: linear-gradient(135deg, rgba(220, 32, 50, 0.1), rgba(244, 63, 94, 0.05));
+  border-left: 3px solid #dc2032;
+}
+
+.stepItem.completed {
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.stepCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: #e5e7eb;
+  color: #6b7280;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.stepItem.active .stepCircle {
+  background: linear-gradient(135deg, #dc2032, #f43f5e);
+  color: white;
+  transform: scale(1.1);
+}
+
+.stepItem.completed .stepCircle {
+  background: #10b981;
+  color: white;
+}
+
+.stepItem span {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.stepItem.active span {
+  color: #dc2032;
+  font-weight: 600;
+}
+
+/* Right Side */
+.rightSide {
+  animation: slideInRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Form Card */
+.formCard {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #f0f1f3;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+}
+
+/* Form Footer */
+.formFooter {
+  padding: 1.25rem 2.5rem;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+/* Buttons */
+.submitBtn,
+.nextBtn,
+.prevBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.95rem 2rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.submitBtn {
+  background: linear-gradient(135deg, #dc2032 0%, #f43f5e 100%);
+  color: white;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c41c2a 0%, #e81a48 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(220, 32, 50, 0.3);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.nextBtn {
+  background: linear-gradient(135deg, #1e2938 0%, #2d3f54 100%);
+  color: white;
+}
+
+.nextBtn:hover {
+  background: linear-gradient(135deg, #1a2230 0%, #243547 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(30, 41, 56, 0.4);
+}
+
+.nextBtn:active {
+  transform: translateY(0);
+}
+
+.prevBtn {
+  background: white;
+  color: #6b7280;
+  border: 1.5px solid #e5e7eb;
+}
+
+.prevBtn:hover {
+  background: #f9fafb;
+  color: #374151;
+  border-color: #d1d5db;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.prevBtn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .mainContent {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .progressCard {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageContainer {
+    padding: 1rem;
+  }
+
+  .mainContent {
+    gap: 1rem;
+  }
+
+  .progressCard {
+    padding: 1.5rem;
+  }
+
+  .progressHeader h2 {
+    font-size: 1.2rem;
+  }
+
+  .formFooter {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .submitBtn,
+  .nextBtn,
+  .prevBtn {
+    padding: 0.85rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageContainer {
+    padding: 0.75rem;
+  }
+
+  .contentWrapper {
+    width: 100%;
+  }
+
+  .mainContent {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .progressCard {
+    display: none;
+  }
+
+  .formCard {
+    min-height: auto;
+  }
+
+  .formFooter {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .submitBtn,
+  .nextBtn,
+  .prevBtn {
+    width: 100%;
+    padding: 0.8rem 1.25rem;
+    font-size: 0.85rem;
+  }
+
+  .stepsVertical {
+    gap: 0.75rem;
+  }
+
+  .stepItem {
+    padding: 0.6rem 0.75rem;
+  }
+
+  .stepCircle {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .formFooter {
+    display: none;
+  }
+
+  .pageContainer {
+    background: white;
+    padding: 0;
+  }
+
+  .formCard {
+    box-shadow: none;
+    border: none;
+  }
+}

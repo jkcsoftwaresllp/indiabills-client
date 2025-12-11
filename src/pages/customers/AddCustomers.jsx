@@ -1,13 +1,10 @@
-import { FiArrowLeft, FiArrowRight, FiCheckCircle, FiUploadCloud, FiUser, FiMail, FiPhone, FiBriefcase, FiLock, FiShield, FiCheck } from 'react-icons/fi';
+import { FiArrowLeft, FiUploadCloud, FiUser, FiBriefcase } from 'react-icons/fi';
 import React, { useState, useCallback } from "react";
 import MultiPageAnimate from "../../components/Animate/MultiPageAnimate";
-import InputBox from "../../components/FormComponent/InputBox";
-import Dropdown from "../../components/FormComponent/Dropdown";
-import PageAnimate from "../../components/Animate/PageAnimate";
+import AddForm from "../../components/FormComponent/AddForm";
 import { createCustomer, uploadImg } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import Timeline from "../../components/FormComponent/Timeline";
 import { renameAndOptimize } from "../../utils/FormHelper";
 import styles from './AddCustomers.module.css';
 
@@ -15,16 +12,16 @@ const AddCustomers = () => {
   const { successPopup, errorPopup } = useStore();
   const navigate = useNavigate();
 
-  const [image, setImage] = useState();
   const [formData, setFormData] = useState({});
-  const [page, setPage] = useState(1);
   const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [image, setImage] = useState();
 
-  const validateSlideFields = useCallback(() => {
+  const validateSlideFields = useCallback((pageNum) => {
     const newErrors = {};
 
-    if (page === 1) {
+    if (pageNum === 1) {
       // Validate first slide (Basic Information)
       const requiredFields = ["first_name", "last_name", "email", "phone", "password", "confirm_password"];
       for (const field of requiredFields) {
@@ -53,7 +50,7 @@ const AddCustomers = () => {
       if (formData.password && formData.password.length < 8) {
         newErrors.password = "Password must be at least 8 characters";
       }
-    } else if (page === 2) {
+    } else if (pageNum === 2) {
       // Validate second slide (Business Details)
       if (formData.customer_type === "business") {
         if (!formData.business_name || formData.business_name.trim() === "") {
@@ -72,23 +69,7 @@ const AddCustomers = () => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [page, formData]);
-
-  const backPage = useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page]);
-
-  const nextPage = useCallback(() => {
-    if (page < 2) {
-      if (validateSlideFields()) {
-        setPage(page + 1);
-      } else {
-        errorPopup("Please fix the errors before proceeding");
-      }
-    }
-  }, [page, validateSlideFields, errorPopup]);
+  }, [formData]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -123,46 +104,29 @@ const AddCustomers = () => {
   };
 
   const submit = async () => {
-    if (!validateSlideFields()) {
+    if (!validateSlideFields(2)) {
       errorPopup("Please fix the validation errors!");
       return;
     }
 
-    // Final validation for all fields
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      errorPopup("Invalid email format");
-      return;
-    }
-
-    if (!formData.phone || formData.phone.replace(/\D/g, '').length < 10) {
-      errorPopup("Invalid phone number format");
-      return;
-    }
-
-    if (formData.password !== formData.confirm_password) {
-      errorPopup("Password and confirm password do not match");
-      return;
-    }
+    setIsSubmitting(true);
 
     let avatar = "";
     if (image) {
-      setUploading(true);
       try {
         const ImageData = await renameAndOptimize(formData.first_name, image);
         const response = await uploadImg(ImageData.image, true);
         if (response !== 200) {
           errorPopup("Failed to upload the image");
-          setUploading(false);
+          setIsSubmitting(false);
           return;
         }
         avatar = ImageData.name;
       } catch (err) {
         errorPopup("Failed to upload the image");
-        setUploading(false);
+        setIsSubmitting(false);
         return;
       }
-      setUploading(false);
     }
 
     const finalData = {
@@ -183,90 +147,58 @@ const AddCustomers = () => {
     } catch (error) {
       const errorMessage = error?.message || "Failed to register the customer";
       errorPopup(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const steps = ["Personal Info", "Business Details"];
 
+  const pages = [
+    <BasicPage
+      key="basic"
+      formData={formData}
+      handleChange={handleChange}
+      errors={errors}
+      setImage={handleImageUpload}
+      uploading={uploading}
+    />,
+    <BusinessPage
+      key="business"
+      formData={formData}
+      handleChange={handleChange}
+      errors={errors}
+      setFormData={setFormData}
+    />
+  ];
+
   return (
-    <PageAnimate>
-      <div className={styles.pageContainer}>
-        <div className={styles.contentWrapper}>
-          <button className={styles.backButton} onClick={() => navigate(-1)}>
-            <FiArrowLeft />
-          </button>
-
-          <div className={styles.mainContent}>
-            {/* Left Side - Progress & Info */}
-            <div className={styles.leftSide}>
-              <div className={styles.progressCard}>
-                <div className={styles.progressHeader}>
-                  <h2>New Customer</h2>
-                  <span className={styles.stepCounter}>{page}/2</span>
-                </div>
-
-                <div className={styles.stepsVertical}>
-                  {steps.map((step, idx) => (
-                    <div
-                      key={idx}
-                      className={`${styles.stepItem} ${page === idx + 1 ? styles.active : ''} ${page > idx + 1 ? styles.completed : ''}`}
-                    >
-                      <div className={styles.stepCircle}>
-                        {page > idx + 1 ? <FiCheck /> : idx + 1}
-                      </div>
-                      <span>{step}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Right Side - Form */}
-            <div className={styles.rightSide}>
-              <div className={styles.formCard}>
-                {page === 1 && (
-                  <BasicPage
-                    formData={formData}
-                    handleChange={handleChange}
-                    errors={errors}
-                    setImage={handleImageUpload}
-                    uploading={uploading}
-                  />
-                )}
-                {page === 2 && (
-                  <BusinessPage
-                    formData={formData}
-                    handleChange={handleChange}
-                    errors={errors}
-                    setFormData={setFormData}
-                  />
-                )}
-
-                <div className={styles.formFooter}>
-                  {page > 1 && (
-                    <button className={styles.prevBtn} onClick={backPage}>
-                      <FiArrowLeft />
-                      <span>Back</span>
-                    </button>
-                  )}
-                  {page === 2 ? (
-                    <button className={styles.submitBtn} onClick={submit} disabled={uploading}>
-                      <FiCheckCircle />
-                      <span>{uploading ? 'Processing...' : 'Complete Registration'}</span>
-                    </button>
-                  ) : (
-                    <button className={styles.nextBtn} onClick={nextPage}>
-                      <span>Continue</span>
-                      <FiArrowRight />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </PageAnimate>
+    <>
+      <button
+        className={styles.backButton}
+        onClick={() => navigate(-1)}
+        style={{
+          position: 'absolute',
+          top: '2rem',
+          left: '2rem',
+          zIndex: 10
+        }}
+      >
+        <FiArrowLeft />
+      </button>
+      <AddForm
+        title="New Customer"
+        steps={steps}
+        pages={pages}
+        formData={formData}
+        handleChange={handleChange}
+        errors={errors}
+        onSubmit={submit}
+        validatePage={validateSlideFields}
+        isSubmitting={isSubmitting}
+        onError={errorPopup}
+      />
+    </>
   );
 };
 

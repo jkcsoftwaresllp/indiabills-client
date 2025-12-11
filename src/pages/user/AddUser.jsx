@@ -1,14 +1,11 @@
-import { FiArrowLeft, FiArrowRight, FiCheckCircle, FiUploadCloud, FiUser, FiMail, FiPhone, FiBriefcase, FiLock, FiShield, FiCheck } from 'react-icons/fi';
+import { FiArrowLeft, FiUploadCloud, FiUser, FiMail, FiBriefcase, FiShield } from 'react-icons/fi';
 import React, { useState, useCallback } from "react";
 import MultiPageAnimate from "../../components/Animate/MultiPageAnimate";
-import InputBox from "../../components/FormComponent/InputBox";
-import Dropdown from "../../components/FormComponent/Dropdown";
-import PageAnimate from "../../components/Animate/PageAnimate";
+import AddForm from "../../components/FormComponent/AddForm";
 import { createUser, uploadUserImage } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import Timeline from "../../components/FormComponent/Timeline";
-import { Button, Input, CircularProgress } from "@mui/material";
+import { Input, CircularProgress } from "@mui/material";
 import styles from './AddUser.module.css';
 
 const AddUser = () => {
@@ -29,14 +26,14 @@ const AddUser = () => {
     avatar_url: '',
     role: ''
   });
-  const [page, setPage] = useState(1);
   const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validateCurrentStep = () => {
+  const validateCurrentStep = useCallback((pageNum) => {
     const newErrors = {};
 
-    if (page === 1) {
+    if (pageNum === 1) {
       // Step 1 validation: Personal Information
       if (!formData.first_name) newErrors.first_name = 'First name is required';
       if (!formData.last_name) newErrors.last_name = 'Last name is required';
@@ -57,7 +54,7 @@ const AddUser = () => {
       if (formData.username && formData.username.length < 3) {
         newErrors.username = 'Username must be at least 3 characters';
       }
-    } else if (page === 2) {
+    } else if (pageNum === 2) {
       // Step 2 validation: Contact & Avatar
       if (!formData.email) newErrors.email = 'Email is required';
 
@@ -75,28 +72,14 @@ const AddUser = () => {
       if (formData.avatar_url && !/^https?:\/\/.+/.test(formData.avatar_url)) {
         newErrors.avatar_url = 'Invalid avatar URL';
       }
-    } else if (page === 3) {
+    } else if (pageNum === 3) {
       // Step 3 validation: Role & Permissions
       if (!formData.role) newErrors.role = 'Role is required';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const backPage = useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page]);
-
-  const nextPage = useCallback(() => {
-    if (validateCurrentStep() && page < 3) {
-      setPage(page + 1);
-    } else if (!validateCurrentStep()) {
-      errorPopup("Please fill all required fields correctly");
-    }
-  }, [page, formData, errorPopup]);
+  }, [formData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -104,51 +87,13 @@ const AddUser = () => {
       ...prevState,
       [name]: value,
     }));
-    
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
         [name]: ''
       }));
     }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.password) newErrors.password = 'Password is required';
-    if (!formData.re_enter_password) newErrors.re_enter_password = 'Please confirm password';
-    if (!formData.first_name) newErrors.first_name = 'First name is required';
-    if (!formData.last_name) newErrors.last_name = 'Last name is required';
-    if (!formData.role) newErrors.role = 'Role is required';
-
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Must be a valid email address';
-    }
-
-    if (formData.password && formData.password.length < 8) {
-      newErrors.password = 'Must be at least 8 characters long';
-    }
-
-    if (formData.password !== formData.re_enter_password) {
-      newErrors.re_enter_password = 'Passwords do not match';
-    }
-
-    if (formData.username && formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
-    }
-
-    if (formData.phone && !/^(\+)?[1-9]\d{6,14}$/.test(formData.phone.replace(/[\s-]/g, ''))) {
-      newErrors.phone = 'Invalid phone number (7-15 digits)';
-    }
-
-    if (formData.avatar_url && !/^https?:\/\/.+/.test(formData.avatar_url)) {
-      newErrors.avatar_url = 'Invalid avatar URL';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
   const handleImageUpload = async (file) => {
@@ -167,7 +112,7 @@ const AddUser = () => {
     setUploading(true);
     try {
       const response = await uploadUserImage(file);
-      
+
       if (response.status === 200) {
         const imageUrl = response.data.imageUrl || response.data.url;
         setFormData(prev => ({
@@ -187,14 +132,16 @@ const AddUser = () => {
   };
 
   const submit = async () => {
-    if (!validateForm()) {
+    if (!validateCurrentStep(3)) {
       errorPopup("Please fix the validation errors!");
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       const response = await createUser(formData);
-      
+
       if (response.status === 201 || response.status === 200) {
         successPopup("User registered successfully!");
         navigate('/users');
@@ -205,83 +152,64 @@ const AddUser = () => {
     } catch (error) {
       console.error('Error creating user:', error);
       errorPopup("Failed to register the user");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const steps = ["Personal", "Contact", "Permissions"];
 
+  const pages = [
+    <BasicPage
+      key="basic"
+      formData={formData}
+      handleChange={handleChange}
+      errors={errors}
+    />,
+    <ContactPage
+      key="contact"
+      formData={formData}
+      handleChange={handleChange}
+      errors={errors}
+      handleImageUpload={handleImageUpload}
+      uploading={uploading}
+    />,
+    <RolePage
+      key="role"
+      formData={formData}
+      setFormData={setFormData}
+      handleChange={handleChange}
+      errors={errors}
+    />
+  ];
+
   return (
-    <PageAnimate>
-      <div className={styles.pageContainer}>
-        <div className={styles.backgroundElements}>
-          <div className={styles.blob1}></div>
-          <div className={styles.blob2}></div>
-        </div>
-
-        <div className={styles.contentWrapper}>
-          <button className={styles.backButton} onClick={() => navigate(-1)}>
-            <FiArrowLeft />
-          </button>
-
-          <div className={styles.mainContent}>
-            {/* Left Side - Progress & Info */}
-            <div className={styles.leftSide}>
-              <div className={styles.progressCard}>
-                <div className={styles.progressHeader}>
-                  <h2>New User Setup</h2>
-                  <span className={styles.stepCounter}>{page}/3</span>
-                </div>
-                
-                <div className={styles.stepsVertical}>
-                  {steps.map((step, idx) => (
-                    <div 
-                      key={idx}
-                      className={`${styles.stepItem} ${page === idx + 1 ? styles.active : ''} ${page > idx + 1 ? styles.completed : ''}`}
-                    >
-                      <div className={styles.stepCircle}>
-                        {page > idx + 1 ? <FiCheck /> : idx + 1}
-                      </div>
-                      <span>{step}</span>
-                    </div>
-                  ))}
-                </div>
-
-
-              </div>
-            </div>
-
-            {/* Right Side - Form */}
-            <div className={styles.rightSide}>
-              <div className={styles.formCard}>
-                {page === 1 && <BasicPage formData={formData} handleChange={handleChange} errors={errors} />}
-                {page === 2 && <ContactPage formData={formData} handleChange={handleChange} errors={errors} handleImageUpload={handleImageUpload} uploading={uploading} />}
-                {page === 3 && <RolePage formData={formData} setFormData={setFormData} handleChange={handleChange} errors={errors} />}
-
-                <div className={styles.formFooter}>
-                  {page > 1 && (
-                    <button className={styles.prevBtn} onClick={backPage}>
-                      <FiArrowLeft />
-                      <span>Back</span>
-                    </button>
-                  )}
-                  {page === 3 ? (
-                    <button className={styles.submitBtn} onClick={submit}>
-                      <FiCheckCircle />
-                      <span>Complete Registration</span>
-                    </button>
-                  ) : (
-                    <button className={styles.nextBtn} onClick={nextPage}>
-                      <span>Continue</span>
-                      <FiArrowRight />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </PageAnimate>
+    <>
+      <button
+        className={styles.backButton}
+        onClick={() => navigate(-1)}
+        style={{
+          position: 'absolute',
+          top: '2rem',
+          left: '2rem',
+          zIndex: 10
+        }}
+      >
+        <FiArrowLeft />
+      </button>
+      <AddForm
+        title="New User Setup"
+        steps={steps}
+        pages={pages}
+        formData={formData}
+        handleChange={handleChange}
+        errors={errors}
+        onSubmit={submit}
+        validatePage={validateCurrentStep}
+        isSubmitting={isSubmitting}
+        onError={errorPopup}
+      />
+    </>
   );
 };
 
@@ -394,7 +322,7 @@ const ContactPage = React.memo(({ formData, handleChange, errors, handleImageUpl
 
   const clearImageUpload = () => {
     // This will be called if user wants to use URL instead
-    document.getElementById('avatar-upload-add').value = '';
+    document.getElementById('avatar-upload-add') && (document.getElementById('avatar-upload-add').value = '');
   };
 
   return (
@@ -508,7 +436,7 @@ ContactPage.displayName = 'ContactPage';
 
 const RolePage = React.memo(({ formData, setFormData, handleChange, errors }) => {
   const roleOptions = ["admin", "manager", "operator", "customer"];
-  
+
   const roleDescriptions = {
     admin: "Full system access and user management capabilities",
     manager: "Department management, reporting and team oversight",
