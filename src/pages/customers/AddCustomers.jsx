@@ -1,16 +1,15 @@
-import { FiArrowLeft, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
+import { FiArrowLeft, FiArrowRight, FiCheckCircle, FiUploadCloud, FiUser, FiMail, FiPhone, FiBriefcase, FiLock, FiShield, FiCheck } from 'react-icons/fi';
 import React, { useState, useCallback } from "react";
-import { getOption, renameAndOptimize, validateForm } from "../../utils/FormHelper";
 import MultiPageAnimate from "../../components/Animate/MultiPageAnimate";
 import InputBox from "../../components/FormComponent/InputBox";
 import Dropdown from "../../components/FormComponent/Dropdown";
 import PageAnimate from "../../components/Animate/PageAnimate";
-import { createCustomer } from "../../network/api";
+import { createCustomer, uploadImg } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import ImageUpload from "../../components/FormComponent/ImageUpload";
-import MobileField from "../../components/FormComponent/MobileField";
 import Timeline from "../../components/FormComponent/Timeline";
+import { renameAndOptimize } from "../../utils/FormHelper";
+import styles from './AddCustomers.module.css';
 
 const AddCustomers = () => {
   const { successPopup, errorPopup } = useStore();
@@ -19,6 +18,61 @@ const AddCustomers = () => {
   const [image, setImage] = useState();
   const [formData, setFormData] = useState({});
   const [page, setPage] = useState(1);
+  const [errors, setErrors] = useState({});
+  const [uploading, setUploading] = useState(false);
+
+  const validateSlideFields = useCallback(() => {
+    const newErrors = {};
+
+    if (page === 1) {
+      // Validate first slide (Basic Information)
+      const requiredFields = ["first_name", "last_name", "email", "phone", "password", "confirm_password"];
+      for (const field of requiredFields) {
+        if (!formData[field] || formData[field].toString().trim() === "") {
+          newErrors[field] = field.replace(/_/g, " ").charAt(0).toUpperCase() + field.replace(/_/g, " ").slice(1) + " is required";
+        }
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (formData.email && !emailRegex.test(formData.email)) {
+        newErrors.email = "Invalid email format";
+      }
+
+      // Validate phone format
+      if (formData.phone && formData.phone.replace(/\D/g, '').length < 10) {
+        newErrors.phone = "Invalid phone number format";
+      }
+
+      // Validate password match
+      if (formData.password && formData.confirm_password && formData.password !== formData.confirm_password) {
+        newErrors.confirm_password = "Passwords do not match";
+      }
+
+      // Validate password length
+      if (formData.password && formData.password.length < 8) {
+        newErrors.password = "Password must be at least 8 characters";
+      }
+    } else if (page === 2) {
+      // Validate second slide (Business Details)
+      if (formData.customer_type === "business") {
+        if (!formData.business_name || formData.business_name.trim() === "") {
+          newErrors.business_name = "Business Name is required for business customers";
+        }
+        if (!formData.gstin || formData.gstin.trim() === "") {
+          newErrors.gstin = "GSTIN is required for business customers";
+        }
+      }
+
+      // Validate customer type is selected
+      if (!formData.customer_type) {
+        newErrors.customer_type = "Customer Type is required";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [page, formData]);
 
   const backPage = useCallback(() => {
     if (page > 1) {
@@ -26,49 +80,15 @@ const AddCustomers = () => {
     }
   }, [page]);
 
-  const validateSlideFields = useCallback(() => {
-    if (page === 1) {
-      // Validate first slide (Basic Information)
-      const requiredFields = ["first_name", "last_name", "email", "phone", "password", "confirm_password"];
-      for (const field of requiredFields) {
-        if (!formData[field] || formData[field].toString().trim() === "") {
-          const fieldLabel = field.replace(/_/g, " ").charAt(0).toUpperCase() + field.replace(/_/g, " ").slice(1);
-          errorPopup(`${fieldLabel} is required`);
-          return false;
-        }
-      }
-
-      // Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        errorPopup("Invalid email format");
-        return false;
-      }
-
-      // Validate phone format
-      if (!formData.phone || formData.phone.replace(/\D/g, '').length < 10) {
-        errorPopup("Invalid phone number format");
-        return false;
-      }
-
-      // Validate password match
-      if (formData.password !== formData.confirm_password) {
-        errorPopup("Password and confirm password do not match");
-        return false;
-      }
-
-      return true;
-    }
-    return true;
-  }, [page, formData, errorPopup]);
-
   const nextPage = useCallback(() => {
     if (page < 2) {
       if (validateSlideFields()) {
         setPage(page + 1);
+      } else {
+        errorPopup("Please fix the errors before proceeding");
       }
     }
-  }, [page, validateSlideFields]);
+  }, [page, validateSlideFields, errorPopup]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -76,40 +96,50 @@ const AddCustomers = () => {
       ...prevState,
       [name]: type === "number" ? Number(value) : value,
     }));
+
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
-  const submit = async () => {
-    if (!validateForm("customers", formData)) {
-      errorPopup(`Complete all required fields before submitting!`);
+  const handleImageUpload = async (file) => {
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      errorPopup('Please select a valid image file');
       return;
     }
 
-    // Business type conditional validation
-    if (formData.customer_type === "business") {
-      if (!formData.business_name || formData.business_name.trim() === "") {
-        errorPopup("Business Name is required for business customers");
-        return;
-      }
-      if (!formData.gstin || formData.gstin.trim() === "") {
-        errorPopup("GSTIN is required for business customers");
-        return;
-      }
+    if (file.size > 5 * 1024 * 1024) {
+      errorPopup('Image size should be less than 5MB');
+      return;
     }
 
-    // Validate email format
+    setImage(file);
+  };
+
+  const submit = async () => {
+    if (!validateSlideFields()) {
+      errorPopup("Please fix the validation errors!");
+      return;
+    }
+
+    // Final validation for all fields
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       errorPopup("Invalid email format");
       return;
     }
 
-    // Validate phone format
     if (!formData.phone || formData.phone.replace(/\D/g, '').length < 10) {
       errorPopup("Invalid phone number format");
       return;
     }
 
-    // Validate password match
     if (formData.password !== formData.confirm_password) {
       errorPopup("Password and confirm password do not match");
       return;
@@ -117,13 +147,22 @@ const AddCustomers = () => {
 
     let avatar = "";
     if (image) {
-      const ImageData = await renameAndOptimize(formData.first_name, image);
-      const response = await uploadImg(ImageData.image, true);
-      if (response !== 200) {
-        console.error("Failed to upload the image");
+      setUploading(true);
+      try {
+        const ImageData = await renameAndOptimize(formData.first_name, image);
+        const response = await uploadImg(ImageData.image, true);
+        if (response !== 200) {
+          errorPopup("Failed to upload the image");
+          setUploading(false);
+          return;
+        }
+        avatar = ImageData.name;
+      } catch (err) {
+        errorPopup("Failed to upload the image");
+        setUploading(false);
         return;
       }
-      avatar = ImageData.name;
+      setUploading(false);
     }
 
     const finalData = {
@@ -135,7 +174,6 @@ const AddCustomers = () => {
       const status = await createCustomer(finalData);
       if (status === 201 || status === 200) {
         successPopup("Customer registered successfully!");
-        // Add a small delay to ensure server processes the request
         setTimeout(() => {
           navigate("/customers");
         }, 500);
@@ -148,69 +186,82 @@ const AddCustomers = () => {
     }
   };
 
-  const steps = ["Basic Information", "Business Details"];
+  const steps = ["Personal Info", "Business Details"];
 
   return (
     <PageAnimate>
-      <div className={"h-full flex flex-col gap-12 justify-center items-center"}>
-        <button
-          className={"self-start flex items-center"}
-          onClick={() => navigate(-1)}
-        >
-          <FiArrowLeft /> Go back
-        </button>
+      <div className={styles.pageContainer}>
+        <div className={styles.contentWrapper}>
+          <button className={styles.backButton} onClick={() => navigate(-1)}>
+            <FiArrowLeft />
+          </button>
 
-        <h1 className="text-2xl rounded-lg lowercase transition hover:shadow-lg p-4 text-center w-3/4 idms-transparent-bg font-extrabold">
-          register a new<span className={"text-rose-400"}> customer</span> :)
-        </h1>
+          <div className={styles.mainContent}>
+            {/* Left Side - Progress & Info */}
+            <div className={styles.leftSide}>
+              <div className={styles.progressCard}>
+                <div className={styles.progressHeader}>
+                  <h2>New Customer</h2>
+                  <span className={styles.stepCounter}>{page}/2</span>
+                </div>
 
-        <Timeline steps={steps} currentStep={page} />
+                <div className={styles.stepsVertical}>
+                  {steps.map((step, idx) => (
+                    <div
+                      key={idx}
+                      className={`${styles.stepItem} ${page === idx + 1 ? styles.active : ''} ${page > idx + 1 ? styles.completed : ''}`}
+                    >
+                      <div className={styles.stepCircle}>
+                        {page > idx + 1 ? <FiCheck /> : idx + 1}
+                      </div>
+                      <span>{step}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
 
-        <div>
-          <div className={"h-full w-full flex justify-center"}>
-            <main>
-              {page === 1 && (
-                <BasicPage
-                  setImage={setImage}
-                  formData={formData}
-                  setFormData={setFormData}
-                  handleChange={handleChange}
-                />
-              )}
-              {page === 2 && (
-                <BusinessPage
-                  formData={formData}
-                  setFormData={setFormData}
-                  handleChange={handleChange}
-                />
-              )}
-            </main>
+            {/* Right Side - Form */}
+            <div className={styles.rightSide}>
+              <div className={styles.formCard}>
+                {page === 1 && (
+                  <BasicPage
+                    formData={formData}
+                    handleChange={handleChange}
+                    errors={errors}
+                    setImage={handleImageUpload}
+                    uploading={uploading}
+                  />
+                )}
+                {page === 2 && (
+                  <BusinessPage
+                    formData={formData}
+                    handleChange={handleChange}
+                    errors={errors}
+                    setFormData={setFormData}
+                  />
+                )}
 
-            <div className={"p-2 flex flex-col gap-4"}>
-              {page === 2 && (
-                <button
-                  className="p-3 flex-grow shadow-xl form-button-submit"
-                  onClick={submit}
-                >
-                  <FiCheckCircle />
-                </button>
-              )}
-              {page < 2 && (
-                <button
-                  className="p-3 flex-grow shadow-xl form-button-nav"
-                  onClick={nextPage}
-                >
-                  <FiArrowRight />
-                </button>
-              )}
-              {page >= 2 && (
-                <button
-                  className="p-3 flex-grow shadow-xl form-button-nav"
-                  onClick={backPage}
-                >
-                  <FiArrowLeft />
-                </button>
-              )}
+                <div className={styles.formFooter}>
+                  {page > 1 && (
+                    <button className={styles.prevBtn} onClick={backPage}>
+                      <FiArrowLeft />
+                      <span>Back</span>
+                    </button>
+                  )}
+                  {page === 2 ? (
+                    <button className={styles.submitBtn} onClick={submit} disabled={uploading}>
+                      <FiCheckCircle />
+                      <span>{uploading ? 'Processing...' : 'Complete Registration'}</span>
+                    </button>
+                  ) : (
+                    <button className={styles.nextBtn} onClick={nextPage}>
+                      <span>Continue</span>
+                      <FiArrowRight />
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -221,80 +272,151 @@ const AddCustomers = () => {
 
 export default AddCustomers;
 
-const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage }) => {
-   return (
-     <MultiPageAnimate>
-       <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-         <main className="grid grid-cols-2 gap-6">
-           <InputBox
-             name="first_name"
-             type="string"
-             label="First Name"
-             placeholder={""}
-             value={formData.first_name}
-             onChange={handleChange}
-             required
-           />
-           <InputBox
-             name="last_name"
-             type="string"
-             label="Last Name"
-             placeholder={""}
-             value={formData.last_name}
-             onChange={handleChange}
-             required
-           />
-           <InputBox
-             name="middle_name"
-             type="string"
-             label="Middle Name"
-             placeholder={""}
-             value={formData.middle_name}
-             onChange={handleChange}
-           />
-           <ImageUpload setImage={setImage} />
-           <MobileField
-             label={"Phone *"}
-             name={"phone"}
-             setData={setFormData}
-             data={formData}
-             required
-           />
-           <InputBox
-             name="email"
-             type="email"
-             label="Email"
-             placeholder={"example@domain.com"}
-             value={formData.email}
-             onChange={handleChange}
-             required
-           />
-           <Dropdown
-             name={"gender"}
-             label="Gender"
-             options={["male", "female", "other", "prefer_not_to_say"]}
-             selectedData={formData}
-             setValue={setFormData}
-           />
-           <InputBox
-             name="password"
-             type="password"
-             label="Password"
-             placeholder={"Password"}
-             value={formData.password}
-             onChange={handleChange}
-             required
-           />
-           <InputBox
-             name="confirm_password"
-             type="password"
-             label="Confirm Password"
-             placeholder={"Confirm Password"}
-             value={formData.confirm_password}
-             onChange={handleChange}
-             required
-           />
-        </main>
+const BasicPage = React.memo(({ formData, handleChange, errors, setImage, uploading }) => {
+  return (
+    <MultiPageAnimate>
+      <div className={styles.formContent}>
+        <div className={styles.pageHeader}>
+          <FiUser className={styles.pageIcon} />
+          <h1>Personal Information</h1>
+          <p>Let's start with your basic customer details</p>
+        </div>
+
+        <div className={styles.fieldGrid}>
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>First Name *</label>
+            <input
+              type="text"
+              name="first_name"
+              placeholder="John"
+              value={formData.first_name || ''}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.first_name ? styles.error : ''}`}
+            />
+            {errors.first_name && <span className={styles.errorMsg}>{errors.first_name}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Last Name *</label>
+            <input
+              type="text"
+              name="last_name"
+              placeholder="Doe"
+              value={formData.last_name || ''}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.last_name ? styles.error : ''}`}
+            />
+            {errors.last_name && <span className={styles.errorMsg}>{errors.last_name}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Middle Name</label>
+            <input
+              type="text"
+              name="middle_name"
+              placeholder="Michael"
+              value={formData.middle_name || ''}
+              onChange={handleChange}
+              className={styles.fieldInput}
+            />
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Gender</label>
+            <select
+              name="gender"
+              value={formData.gender || ''}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${styles.selectInput}`}
+            >
+              <option value="">Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+              <option value="prefer_not_to_say">Prefer not to say</option>
+            </select>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Email *</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="john.doe@example.com"
+              value={formData.email || ''}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.email ? styles.error : ''}`}
+            />
+            {errors.email && <span className={styles.errorMsg}>{errors.email}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Phone *</label>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="+91 98765 43210"
+              value={formData.phone || ''}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.phone ? styles.error : ''}`}
+            />
+            {errors.phone && <span className={styles.errorMsg}>{errors.phone}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Password *</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="At least 8 characters"
+              value={formData.password || ''}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.password ? styles.error : ''}`}
+            />
+            {errors.password && <span className={styles.errorMsg}>{errors.password}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Confirm Password *</label>
+            <input
+              type="password"
+              name="confirm_password"
+              placeholder="Re-enter your password"
+              value={formData.confirm_password || ''}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.confirm_password ? styles.error : ''}`}
+            />
+            {errors.confirm_password && <span className={styles.errorMsg}>{errors.confirm_password}</span>}
+          </div>
+
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <label className={styles.fieldLabel}>Profile Photo</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImage(e.target.files[0])}
+              disabled={uploading}
+              className={styles.fileInput}
+              id="avatar-upload-add"
+            />
+            <label htmlFor="avatar-upload-add" className={styles.uploadZone}>
+              <div className={styles.uploadContent}>
+                {uploading ? (
+                  <>
+                    <div className={styles.spinner}></div>
+                    <span>Uploading image...</span>
+                  </>
+                ) : (
+                  <>
+                    <FiUploadCloud className={styles.uploadIcon} />
+                    <span className={styles.uploadText}>Drag & drop or click to upload</span>
+                    <small>PNG, JPG, GIF up to 5MB</small>
+                  </>
+                )}
+              </div>
+            </label>
+          </div>
+        </div>
       </div>
     </MultiPageAnimate>
   );
@@ -302,159 +424,144 @@ const BasicPage = React.memo(({ formData, handleChange, setFormData, setImage })
 
 BasicPage.displayName = "BasicPage";
 
-const BusinessPage = React.memo(({ formData, handleChange, setFormData }) => {
-   const isBusinessCustomer = formData.customer_type === "business";
+const BusinessPage = React.memo(({ formData, handleChange, errors, setFormData }) => {
+  const isBusinessCustomer = formData.customer_type === "business";
 
-   return (
-     <MultiPageAnimate>
-       <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-         <main className="grid grid-cols-2 gap-6">
-           <Dropdown
-             name={"customer_type"}
-             label="Customer Type *"
-             options={["individual", "business"]}
-             selectedData={formData}
-             setValue={setFormData}
-             required
-           />
-          <InputBox
-            name="business_name"
-            type="string"
-            label={`Business Name${isBusinessCustomer ? " *" : ""}`}
-            placeholder={"Business Name"}
-            value={formData.business_name}
-            onChange={handleChange}
-            required={isBusinessCustomer}
-          />
-          <InputBox
-            name="gstin"
-            type="text"
-            label={`GSTIN${isBusinessCustomer ? " *" : ""}`}
-            placeholder={"GSTIN"}
-            value={formData.gstin}
-            onChange={handleChange}
-            required={isBusinessCustomer}
-          />
-          <InputBox
-            name="fssai_number"
-            type="text"
-            label="FSSAI Number"
-            placeholder={"FSSAI Number"}
-            value={formData.fssai_number}
-            onChange={handleChange}
-          />
-          <InputBox
-            name="pan_number"
-            type="text"
-            label="PAN Number"
-            placeholder={"PAN Number"}
-            value={formData.pan_number}
-            onChange={handleChange}
-          />
-          <InputBox
-            name="aadhar_number"
-            type="text"
-            label="Aadhar Number"
-            placeholder={"Aadhar Number"}
-            value={formData.aadhar_number}
-            onChange={handleChange}
-          />
-          <InputBox
-            name="date_of_birth"
-            type="date"
-            label="Date of Birth"
-            placeholder={""}
-            value={formData.date_of_birth}
-            onChange={handleChange}
-          />
-          <InputBox
-            name="credit_limit"
-            type="number"
-            label="Credit Limit"
-            placeholder={"0"}
-            value={formData.credit_limit}
-            onChange={handleChange}
-          />
-          <InputBox
-            name="loyalty_points"
-            type="number"
-            label="Loyalty Points"
-            placeholder={"0"}
-            value={formData.loyalty_points}
-            onChange={handleChange}
-          />
-        </main>
+  return (
+    <MultiPageAnimate>
+      <div className={styles.formContent}>
+        <div className={styles.pageHeader}>
+          <FiBriefcase className={styles.pageIcon} />
+          <h1>Business Details</h1>
+          <p>Complete your customer type and business information</p>
+        </div>
+
+        <div className={styles.fieldGrid}>
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Customer Type *</label>
+            <select
+              name="customer_type"
+              value={formData.customer_type || ''}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${styles.selectInput} ${errors.customer_type ? styles.error : ''}`}
+            >
+              <option value="">Select customer type</option>
+              <option value="individual">Individual</option>
+              <option value="business">Business</option>
+            </select>
+            {errors.customer_type && <span className={styles.errorMsg}>{errors.customer_type}</span>}
+          </div>
+
+          {isBusinessCustomer && (
+            <>
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>Business Name *</label>
+                <input
+                  type="text"
+                  name="business_name"
+                  placeholder="Your Business Name"
+                  value={formData.business_name || ''}
+                  onChange={handleChange}
+                  className={`${styles.fieldInput} ${errors.business_name ? styles.error : ''}`}
+                />
+                {errors.business_name && <span className={styles.errorMsg}>{errors.business_name}</span>}
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>GSTIN *</label>
+                <input
+                  type="text"
+                  name="gstin"
+                  placeholder="XXXXXXXXXXXX"
+                  value={formData.gstin || ''}
+                  onChange={handleChange}
+                  className={`${styles.fieldInput} ${errors.gstin ? styles.error : ''}`}
+                />
+                {errors.gstin && <span className={styles.errorMsg}>{errors.gstin}</span>}
+              </div>
+            </>
+          )}
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>PAN Number</label>
+            <input
+              type="text"
+              name="pan_number"
+              placeholder="ABCDE1234F"
+              value={formData.pan_number || ''}
+              onChange={handleChange}
+              className={styles.fieldInput}
+            />
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Aadhar Number</label>
+            <input
+              type="text"
+              name="aadhar_number"
+              placeholder="123456789012"
+              value={formData.aadhar_number || ''}
+              onChange={handleChange}
+              className={styles.fieldInput}
+            />
+          </div>
+
+          {isBusinessCustomer && (
+            <>
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>FSSAI Number</label>
+                <input
+                  type="text"
+                  name="fssai_number"
+                  placeholder="FSSAI Number"
+                  value={formData.fssai_number || ''}
+                  onChange={handleChange}
+                  className={styles.fieldInput}
+                />
+              </div>
+            </>
+          )}
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Date of Birth</label>
+            <input
+              type="date"
+              name="date_of_birth"
+              value={formData.date_of_birth || ''}
+              onChange={handleChange}
+              className={styles.fieldInput}
+            />
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Credit Limit</label>
+            <input
+              type="number"
+              name="credit_limit"
+              placeholder="0"
+              value={formData.credit_limit || ''}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              min="0"
+            />
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Loyalty Points</label>
+            <input
+              type="number"
+              name="loyalty_points"
+              placeholder="0"
+              value={formData.loyalty_points || ''}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              min="0"
+            />
+          </div>
+        </div>
       </div>
     </MultiPageAnimate>
   );
 });
 
 BusinessPage.displayName = "BusinessPage";
-
-const AddressPage = React.memo(({ formData, handleChange, setFormData }) => {
-  return (
-    <MultiPageAnimate>
-      <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-        <main className="flex flex-col gap-6">
-          <InputBox
-            required
-            name="addressType"
-            type="string"
-            label="Address Type"
-            placeholder={""}
-            value={formData.addressType}
-            onChange={handleChange}
-          />
-          <InputBox
-            multiline={true}
-            required
-            name="addressLine"
-            type="string"
-            label="Address Line"
-            placeholder={"Plot, Street, Town"}
-            value={formData.addressLine}
-            onChange={handleChange}
-          />
-          <div className={"grid grid-cols-2 gap-4"}>
-            <InputBox
-              name="landmark"
-              type="string"
-              label="Landmark"
-              placeholder={""}
-              value={formData.landmark}
-              onChange={handleChange}
-            />
-            <InputBox
-              required
-              name="city"
-              type="string"
-              label="City"
-              placeholder={""}
-              value={formData.city}
-              onChange={handleChange}
-            />
-            <Dropdown
-              required
-              name={"state"}
-              label="State"
-              options={getOption("state")}
-              selectedData={formData}
-              setValue={setFormData}
-            />
-            <InputBox
-              required
-              name="pinCode"
-              type="string"
-              label="Pin Code"
-              placeholder={"00000"}
-              value={formData.pinCode}
-              onChange={handleChange}
-            />
-          </div>
-        </main>
-      </div>
-    </MultiPageAnimate>
-  );
-});
-
-AddressPage.displayName = "AddressPage";
