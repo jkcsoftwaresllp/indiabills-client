@@ -1,5 +1,4 @@
-import { FiArrowLeft, FiArrowRight, FiCheckCircle } from "react-icons/fi";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createFirstTimeOrganization } from "../../network/api/organizationApi";
 import { useStore } from "../../store/store";
@@ -10,25 +9,16 @@ import {
 } from "../../utils/authHelper";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import logo from "../../assets/IndiaBills_logo.png";
-import bg from "../../assets/bglogo.png";
-import styles from "../user/Login.module.css";
+import styles from "./OrganizationSetup.module.css";
 import {
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-  Button,
-  Grid,
-  Box,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Stepper,
-  Step,
-  StepLabel,
-  CircularProgress,
-} from "@mui/material";
+  FiArrowLeft,
+  FiArrowRight,
+  FiCheckCircle,
+  FiHome,
+  FiMail,
+  FiMap,
+  FiSettings,
+} from "react-icons/fi";
 import { getOption } from "../../utils/FormHelper";
 
 const OrganizationSetup = () => {
@@ -58,10 +48,25 @@ const OrganizationSetup = () => {
     brandAccentColor: "#c42032",
   });
 
-  const steps = ["Basic Information", "Contact & Address", "Branding & Domain"];
+  const steps = [
+    {
+      label: "Basic Info",
+      description: "Organization details",
+      icon: FiHome,
+    },
+    {
+      label: "Contact & Address",
+      description: "Location details",
+      icon: FiMail,
+    },
+    {
+      label: "Branding & Domain",
+      description: "Brand & identity",
+      icon: FiSettings,
+    },
+  ];
 
   useEffect(() => {
-    // Check if user has temp session
     const tempSession = getTempSession();
     if (!tempSession) {
       errorPopup("Session expired. Please login again.");
@@ -76,7 +81,6 @@ const OrganizationSetup = () => {
       [name]: value,
     }));
 
-    // Clear error for this field
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -85,17 +89,44 @@ const OrganizationSetup = () => {
     }
   };
 
-  const handleNext = () => {
-    const validation = validateOrganizationData(formData);
+  const validateCurrentStep = () => {
+    const newErrors = {};
+
     if (activeStep === 0) {
-      // Validate basic info
-      if (!formData.name) {
-        setErrors({ name: "Organization name is required" });
-        return;
+      if (!formData.name.trim()) {
+        newErrors.name = "Organization name is required";
+      }
+      if (!formData.businessName.trim()) {
+        newErrors.businessName = "Business name is required";
       }
     }
 
-    setActiveStep((prev) => prev + 1);
+    if (activeStep === 1) {
+      if (!formData.email.trim()) {
+        newErrors.email = "Email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        newErrors.email = "Please enter a valid email";
+      }
+
+      if (!formData.phone.trim()) {
+        newErrors.phone = "Phone number is required";
+      }
+    }
+
+    if (activeStep === 2) {
+      if (!formData.domain.trim() && !formData.subdomain.trim()) {
+        newErrors.domain = "Either domain or subdomain is required";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateCurrentStep()) {
+      setActiveStep((prev) => prev + 1);
+    }
   };
 
   const handleBack = () => {
@@ -108,8 +139,12 @@ const OrganizationSetup = () => {
   };
 
   const handleSubmit = async () => {
-    const validation = validateOrganizationData(formData);
+    if (!validateCurrentStep()) {
+      errorPopup("Please fix the validation errors");
+      return;
+    }
 
+    const validation = validateOrganizationData(formData);
     if (!validation.isValid) {
       setErrors(validation.errors);
       errorPopup("Please fix the validation errors");
@@ -145,356 +180,392 @@ const OrganizationSetup = () => {
     }
   };
 
-  const renderStepContent = (step) => {
-    switch (step) {
+  const renderStepContent = () => {
+    switch (activeStep) {
       case 0:
         return (
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Organization Name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                error={!!errors.name}
-                helperText={errors.name}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Business Name"
-                name="businessName"
-                value={formData.businessName}
-                onChange={handleChange}
-                placeholder="Legal business name"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="About"
-                name="about"
-                value={formData.about}
-                onChange={handleChange}
-                multiline
-                rows={3}
-                placeholder="Tell us about your organization"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Tagline"
-                name="tagline"
-                value={formData.tagline}
-                onChange={handleChange}
-                placeholder="Your organization's motto"
-              />
-            </Grid>
-          </Grid>
+          <div className={styles.stepContent}>
+            <div className={styles.stepTitle}>
+              <FiHome /> Basic Information
+            </div>
+            <p className={styles.stepDescription}>
+              Tell us about your organization. This information helps us
+              personalize your experience.
+            </p>
+
+            <div className={styles.formGrid}>
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                <label className={styles.label}>Organization Name *</label>
+                <div className={styles.inputWrapper}>
+                  <FiHome className={styles.fieldIcon} />
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Your Organization Name"
+                    className={styles.input}
+                  />
+                </div>
+                {errors.name && (
+                  <span className={styles.helperText}>{errors.name}</span>
+                )}
+              </div>
+
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                <label className={styles.label}>Business Name *</label>
+                <div className={styles.inputWrapper}>
+                  <FiHome className={styles.fieldIcon} />
+                  <input
+                    type="text"
+                    name="businessName"
+                    value={formData.businessName}
+                    onChange={handleChange}
+                    placeholder="Legal business name"
+                    className={styles.input}
+                  />
+                </div>
+                {errors.businessName && (
+                  <span className={styles.helperText}>
+                    {errors.businessName}
+                  </span>
+                )}
+              </div>
+
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                <label className={styles.label}>About Your Business</label>
+                <textarea
+                  name="about"
+                  value={formData.about}
+                  onChange={handleChange}
+                  placeholder="Briefly describe your organization..."
+                  className={styles.textarea}
+                />
+              </div>
+
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                <label className={styles.label}>Tagline</label>
+                <input
+                  type="text"
+                  name="tagline"
+                  value={formData.tagline}
+                  onChange={handleChange}
+                  placeholder="Your organization's motto"
+                  className={styles.input}
+                />
+              </div>
+            </div>
+          </div>
         );
+
       case 1:
         return (
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                error={!!errors.email}
-                helperText={errors.email}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="+91-9876543210"
-                error={!!errors.phone}
-                helperText={errors.phone}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Website"
-                name="website"
-                value={formData.website}
-                onChange={handleChange}
-                placeholder="https://yourcompany.com"
-                error={!!errors.website}
-                helperText={errors.website}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Address Line"
-                name="addressLine"
-                value={formData.addressLine}
-                onChange={handleChange}
-                multiline
-                rows={2}
-                placeholder="Street address, building, etc."
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                label="City"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <FormControl fullWidth>
-                <InputLabel>State</InputLabel>
-                <Select
-                  name="state"
-                  value={formData.state}
+          <div className={styles.stepContent}>
+            <div className={styles.stepTitle}>
+              <FiMail /> Contact & Address
+            </div>
+            <p className={styles.stepDescription}>
+              Provide your contact information and business address so customers
+              can reach you easily.
+            </p>
+
+            <div className={styles.formGrid}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Email Address *</label>
+                <div className={styles.inputWrapper}>
+                  <FiMail className={styles.fieldIcon} />
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="contact@company.com"
+                    className={styles.input}
+                  />
+                </div>
+                {errors.email && (
+                  <span className={styles.helperText}>{errors.email}</span>
+                )}
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Phone Number *</label>
+                <div className={styles.inputWrapper}>
+                  <FiMail className={styles.fieldIcon} />
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="+91-9876543210"
+                    className={styles.input}
+                  />
+                </div>
+                {errors.phone && (
+                  <span className={styles.helperText}>{errors.phone}</span>
+                )}
+              </div>
+
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                <label className={styles.label}>Website</label>
+                <div className={styles.inputWrapper}>
+                  <FiMail className={styles.fieldIcon} />
+                  <input
+                    type="url"
+                    name="website"
+                    value={formData.website}
+                    onChange={handleChange}
+                    placeholder="https://yourcompany.com"
+                    className={styles.input}
+                  />
+                </div>
+              </div>
+
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                <label className={styles.label}>Address Line</label>
+                <textarea
+                  name="addressLine"
+                  value={formData.addressLine}
                   onChange={handleChange}
-                >
-                  {getOption("state").map((state) => (
-                    <MenuItem key={state} value={state}>
-                      {state}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                label="PIN Code"
-                name="pinCode"
-                value={formData.pinCode}
-                onChange={handleChange}
-                error={!!errors.pinCode}
-                helperText={errors.pinCode}
-              />
-            </Grid>
-          </Grid>
+                  placeholder="Street address, building, etc."
+                  className={styles.textarea}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>City</label>
+                <div className={styles.inputWrapper}>
+                  <FiMap className={styles.fieldIcon} />
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    placeholder="City"
+                    className={styles.input}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>State</label>
+                <div className={styles.inputWrapper}>
+                  <FiMap className={styles.fieldIcon} />
+                  <select
+                    name="state"
+                    value={formData.state}
+                    onChange={handleChange}
+                    className={styles.select}
+                  >
+                    <option value="">Select State</option>
+                    {getOption("state").map((state) => (
+                      <option key={state} value={state}>
+                        {state}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>PIN Code</label>
+                <div className={styles.inputWrapper}>
+                  <FiMap className={styles.fieldIcon} />
+                  <input
+                    type="text"
+                    name="pinCode"
+                    value={formData.pinCode}
+                    onChange={handleChange}
+                    placeholder="PIN Code"
+                    className={styles.input}
+                  />
+                </div>
+                {errors.pinCode && (
+                  <span className={styles.helperText}>{errors.pinCode}</span>
+                )}
+              </div>
+            </div>
+          </div>
         );
+
       case 2:
         return (
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Logo URL"
-                name="logoUrl"
-                value={formData.logoUrl}
-                onChange={handleChange}
-                placeholder="https://example.com/logo.png"
-                error={!!errors.logoUrl}
-                helperText={errors.logoUrl}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Domain"
-                name="domain"
-                value={formData.domain}
-                onChange={handleChange}
-                placeholder="yourcompany.com"
-                error={!!errors.domain}
-                helperText={
-                  errors.domain || "Either domain or subdomain is required"
-                }
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Subdomain"
-                name="subdomain"
-                value={formData.subdomain}
-                onChange={handleChange}
-                placeholder="yourcompany"
-                error={!!errors.subdomain}
-                helperText={errors.subdomain}
-              />
-            </Grid>
-            {/* Color customization fields - commented out for future use */}
-            {/* <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Primary Color"
-                name="brandPrimaryColor"
-                type="color"
-                value={formData.brandPrimaryColor}
-                onChange={handleChange}
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.brandPrimaryColor}
-                helperText={errors.brandPrimaryColor}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Accent Color"
-                name="brandAccentColor"
-                type="color"
-                value={formData.brandAccentColor}
-                onChange={handleChange}
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.brandAccentColor}
-                helperText={errors.brandAccentColor}
-              />
-            </Grid> */}
-          </Grid>
+          <div className={styles.stepContent}>
+            <div className={styles.stepTitle}>
+              <FiSettings /> Branding & Domain
+            </div>
+            <p className={styles.stepDescription}>
+              Set up your brand identity and domain to represent your business
+              uniquely.
+            </p>
+
+            <div className={styles.formGrid}>
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                <label className={styles.label}>Logo URL</label>
+                <div className={styles.inputWrapper}>
+                  <FiSettings className={styles.fieldIcon} />
+                  <input
+                    type="url"
+                    name="logoUrl"
+                    value={formData.logoUrl}
+                    onChange={handleChange}
+                    placeholder="https://example.com/logo.png"
+                    className={styles.input}
+                  />
+                </div>
+                {errors.logoUrl && (
+                  <span className={styles.helperText}>{errors.logoUrl}</span>
+                )}
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Domain</label>
+                <div className={styles.inputWrapper}>
+                  <FiSettings className={styles.fieldIcon} />
+                  <input
+                    type="text"
+                    name="domain"
+                    value={formData.domain}
+                    onChange={handleChange}
+                    placeholder="yourcompany.com"
+                    className={styles.input}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Subdomain</label>
+                <div className={styles.inputWrapper}>
+                  <FiSettings className={styles.fieldIcon} />
+                  <input
+                    type="text"
+                    name="subdomain"
+                    value={formData.subdomain}
+                    onChange={handleChange}
+                    placeholder="yourcompany"
+                    className={styles.input}
+                  />
+                </div>
+              </div>
+
+              {errors.domain && (
+                <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                  <span className={styles.helperText}>{errors.domain}</span>
+                </div>
+              )}
+            </div>
+          </div>
         );
+
       default:
         return null;
     }
   };
 
   return (
-    <div
-      className={styles.container}
-      style={{
-        backgroundImage: `url(${bg})`,
-        height: "auto",
-        minHeight: "100vh",
-        position: "relative",
-        overflow: "auto",
-      }}
-    >
-      <div className="bg-white bg-opacity-95 backdrop-blur-lg rounded-lg shadow-xl p-4 sm:p-6 md:p-8 w-full max-w-2xl sm:max-w-3xl md:max-w-4xl mx-auto my-4 sm:my-6">
-        <div className="text-center mb-6 sm:mb-8">
-          <img
-            src={logo}
-            alt="IndiaBills Logo"
-            className="w-24 sm:w-28 md:w-32 mx-auto mb-3 sm:mb-4"
-          />
-          <Typography
-            variant="h5"
-            sm={{ variant: "h4" }}
-            className="font-bold text-gray-800 mb-1 sm:mb-2 text-xl sm:text-2xl"
-          >
-            Set Up Your Organization
-          </Typography>
-          <Typography
-            variant="body2"
-            sm={{ variant: "body1" }}
-            color="textSecondary"
-            className="text-xs sm:text-sm"
-          >
-            Let's create your first organization to get started
-          </Typography>
-        </div>
+    <PageAnimate>
+      <div className={styles.container}>
+        <div className={styles.backgroundGradient}></div>
 
-        <Box className="mb-6 sm:mb-8 overflow-x-auto">
-          <Stepper activeStep={activeStep} orientation="horizontal">
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
-                  <span className="hidden sm:inline">{label}</span>
-                  <span className="sm:hidden text-xs">
-                    {label.split(" ")[0]}
-                  </span>
-                </StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Box>
+        <div className={styles.contentWrapper}>
+          {/* Header */}
+          <div className={styles.header}>
+            <img src={logo} alt="IndiaBills Logo" className={styles.logo} />
+            <h1 className={styles.title}>Set Up Your Organization</h1>
+            <p className={styles.subtitle}>
+              Complete setup to get started with IndiaBills
+            </p>
+          </div>
 
-        <Card sx={{ mb: 3 }}>
-          <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }}
-            >
-              {steps[activeStep]}
-            </Typography>
-            {renderStepContent(activeStep)}
-          </CardContent>
-        </Card>
+          {/* Main Card */}
+          <div className={styles.mainCard}>
+            {/* Stepper */}
+            <div className={styles.stepperSection}>
+              <div className={styles.stepperContainer}>
+                {steps.map((step, index) => {
+                  const StepIcon = step.icon;
+                  const isActive = index === activeStep;
+                  const isCompleted = index < activeStep;
 
-        <Box
-          mt={3}
-          sm:mt={4}
-          display="flex"
-          flexDirection={{ xs: "column", sm: "row" }}
-          justifyContent={{ xs: "center", sm: "space-between" }}
-          gap={2}
-          sx={{ width: "100%" }}
-        >
-          <Button
-            onClick={handleBackToLogin}
-            disabled={loading}
-            fullWidth={{ xs: true, sm: false }}
-            variant="outlined"
-            sx={{
-              order: { xs: 3, sm: 0 },
-              minWidth: { sm: "120px" },
-            }}
-          >
-            Back to Login
-          </Button>
+                  return (
+                    <div
+                      key={index}
+                      className={`${styles.step} ${
+                        isActive ? styles.active : ""
+                      } ${isCompleted ? styles.completed : ""}`}
+                    >
+                      <div className={styles.stepNumber}>
+                        {isCompleted ? <FiCheckCircle size={20} /> : index + 1}
+                      </div>
+                      <div className={styles.stepLabel}>{step.label}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
 
-          <Box
-            display="flex"
-            flexDirection={{ xs: "column", sm: "row" }}
-            gap={2}
-            sx={{ width: { xs: "100%", sm: "auto" } }}
-          >
-            {activeStep > 0 && (
-              <Button
-                onClick={handleBack}
-                startIcon={<FiArrowLeft />}
-                disabled={loading}
-                fullWidth={{ xs: true, sm: false }}
-                variant="outlined"
-                sx={{ minWidth: { sm: "100px" } }}
-              >
-                Back
-              </Button>
-            )}
+            {/* Step Content */}
+            {renderStepContent()}
 
-            {activeStep < steps.length - 1 ? (
-              <Button
-                variant="contained"
-                onClick={handleNext}
-                endIcon={<FiArrowRight />}
-                disabled={loading}
-                fullWidth={{ xs: true, sm: false }}
-                sx={{ minWidth: { sm: "100px" } }}
-              >
-                Next
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                onClick={handleSubmit}
-                startIcon={<FiCheckCircle />}
-                disabled={loading}
-                fullWidth={{ xs: true, sm: false }}
-                sx={{ minWidth: { sm: "180px" } }}
-              >
-                {loading ? (
-                  <CircularProgress size={20} />
-                ) : (
-                  "Create Organization"
+            {/* Action Buttons */}
+            <div className={styles.buttonsContainer}>
+              <div className={styles.primaryButtonRow}>
+                {activeStep > 0 && (
+                  <button
+                    onClick={handleBack}
+                    disabled={loading}
+                    className={`${styles.button} ${styles.secondaryButton}`}
+                  >
+                    <FiArrowLeft size={18} />
+                    Back
+                  </button>
                 )}
-              </Button>
-            )}
-          </Box>
-        </Box>
+
+                {activeStep < steps.length - 1 ? (
+                  <button
+                    onClick={handleNext}
+                    disabled={loading}
+                    className={`${styles.button} ${styles.primaryButton}`}
+                  >
+                    Next
+                    <FiArrowRight size={18} />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className={`${styles.button} ${styles.primaryButton}`}
+                  >
+                    {loading ? (
+                      <>
+                        <span className={styles.spinner}></span>
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        <FiCheckCircle size={18} />
+                        Create Organization
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+
+              <div className={styles.secondaryButtonRow}>
+                <button
+                  onClick={handleBackToLogin}
+                  disabled={loading}
+                  className={`${styles.button} ${styles.backButton}`}
+                >
+                  <FiArrowLeft size={18} />
+                  Back to Login
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </PageAnimate>
   );
 };
 
