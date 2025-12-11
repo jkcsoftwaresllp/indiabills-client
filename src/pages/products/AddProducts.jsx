@@ -59,21 +59,23 @@ const AddProducts = () => {
     } else if (pageNum === 2) {
       // Step 2: Pricing & Inventory
       const unitMrp = parseFloat(formData.unitMRP);
-      const purchasePrice = parseFloat(formData.purchasePrice);
+      const purchasePrice = formData.rateType === "purchasePriceWithoutTax" 
+        ? parseFloat(formData.purchasePriceWithoutTax) 
+        : parseFloat(formData.purchaseRate);
       const salePrice = parseFloat(formData.salePrice);
 
       if (!formData.unitMRP || isNaN(unitMrp) || unitMrp <= 0) {
         newErrors.unitMRP = 'Valid Unit MRP is required';
       }
-      if (!formData.purchasePrice || isNaN(purchasePrice) || purchasePrice <= 0) {
-        newErrors.purchasePrice = 'Valid Purchase Price is required';
+      if (!purchasePrice || isNaN(purchasePrice) || purchasePrice <= 0) {
+        newErrors.purchasePriceWithoutTax = 'Valid Purchase Price is required';
       }
       if (!formData.salePrice || isNaN(salePrice) || salePrice <= 0) {
         newErrors.salePrice = 'Valid Sale Price is required';
       }
 
       if (unitMrp && purchasePrice && purchasePrice > unitMrp) {
-        newErrors.purchasePrice = 'Cannot exceed Unit MRP';
+        newErrors.purchasePriceWithoutTax = 'Cannot exceed Unit MRP';
       }
       if (unitMrp && salePrice && salePrice > unitMrp) {
         newErrors.salePrice = 'Cannot exceed Unit MRP';
@@ -150,7 +152,8 @@ const AddProducts = () => {
     if (field === "key") {
       newVariants[index].key = value;
     } else {
-      newVariants[index].values = value.split(",").map(v => v.trim()).filter(v => v);
+      // Store as raw string while editing, parse only on submit
+      newVariants[index].values = value;
     }
     setFormData((prevState) => ({
       ...prevState,
@@ -212,18 +215,19 @@ const AddProducts = () => {
         variants: formData.variants?.filter(v => v.key?.trim())
           .map(variant => ({
             key: variant.key.trim(),
-            values: Array.isArray(variant.values) ? variant.values : [variant.values]
+            values: Array.isArray(variant.values) 
+              ? variant.values 
+              : variant.values.split(",").map(v => v.trim()).filter(v => v)
           })) || []
       };
 
       const response = await createProduct(apiData);
 
-      if (response.status === 201 || response.status === 200) {
+      if (response === 201 || response === 200) {
         successPopup("Product added successfully!");
         navigate('/products');
       } else {
-        const errorMessage = response.data?.message || "Failed to add product";
-        errorPopup(errorMessage);
+        errorPopup("Failed to add product");
       }
     } catch (error) {
       console.error('Error creating product:', error);
@@ -729,7 +733,7 @@ const VariantPage = React.memo(({ formData, handleVariantChange, addVariantRow, 
                     <input
                       type="text"
                       placeholder="e.g., S, M, L, XL"
-                      value={variant.values.join(", ")}
+                      value={Array.isArray(variant.values) ? variant.values.join(", ") : variant.values}
                       onChange={(e) => handleVariantChange(index, "values", e.target.value)}
                       className={styles.fieldInput}
                     />
