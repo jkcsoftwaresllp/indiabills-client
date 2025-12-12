@@ -1,76 +1,118 @@
-import { FiArrowLeft, FiArrowRight, FiCheckCircle, FiBriefcase } from 'react-icons/fi';
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { FiArrowLeft, FiTruck, FiMapPin, FiFileText, FiAlertCircle } from 'react-icons/fi';
 import MultiPageAnimate from "../../components/Animate/MultiPageAnimate";
-import InputBox from "../../components/FormComponent/InputBox";
-import Dropdown from "../../components/FormComponent/Dropdown";
-import PageAnimate from "../../components/Animate/PageAnimate";
+import AddForm from "../../components/FormComponent/AddForm";
 import { createTransportPartner } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import Timeline from "../../components/FormComponent/Timeline";
 import { getOption } from "../../utils/FormHelper";
+import styles from './AddTransport.module.css';
 
 const AddTransport = () => {
   const { successPopup, errorPopup } = useStore();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    name: "",
-    businessName: "",
-    contactPerson: "",
-    email: "",
-    phone: "",
-    alternatePhone: "",
-    addressLine: "",
-    city: "",
-    state: "",
-    pinCode: "",
-    gstNumber: "",
-    panNumber: "",
-    vehicleDetails: "", // Comma-separated or multiline input
-    baseRate: "",
-    ratePerKm: ""
+    name: '',
+    businessName: '',
+    contactPerson: '',
+    email: '',
+    phone: '',
+    alternatePhone: '',
+    addressLine: '',
+    city: '',
+    state: '',
+    pinCode: '',
+    gstNumber: '',
+    panNumber: '',
+    vehicleDetails: '',
+    baseRate: '',
+    ratePerKm: ''
   });
 
-  const [page, setPage] = useState(1);
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const backPage = useCallback(() => {
-    if (page > 1) setPage(page - 1);
-  }, [page]);
+  const validateCurrentStep = useCallback((pageNum) => {
+    const newErrors = {};
 
-  const nextPage = useCallback(() => {
-    if (page < 3) setPage(page + 1);
-  }, [page]);
+    if (pageNum === 1) {
+      // Step 1: Basic Information
+      if (!formData.name?.trim()) newErrors.name = 'Transport name is required';
+      if (!formData.businessName?.trim()) newErrors.businessName = 'Business name is required';
+      if (!formData.contactPerson?.trim()) newErrors.contactPerson = 'Contact person is required';
+      if (!formData.email?.trim()) newErrors.email = 'Email is required';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Valid email is required';
+      if (!formData.phone?.trim()) newErrors.phone = 'Phone is required';
+      else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) newErrors.phone = 'Valid 10-digit phone is required';
+    } else if (pageNum === 2) {
+      // Step 2: Address Details
+      if (!formData.addressLine?.trim()) newErrors.addressLine = 'Address is required';
+      if (!formData.city?.trim()) newErrors.city = 'City is required';
+      if (!formData.state?.trim()) newErrors.state = 'State is required';
+      if (!formData.pinCode?.trim()) newErrors.pinCode = 'Pin code is required';
+      else if (!/^\d{6}$/.test(formData.pinCode)) newErrors.pinCode = 'Valid 6-digit pin code is required';
+      
+      const baseRate = parseFloat(formData.baseRate);
+      const ratePerKm = parseFloat(formData.ratePerKm);
+      
+      if (!formData.baseRate || isNaN(baseRate) || baseRate < 0) {
+        newErrors.baseRate = 'Valid base rate is required';
+      }
+      if (!formData.ratePerKm || isNaN(ratePerKm) || ratePerKm < 0) {
+        newErrors.ratePerKm = 'Valid rate per KM is required';
+      }
+    } else if (pageNum === 3) {
+      // Step 3: Legal Details & Vehicles
+      if (!formData.vehicleDetails?.trim()) newErrors.vehicleDetails = 'At least one vehicle is required';
+      if (!formData.gstNumber?.trim()) newErrors.gstNumber = 'GST number is required';
+      else if (!/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(formData.gstNumber.toUpperCase())) {
+        newErrors.gstNumber = 'Valid GST number format required (e.g., 29ABCDE1234F1Z5)';
+      }
+      if (!formData.panNumber?.trim()) newErrors.panNumber = 'PAN number is required';
+      else if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(formData.panNumber.toUpperCase())) {
+        newErrors.panNumber = 'Valid PAN format required (e.g., ABCDE1234F)';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [formData]);
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "number" ? Number(value) : value,
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
     }));
+
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
-  /** 🧩 Build backend payload structure */
   const buildPayload = () => {
-    const vehiclesArray =
-      formData.vehicleDetails
-        ?.split(",")
-        .map((v) => v.trim())
-        .filter((v) => v.length > 0) || [];
+    const vehiclesArray = formData.vehicleDetails
+      ?.split(/[,\n]/)
+      .map((v) => v.trim())
+      .filter((v) => v.length > 0) || [];
 
     return {
-      name: formData.name,
-      business_name: formData.businessName,
-      contact_person: formData.contactPerson,
-      email: formData.email,
-      phone: formData.phone,
-      alternate_phone: formData.alternatePhone,
-      address_line: formData.addressLine,
-      city: formData.city,
+      name: formData.name.trim(),
+      business_name: formData.businessName.trim(),
+      contact_person: formData.contactPerson.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      alternate_phone: formData.alternatePhone?.trim() || null,
+      address_line: formData.addressLine.trim(),
+      city: formData.city.trim(),
       state: formData.state,
-      pin_code: formData.pinCode,
-      gst_number: formData.gstNumber,
-      pan_number: formData.panNumber,
+      pin_code: formData.pinCode.trim(),
+      gst_number: formData.gstNumber.toUpperCase(),
+      pan_number: formData.panNumber.toUpperCase(),
       vehicle_details: { vehicles: vehiclesArray },
       base_rate: Number(formData.baseRate) || 0,
       rate_per_km: Number(formData.ratePerKm) || 0
@@ -78,222 +120,360 @@ const AddTransport = () => {
   };
 
   const submit = async () => {
+    if (!validateCurrentStep(3)) {
+      errorPopup("Please fix validation errors!");
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
       const payload = buildPayload();
       const status = await createTransportPartner(payload);
+      
       if (status === 200 || status === 201) {
-        successPopup("Transport registered successfully!");
+        successPopup("Transport partner registered successfully!");
         navigate("/transport");
       } else {
-        errorPopup("Failed to register the transport :(");
+        errorPopup("Failed to register transport partner");
       }
     } catch (err) {
-      errorPopup("An unexpected error occurred!");
-      console.error(err);
+      console.error('Error:', err);
+      errorPopup("An unexpected error occurred");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const steps = ["Basic Info", "Address Details", "Legal Details"];
+  const steps = ["Basic Information", "Address & Pricing", "Legal Details"];
+
+  const pages = [
+    <BasicPage
+      key="basic"
+      formData={formData}
+      handleChange={handleChange}
+      errors={errors}
+    />,
+    <AddressPage
+      key="address"
+      formData={formData}
+      handleChange={handleChange}
+      errors={errors}
+    />,
+    <LegalPage
+      key="legal"
+      formData={formData}
+      handleChange={handleChange}
+      errors={errors}
+    />
+  ];
 
   return (
-    <PageAnimate>
-      <div className="h-full flex flex-col gap-12 justify-center items-center">
+    <div style={{ background: '#f8f9fa', minHeight: '100vh' }}>
+      <div style={{ padding: '0.4rem 1.5rem 0rem 1.5rem' }}>
         <button
-          className="self-start flex items-center"
+          className={styles.backButton}
           onClick={() => navigate(-1)}
+          title="Go back"
         >
-          <FiArrowLeft /> Go back
+          <FiArrowLeft />
         </button>
-
-        <h1 className="text-2xl rounded-lg lowercase transition hover:shadow-lg p-4 text-center w-3/4 idms-transparent-bg font-extrabold">
-          register a new<span className="text-rose-400"> transport</span> :)
-        </h1>
-
-        <Timeline steps={steps} currentStep={page} />
-
-        <div className="h-full w-full flex justify-center">
-          <main>
-            {page === 1 && (
-              <BasicPage formData={formData} handleChange={handleChange} />
-            )}
-            {page === 2 && (
-              <AddressPage
-                formData={formData}
-                handleChange={handleChange}
-                setFormData={setFormData}
-              />
-            )}
-            {page === 3 && (
-              <LegalPage formData={formData} handleChange={handleChange} />
-            )}
-          </main>
-
-          <div className="p-2 flex flex-col gap-4">
-            {page === 3 && (
-              <button
-                className="p-3 flex-grow shadow-xl form-button-submit"
-                onClick={submit}
-              >
-                <FiCheckCircle />
-              </button>
-            )}
-            {page < 3 && (
-              <button
-                className="p-3 flex-grow shadow-xl form-button-nav"
-                onClick={nextPage}
-              >
-                <FiArrowRight />
-              </button>
-            )}
-            {page >= 2 && (
-              <button
-                className="p-3 flex-grow shadow-xl form-button-nav"
-                onClick={backPage}
-              >
-                <FiArrowLeft />
-              </button>
-            )}
-          </div>
-        </div>
       </div>
-    </PageAnimate>
+      <AddForm
+        title="Register Transport Partner"
+        steps={steps}
+        pages={pages}
+        formData={formData}
+        handleChange={handleChange}
+        errors={errors}
+        onSubmit={submit}
+        validatePage={validateCurrentStep}
+        isSubmitting={isSubmitting}
+        onError={errorPopup}
+      />
+    </div>
   );
 };
 
 export default AddTransport;
 
-/* --------------------- Subpages ---------------------- */
+/* ==================== Page Components ==================== */
 
-const BasicPage = React.memo(({ formData, handleChange }) => (
-  <MultiPageAnimate>
-    <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-      <main className="grid grid-cols-2 gap-6">
-        <InputBox
-          name="name"
-          label="Transport Name"
-          placeholder="Transport Name"
-          value={formData.name}
-          onChange={handleChange}
-        />
-        <InputBox
-          name="businessName"
-          label="Business Name"
-          placeholder="Business Name"
-          value={formData.businessName}
-          onChange={handleChange}
-        />
-        <InputBox
-          name="contactPerson"
-          label="Contact Person"
-          placeholder="Contact Person"
-          value={formData.contactPerson}
-          onChange={handleChange}
-        />
-        <InputBox
-          name="email"
-          label="Email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-        <InputBox
-          name="phone"
-          label="Phone"
-          placeholder="Phone"
-          value={formData.phone}
-          onChange={handleChange}
-        />
-        <InputBox
-          name="alternatePhone"
-          label="Alternate Phone"
-          placeholder="Alternate Phone"
-          value={formData.alternatePhone}
-          onChange={handleChange}
-        />
-        <InputBox
-          name="vehicleDetails"
-          label="Vehicle Numbers (comma separated)"
-          placeholder="KA01AB1234, KA02CD5678"
-          value={formData.vehicleDetails}
-          onChange={handleChange}
-        />
-      </main>
-    </div>
-  </MultiPageAnimate>
-));
+const BasicPage = React.memo(({ formData, handleChange, errors }) => {
+  return (
+    <MultiPageAnimate>
+      <div className={styles.formContent}>
+        <div className={styles.pageHeader}>
+          <FiTruck className={styles.pageIcon} />
+          <h1>Basic Information</h1>
+          <p>Tell us about your transport business</p>
+        </div>
 
-const AddressPage = React.memo(({ formData, handleChange, setFormData }) => (
-  <MultiPageAnimate>
-    <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-      <main className="grid grid-cols-2 gap-6">
-        <InputBox
-          name="addressLine"
-          label="Address Line"
-          placeholder="Address Line"
-          value={formData.addressLine}
-          onChange={handleChange}
-        />
-        <InputBox
-          name="city"
-          label="City"
-          placeholder="City"
-          value={formData.city}
-          onChange={handleChange}
-        />
-        <Dropdown
-          name="state"
-          label="State"
-          options={getOption("state")}
-          selectedData={formData.state}
-          setValue={setFormData}
-        />
-        <InputBox
-          name="pinCode"
-          label="Pin Code"
-          placeholder="123456"
-          value={formData.pinCode}
-          onChange={handleChange}
-        />
-        <InputBox
-          name="baseRate"
-          type="number"
-          label="Base Rate (₹)"
-          placeholder="0"
-          value={formData.baseRate}
-          onChange={handleChange}
-        />
-        <InputBox
-          name="ratePerKm"
-          type="number"
-          label="Rate Per KM (₹)"
-          placeholder="0"
-          value={formData.ratePerKm}
-          onChange={handleChange}
-        />
-      </main>
-    </div>
-  </MultiPageAnimate>
-));
+        <div className={styles.fieldGrid}>
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <label className={styles.fieldLabel}>Transport Name *</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="e.g., Fast Logistics Pvt Ltd"
+              value={formData.name}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.name ? styles.error : ''}`}
+            />
+            {errors.name && <span className={styles.errorMsg}>{errors.name}</span>}
+          </div>
 
-const LegalPage = React.memo(({ formData, handleChange }) => (
-  <MultiPageAnimate>
-    <div className="p-8 flex flex-col items-center gap-8 idms-bg">
-      <main className="grid grid-cols-2 gap-6">
-        <InputBox
-          name="gstNumber"
-          label="GST Number"
-          placeholder="29ABCDE1234F1Z5"
-          value={formData.gstNumber}
-          onChange={handleChange}
-        />
-        <InputBox
-          name="panNumber"
-          label="PAN Number"
-          placeholder="ABCDE1234F"
-          value={formData.panNumber}
-          onChange={handleChange}
-        />
-      </main>
-    </div>
-  </MultiPageAnimate>
-));
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Business Name *</label>
+            <input
+              type="text"
+              name="businessName"
+              placeholder="e.g., FL Logistics"
+              value={formData.businessName}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.businessName ? styles.error : ''}`}
+            />
+            {errors.businessName && <span className={styles.errorMsg}>{errors.businessName}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Contact Person *</label>
+            <input
+              type="text"
+              name="contactPerson"
+              placeholder="e.g., Raj Kumar"
+              value={formData.contactPerson}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.contactPerson ? styles.error : ''}`}
+            />
+            {errors.contactPerson && <span className={styles.errorMsg}>{errors.contactPerson}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Email *</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="e.g., contact@fastlogistics.com"
+              value={formData.email}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.email ? styles.error : ''}`}
+            />
+            {errors.email && <span className={styles.errorMsg}>{errors.email}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Phone *</label>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="10-digit phone number"
+              value={formData.phone}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.phone ? styles.error : ''}`}
+              maxLength="15"
+            />
+            {errors.phone && <span className={styles.errorMsg}>{errors.phone}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Alternate Phone</label>
+            <input
+              type="tel"
+              name="alternatePhone"
+              placeholder="Optional alternate number"
+              value={formData.alternatePhone}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              maxLength="15"
+            />
+          </div>
+        </div>
+      </div>
+    </MultiPageAnimate>
+  );
+});
+
+BasicPage.displayName = 'BasicPage';
+
+const AddressPage = React.memo(({ formData, handleChange, errors }) => {
+  return (
+    <MultiPageAnimate>
+      <div className={styles.formContent}>
+        <div className={styles.pageHeader}>
+          <FiMapPin className={styles.pageIcon} />
+          <h1>Address & Pricing</h1>
+          <p>Location and pricing details</p>
+        </div>
+
+        <div className={styles.fieldGrid}>
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <label className={styles.fieldLabel}>Address Line *</label>
+            <textarea
+              name="addressLine"
+              placeholder="Full address including street, building, etc."
+              value={formData.addressLine}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${styles.textArea} ${errors.addressLine ? styles.error : ''}`}
+              rows="2"
+            />
+            {errors.addressLine && <span className={styles.errorMsg}>{errors.addressLine}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>City *</label>
+            <input
+              type="text"
+              name="city"
+              placeholder="e.g., Bangalore"
+              value={formData.city}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.city ? styles.error : ''}`}
+            />
+            {errors.city && <span className={styles.errorMsg}>{errors.city}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>State *</label>
+            <select
+              name="state"
+              value={formData.state}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${styles.selectInput} ${errors.state ? styles.error : ''}`}
+            >
+              <option value="">Select a state</option>
+              {getOption("state").map((state, idx) => (
+                <option key={idx} value={state}>{state}</option>
+              ))}
+            </select>
+            {errors.state && <span className={styles.errorMsg}>{errors.state}</span>}
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Pin Code *</label>
+            <input
+              type="text"
+              name="pinCode"
+              placeholder="6-digit pin code"
+              value={formData.pinCode}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.pinCode ? styles.error : ''}`}
+              maxLength="6"
+            />
+            {errors.pinCode && <span className={styles.errorMsg}>{errors.pinCode}</span>}
+          </div>
+
+          {/* Pricing Section Header */}
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <div className={styles.sectionHeader}>
+              <FiAlertCircle size={18} />
+              <h3>Pricing</h3>
+            </div>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Base Rate (₹) *</label>
+            <div className={styles.currencyInput}>
+              <span className={styles.currencySymbol}>₹</span>
+              <input
+                type="number"
+                name="baseRate"
+                placeholder="0.00"
+                value={formData.baseRate}
+                onChange={handleChange}
+                className={`${styles.fieldInput} ${errors.baseRate ? styles.error : ''}`}
+                min="0"
+                step="0.01"
+              />
+            </div>
+            {errors.baseRate && <span className={styles.errorMsg}>{errors.baseRate}</span>}
+            <small className={styles.fieldHint}>Base rate per trip</small>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Rate Per KM (₹) *</label>
+            <div className={styles.currencyInput}>
+              <span className={styles.currencySymbol}>₹</span>
+              <input
+                type="number"
+                name="ratePerKm"
+                placeholder="0.00"
+                value={formData.ratePerKm}
+                onChange={handleChange}
+                className={`${styles.fieldInput} ${errors.ratePerKm ? styles.error : ''}`}
+                min="0"
+                step="0.01"
+              />
+            </div>
+            {errors.ratePerKm && <span className={styles.errorMsg}>{errors.ratePerKm}</span>}
+            <small className={styles.fieldHint}>Per kilometer charge</small>
+          </div>
+        </div>
+      </div>
+    </MultiPageAnimate>
+  );
+});
+
+AddressPage.displayName = 'AddressPage';
+
+const LegalPage = React.memo(({ formData, handleChange, errors }) => {
+  return (
+    <MultiPageAnimate>
+      <div className={styles.formContent}>
+        <div className={styles.pageHeader}>
+          <FiFileText className={styles.pageIcon} />
+          <h1>Legal Details</h1>
+          <p>Complete your legal information</p>
+        </div>
+
+        <div className={styles.fieldGrid}>
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <label className={styles.fieldLabel}>Vehicle Numbers (comma or line separated) *</label>
+            <textarea
+              name="vehicleDetails"
+              placeholder="e.g., KA01AB1234&#10;KA02CD5678&#10;TN03EF9012"
+              value={formData.vehicleDetails}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${styles.textArea} ${errors.vehicleDetails ? styles.error : ''}`}
+              rows="3"
+            />
+            {errors.vehicleDetails && <span className={styles.errorMsg}>{errors.vehicleDetails}</span>}
+            <small className={styles.fieldHint}>Add one vehicle number per line or separated by commas</small>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>GST Number *</label>
+            <input
+              type="text"
+              name="gstNumber"
+              placeholder="e.g., 29ABCDE1234F1Z5"
+              value={formData.gstNumber}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.gstNumber ? styles.error : ''}`}
+              maxLength="15"
+            />
+            {errors.gstNumber && <span className={styles.errorMsg}>{errors.gstNumber}</span>}
+            <small className={styles.fieldHint}>15-character GST registration number</small>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>PAN Number *</label>
+            <input
+              type="text"
+              name="panNumber"
+              placeholder="e.g., ABCDE1234F"
+              value={formData.panNumber}
+              onChange={handleChange}
+              className={`${styles.fieldInput} ${errors.panNumber ? styles.error : ''}`}
+              maxLength="10"
+            />
+            {errors.panNumber && <span className={styles.errorMsg}>{errors.panNumber}</span>}
+            <small className={styles.fieldHint}>10-character PAN number</small>
+          </div>
+        </div>
+      </div>
+    </MultiPageAnimate>
+  );
+});
+
+LegalPage.displayName = 'LegalPage';

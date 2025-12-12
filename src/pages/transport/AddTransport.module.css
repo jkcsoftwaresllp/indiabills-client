@@ -1,0 +1,295 @@
+/* AddTransport.module.css - Professional & Modern Design */
+
+* {
+  box-sizing: border-box;
+}
+
+/* Back Button */
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background: white;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #6b7280;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.backButton:hover {
+  background: white;
+  color: #dc2032;
+  border-color: #dc2032;
+  transform: translateX(-4px);
+  box-shadow: 0 8px 16px rgba(220, 32, 50, 0.15);
+}
+
+.backButton:active {
+  transform: translateX(-2px);
+}
+
+/* Form Content */
+.formContent {
+  padding: 2.5rem 2.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Page Header */
+.pageHeader {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.pageIcon {
+  font-size: 2.2rem;
+  color: #dc2032;
+  margin-bottom: 0.5rem;
+  display: block;
+  animation: iconBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.pageHeader h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.pageHeader p {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin: 0.3rem 0 0 0;
+}
+
+/* Field Grid */
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.fieldGrid > .fullWidth {
+  grid-column: 1 / -1;
+}
+
+/* Field Group */
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fieldLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Input Field */
+.fieldInput,
+.selectInput {
+  padding: 0.95rem 1rem;
+  font-size: 0.95rem;
+  background: #f9fafb;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  color: #111827;
+  font-family: inherit;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  outline: none;
+  width: 100%;
+}
+
+.fieldInput::placeholder {
+  color: #d1d5db;
+}
+
+.fieldInput:focus,
+.selectInput:focus {
+  background: white;
+  border-color: #dc2032;
+  box-shadow: 0 0 0 3px rgba(220, 32, 50, 0.1), 0 2px 8px rgba(220, 32, 50, 0.15);
+  transform: translateY(-1px);
+}
+
+.fieldInput:hover:not(:focus),
+.selectInput:hover:not(:focus) {
+  border-color: #d1d5db;
+  background: #fafbfc;
+}
+
+.fieldInput.error {
+  border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.04);
+}
+
+.fieldInput.error:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1), 0 2px 8px rgba(220, 38, 38, 0.15);
+}
+
+/* Text Area */
+.textArea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  padding: 0.95rem 1rem;
+}
+
+/* Currency Input */
+.currencyInput {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currencySymbol {
+  position: absolute;
+  left: 1rem;
+  color: #6b7280;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.currencyInput .fieldInput {
+  padding-left: 2.5rem;
+}
+
+/* Field Hint */
+.fieldHint {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: -0.25rem;
+}
+
+/* Error Message */
+.errorMsg {
+  font-size: 0.8rem;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: -0.25rem;
+}
+
+/* Section Header */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.sectionHeader h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0;
+}
+
+.sectionHeader svg {
+  color: #dc2032;
+}
+
+/* Responsive Design */
+
+/* Hide back button on screens 600px and above */
+@media (min-width: 600px) {
+  .backButton {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .fieldGrid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .formContent {
+    padding: 2rem 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .pageIcon {
+    font-size: 2rem;
+  }
+
+  .pageHeader h1 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .backButton {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .formContent {
+    padding: 1.5rem 1rem;
+    gap: 1.25rem;
+  }
+
+  .pageIcon {
+    font-size: 1.8rem;
+  }
+
+  .pageHeader h1 {
+    font-size: 1.1rem;
+  }
+
+  .pageHeader p {
+    font-size: 0.8rem;
+  }
+
+  .fieldLabel {
+    font-size: 0.75rem;
+  }
+
+  .fieldInput,
+  .selectInput {
+    padding: 0.85rem 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .textArea {
+    min-height: 60px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .backButton {
+    display: none;
+  }
+}
