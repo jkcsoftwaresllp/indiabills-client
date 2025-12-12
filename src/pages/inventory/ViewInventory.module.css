@@ -1,0 +1,692 @@
+/* ViewInventory.module.css - Professional & Modern Inventory Management Interface */
+
+/* ============================================================================
+   PAGE CONTAINER & LAYOUT
+   ============================================================================ */
+
+.pageWrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%);
+  padding: 2.5rem 1.5rem;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ============================================================================
+   HEADER SECTION
+   ============================================================================ */
+
+.headerSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  animation: slideInDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a202c;
+  letter-spacing: -0.5px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.breadcrumbNav {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
+/* ============================================================================
+   STATS CARDS
+   ============================================================================ */
+
+.statsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  animation: fadeIn 0.6s ease-out 0.2s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.statCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #dc2032, #f43f5e);
+}
+
+.statCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.statLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+}
+
+.statIcon {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  opacity: 0.1;
+  font-size: 3rem;
+}
+
+/* ============================================================================
+   TABS & NAVIGATION
+   ============================================================================ */
+
+.tabsWrapper {
+  margin-bottom: 2rem;
+  animation: slideInLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.customTabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+  padding: 0;
+  background: transparent;
+}
+
+.tabButton {
+  padding: 1rem 1.5rem;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tabButton:hover {
+  color: #1a202c;
+}
+
+.tabButton.active {
+  color: #dc2032;
+  border-bottom-color: #dc2032;
+}
+
+/* ============================================================================
+   WAREHOUSE SELECTOR & ACTION CONTROLS
+   ============================================================================ */
+
+.controlBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 2rem;
+  flex-wrap: wrap;
+  animation: slideInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.warehouseSelector {
+  flex: 1;
+  min-width: 250px;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.iconButton {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #1e2938, #2d3f54);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(30, 41, 56, 0.2);
+}
+
+.iconButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(30, 41, 56, 0.3);
+}
+
+.iconButton.primary {
+  background: linear-gradient(135deg, #dc2032, #f43f5e);
+  box-shadow: 0 4px 12px rgba(220, 32, 50, 0.2);
+}
+
+.iconButton.primary:hover {
+  box-shadow: 0 8px 20px rgba(220, 32, 50, 0.3);
+}
+
+.iconButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================================================
+   SEARCH & FILTER SECTION
+   ============================================================================ */
+
+.searchSection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  animation: fadeIn 0.6s ease-out 0.3s both;
+}
+
+.searchInputWrapper {
+  position: relative;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background: white;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #dc2032;
+  box-shadow: 0 0 0 3px rgba(220, 32, 50, 0.1);
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+/* ============================================================================
+   DATA TABLE CONTAINER
+   ============================================================================ */
+
+.tableWrapper {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+}
+
+.tableContainer {
+  height: 400px;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.tableContainer::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ============================================================================
+   EMPTY STATE
+   ============================================================================ */
+
+.emptyState {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.emptyStateContent {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  opacity: 0.2;
+  margin-bottom: 0.5rem;
+}
+
+.emptyTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+}
+
+.emptyMessage {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+  max-width: 400px;
+}
+
+.emptyActionButton {
+  padding: 0.9rem 2rem;
+  background: linear-gradient(135deg, #dc2032, #f43f5e);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(220, 32, 50, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.emptyActionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(220, 32, 50, 0.3);
+}
+
+/* ============================================================================
+   CHECKLIST SECTION
+   ============================================================================ */
+
+.checklistContainer {
+  background: linear-gradient(135deg, rgba(248, 249, 250, 0.8), rgba(241, 245, 249, 0.8));
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.checklistTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 1.5rem 0;
+}
+
+.checklistItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.checklistItem:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.checklistCheckbox {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  font-size: 0.75rem;
+}
+
+.checklistItem.completed .checklistCheckbox {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #10b981;
+  color: white;
+}
+
+.checklistItem.pending .checklistCheckbox {
+  background: white;
+  border-color: #d1d5db;
+}
+
+.checklistText {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.checklistItem.completed .checklistText {
+  color: #10b981;
+}
+
+/* ============================================================================
+   LOADING STATE
+   ============================================================================ */
+
+.loadingWrapper {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #dc2032;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================================
+   MODAL & DIALOG STYLES
+   ============================================================================ */
+
+.dialogTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  border-bottom: 2px solid #f0f1f3;
+  padding: 1.5rem;
+}
+
+.dialogContent {
+  padding: 1.5rem;
+}
+
+.dialogActions {
+  padding: 1.5rem;
+  border-top: 1px solid #f0f1f3;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+  .headerSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .controlBar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .warehouseSelector {
+    width: 100%;
+  }
+
+  .actionButtons {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .statsContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .pageWrapper {
+    padding: 1.5rem 1rem;
+  }
+
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+
+  .statsContainer {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .tableContainer {
+    height: 300px;
+  }
+
+  .customTabs {
+    gap: 0.25rem;
+  }
+
+  .tabButton {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .searchSection {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .emptyIcon {
+    font-size: 3rem;
+  }
+
+  .emptyTitle {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageWrapper {
+    padding: 1rem 0.75rem;
+  }
+
+  .pageTitle {
+    font-size: 1.25rem;
+  }
+
+  .headerSection {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .statsContainer {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .statCard {
+    padding: 1rem;
+  }
+
+  .statValue {
+    font-size: 1.5rem;
+  }
+
+  .controlBar {
+    gap: 0.75rem;
+  }
+
+  .actionButtons {
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .iconButton {
+    width: 38px;
+    height: 38px;
+  }
+
+  .tableContainer {
+    height: 250px;
+  }
+
+  .customTabs {
+    gap: 0;
+  }
+
+  .tabButton {
+    padding: 0.75rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .checklistContainer {
+    padding: 1rem;
+  }
+
+  .emptyIcon {
+    font-size: 2.5rem;
+  }
+
+  .emptyTitle {
+    font-size: 1.1rem;
+  }
+
+  .emptyMessage {
+    font-size: 0.9rem;
+  }
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+
+.hidden {
+  display: none;
+}
+
+.textMuted {
+  color: #6b7280;
+}
+
+.textDanger {
+  color: #dc2032;
+}
+
+.textSuccess {
+  color: #10b981;
+}
+
+.textPrimary {
+  color: #1a202c;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(220, 32, 50, 0.1);
+  color: #dc2032;
+}
+
+.badge.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.badge.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
