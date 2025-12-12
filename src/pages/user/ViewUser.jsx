@@ -1,19 +1,21 @@
-import { FiChevronDown, FiFilter, FiPlus } from 'react-icons/fi';
+import { FiSearch, FiFilter, FiPlus, FiChevronDown, FiUsers } from 'react-icons/fi';
 import { useEffect, useState } from "react";
 import { getUsersByRole } from "../../network/api";
 import UserCard from "../../components/FormComponent/UserCard";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import styles from './ViewUser.module.css';
 
 const ViewUsers = () => {
     const roles = ["admin", "manager", "operator", "customer"];
     const [users, setUsers] = useState([]);
     const [selectedRole, setSelectedRole] = useState(roles[0]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [sorter, setSorter] = useState(false);
     const [sortOption, setSortOption] = useState("name");
     const [loading, setLoading] = useState(true);
+    const [showSortMenu, setShowSortMenu] = useState(false);
+    const [showRoleMenu, setShowRoleMenu] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -68,83 +70,224 @@ const ViewUsers = () => {
     });
 
     const itemVariants = {
-        hidden: { opacity: 0, y: -20 },
+        hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0 },
-        exit: { opacity: 0, y: 20 }
+        exit: { opacity: 0, y: -20 }
+    };
+
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.05,
+                delayChildren: 0.1,
+            }
+        }
     };
 
     return (
         <PageAnimate>
-            <div className={"flex flex-col p-4 gap-2 w-full"}>
-                <div className="flex justify-between items-center gap-4 mb-4">
-                    <div className="relative flex items-center">
-                        <h1 className="p-2 text-4xl bg-transparent rounded font-semibold">
-                            {selectedRole ? capitalize(selectedRole) : 'Select a Role'}
-                        </h1>
-                        <span className="font-semibold"><FiChevronDown/></span>
-                        <select 
-                            className="bg-transparent rounded absolute inset-0 opacity-0" 
-                            value={selectedRole}
-                            onChange={(e) => setSelectedRole(e.target.value)}
-                        >
-                            {roles.map((role) => (
-                                <option key={role} value={role} className="capitalize"> 
-                                    {capitalize(role)} 
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <input
-                        className="p-2 w-3/5 border rounded-xl"
-                        type="text"
-                        placeholder="Search by name, email, or username"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <div id="sort" className={"flex relative"}>
-                        <FiFilter onClick={() => setSorter(!sorter)} style={{ fontSize: 40 }} />
-                        {sorter && (
-                            <div className="flex flex-col absolute bottom-0 rounded-lg text-sm bg-primary text-slate-300">
-                                <button 
-                                    className="hover:bg-accent transition p-2 rounded-t-lg" 
-                                    onClick={() => {setSortOption("name"); setSorter(false);}}
-                                >
-                                    Name
-                                </button>
-                                <button 
-                                    className="hover:bg-accent transition p-2 rounded-b-lg" 
-                                    onClick={() => {setSortOption("email"); setSorter(false);}}
-                                >
-                                    Email
-                                </button>
+            <div className={styles.container}>
+                {/* Header Section */}
+                <motion.div 
+                    className={styles.header}
+                    initial={{ opacity: 0, y: -30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                >
+                    <div className={styles.headerContent}>
+                        <div className={styles.titleSection}>
+                            <div className={styles.iconWrapper}>
+                                <FiUsers className={styles.headerIcon} />
                             </div>
-                        )}
+                            <div>
+                                <h1 className={styles.pageTitle}>Team Members</h1>
+                                <p className={styles.pageSubtitle}>Manage and view all users in your organization</p>
+                            </div>
+                        </div>
+                        <motion.button 
+                            className={styles.addButton}
+                            onClick={addUser}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            <FiPlus />
+                            <span>Add New User</span>
+                        </motion.button>
                     </div>
-                </div>
-                <hr style={{
-                        marginTop: "0.5rem",
-                        height: "2px",
-                        borderWidth: 0,
-                        color: "black",
-                        backgroundColor: "lightgray",
-                    }}
-                />
-                
-                {loading ? (
-                    <div className="flex justify-center items-center h-64">
-                        <div className="text-lg">Loading users...</div>
+                </motion.div>
+
+                {/* Controls Section */}
+                <motion.div 
+                    className={styles.controlsSection}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.1 }}
+                >
+                    <div className={styles.controlsGrid}>
+                        {/* Role Selector */}
+                        <div className={styles.selectorWrapper}>
+                            <label className={styles.label}>Role</label>
+                            <div className={styles.dropdown}>
+                                <button 
+                                    className={styles.dropdownButton}
+                                    onClick={() => setShowRoleMenu(!showRoleMenu)}
+                                >
+                                    <span>{capitalize(selectedRole)}</span>
+                                    <FiChevronDown className={showRoleMenu ? styles.chevronActive : ''} />
+                                </button>
+                                <AnimatePresence>
+                                    {showRoleMenu && (
+                                        <motion.div 
+                                            className={styles.dropdownMenu}
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            transition={{ duration: 0.2 }}
+                                        >
+                                            {roles.map((role) => (
+                                                <motion.button
+                                                    key={role}
+                                                    className={`${styles.dropdownItem} ${selectedRole === role ? styles.active : ''}`}
+                                                    onClick={() => {
+                                                        setSelectedRole(role);
+                                                        setShowRoleMenu(false);
+                                                    }}
+                                                    whileHover={{ backgroundColor: 'rgba(196, 32, 50, 0.1)' }}
+                                                >
+                                                    {capitalize(role)}
+                                                </motion.button>
+                                            ))}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </div>
+
+                        {/* Search Box */}
+                        <div className={styles.searchWrapper}>
+                            <label className={styles.label}>Search</label>
+                            <div className={styles.searchInputGroup}>
+                                <FiSearch className={styles.searchIcon} />
+                                <input
+                                    className={styles.searchInput}
+                                    type="text"
+                                    placeholder="Search by name, email or username..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Sort Selector */}
+                        <div className={styles.selectorWrapper}>
+                            <label className={styles.label}>Sort By</label>
+                            <div className={styles.dropdown}>
+                                <button 
+                                    className={styles.dropdownButton}
+                                    onClick={() => setShowSortMenu(!showSortMenu)}
+                                >
+                                    <span>{sortOption === 'name' ? 'Name' : 'Email'}</span>
+                                    <FiFilter />
+                                </button>
+                                <AnimatePresence>
+                                    {showSortMenu && (
+                                        <motion.div 
+                                            className={styles.dropdownMenu}
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            transition={{ duration: 0.2 }}
+                                        >
+                                            <motion.button
+                                                className={`${styles.dropdownItem} ${sortOption === 'name' ? styles.active : ''}`}
+                                                onClick={() => {
+                                                    setSortOption('name');
+                                                    setShowSortMenu(false);
+                                                }}
+                                                whileHover={{ backgroundColor: 'rgba(196, 32, 50, 0.1)' }}
+                                            >
+                                                Name
+                                            </motion.button>
+                                            <motion.button
+                                                className={`${styles.dropdownItem} ${sortOption === 'email' ? styles.active : ''}`}
+                                                onClick={() => {
+                                                    setSortOption('email');
+                                                    setShowSortMenu(false);
+                                                }}
+                                                whileHover={{ backgroundColor: 'rgba(196, 32, 50, 0.1)' }}
+                                            >
+                                                Email
+                                            </motion.button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </div>
                     </div>
-                ) : (
-                    <div className={"flex p-2 gap-4 flex-wrap"}>
-                        <AnimatePresence>
-                            {sortedUsers.length > 0 && (
-                                sortedUsers.map((user) => (
+
+                    {/* Results Info */}
+                    <div className={styles.resultsInfo}>
+                        <p className={styles.resultsText}>
+                            Showing <span className={styles.highlight}>{sortedUsers.length}</span> {selectedRole}{sortedUsers.length !== 1 ? 's' : ''}
+                        </p>
+                    </div>
+                </motion.div>
+
+                {/* Content Section */}
+                <motion.div 
+                    className={styles.contentSection}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                    {loading ? (
+                        <div className={styles.loadingContainer}>
+                            <motion.div 
+                                className={styles.loadingSpinner}
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                            />
+                            <p className={styles.loadingText}>Loading users...</p>
+                        </div>
+                    ) : sortedUsers.length === 0 ? (
+                        <motion.div 
+                            className={styles.emptyState}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                        >
+                            <div className={styles.emptyIcon}>
+                                <FiUsers />
+                            </div>
+                            <h3 className={styles.emptyTitle}>No users found</h3>
+                            <p className={styles.emptyDescription}>
+                                {searchTerm ? "Try adjusting your search filters" : "No users in this role yet"}
+                            </p>
+                            {!searchTerm && (
+                                <motion.button 
+                                    className={styles.emptyButton}
+                                    onClick={addUser}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <FiPlus /> Create First User
+                                </motion.button>
+                            )}
+                        </motion.div>
+                    ) : (
+                        <motion.div 
+                            className={styles.usersGrid}
+                            variants={containerVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            <AnimatePresence mode="popLayout">
+                                {sortedUsers.map((user) => (
                                     <motion.div 
-                                        key={user.id} 
-                                        variants={itemVariants} 
-                                        initial="hidden" 
-                                        animate="visible" 
-                                        exit="exit" 
+                                        key={user.id}
+                                        variants={itemVariants}
+                                        exit="exit"
                                         layout
                                     >
                                         <UserCard 
@@ -158,23 +301,11 @@ const ViewUsers = () => {
                                             department={user.department}
                                         />
                                     </motion.div>
-                                ))
-                            )}
-                        </AnimatePresence>
-                        <motion.div 
-                            className="flex justify-center p-4 items-center w-32 min-h-full rounded-lg cursor-pointer text-slate-100 shadow-2xl transition ease-in bg-primary hover:text-accent" 
-                            onClick={addUser} 
-                            style={{ fontSize: 50, minHeight: '205.367px' }} 
-                            variants={itemVariants} 
-                            initial="hidden" 
-                            animate="visible" 
-                            exit="exit" 
-                            layout
-                        >
-                            <FiPlus />
+                                ))}
+                            </AnimatePresence>
                         </motion.div>
-                    </div>
-                )}
+                    )}
+                </motion.div>
             </div>
         </PageAnimate>
     );
