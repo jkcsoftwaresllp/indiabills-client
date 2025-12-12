@@ -1,23 +1,49 @@
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
+import { FiX, FiCheck } from "react-icons/fi";
+import styles from './Modal.module.css';
 
 const Modal = ({ handleClose, open, title, children, submit }) => {
-    return (
-        <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Add Location</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    {title}
-                </DialogContentText>
+  if (!open) return null;
 
-                {children}
+  return (
+    <div className={styles.modalOverlay} onClick={handleClose}>
+      <div className={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className={styles.modalHeader}>
+          <h2 className={styles.modalTitle}>{title}</h2>
+          <button
+            className={styles.closeButton}
+            onClick={handleClose}
+            title="Close"
+            aria-label="Close modal"
+          >
+            <FiX />
+          </button>
+        </div>
 
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={submit}>Add</Button>
-            </DialogActions>
-        </Dialog>
-    )
-}
+        {/* Content */}
+        <div className={styles.modalContent}>
+          {children}
+        </div>
 
-export default Modal
+        {/* Footer */}
+        <div className={styles.modalFooter}>
+          <button
+            className={styles.cancelButton}
+            onClick={handleClose}
+          >
+            Cancel
+          </button>
+          <button
+            className={styles.submitButton}
+            onClick={submit}
+          >
+            <FiCheck />
+            <span>Add</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Modal;

@@ -1,0 +1,49 @@
+/* AddLocationModal.module.css - Professional form styling */
+
+.modalContent {
+  padding: 1.5rem 0;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fieldLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a202c;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.required {
+  color: #c42032;
+  font-weight: 700;
+}
+
+.error {
+  font-size: 0.8rem;
+  color: #ef4444;
+  font-style: italic;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .fieldLabel {
+    font-size: 0.85rem;
+  }
+}
