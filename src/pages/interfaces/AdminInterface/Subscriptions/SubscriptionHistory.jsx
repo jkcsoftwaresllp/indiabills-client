@@ -52,7 +52,10 @@ const SubscriptionHistory = () => {
       const response = await getSubscriptionHistory();
 
       if (response.status === 200 && response.data.success) {
-        setSubscriptions(response.data.data || []);
+        const data = response.data.data || [];
+        // Sort by start_date in descending order (newest first)
+        data.sort((a, b) => new Date(b.start_date) - new Date(a.start_date));
+        setSubscriptions(data);
       } else {
         setError(
           response.data.message || "Failed to load subscription history"

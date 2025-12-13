@@ -577,36 +577,7 @@ const ViewInvoice = ({ open, onClose, invoice, type }) => {
             </div>
           </div>
 
-          {/* Payment Details */}
-          <div className={styles.billingSection}>
-            <div className={styles.billingBlock}>
-              <h4>Amount Breakdown</h4>
-              <p>
-                <strong>Amount Paid:</strong> {formatCurrency(totalAmount)}
-              </p>
-              <p>
-                <strong>Used Amount:</strong>{" "}
-                {formatCurrency(payment?.used_amount || 0)}
-              </p>
-              <p>
-                <strong>Unused Amount:</strong>{" "}
-                {formatCurrency(payment?.unused_amount || 0)}
-              </p>
-            </div>
 
-            <div className={styles.billingBlock}>
-              <h4>Organization</h4>
-              <p>
-                <strong>Organization Name:</strong> Your Organization
-              </p>
-              <p>
-                <strong>Email:</strong> organization@email.com
-              </p>
-              <p>
-                <strong>GST No.:</strong> XXXXXXXXXXXX
-              </p>
-            </div>
-          </div>
 
           {/* Items Table */}
           <div className={styles.itemsSection}>

@@ -40,7 +40,10 @@ const PaymentHistory = () => {
       const response = await getSubscriptionPayments();
 
       if (response.status === 200 && response.data.success) {
-        setPayments(response.data.data || []);
+        const data = response.data.data || [];
+        // Sort by created_at in descending order (newest first)
+        data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        setPayments(data);
       } else {
         setError(response.data.message || "Failed to load payment history");
       }
