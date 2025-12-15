@@ -5,12 +5,15 @@ import {
   FiSearch,
   FiZap,
   FiAlertCircle,
+  FiInbox,
+  FiArrowRight,
 } from "react-icons/fi";
 import { useEffect, useState, useMemo } from "react";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import { useNavigate } from "react-router-dom";
 import DataGrid from "../../components/FormComponent/DataGrid";
 import ColumnSelector from "../../components/FormComponent/ColumnSelector";
+import NoDataFound from "../../components/FormComponent/NoDataFound";
 import QuickEditModal from "../../components/core/QuickEditModal";
 import DetailsModal from "../../components/core/DetailsModal";
 import { IconButton, InputBase } from "@mui/material";
@@ -518,14 +521,7 @@ const ViewData = ({
             onRowClicked={handleRowClicked}
           />
         ) : (
-          <div className="h-full grid place-items-center px-4">
-            <div className="flex flex-col gap-4 items-center text-center">
-              <h1 className="text-lg sm:text-2xl">
-                No data found{" "}
-                <span className="block sm:inline ml-0 sm:ml-4">ʕ•́ᴥ•̀ʔっ</span>
-              </h1>
-            </div>
-          </div>
+          <NoDataFound title={title} onAddNew={add} />
         )}
       </div>
 

@@ -1,0 +1,133 @@
+.no-data-container {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(245, 245, 245, 0.3) 100%
+  );
+}
+
+/* Content Wrapper */
+.no-data-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 3rem 2rem;
+  max-width: 520px;
+}
+
+/* Typography */
+.no-data-title {
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: var(--color-primary, #1e2938);
+  margin: 0 0 1rem 0;
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+}
+
+.no-data-description {
+  font-size: 0.975rem;
+  color: #6b7280;
+  margin: 0 0 2.5rem 0;
+  line-height: 1.65;
+  letter-spacing: 0.2px;
+  font-weight: 400;
+}
+
+/* CTA Button */
+.no-data-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.875rem 2rem;
+  background: var(--color-accent, #c42032);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(196, 32, 50, 0.18);
+}
+
+.no-data-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(196, 32, 50, 0.25);
+  background: rgba(196, 32, 50, 0.9);
+}
+
+.no-data-button:active {
+  transform: translateY(0);
+}
+
+.button-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.25s ease;
+}
+
+.no-data-button:hover .button-icon {
+  transform: translateX(2px);
+}
+
+/* Decorative Elements */
+.no-data-decorative {
+  position: relative;
+  margin-top: 2.5rem;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.decorative-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(196, 32, 50, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .no-data-content {
+    padding: 2rem 1.5rem;
+    max-width: 100%;
+  }
+
+  .no-data-title {
+    font-size: 1.35rem;
+  }
+
+  .no-data-description {
+    font-size: 0.9rem;
+  }
+
+  .no-data-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .no-data-icon-wrapper {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 2rem;
+  }
+
+  .no-data-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+  }
+
+  .no-data-decorative {
+    margin-top: 2rem;
+  }
+}

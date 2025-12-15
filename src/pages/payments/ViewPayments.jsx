@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import DataGrid from "../../components/FormComponent/DataGrid";
 import Modal from "../../components/core/ModalMaker";
+import NoDataFoundReadOnly from "../../components/FormComponent/NoDataFoundReadOnly";
 import { getPayments, updatePaymentStatus } from "../../network/api";
 import { useStore } from "../../store/store";
 import "ag-grid-community/styles/ag-theme-material.css";
@@ -318,13 +319,7 @@ const ViewPayments = () => {
             onRowClicked={onRowClicked}
           />
         ) : (
-          <div className="h-full grid place-items-center">
-            <div className="flex gap-4 items-center">
-              <h1 className="text-2xl">
-                No data found <span className="ml-4">ʕ•́ᴥ•̀ʔっ</span>
-              </h1>
-            </div>
-          </div>
+          <NoDataFoundReadOnly title="payments" />
         )}
       </div>
 
