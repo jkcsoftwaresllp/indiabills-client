@@ -1,7 +1,7 @@
 import ViewData from "../../layouts/form/ViewData";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../store/store";
-import { getWarehouses, deleteWarehouse } from "../../network/api";
+import { getWarehouses, deleteWarehouse, updateWarehouse } from "../../network/api";
 
 const colDefs = [
   { 
@@ -28,6 +28,7 @@ const colDefs = [
   { 
     field: "is_active", 
     headerName: "Status", 
+    // editable: true,
     cellRenderer: (params) => (
       <span className={`py-1 px-3 rounded-full text-xs ${params.value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
         {params.value ? 'Active' : 'Inactive'}
@@ -39,11 +40,37 @@ const colDefs = [
 ];
 
 const ViewWarehouses = () => {
+  // Transform frontend data (snake_case) to backend format (camelCase)
+  const transformToBackendFormat = (data) => {
+    return {
+      name: data.name,
+      code: data.code,
+      capacity: data.capacity ? parseInt(data.capacity, 10) : 0,
+      managerName: data.manager_name,
+      managerPhone: data.manager_phone,
+      addressLine: data.address_line,
+      city: data.city,
+      state: data.state,
+      pinCode: data.pin_code,
+      isActive: Boolean(data.is_active),
+    };
+  };
+
+  // Update handler for warehouses
+  const handleUpdateWarehouse = async (id, data) => {
+    return await updateWarehouse(id, data);
+  };
+
   return (
     <ViewData 
       title="Warehouses" 
       url="/internal/warehouses"
+      idField="id"
       initialColDefs={colDefs}
+      customDataFetcher={getWarehouses}
+      deleteHandler={deleteWarehouse}
+      updateHandler={handleUpdateWarehouse}
+      transformPayload={transformToBackendFormat}
     />
   );
 };

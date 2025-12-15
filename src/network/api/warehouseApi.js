@@ -98,10 +98,16 @@ export async function updateWarehouse(id, warehouseData) {
     }
 
     const response = await serverInstance.patch(`/internal/warehouses/${id}`, warehouseData);
-    return response.status;
+    return {
+      status: response.status,
+      data: response.data,
+    };
   } catch (error) {
     console.error(`Failed to update warehouse ${id}:`, error.response || error);
-    return error.response?.status || 400;
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data,
+    };
   }
 }
 
@@ -109,9 +115,15 @@ export async function updateWarehouse(id, warehouseData) {
 export async function deleteWarehouse(id) {
   try {
     const response = await serverInstance.delete(`/internal/warehouses/${id}`);
-    return response.status;
+    return {
+      status: response.status,
+      data: response.data,
+    };
   } catch (error) {
     console.error(`Failed to delete warehouse ${id}:`, error.response);
-    return error.response?.status || 500;
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data,
+    };
   }
 }
