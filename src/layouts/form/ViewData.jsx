@@ -4,6 +4,7 @@ import {
   FiPlus,
   FiSearch,
   FiZap,
+  FiAlertCircle,
 } from "react-icons/fi";
 import { useEffect, useState, useMemo } from "react";
 import PageAnimate from "../../components/Animate/PageAnimate";
@@ -56,6 +57,7 @@ const ViewData = ({
   const [quickEditOpen, setQuickEditOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState(null);
+  const [columnLimitWarning, setColumnLimitWarning] = useState(false);
 
   useEffect(() => {
     if (!Organization.fiscalStart) return;
@@ -138,7 +140,8 @@ const ViewData = ({
       } else if (prevSelected.length < 7) {
         return [...prevSelected, field];
       } else {
-        alert("You can only select up to 7 columns.");
+        setColumnLimitWarning(true);
+        setTimeout(() => setColumnLimitWarning(false), 4000);
         return prevSelected;
       }
     });
@@ -428,6 +431,77 @@ const ViewData = ({
           </section>
         </div>
       </header>
+
+      {/* Column Limit Warning Toast */}
+      {columnLimitWarning && (
+        <div
+          style={{
+            position: "fixed",
+            top: "20px",
+            right: "20px",
+            zIndex: 9999,
+            animation: "slideInRight 0.3s ease-out",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              padding: "14px 16px",
+              background:
+                "linear-gradient(135deg, rgba(220, 38, 38, 0.95) 0%, rgba(220, 38, 38, 0.9) 100%)",
+              border: "1px solid rgba(220, 38, 38, 0.3)",
+              borderRadius: "10px",
+              color: "white",
+              fontSize: "13px",
+              fontWeight: "600",
+              boxShadow: "0 8px 24px rgba(220, 38, 38, 0.3)",
+              backdropFilter: "blur(10px)",
+              maxWidth: "350px",
+              animation: "fadeIn 0.3s ease-out",
+            }}
+          >
+            <FiAlertCircle
+              size={18}
+              style={{
+                flexShrink: 0,
+                animation: "pulse 1s ease-in-out infinite",
+              }}
+            />
+            <span>You can select up to 7 columns only</span>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes slideInRight {
+          from {
+            opacity: 0;
+            transform: translateX(400px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.7;
+          }
+        }
+      `}</style>
 
       <div
         className="ag-theme-quartz overflow-x-auto"
