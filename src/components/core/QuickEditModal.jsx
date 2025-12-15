@@ -1,22 +1,30 @@
-import { FiSave, FiTrash2, FiX } from 'react-icons/fi';
+import { FiSave, FiTrash2, FiX, FiEdit3 } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, IconButton } from '@mui/material';
+import styles from './QuickEditModal.module.css';
 
 const QuickEditModal = ({ open, onClose, data, columns, onSave, onDelete, title }) => {
   const [formData, setFormData] = useState({});
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    console.log('QuickEditModal received data:', data);
     if (data) {
       setFormData({ ...data });
+      setErrors({});
     }
-  }, [data]);
+  }, [data, open]);
 
   const handleChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
+    // Clear error for this field when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({
+        ...prev,
+        [field]: ''
+      }));
+    }
   };
 
   const handleSave = () => {
@@ -24,85 +32,93 @@ const QuickEditModal = ({ open, onClose, data, columns, onSave, onDelete, title 
   };
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this item?')) {
+    if (window.confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
       onDelete(data);
     }
   };
 
   const editableColumns = columns.filter(col => col.editable && col.field);
 
-  console.log('Editable columns:', editableColumns);
-  console.log('Form data:', formData);
+  if (!open) return null;
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={onClose} 
-      maxWidth="md" 
-      fullWidth
-      PaperProps={{
-        style: {
-          borderRadius: '16px',
-          padding: '8px'
-        }
-      }}
-    >
-      <DialogTitle>
-        <div className="flex justify-between items-center">
-          <span className="text-2xl font-bold">Quick Edit {title}</span>
-          <IconButton onClick={onClose} size="small">
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className={styles.header}>
+          <div className={styles.titleSection}>
+            <div className={styles.titleWithIcon}>
+              <FiEdit3 className={styles.titleIcon} />
+              <h2 className={styles.title}>Edit {title}</h2>
+            </div>
+            <p className={styles.subtitle}>Update information below</p>
+          </div>
+          <button className={styles.closeBtn} onClick={onClose} title="Close">
             <FiX />
-          </IconButton>
+          </button>
         </div>
-      </DialogTitle>
-      
-      <DialogContent dividers>
-        <Grid container spacing={3}>
-          {editableColumns.length > 0 ? editableColumns.map((col) => (
-            <Grid item xs={12} sm={6} key={col.field}>
-              <TextField
-                fullWidth
-                label={col.headerName}
-                value={formData[col.field] ?? ''}
-                onChange={(e) => handleChange(col.field, e.target.value)}
-                variant="outlined"
-                size="small"
-                InputLabelProps={{
-                  style: { textTransform: 'capitalize' }
-                }}
-              />
-            </Grid>
-          )) : (
-            <Grid item xs={12}>
-              <p className="text-gray-500">No editable fields available</p>
-            </Grid>
+
+        {/* Content */}
+        <div className={styles.content}>
+          {editableColumns.length > 0 ? (
+            <div className={styles.fieldGrid}>
+              {editableColumns.map((col) => (
+                <div key={col.field} className={styles.fieldGroup}>
+                  <label className={styles.fieldLabel}>
+                    {col.headerName}
+                  </label>
+                  <input
+                    type={col.type || 'text'}
+                    value={formData[col.field] ?? ''}
+                    onChange={(e) => handleChange(col.field, e.target.value)}
+                    placeholder={`Enter ${col.headerName.toLowerCase()}`}
+                    className={`${styles.fieldInput} ${errors[col.field] ? styles.error : ''}`}
+                  />
+                  {errors[col.field] && (
+                    <span className={styles.errorMsg}>{errors[col.field]}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>
+                <FiEdit3 />
+              </div>
+              <p>No editable fields available</p>
+              <span>Check your field configuration</span>
+            </div>
           )}
-        </Grid>
-      </DialogContent>
-      
-      <DialogActions className="p-4 gap-2">
-        <Button 
-          onClick={handleDelete} 
-          variant="outlined" 
-          color="error"
-          startIcon={<FiTrash2 />}
-        >
-          Delete
-        </Button>
-        <div className="flex-grow" />
-        <Button onClick={onClose} variant="outlined">
-          Cancel
-        </Button>
-        <Button 
-          onClick={handleSave} 
-          variant="contained" 
-          color="primary"
-          startIcon={<FiSave />}
-        >
-          Save Changes
-        </Button>
-      </DialogActions>
-    </Dialog>
+        </div>
+
+        {/* Footer */}
+        <div className={styles.footer}>
+          <button
+            className={styles.deleteBtn}
+            onClick={handleDelete}
+            title="Delete this item"
+          >
+            <FiTrash2 />
+            Delete
+          </button>
+          <div className={styles.footerActions}>
+            <button
+              className={styles.cancelBtn}
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+            <button
+              className={styles.saveBtn}
+              onClick={handleSave}
+            >
+              <FiSave />
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
