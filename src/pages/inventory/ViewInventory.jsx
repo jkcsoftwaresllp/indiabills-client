@@ -347,7 +347,7 @@ const ViewInventory = () => {
         </span>
       ),
     },
-    { headerName: "Supplier Name", field: "supplierName", editable: true },
+    { headerName: "Supplier Name", field: "supplierName" },
   ];
 
   useEffect(() => {
@@ -466,7 +466,7 @@ const ViewInventory = () => {
       action: async (data) => {
         try {
           const response = await deleteBatch(data?.batchId);
-          if (response === 200) {
+          if (response?.status === 200 || response === 200) {
             successPopup("Deleted successfully");
             setEntries((prev) =>
               prev.filter((row) => row.batchId !== data?.batchId)
@@ -1008,9 +1008,9 @@ const ViewInventory = () => {
               remainingQuantity: updatedData.remainingQuantity,
             };
 
-            const status = await updateBatch(updatedData.batchId, apiPayload);
+            const response = await updateBatch(updatedData.batchId, apiPayload);
 
-            if (status === 200 || status === 204) {
+            if (response?.status === 200 || response?.status === 204 || response === 200) {
               successPopup("Batch updated successfully");
               setSelectedBatchRows([]);
               setQuickEditOpen(false);
@@ -1028,7 +1028,7 @@ const ViewInventory = () => {
         onDelete={async (data) => {
           try {
             const response = await deleteBatch(data?.batchId);
-            if (response === 200) {
+            if (response?.status === 200 || response === 200) {
               successPopup("Deleted successfully");
               setSelectedBatchRows([]);
               setQuickEditOpen(false);

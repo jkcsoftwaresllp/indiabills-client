@@ -121,10 +121,16 @@ export async function updateBatch(id, batchData) {
     }
 
     const response = await serverInstance.patch(`/internal/batches/${id}`, batchData);
-    return response.status;
+    return {
+      status: response.status,
+      data: response.data,
+    };
   } catch (error) {
     console.error(`Failed to update batch ${id}:`, error.response || error);
-    return error.response?.status || 400;
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data,
+    };
   }
 }
 
@@ -132,10 +138,16 @@ export async function updateBatch(id, batchData) {
 export async function deleteBatch(id) {
   try {
     const response = await serverInstance.delete(`/internal/batches/${id}`);
-    return response.status;
+    return {
+      status: response.status,
+      data: response.data,
+    };
   } catch (error) {
     console.error(`Failed to delete batch ${id}:`, error.response);
-    return error.response?.status || 500;
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data,
+    };
   }
 }
 
