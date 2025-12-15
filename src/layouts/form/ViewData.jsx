@@ -251,71 +251,94 @@ const ViewData = ({
 
   return (
     <PageAnimate>
-      <header className={"flex items-center justify-between px-4 py-1"}>
-        <div><h4 className={"text-3xl transition font-bold hover:text-rose-500"}>{title}</h4></div>
-
-        <div className="flex items-center mb-4 md:mb-0">
-          <IconButton type="button" aria-label="search"><FiSearch /></IconButton>
-          <InputBase
-            placeholder={`Search by ${title} name`}
-            inputProps={{ 'aria-label': 'search' }}
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="ml-2"
-          />
+      <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 px-2 sm:px-4 py-4">
+        <div className="w-full lg:w-auto">
+          <h4 className="text-2xl sm:text-3xl transition font-bold hover:text-rose-500 truncate">{title}</h4>
         </div>
 
-        {dateRange && (
-          <section className="flex gap-2 w-fit justify-between items-center border-2 transition p-2 hover:shadow-lg rounded-xl">
-            <div className="flex flex-col items-end">
-              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="p-2 bg-light rounded-xl border text-sm"/>
-            </div>
-            <div className="flex flex-col">
-              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="p-2 bg-light rounded-xl border text-sm"/>
-            </div>
-            <button className="bg-primary flex items-center justify-center transition rounded-full hover:bg-accent text-light font-medium p-2 hover:brightness-125 shadow-2xl" onClick={handleFilter}>
-              <FiCheckCircle fontSize='small' />
-            </button>
-          </section>
-        )}
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full lg:w-auto">
+          <div className="flex items-center w-full sm:w-auto border rounded-lg px-2 py-1">
+            <IconButton type="button" aria-label="search" size="small"><FiSearch /></IconButton>
+            <InputBase
+              placeholder={`Search ${title}`}
+              inputProps={{ 'aria-label': 'search' }}
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="flex-1 sm:flex-none ml-1"
+              style={{ fontSize: '0.875rem' }}
+            />
+          </div>
 
-        <section className={"flex items-center justify-between gap-2"}>
-          {!disableControls && (
-            <MouseHoverPopover
-              triggerElement={
-                <button 
-                  onClick={handleQuickEdit} 
-                  className={`transition ease-in-out p-2 w-fit bg-primary rounded-full ${selectedRows.length === 0 ? 'text-slate-200' : 'text-amber-500 -translate-y-1 shadow-lg'}`}
-                  disabled={selectedRows.length === 0}
-                >
-                  <FiZap />
-                </button>
-              }
-              popoverContent={<span className="text-xs"> Quick Edit {selectedRows.length > 0 ? `(${selectedRows.length} selected)` : ''} </span>}
-            />
-          )}
-          <MouseHoverPopover
-            triggerElement={
-              <button onClick={() => setIsModalOpen(true)} className="p-2 w-fit bg-primary text-slate-200 rounded-full hover:bg-accent hover:brightness-200">
-                <FiColumns />
+          {dateRange && (
+            <section className="flex flex-col sm:flex-row gap-2 w-full sm:w-fit justify-between items-center border-2 transition p-2 hover:shadow-lg rounded-xl">
+              <div className="flex flex-col items-start sm:items-end w-full sm:w-auto">
+                <label className="text-xs text-gray-500 mb-1">From</label>
+                <input 
+                  type="date" 
+                  value={startDate} 
+                  onChange={(e) => setStartDate(e.target.value)} 
+                  className="p-2 bg-light rounded-xl border text-xs sm:text-sm w-full"
+                />
+              </div>
+              <div className="flex flex-col items-start w-full sm:w-auto">
+                <label className="text-xs text-gray-500 mb-1">To</label>
+                <input 
+                  type="date" 
+                  value={endDate} 
+                  onChange={(e) => setEndDate(e.target.value)} 
+                  className="p-2 bg-light rounded-xl border text-xs sm:text-sm w-full"
+                />
+              </div>
+              <button 
+                className="bg-primary flex items-center justify-center transition rounded-full hover:bg-accent text-light font-medium p-2 hover:brightness-125 shadow-2xl w-full sm:w-auto" 
+                onClick={handleFilter}
+              >
+                <FiCheckCircle fontSize='small' />
               </button>
-            }
-            popoverContent={<span className="text-xs"> Select Columns </span>}
-          />
-          {!disableControls && (
+            </section>
+          )}
+
+          <section className="flex items-center justify-center sm:justify-between gap-2 w-full sm:w-auto">
+            {!disableControls && (
+              <MouseHoverPopover
+                triggerElement={
+                  <button 
+                    onClick={handleQuickEdit} 
+                    className={`transition ease-in-out p-2 w-fit bg-primary rounded-full ${selectedRows.length === 0 ? 'text-slate-200' : 'text-amber-500 -translate-y-1 shadow-lg'}`}
+                    disabled={selectedRows.length === 0}
+                  >
+                    <FiZap />
+                  </button>
+                }
+                popoverContent={<span className="text-xs"> Quick Edit {selectedRows.length > 0 ? `(${selectedRows.length})` : ''} </span>}
+              />
+            )}
             <MouseHoverPopover
               triggerElement={
-                <button onClick={add} className="p-2 w-fit bg-primary text-slate-200 rounded-full hover:bg-accent hover:brightness-200">
-                  <FiPlus />
+                <button onClick={() => setIsModalOpen(true)} className="p-2 w-fit bg-primary text-slate-200 rounded-full hover:bg-accent hover:brightness-200">
+                  <FiColumns />
                 </button>
               }
-              popoverContent={<span className="text-xs"> New {title} </span>}
+              popoverContent={<span className="text-xs"> Columns </span>}
             />
-          )}
-        </section>
+            {!disableControls && (
+              <MouseHoverPopover
+                triggerElement={
+                  <button onClick={add} className="p-2 w-fit bg-primary text-slate-200 rounded-full hover:bg-accent hover:brightness-200">
+                    <FiPlus />
+                  </button>
+                }
+                popoverContent={<span className="text-xs"> New </span>}
+              />
+            )}
+          </section>
+        </div>
       </header>
 
-      <div className="ag-theme-quartz" style={{ height: 500, width: "100%", marginBottom: '2rem' }}>
+      <div 
+        className="ag-theme-quartz overflow-x-auto" 
+        style={{ height: '500px', width: "100%", marginBottom: '2rem' }}
+      >
         {filteredRowData.length > 0 ? (
           <DataGrid
             rowData={filteredRowData}
@@ -326,9 +349,9 @@ const ViewData = ({
             onRowClicked={handleRowClicked}
           />
         ) : (
-          <div className="h-full grid place-items-center">
-            <div className="flex gap-4 items-center">
-              <h1 className="text-2xl">No data found <span className="ml-4">ʕ•́ᴥ•̀ʔっ</span></h1>
+          <div className="h-full grid place-items-center px-4">
+            <div className="flex flex-col gap-4 items-center text-center">
+              <h1 className="text-lg sm:text-2xl">No data found <span className="block sm:inline ml-0 sm:ml-4">ʕ•́ᴥ•̀ʔっ</span></h1>
             </div>
           </div>
         )}
