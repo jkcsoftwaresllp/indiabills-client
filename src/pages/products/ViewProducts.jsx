@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import {
   getProducts,
   deleteProduct,
+  updateProduct,
   toggleWishlist,
   getWishlist,
 } from "../../network/api";
@@ -246,6 +247,11 @@ const ViewProducts = () => {
     }
   };
 
+  // Update handler for products
+  const handleUpdateProduct = async (id, data) => {
+    return await updateProduct(id, data);
+  };
+
   return (
     <ViewData
       title="Items"
@@ -253,6 +259,7 @@ const ViewProducts = () => {
       customDataFetcher={getProducts}
       initialColDefs={colDefs}
       deleteHandler={deleteProduct}
+      updateHandler={handleUpdateProduct}
       transformPayload={transformToBackendFormat}
     />
   );

@@ -21,8 +21,6 @@ import {
   deleteStuff,
   getData,
   getReport,
-  updateProduct,
-  deleteProduct,
 } from "../../network/api";
 import { cutShort } from "../../utils/FormHelper";
 import { CircularProgress, Container, Grid } from "@mui/material";
@@ -41,6 +39,7 @@ const ViewData = ({
   menuOptions,
   transformPayload,
   deleteHandler,
+  updateHandler,
 }) => {
   const navigate = useNavigate();
   const { refreshTableId, Organization } = useStore();
@@ -174,12 +173,12 @@ const ViewData = ({
   );
 
   const onCellValueChanged = (event) => {
-    // Use updateProduct for Items, updateStuff for others
-    if (title === "Items") {
+    // Use updateHandler if provided, otherwise fall back to updateStuff
+    if (updateHandler) {
       const payloadToSend = transformPayload
         ? transformPayload(event.data)
         : event.data;
-      updateProduct(event.data[id_field], payloadToSend).then();
+      updateHandler(event.data[id_field], payloadToSend).then();
     } else {
       updateStuff(`${url}/update/${event.data[id_field]}`, {
         value: event.data,
@@ -212,9 +211,9 @@ const ViewData = ({
       console.log("Sending update payload:", payloadToSend);
 
       let response;
-      // Use custom update handler if available (for specific resources like products)
-      if (title === "Items") {
-        response = await updateProduct(updatedData[id_field], payloadToSend);
+      // Use updateHandler if available, otherwise fall back to updateStuff
+      if (updateHandler) {
+        response = await updateHandler(updatedData[id_field], payloadToSend);
       } else {
         response = await updateStuff(`${url}/update/${updatedData[id_field]}`, {
           value: payloadToSend,
@@ -230,14 +229,15 @@ const ViewData = ({
         );
         setQuickEditOpen(false);
         setSelectedRows([]);
-        successPopup?.("Product updated successfully");
+        const itemType = title.slice(0, -1); // Remove trailing 's' (Items -> Item, Suppliers -> Supplier)
+        successPopup?.(`${itemType} updated successfully`);
       } else {
         throw new Error("Update failed");
       }
     } catch (error) {
       const { errorPopup } = useStore.getState();
       console.error("Update failed:", error);
-      errorPopup?.(error.message || "Failed to update product");
+      errorPopup?.(error.message || `Failed to update ${title.toLowerCase()}`);
     }
   };
 
@@ -247,7 +247,7 @@ const ViewData = ({
 
       let response;
       if (deleteHandler) {
-        // Use custom delete handler if provided
+        // Use deleteHandler if provided
         response = await deleteHandler(data[id_field]);
       } else {
         // Fallback to generic delete
@@ -260,14 +260,15 @@ const ViewData = ({
         );
         setQuickEditOpen(false);
         setSelectedRows([]);
-        successPopup?.("Product deleted successfully");
+        const itemType = title.slice(0, -1); // Remove trailing 's' (Items -> Item, Suppliers -> Supplier)
+        successPopup?.(`${itemType} deleted successfully`);
       } else {
         throw new Error("Delete failed");
       }
     } catch (error) {
       const { errorPopup } = useStore.getState();
       console.error("Delete failed:", error);
-      errorPopup?.(error.message || "Failed to delete product");
+      errorPopup?.(error.message || `Failed to delete ${title.toLowerCase()}`);
     }
   };
 

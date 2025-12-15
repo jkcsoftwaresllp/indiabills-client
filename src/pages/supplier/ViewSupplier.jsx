@@ -1,6 +1,6 @@
 import ViewData from "../../layouts/form/ViewData";
 import Rating from '@mui/material/Rating';
-import { getSuppliers, deleteSupplier } from "../../network/api";
+import { getSuppliers, deleteSupplier, updateSupplier } from "../../network/api";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../store/store";
 
@@ -25,17 +25,17 @@ const colDefs = [
   { field: "contactPerson", headerName: "Contact Person", editable: true, cellStyle: { textTransform: 'capitalize' } },
   { field: "phone", headerName: "Phone", editable: true },
   { field: "alternatePhone", headerName: "Alternate Phone", editable: true },
-  { field: "email", headerName: "Email" },
-  { field: "addressLine", headerName: "Address" },
-  { field: "city", headerName: "City" },
-  { field: "state", headerName: "State" },
-  { field: "pinCode", headerName: "Pin Code" },
-  { field: "gstin", headerName: "GSTIN" },
-  { field: "bankAccountNumber", headerName: "Account Number" },
-  { field: "ifscCode", headerName: "IFSC Code" },
-  { field: "upiId", headerName: "UPI ID" },
-  { field: "creditLimit", headerName: "Credit Limit", cellClassRules: { money: (p) => p.value } },
-  { field: "paymentTerms", headerName: "Payment Terms" },
+  { field: "email", headerName: "Email", editable: true },
+  { field: "addressLine", headerName: "Address", editable: true },
+  { field: "city", headerName: "City", editable: true },
+  { field: "state", headerName: "State", editable: true },
+  { field: "pinCode", headerName: "Pin Code", editable: true },
+  { field: "gstin", headerName: "GSTIN", editable: true },
+  { field: "bankAccountNumber", headerName: "Account Number", editable: true },
+  { field: "ifscCode", headerName: "IFSC Code", editable: true },
+  { field: "upiId", headerName: "UPI ID", editable: true },
+  { field: "creditLimit", headerName: "Credit Limit", editable: true, cellClassRules: { money: (p) => p.value } },
+  { field: "paymentTerms", headerName: "Payment Terms", editable: true },
   { field: "remarks", headerName: "Remarks", editable: true },
   { field: "isActive", headerName: "Status", cellRenderer: (params) => (
     <span className={`py-1 px-3 rounded-full text-xs ${params.value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
@@ -47,12 +47,46 @@ const colDefs = [
 ];
 
 const ViewSuppliers = () => {
+  // Transform frontend data (camelCase) to backend format (snake_case)
+  const transformToBackendFormat = (data) => {
+    return {
+      name: data.name,
+      business_name: data.businessName,
+      contact_person: data.contactPerson,
+      phone: data.phone,
+      alternate_phone: data.alternatePhone,
+      email: data.email,
+      address_line: data.addressLine,
+      city: data.city,
+      state: data.state,
+      pin_code: data.pinCode,
+      gstin: data.gstin,
+      bank_account_number: data.bankAccountNumber,
+      ifsc_code: data.ifscCode,
+      upi_id: data.upiId,
+      credit_limit: data.creditLimit ? parseFloat(data.creditLimit) : 0,
+      payment_terms: data.paymentTerms,
+      remarks: data.remarks,
+      rating: data.rating ? parseFloat(data.rating) : 0,
+      is_active: Boolean(data.isActive),
+    };
+  };
+
+  // Update handler for suppliers
+  const handleUpdateSupplier = async (id, data) => {
+    return await updateSupplier(id, data);
+  };
+
   return (
     <ViewData 
       title="Suppliers" 
       url="/suppliers"
+      idField="id"
       customDataFetcher={getSuppliers}
-      initialColDefs={colDefs} 
+      initialColDefs={colDefs}
+      deleteHandler={deleteSupplier}
+      updateHandler={handleUpdateSupplier}
+      transformPayload={transformToBackendFormat}
     />
   );
 };
