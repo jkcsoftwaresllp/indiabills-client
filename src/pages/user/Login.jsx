@@ -276,14 +276,14 @@ const LoginPage = () => {
                   <label htmlFor="password" className={styles.label}>
                     Password
                   </label>
-                  <button
+                  {/* <button
                     type="button"
                     className={styles.forgotPasswordLink}
                     onClick={handleForgotPasswordClick}
                     disabled={loading}
                   >
                     Forgot password?
-                  </button>
+                  </button> */}
                 </div>
                 <div className={styles.inputWrapper}>
                   <MdOutlineLock className={styles.fieldIcon} />
