@@ -1,5 +1,5 @@
 import ViewData from "../../layouts/form/ViewData";
-import { getOffers, deleteOffer } from "../../network/api";
+import { getOffers, deleteOffer, updateOffer } from "../../network/api";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../store/store";
 
@@ -27,25 +27,42 @@ const colDefs = [
   },
   { field: "name", headerName: "Offer Name", filter: true, editable: true, cellStyle: { textTransform: "capitalize" } },
   { field: "description", headerName: "Description", editable: true },
-  { field: "offerType", headerName: "Offer Type", editable: true },
-  { field: "discountType", headerName: "Discount Type", editable: true },
-  { field: "discountValue", headerName: "Discount Value", editable: true },
-  { field: "maxDiscountAmount", headerName: "Max Discount Amount", editable: true },
-  { field: "minOrderAmount", headerName: "Min Order Amount", editable: true },
   {
-    field: "startDate",
+    field: "offer_type",
+    headerName: "Offer Type",
+    editable: true,
+    options: [
+      { value: "product_discount", label: "Product Discount" },
+      { value: "order_discount", label: "Order Discount" },
+      { value: "shipping_discount", label: "Free Shipping" },
+    ],
+  },
+  {
+    field: "discount_type",
+    headerName: "Discount Type",
+    editable: true,
+    options: [
+      { value: "percentage", label: "Percentage (%)" },
+      { value: "fixed", label: "Fixed Amount (₹)" },
+    ],
+  },
+  { field: "discount_value", headerName: "Discount Value", editable: true },
+  { field: "max_discount_amount", headerName: "Max Discount Amount", editable: true },
+  { field: "min_order_amount", headerName: "Min Order Amount", editable: true },
+  {
+    field: "start_date",
     headerName: "Start Date",
     editable: true,
     valueFormatter: (p) => formatDate(p.value),
   },
   {
-    field: "endDate",
+    field: "end_date",
     headerName: "End Date",
     editable: true,
     valueFormatter: (p) => formatDate(p.value),
   },
   {
-    field: "isActive",
+    field: "is_active",
     headerName: "Status",
     cellRenderer: (params) => (
       <span
@@ -58,46 +75,49 @@ const colDefs = [
     ),
   },
   {
-    field: "createdAt",
+    field: "created_at",
     headerName: "Created At",
     valueFormatter: ({ value }) => formatDate(value),
   },
   {
-    field: "updatedAt",
+    field: "updated_at",
     headerName: "Updated At",
     valueFormatter: ({ value }) => formatDate(value),
   },
 ];
 
 const ViewOffers = () => {
+  // Transform frontend data (snake_case) to backend format
+  const transformToBackendFormat = (data) => {
+    return {
+      name: data.name,
+      description: data.description,
+      offer_type: data.offer_type,
+      discount_type: data.discount_type,
+      discount_value: data.discount_value ? parseFloat(data.discount_value) : 0,
+      max_discount_amount: data.max_discount_amount ? parseFloat(data.max_discount_amount) : 0,
+      min_order_amount: data.min_order_amount ? parseFloat(data.min_order_amount) : 0,
+      start_date: data.start_date,
+      end_date: data.end_date,
+      is_active: Boolean(data.is_active),
+    };
+  };
+
+  // Update handler for offers
+  const handleUpdateOffer = async (id, data) => {
+    return await updateOffer(id, data);
+  };
+
   return (
     <ViewData
       title="Offers"
       url="/offers"
-      customDataFetcher={async () => {
-        const response = await getOffers();
-        //Map backend snake_case → camelCase
-        if (response?.data) {
-          return response.data.map((offer) => ({
-            id: offer.id,
-            name: offer.name,
-            description: offer.description,
-            offerType: offer.offer_type,
-            discountType: offer.discount_type,
-            discountValue: offer.discount_value,
-            maxDiscountAmount: offer.max_discount_amount,
-            minOrderAmount: offer.min_order_amount,
-            startDate: offer.start_date,
-            endDate: offer.end_date,
-            isActive: offer.is_active,
-            createdAt: offer.created_at,
-            updatedAt: offer.updated_at,
-          }));
-        }
-        return [];
-      }}
+      idField="id"
+      customDataFetcher={getOffers}
       initialColDefs={colDefs}
-      onDelete={deleteOffer}
+      deleteHandler={deleteOffer}
+      updateHandler={handleUpdateOffer}
+      transformPayload={transformToBackendFormat}
     />
   );
 };

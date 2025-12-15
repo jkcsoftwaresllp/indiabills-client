@@ -191,40 +191,73 @@ const QuickEditModal = ({
                   inputType = "number";
                 }
 
+                // Render select dropdown if options are provided
+                if (col.options && Array.isArray(col.options)) {
+                  return (
+                    <div key={col.field} className={styles.fieldGroup}>
+                      <label className={styles.fieldLabel}>
+                        {col.headerName}
+                      </label>
+                      <select
+                        value={formData[col.field] ?? ""}
+                        onChange={(e) => {
+                          handleChange(col.field, e.target.value);
+                        }}
+                        className={`${styles.fieldInput} ${
+                          errors[col.field] ? styles.error : ""
+                        }`}
+                        disabled={loading}
+                      >
+                        <option value="">Select {col.headerName.toLowerCase()}</option>
+                        {col.options.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                      {errors[col.field] && (
+                        <span className={styles.errorMsg}>
+                          {errors[col.field]}
+                        </span>
+                      )}
+                    </div>
+                  );
+                }
+
                 return (
-                  <div key={col.field} className={styles.fieldGroup}>
-                    <label className={styles.fieldLabel}>
-                      {col.headerName}
-                    </label>
-                    <input
-                      type={inputType}
-                      step={inputType === "number" ? "0.01" : undefined}
-                      value={formData[col.field] ?? ""}
-                      onChange={(e) => {
-                        handleChange(col.field, e.target.value);
-                        // Reset price input type when taxes change
-                        if (
-                          col.field === "cgst" ||
-                          col.field === "sgst" ||
-                          col.field === "cess"
-                        ) {
-                          setPriceInputType(null);
-                          setFinalPriceType(null);
-                        }
-                      }}
-                      placeholder={`Enter ${col.headerName.toLowerCase()}`}
-                      className={`${styles.fieldInput} ${
-                        errors[col.field] ? styles.error : ""
-                      }`}
-                      disabled={loading}
-                    />
-                    {errors[col.field] && (
-                      <span className={styles.errorMsg}>
-                        {errors[col.field]}
-                      </span>
-                    )}
-                  </div>
-                );
+                   <div key={col.field} className={styles.fieldGroup}>
+                     <label className={styles.fieldLabel}>
+                       {col.headerName}
+                     </label>
+                     <input
+                       type={inputType}
+                       step={inputType === "number" ? "0.01" : undefined}
+                       value={formData[col.field] ?? ""}
+                       onChange={(e) => {
+                         handleChange(col.field, e.target.value);
+                         // Reset price input type when taxes change
+                         if (
+                           col.field === "cgst" ||
+                           col.field === "sgst" ||
+                           col.field === "cess"
+                         ) {
+                           setPriceInputType(null);
+                           setFinalPriceType(null);
+                         }
+                       }}
+                       placeholder={`Enter ${col.headerName.toLowerCase()}`}
+                       className={`${styles.fieldInput} ${
+                         errors[col.field] ? styles.error : ""
+                       }`}
+                       disabled={loading}
+                     />
+                     {errors[col.field] && (
+                       <span className={styles.errorMsg}>
+                         {errors[col.field]}
+                       </span>
+                     )}
+                   </div>
+                 );
               })}
 
               {/* Price Input Type Selection */}

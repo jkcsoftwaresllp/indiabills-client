@@ -16,7 +16,8 @@ export async function getOffers(options = {}) {
     const url = `/internal/offers${query}`;
 
     const response = await serverInstance.get(url);
-    return response.data;
+    // normalize always to array
+    return response.data?.data || response.data || [];
   } catch (error) {
     console.error("Failed to fetch offers:", error?.response || error);
     return [];
