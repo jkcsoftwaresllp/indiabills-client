@@ -1,10 +1,14 @@
 import ViewData from "../../layouts/form/ViewData";
-import { useNavigate } from "react-router-dom";
-import { useStore } from "../../store/store";
-import { getTransportPartners, deleteTransportPartner } from "../../network/api";
+import { getTransportPartners, deleteTransportPartner, updateTransportPartner } from "../../network/api";
+import { getOption } from "../../utils/FormHelper";
+
+const stateOptions = getOption("state").map((state) => ({
+  label: state,
+  value: state,
+}));
 
 const colDefs = [
-  { field: "id", headerName: "ID", width: 50, checkboxSelection: true, headerCheckboxSelection: false, cellRenderer: (params) => (<p><span className="text-blue-950">#</span><span className="font-medium">{params.value}</span></p>) },
+  { field: "id", headerName: "ID", width: 50, cellRenderer: (params) => (<p><span className="text-blue-950">#</span><span className="font-medium">{params.value}</span></p>) },
   { field: "name", headerName: "Transport Name", filter: true, editable: true, cellStyle: { textTransform: 'capitalize' } },
   { field: "businessName", headerName: "Business Name", editable: true, cellStyle: { textTransform: 'capitalize' } },
   { field: "vehicleDetails", headerName: "Vehicle Details", editable: true },
@@ -14,7 +18,7 @@ const colDefs = [
   { field: "contactPerson", headerName: "Contact Person", editable: true, cellStyle: { textTransform: 'capitalize' } },
   { field: "addressLine", headerName: "Address", editable: true, cellStyle: { textTransform: 'capitalize' } },
   { field: "city", headerName: "City", editable: true, cellStyle: { textTransform: 'capitalize' } },
-  { field: "state", headerName: "State", editable: true, cellStyle: { textTransform: 'capitalize' } },
+  { field: "state", headerName: "State", editable: true, cellStyle: { textTransform: 'capitalize' }, options: stateOptions },
   { field: "pinCode", headerName: "Pin Code", editable: true },
   { field: "gstNumber", headerName: "GST Number", editable: true },
   { field: "panNumber", headerName: "PAN Number", editable: true },
@@ -30,12 +34,43 @@ const colDefs = [
 ];
 
 const ViewTransport = () => {
+  // Transform frontend data (camelCase) to backend format (snake_case)
+  const transformToBackendFormat = (data) => {
+    return {
+      name: data.name,
+      business_name: data.businessName,
+      vehicle_details: data.vehicleDetails,
+      email: data.email,
+      phone: data.phone,
+      alternate_phone: data.alternatePhone,
+      contact_person: data.contactPerson,
+      address_line: data.addressLine,
+      city: data.city,
+      state: data.state,
+      pin_code: data.pinCode,
+      gst_number: data.gstNumber,
+      pan_number: data.panNumber,
+      base_rate: data.baseRate ? parseFloat(data.baseRate) : 0,
+      rate_per_km: data.ratePerKm ? parseFloat(data.ratePerKm) : 0,
+      is_active: Boolean(data.isActive),
+    };
+  };
+
+  // Update handler for transport partners
+  const handleUpdateTransport = async (id, data) => {
+    return await updateTransportPartner(id, data);
+  };
+
   return (
     <ViewData
       title="Transport"
       url="/transport"
+      idField="id"
       customDataFetcher={getTransportPartners}
       initialColDefs={colDefs}
+      deleteHandler={deleteTransportPartner}
+      updateHandler={handleUpdateTransport}
+      transformPayload={transformToBackendFormat}
     />
   );
 };
