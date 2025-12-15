@@ -1,13 +1,13 @@
-import serverInstance from './api-config';
+import serverInstance from "./api-config";
 
 // Get all products
 export async function getProducts() {
   try {
-    const response = await serverInstance.get('/internal/products');
+    const response = await serverInstance.get("/internal/products");
     // normalize always to array
     return response.data?.data || [];
   } catch (error) {
-    console.error('Failed to fetch products:', error.response);
+    console.error("Failed to fetch products:", error.response);
     return [];
   }
 }
@@ -26,11 +26,18 @@ export async function getProductById(id) {
 // Create new product
 export async function createProduct(productData) {
   try {
-    const response = await serverInstance.post('/internal/products', productData);
+    const response = await serverInstance.post(
+      "/internal/products",
+      productData
+    );
     return response.status;
   } catch (error) {
-    console.error('Failed to create product:', error.response);
-    const errorMessage = error.response?.data?.message || error.response?.data?.errors?.join(', ') || error.message || 'Failed to create product';
+    console.error("Failed to create product:", error.response);
+    const errorMessage =
+      error.response?.data?.message ||
+      error.response?.data?.errors?.join(", ") ||
+      error.message ||
+      "Failed to create product";
     throw new Error(errorMessage);
   }
 }
@@ -38,11 +45,20 @@ export async function createProduct(productData) {
 // Update product
 export async function updateProduct(id, productData) {
   try {
-    const response = await serverInstance.patch(`/internal/products/${id}`, productData);
-    return response.status;
+    const response = await serverInstance.patch(
+      `/internal/products/${id}`,
+      productData
+    );
+    return {
+      status: response.status,
+      data: response.data,
+    };
   } catch (error) {
     console.error(`Failed to update product ${id}:`, error.response);
-    return error.response?.status || 500;
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data,
+    };
   }
 }
 
@@ -50,9 +66,15 @@ export async function updateProduct(id, productData) {
 export async function deleteProduct(id) {
   try {
     const response = await serverInstance.delete(`/internal/products/${id}`);
-    return response.status;
+    return {
+      status: response.status,
+      data: response.data,
+    };
   } catch (error) {
     console.error(`Failed to delete product ${id}:`, error.response);
-    return error.response?.status || 500;
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data,
+    };
   }
 }

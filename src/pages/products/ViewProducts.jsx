@@ -1,11 +1,16 @@
-import { FiPlus } from 'react-icons/fi';
+import { FiPlus } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import ViewData from "../../layouts/form/ViewData";
 import { useNavigate } from "react-router-dom";
-import { getProducts, deleteProduct, toggleWishlist, getWishlist } from "../../network/api";
+import {
+  getProducts,
+  deleteProduct,
+  toggleWishlist,
+  getWishlist,
+} from "../../network/api";
 import { useStore } from "../../store/store";
 import { IconButton, Tooltip } from "@mui/material";
-import { Favorite, FavoriteBorder } from '@mui/icons-material';
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
 
 const colDefs = [
   {
@@ -41,44 +46,97 @@ const colDefs = [
   {
     field: "barcode",
     headerName: "Barcode",
+    editable: true,
   },
   {
     field: "brand",
     headerName: "Brand",
+    editable: true,
     cellStyle: { textTransform: "capitalize" },
   },
-  { field: "dimensions", headerName: "Dimensions" },
-  { field: "weight", headerName: "Weight (g)" },
+  {
+    field: "dimensions",
+    headerName: "Dimensions",
+    editable: true,
+  },
+  {
+    field: "weight",
+    headerName: "Weight (g)",
+    editable: true,
+  },
   {
     field: "manufacturer",
     headerName: "Manufacturer",
+    editable: true,
     cellStyle: { textTransform: "capitalize" },
   },
   {
     field: "sale_price",
     headerName: "Sale Price",
+    editable: true,
     cellClassRules: { money: (p) => p.value },
   },
   {
     field: "purchase_price",
     headerName: "Purchase Price",
+    editable: true,
     cellClassRules: { money: (p) => p.value },
   },
   {
     field: "unit_mrp",
     headerName: "Unit MRP",
+    editable: true,
     cellClassRules: { money: (p) => p.value },
   },
-  { field: "reorder_level", headerName: "Reorder Level", editable: true },
-  { field: "max_stock_level", headerName: "Max Stock Level", editable: true },
-  { field: "unit_of_measure", headerName: "Unit of Measure" },
+  {
+    field: "reorder_level",
+    headerName: "Reorder Level",
+    editable: true,
+  },
+  {
+    field: "max_stock_level",
+    headerName: "Max Stock Level",
+    editable: true,
+  },
+  {
+    field: "unit_of_measure",
+    headerName: "Unit of Measure",
+    editable: true,
+  },
+  {
+    field: "hsn",
+    headerName: "HSN",
+    editable: true,
+  },
+  {
+    field: "upc",
+    headerName: "UPC",
+    editable: true,
+  },
+  {
+    field: "cgst",
+    headerName: "CGST %",
+    editable: true,
+  },
+  {
+    field: "sgst",
+    headerName: "SGST %",
+    editable: true,
+  },
+  {
+    field: "cess",
+    headerName: "Cess %",
+    editable: true,
+  },
   {
     field: "is_active",
     headerName: "Status",
     cellRenderer: (params) => (
       <span
         className={`py-1 px-3 rounded-full text-xs ${
-          params.value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          params.value
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
         }`}
       >
         {params.value ? "Active" : "Inactive"}
@@ -96,8 +154,13 @@ const colDefs = [
     headerName: "Wishlist",
     width: 120,
     cellRenderer: (params) => (
-      <Tooltip title={params.value ? "Remove from Wishlist" : "Add to Wishlist"}>
-        <IconButton size="small" onClick={() => params.data.onWishlistToggle(params.data)}>
+      <Tooltip
+        title={params.value ? "Remove from Wishlist" : "Add to Wishlist"}
+      >
+        <IconButton
+          size="small"
+          onClick={() => params.data.onWishlistToggle(params.data)}
+        >
           {params.value ? <Favorite color="error" /> : <FavoriteBorder />}
         </IconButton>
       </Tooltip>
@@ -110,6 +173,36 @@ const ViewProducts = () => {
   const { successPopup, errorPopup, refreshTableSetId } = useStore();
   const [wishlistItems, setWishlistItems] = useState(new Set());
 
+  // Transform frontend data (snake_case) to backend format (camelCase)
+  const transformToBackendFormat = (data) => {
+    return {
+      name: data.name,
+      description: data.description,
+      categoryId: data.category_id,
+      manufacturer: data.manufacturer,
+      brand: data.brand,
+      barcode: data.barcode,
+      dimensions: data.dimensions,
+      weight: data.weight ? parseFloat(data.weight) : 0,
+      unitMrp: data.unit_mrp ? parseFloat(data.unit_mrp) : 0,
+      purchasePrice: data.purchase_price ? parseFloat(data.purchase_price) : 0,
+      salePrice: data.sale_price ? parseFloat(data.sale_price) : 0,
+      reorderLevel: data.reorder_level ? parseInt(data.reorder_level, 10) : 0,
+      unitOfMeasure: data.unit_of_measure,
+      maxStockLevel: data.max_stock_level
+        ? parseInt(data.max_stock_level, 10)
+        : 0,
+      isActive: Boolean(data.is_active),
+      hsn: data.hsn,
+      upc: data.upc,
+      taxes: {
+        cgst: data.cgst ? parseFloat(data.cgst) : null,
+        sgst: data.sgst ? parseFloat(data.sgst) : null,
+        cess: data.cess ? parseFloat(data.cess) : null,
+      },
+    };
+  };
+
   // Fetch wishlist on mount
   useEffect(() => {
     fetchWishlistItems();
@@ -118,7 +211,7 @@ const ViewProducts = () => {
   const fetchWishlistItems = async () => {
     const response = await getWishlist();
     if (response.status === 200 && Array.isArray(response.data)) {
-      const wishlistIds = new Set(response.data.map(item => item.id));
+      const wishlistIds = new Set(response.data.map((item) => item.id));
       setWishlistItems(wishlistIds);
     }
   };
@@ -147,43 +240,20 @@ const ViewProducts = () => {
         }
         return newSet;
       });
-      successPopup(result.data?.message || 'Wishlist updated');
+      successPopup(result.data?.message || "Wishlist updated");
     } else {
-      errorPopup('Failed to update wishlist');
+      errorPopup("Failed to update wishlist");
     }
   };
 
   return (
     <ViewData
       title="Items"
+      idField="id"
       customDataFetcher={getProducts}
       initialColDefs={colDefs}
       deleteHandler={deleteProduct}
-      transformPayload={(data) => ({
-        // ensure outgoing payload matches backend format
-        id: data.id || 0,
-        organization_id: data.organization_id || 0,
-        name: data.name || "",
-        description: data.description || "",
-        category_id: data.category_id || 0,
-        manufacturer: data.manufacturer || "",
-        brand: data.brand || "",
-        barcode: data.barcode || "",
-        dimensions: data.dimensions || "",
-        weight: Number(data.weight) || 0,
-        unit_mrp: Number(data.unit_mrp) || 0,
-        purchase_price: Number(data.purchase_price) || 0,
-        sale_price: Number(data.sale_price) || 0,
-        reorder_level: Number(data.reorder_level) || 0,
-        unit_of_measure: data.unit_of_measure || "",
-        max_stock_level: Number(data.max_stock_level) || 0,
-        is_active: Boolean(data.is_active),
-        version: data.version || 0,
-        created_at: data.created_at || new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        created_by: data.created_by || 0,
-        updated_by: data.updated_by || 0,
-      })}
+      transformPayload={transformToBackendFormat}
     />
   );
 };
