@@ -38,7 +38,7 @@ const AddProducts = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories, setCategories] = useState([]);
   const [priceInputType, setPriceInputType] = useState(null); // null, "withoutTax", or "withTax"
-  const [finalPriceType, setFinalPriceType] = useState(null); // "purchasePriceWithoutTax" or "purchaseRate"
+  const [finalPriceType, setFinalPriceType] = useState(null); // "salePriceWithoutTax" or "saleRate"
 
   // Load categories on component mount
   useEffect(() => {
@@ -60,25 +60,25 @@ const AddProducts = () => {
     } else if (pageNum === 2) {
        // Step 2: Pricing & Inventory
        const unitMrp = parseFloat(formData.unitMRP);
-       const salePrice = parseFloat(formData.salePrice);
+       const purchasePrice = parseFloat(formData.purchasePrice);
 
        if (!formData.unitMRP || isNaN(unitMrp) || unitMrp <= 0) {
          newErrors.unitMRP = 'Valid Unit MRP is required';
        }
+       if (!formData.purchasePrice || isNaN(purchasePrice) || purchasePrice <= 0) {
+         newErrors.purchasePrice = 'Valid Purchase Price is required';
+       }
        if (!priceInputType) {
          newErrors.priceInputType = 'Select which price to enter';
        }
-       if (priceInputType === "withoutTax" && (!formData.purchasePriceWithoutTax || isNaN(parseFloat(formData.purchasePriceWithoutTax)) || parseFloat(formData.purchasePriceWithoutTax) <= 0)) {
-         newErrors.purchasePriceWithoutTax = 'Valid purchase price (without tax) is required';
+       if (priceInputType === "withoutTax" && (!formData.salePriceWithoutTax || isNaN(parseFloat(formData.salePriceWithoutTax)) || parseFloat(formData.salePriceWithoutTax) <= 0)) {
+         newErrors.salePriceWithoutTax = 'Valid sale price (without tax) is required';
        }
-       if (priceInputType === "withTax" && (!formData.purchaseRate || isNaN(parseFloat(formData.purchaseRate)) || parseFloat(formData.purchaseRate) <= 0)) {
-         newErrors.purchaseRate = 'Valid purchase price (with tax) is required';
+       if (priceInputType === "withTax" && (!formData.saleRate || isNaN(parseFloat(formData.saleRate)) || parseFloat(formData.saleRate) <= 0)) {
+         newErrors.saleRate = 'Valid sale price (with tax) is required';
        }
        if (!finalPriceType) {
-         newErrors.finalPriceType = 'Select your final purchase price';
-       }
-       if (!formData.salePrice || isNaN(salePrice) || salePrice <= 0) {
-         newErrors.salePrice = 'Valid Sale Price is required';
+         newErrors.finalPriceType = 'Select your final sale price';
        }
 
        if (formData.weight && (isNaN(parseFloat(formData.weight)) || parseFloat(formData.weight) <= 0)) {
@@ -152,10 +152,10 @@ const AddProducts = () => {
     setIsSubmitting(true);
 
     try {
-       // Use the final selected purchase price
-       const purchasePrice = finalPriceType === "purchasePriceWithoutTax" 
-         ? parseFloat(formData.purchasePriceWithoutTax) 
-         : parseFloat(formData.purchaseRate);
+       // Use the final selected sale price
+       const salePrice = finalPriceType === "salePriceWithoutTax" 
+         ? parseFloat(formData.salePriceWithoutTax) 
+         : parseFloat(formData.saleRate);
 
       const apiData = {
         name: formData.itemName.trim(),
@@ -167,8 +167,8 @@ const AddProducts = () => {
         dimensions: formData.dimensions?.trim() || null,
         weight: formData.weight ? parseFloat(formData.weight) : null,
         unitMrp: parseFloat(formData.unitMRP),
-        purchasePrice: purchasePrice,
-        salePrice: parseFloat(formData.salePrice),
+        purchasePrice: parseFloat(formData.purchasePrice),
+        salePrice: salePrice,
         reorderLevel: parseInt(formData.reorderLevel) || 0,
         maxStockLevel: parseInt(formData.maxStockLevel) || (parseInt(formData.reorderLevel) * 10),
         isActive: true,
@@ -426,9 +426,9 @@ const BasicPage = React.memo(({ formData, handleChange, errors, categories }) =>
 BasicPage.displayName = 'BasicPage';
 
 const PricingPage = React.memo(({ formData, handleChange, errors, priceInputType, setPriceInputType, finalPriceType, setFinalPriceType }) => {
-   const totalTax = (parseFloat(formData.cgst) || 0) + (parseFloat(formData.sgst) || 0) + (parseFloat(formData.cess) || 0);
-   const calculatedPriceWithTax = formData.purchasePriceWithoutTax ? parseFloat(formData.purchasePriceWithoutTax) * (1 + totalTax / 100) : 0;
-   const calculatedPriceWithoutTax = formData.purchaseRate ? parseFloat(formData.purchaseRate) / (1 + totalTax / 100) : 0;
+    const totalTax = (parseFloat(formData.cgst) || 0) + (parseFloat(formData.sgst) || 0) + (parseFloat(formData.cess) || 0);
+    const calculatedPriceWithTax = formData.salePriceWithoutTax ? parseFloat(formData.salePriceWithoutTax) * (1 + totalTax / 100) : 0;
+    const calculatedPriceWithoutTax = formData.saleRate ? parseFloat(formData.saleRate) / (1 + totalTax / 100) : 0;
 
    return (
      <MultiPageAnimate>
@@ -467,21 +467,21 @@ const PricingPage = React.memo(({ formData, handleChange, errors, priceInputType
            </div>
 
            <div className={styles.fieldGroup}>
-             <label className={styles.fieldLabel}>Sale Price *</label>
+             <label className={styles.fieldLabel}>Purchase Price *</label>
              <div className={styles.currencyInput}>
                <span className={styles.currencySymbol}>₹</span>
                <input
                  type="number"
-                 name="salePrice"
+                 name="purchasePrice"
                  placeholder="0.00"
-                 value={formData.salePrice}
+                 value={formData.purchasePrice}
                  onChange={handleChange}
-                 className={`${styles.fieldInput} ${errors.salePrice ? styles.error : ''}`}
+                 className={`${styles.fieldInput} ${errors.purchasePrice ? styles.error : ''}`}
                  min="0"
                  step="0.01"
                />
              </div>
-             {errors.salePrice && <span className={styles.errorMsg}>{errors.salePrice}</span>}
+             {errors.purchasePrice && <span className={styles.errorMsg}>{errors.purchasePrice}</span>}
            </div>
 
            {/* Taxes Section */}
@@ -537,7 +537,7 @@ const PricingPage = React.memo(({ formData, handleChange, errors, priceInputType
              />
            </div>
 
-           {/* Purchase Price Section */}
+           {/* Sale Price Section */}
            <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
              <label className={styles.fieldLabel}>Step 1: Which price would you like to enter? *</label>
              {errors.priceInputType && <span className={styles.errorMsg}>{errors.priceInputType}</span>}
@@ -550,7 +550,7 @@ const PricingPage = React.memo(({ formData, handleChange, errors, priceInputType
                    checked={priceInputType === "withoutTax"}
                    onChange={(e) => setPriceInputType(e.target.value)}
                  />
-                 Purchase Price (Without Tax)
+                 Sale Price (Without Tax)
                </label>
                <label className={styles.radioLabel}>
                  <input
@@ -560,7 +560,7 @@ const PricingPage = React.memo(({ formData, handleChange, errors, priceInputType
                    checked={priceInputType === "withTax"}
                    onChange={(e) => setPriceInputType(e.target.value)}
                  />
-                 Purchase Price (With Tax)
+                 Sale Price (With Tax)
                </label>
              </div>
            </div>
@@ -569,37 +569,37 @@ const PricingPage = React.memo(({ formData, handleChange, errors, priceInputType
              <>
                <div className={styles.fieldGroup}>
                  <label className={styles.fieldLabel}>
-                   {priceInputType === "withoutTax" ? "Purchase Price (Without Tax)" : "Purchase Price (With Tax)"} *
+                   {priceInputType === "withoutTax" ? "Sale Price (Without Tax)" : "Sale Price (With Tax)"} *
                  </label>
                  <div className={styles.currencyInput}>
                    <span className={styles.currencySymbol}>₹</span>
                    <input
                      type="number"
-                     name={priceInputType === "withoutTax" ? "purchasePriceWithoutTax" : "purchaseRate"}
+                     name={priceInputType === "withoutTax" ? "salePriceWithoutTax" : "saleRate"}
                      placeholder="0.00"
-                     value={priceInputType === "withoutTax" ? formData.purchasePriceWithoutTax || '' : formData.purchaseRate || ''}
+                     value={priceInputType === "withoutTax" ? formData.salePriceWithoutTax || '' : formData.saleRate || ''}
                      onChange={handleChange}
-                     className={`${styles.fieldInput} ${errors[priceInputType === "withoutTax" ? "purchasePriceWithoutTax" : "purchaseRate"] ? styles.error : ''}`}
+                     className={`${styles.fieldInput} ${errors[priceInputType === "withoutTax" ? "salePriceWithoutTax" : "saleRate"] ? styles.error : ''}`}
                      min="0"
                      step="0.01"
                    />
                  </div>
-                 {errors[priceInputType === "withoutTax" ? "purchasePriceWithoutTax" : "purchaseRate"] && (
-                   <span className={styles.errorMsg}>{errors[priceInputType === "withoutTax" ? "purchasePriceWithoutTax" : "purchaseRate"]}</span>
+                 {errors[priceInputType === "withoutTax" ? "salePriceWithoutTax" : "saleRate"] && (
+                   <span className={styles.errorMsg}>{errors[priceInputType === "withoutTax" ? "salePriceWithoutTax" : "saleRate"]}</span>
                  )}
                </div>
 
                <div className={styles.fieldGroup}>
                  <label className={styles.fieldLabel}>
-                   {priceInputType === "withoutTax" ? "Purchase Price (With Tax)" : "Purchase Price (Without Tax)"}
+                   {priceInputType === "withoutTax" ? "Sale Price (With Tax)" : "Sale Price (Without Tax)"}
                  </label>
                  <div className={styles.currencyInput}>
                    <span className={styles.currencySymbol}>₹</span>
                    <input
                      type="number"
-                     name={priceInputType === "withoutTax" ? "purchaseRate" : "purchasePriceWithoutTax"}
+                     name={priceInputType === "withoutTax" ? "saleRate" : "salePriceWithoutTax"}
                      placeholder="0.00"
-                     value={priceInputType === "withoutTax" ? formData.purchaseRate || '' : formData.purchasePriceWithoutTax || ''}
+                     value={priceInputType === "withoutTax" ? formData.saleRate || '' : formData.salePriceWithoutTax || ''}
                      onChange={handleChange}
                      className={styles.fieldInput}
                      min="0"
@@ -617,21 +617,21 @@ const PricingPage = React.memo(({ formData, handleChange, errors, priceInputType
                      <input
                        type="radio"
                        name="finalPriceType"
-                       value="purchasePriceWithoutTax"
-                       checked={finalPriceType === "purchasePriceWithoutTax"}
+                       value="salePriceWithoutTax"
+                       checked={finalPriceType === "salePriceWithoutTax"}
                        onChange={(e) => setFinalPriceType(e.target.value)}
                      />
-                     Purchase Price Without Tax (₹{formData.purchasePriceWithoutTax || '0.00'})
+                     Sale Price Without Tax (₹{formData.salePriceWithoutTax || '0.00'})
                    </label>
                    <label className={styles.radioLabel}>
                      <input
                        type="radio"
                        name="finalPriceType"
-                       value="purchaseRate"
-                       checked={finalPriceType === "purchaseRate"}
+                       value="saleRate"
+                       checked={finalPriceType === "saleRate"}
                        onChange={(e) => setFinalPriceType(e.target.value)}
                      />
-                     Purchase Price With Tax (₹{formData.purchaseRate || '0.00'})
+                     Sale Price With Tax (₹{formData.saleRate || '0.00'})
                    </label>
                  </div>
                </div>
