@@ -1,162 +1,4 @@
-// import { useEffect, useState } from "react";
-// import { getData } from "../../network/api";
-// import ProductCard from "../../components/shop/ProductCard";
-// import SearchBar from "../../components/LayoutComponent/SearchBar";
-// import PageAnimate from "../../components/Animate/PageAnimate";
-// import CircularProgress from "@mui/material/CircularProgress";
-// import { useStore } from "../../store/store";
-// import { useNavigate } from "react-router-dom";
-// import { motion, AnimatePresence } from "framer-motion";
-
-// const ShopPage = () => {
-//   const [products, setProducts] = useState([]);
-//   const [isLoading, setIsLoading] = useState(true);
-//   const [announcement, setAnnouncement] = useState({});
-
-//   const { selectedProducts } = useStore();
-
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       const data = await getData("channel/announcements/shop");
-//       if (data.length > 0) {
-//         setAnnouncement(data[0]);
-//       }
-//     };
-//     fetchData().then();
-//   }, []);
-
-//   const ShowCart = () => {
-//     if (selectedProducts) {
-//       navigate("/cart");
-//     }
-//   };
-
-//   const ShowOrders = () => {
-//     navigate("/orders");
-//   };
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       const data = await getData("/shop/products");
-//       if (data.length > 0) {
-//         setProducts(data);
-//       }
-//     };
-//     fetchData().then(() => setIsLoading(false));
-//   }, []);
-
-//   const [searchFieldByName, setSearchFieldByName] = useState("");
-
-//   const filteredData = products.filter((dataItem) => {
-//     return (
-//       dataItem["itemName"] &&
-//       dataItem["itemName"]
-//         .toLowerCase()
-//         .includes(searchFieldByName.toLowerCase())
-//     );
-//   });
-
-//   const itemVariants = {
-//     hidden: { opacity: 0, y: -20 },
-//     visible: { opacity: 1, y: 0 },
-//     exit: { opacity: 0, y: 20 },
-//   };
-
-//   const Catalogue = () => {
-//     if (isLoading) {
-//       return (
-//         <div className="w-full grid place-items-center">
-//           <CircularProgress />
-//         </div>
-//       );
-//     }
-//     return (
-//       <div className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}>
-//         <AnimatePresence>
-//           {filteredData.map((product, index) => (
-//             <motion.div
-//               key={index}
-//               variants={itemVariants}
-//               initial="hidden"
-//               animate="visible"
-//               exit="exit"
-//               layout
-//             >
-//               <ProductCard key={index} product={product} />
-//             </motion.div>
-//           ))}
-//         </AnimatePresence>
-//       </div>
-//     );
-//   };
-
-//   if (products.length === 0) {
-//     return <p>No Product available in stock</p>;
-//   }
-
-//   return (
-//     <PageAnimate>
-//       <div className={"p-6 flex flex-col gap-4 "}>
-//         <section className={"flex gap-4"}>
-//           <div className={"w-full idms-shop-bg"}>
-//             <img
-//               src={
-//                 "https://mir-s3-cdn-cf.behance.net/project_modules/max_3840/cf8c5599420499.5f09d760d115b.jpg"
-//               }
-//               alt={"shop"}
-//               className={"w-full h-60 object-cover rounded-xl"}
-//             />
-//           </div>
-//         </section>
-//         {announcement.message && (
-//           <marquee className={"bg-primary py-2 px-px rounded-xl text-slate-400"}>
-//             <span className={"text-yellow-200 font-semibold"}>
-//               <b>Announcement:</b>
-//             </span>{" "}
-//             {announcement.message}
-//           </marquee>
-//         )}
-//         <section
-//           className={"p-2 w-full flex justify-between gap-4 items-center"}
-//         >
-//           <SearchBar
-//             className={"w-full"}
-//             title={"product by name"}
-//             value={searchFieldByName}
-//             setSearchFieldByName={setSearchFieldByName}
-//           />
-
-//           <div className={"p-2 rounded-xl idms-transparent-control relative"}>
-//             <FiShoppingCart />
-//             <p className={"absolute top-0 right-0 bg-rose-500 outline-none border-none text-slate-200 px-1 rounded-full text-xs"}>
-//               {Object.keys(selectedProducts).length > 0 &&
-//                 Object.keys(selectedProducts).length}
-//             </p>
-//           </div>
-//           <div
-//             onClick={ShowCart}
-//             className={
-//               "p-2 cursor-pointer hover:shadow-md transition rounded-xl idms-transparent-control relative"
-//             }
-//           >
-//             <p className={"text-nowrap font-medium px-2"}>Checkout</p>
-//           </div>
-//         </section>
-
-//         <main>
-//           <Catalogue />
-//         </main>
-//       </div>
-//     </PageAnimate>
-//   );
-// };
-
-// export default ShopPage;
-
-
-import { FiShoppingCart } from 'react-icons/fi';
+import { FiShoppingCart, FiPackage } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import ProductCard from '../../components/shop/ProductCard';
 import SearchBar from '../../components/LayoutComponent/SearchBar';
@@ -167,20 +9,29 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRoutes } from '../../hooks/useRoutes';
 import { useCart } from '../../hooks/useCart';
-import { getProducts } from '../../network/api';
+import { getProducts, getBatches } from '../../network/api';
 import { getShopAnnouncements } from '../../network/api/channelApi';
 import { socket } from '../../network/websocket';
+import styles from './Shop.module.css';
 
 const ShopPage = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [announcement, setAnnouncement] = useState({});
+  const [searchFieldByName, setSearchFieldByName] = useState('');
+  const [cartItemCount, setCartItemCount] = useState(0);
 
-  const { selectedProducts } = useStore();
+  const { selectedProducts, cart } = useStore();
   const { getCartItemCount } = useCart();
   const { getRoute } = useRoutes();
   const navigate = useNavigate();
 
+  // Update cart count whenever cart changes
+  useEffect(() => {
+    setCartItemCount(getCartItemCount());
+  }, [cart.items, getCartItemCount]);
+
+  // Fetch announcements
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
@@ -208,20 +59,28 @@ const ShopPage = () => {
     };
   }, []);
 
-  const ShowCart = () => {
-    navigate(getRoute('/cart'));
-  };
-
-  const ShowOrders = () => {
-    navigate(getRoute('/orders'));
-  };
-
+  // Fetch products with batch and tax data
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        console.log('Fetching products for shop page...');
         const products = await getProducts();
-        console.log('Products fetched successfully:', products.length);
+
+        // Fetch batch data for all products
+        const batches = await getBatches();
+        const batchQuantityMap = {};
+
+        if (batches && Array.isArray(batches)) {
+          batches.forEach(batch => {
+            if (!batchQuantityMap[batch.product_id]) {
+              batchQuantityMap[batch.product_id] = 0;
+            }
+            // Sum remaining quantity from all batches for this product
+            // Parse string to float since remaining_quantity comes as string from backend
+            const remainingQty = parseFloat(batch.remaining_quantity) || 0;
+            batchQuantityMap[batch.product_id] += remainingQty;
+          });
+        }
+
         const mappedProducts = products.map(product => ({
           id: product.id,
           itemId: product.id,
@@ -230,11 +89,13 @@ const ShopPage = () => {
           salePrice: product.purchasePrice,
           description: product.description,
           manufacturer: product.manufacturer,
-          currentQuantity: 100, // Mock quantity for now
-          imageUrl: "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
-          cgst: 9,
-          sgst: 9,
-          cess: 0,
+          // Fetch remaining quantity from batches
+          currentQuantity: Math.floor(batchQuantityMap[product.id] || 0),
+          imageUrl: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800',
+          // Fetch tax from backend, with fallback to 0
+          cgst: product.cgst || (product.taxes?.cgst || 0),
+          sgst: product.sgst || (product.taxes?.sgst || 0),
+          cess: product.cess || (product.taxes?.cess || 0),
           hsn: product.barcode || '',
           unitMRP: product.unitMRP,
           dimensions: product.dimensions,
@@ -253,8 +114,6 @@ const ShopPage = () => {
     fetchProducts();
   }, []);
 
-  const [searchFieldByName, setSearchFieldByName] = useState('');
-
   const filteredData = products.filter((dataItem) => {
     return (
       dataItem['itemName'] &&
@@ -265,96 +124,151 @@ const ShopPage = () => {
   });
 
   const itemVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+    exit: { opacity: 0, y: -20, transition: { duration: 0.2 } },
   };
 
-  const Catalogue = () => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const ShowCart = () => {
+    navigate(getRoute('/cart'));
+  };
+
+  const renderCatalogueContent = () => {
     if (isLoading) {
       return (
-        <div className="w-full grid place-items-center">
-          <CircularProgress />
+        <div className={styles.loadingContainer}>
+          <CircularProgress size={50} />
         </div>
       );
     }
 
     if (filteredData.length === 0) {
-      return <p className="text-center text-gray-500">No matching products found.</p>;
+      return (
+        <div className={styles.emptyStateContainer}>
+          <div className={styles.emptyStateIcon}>
+            <FiPackage />
+          </div>
+          <div className={styles.emptyStateTitle}>No Products Found</div>
+          <div className={styles.emptyStateDescription}>
+            {searchFieldByName
+              ? `No products match "${searchFieldByName}". Try searching with different keywords.`
+              : 'No products available in stock at the moment.'}
+          </div>
+        </div>
+      );
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <AnimatePresence>
+      <motion.div
+        className={styles.catalogueSection}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <AnimatePresence mode="wait">
           {filteredData.map((product, index) => (
             <motion.div
-              key={index}
+              key={product.itemId || index}
               variants={itemVariants}
-              initial="hidden"
-              animate="visible"
               exit="exit"
               layout
             >
-              <ProductCard key={index} product={product} />
+              <ProductCard product={product} />
             </motion.div>
           ))}
         </AnimatePresence>
-      </div>
+      </motion.div>
     );
   };
 
-  if (products.length === 0 && !isLoading) {
-    return <p className="text-center mt-10 text-gray-500">No Product available in stock</p>;
-  }
-
   return (
     <PageAnimate>
-      <div className="p-6 flex flex-col gap-4">
-        <section className="flex gap-4">
-          <div className="w-full idms-shop-bg">
+      <div className={styles.shopContainer}>
+        <div className={styles.shopContent}>
+          {/* Hero Banner */}
+          <motion.div
+            className={styles.heroBannerWrapper}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             <img
               src="https://mir-s3-cdn-cf.behance.net/project_modules/max_3840/cf8c5599420499.5f09d760d115b.jpg"
               alt="shop"
-              className="w-full h-60 object-cover rounded-xl"
+              className={styles.heroBanner}
             />
-          </div>
-        </section>
+            <div className={styles.bannerOverlay} />
+          </motion.div>
 
-        {announcement.message && (
-          <marquee className="bg-primary py-2 px-px rounded-xl text-slate-400">
-            <span className="text-yellow-200 font-semibold">
-              <b>Announcement:</b>
-            </span>{' '}
-            {announcement.message}
-          </marquee>
-        )}
+          {/* Announcement Banner */}
+          {announcement.message && (
+            <motion.div
+              className={styles.announcementBanner}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <span className={styles.announcementIcon}>📢</span>
+              <div className={styles.announcementText}>
+                <strong>Announcement:</strong> {announcement.message}
+              </div>
+            </motion.div>
+          )}
 
-        <section className="p-2 w-full flex justify-between gap-4 items-center">
-          <SearchBar
-            className="w-full"
-            title="product by name"
-            value={searchFieldByName}
-            setSearchFieldByName={setSearchFieldByName}
-          />
-
-          <div className="p-2 rounded-xl idms-transparent-control relative">
-          <FiShoppingCart />
-          <p className="absolute top-0 right-0 bg-rose-500 text-slate-200 px-1 rounded-full text-xs">
-          {getCartItemCount() > 0 && getCartItemCount()}
-          </p>
-          </div>
-
-          <div
-            onClick={ShowCart}
-            className="p-2 cursor-pointer hover:shadow-md transition rounded-xl idms-transparent-control relative"
+          {/* Controls Section */}
+          <motion.div
+            className={styles.controlsSection}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <p className="text-nowrap font-medium px-2">Checkout</p>
-          </div>
-        </section>
+            <div className={styles.searchWrapper}>
+              <SearchBar
+                title="products by name"
+                value={searchFieldByName}
+                setSearchFieldByName={setSearchFieldByName}
+              />
+            </div>
 
-        <main>
-          <Catalogue />
-        </main>
+            <motion.button
+              className={styles.cartIconWrapper}
+              onClick={cartItemCount > 0 ? ShowCart : null}
+              whileHover={cartItemCount > 0 ? { scale: 1.1 } : {}}
+              whileTap={cartItemCount > 0 ? { scale: 0.95 } : {}}
+              title={cartItemCount > 0 ? 'Go to cart' : 'Cart is empty'}
+              disabled={cartItemCount === 0}
+              style={{
+                opacity: cartItemCount === 0 ? 0.5 : 1,
+                cursor: cartItemCount === 0 ? 'not-allowed' : 'pointer',
+              }}
+            >
+              <FiShoppingCart size={22} />
+              {cartItemCount > 0 && (
+                <div className={styles.cartBadge}>{cartItemCount}</div>
+              )}
+            </motion.button>
+          </motion.div>
+
+          {/* Main Catalogue */}
+          <motion.section
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            {renderCatalogueContent()}
+          </motion.section>
+        </div>
       </div>
     </PageAnimate>
   );

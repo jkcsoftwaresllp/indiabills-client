@@ -12,6 +12,11 @@ export async function getBatches(options = {}) {
     if (options.productId) params.append('productId', options.productId);
 
     const response = await serverInstance.get(`/internal/batches?${params.toString()}`);
+    // Handle response structure: { data: [...], count: number }
+    if (response.data?.data && Array.isArray(response.data.data)) {
+      return response.data.data;
+    }
+    // Fallback for direct array response
     return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error('Failed to fetch batches:', error.response);
