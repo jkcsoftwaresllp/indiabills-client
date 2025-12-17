@@ -8,11 +8,16 @@ import { useStore } from "../../store/store";
 
 const colDefs = [
   {
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    width: 50,
+    sortable: false,
+    filter: false,
+  },
+  {
     field: "id",
     headerName: "ID",
-    width: 50,
-    checkboxSelection: true,
-    headerCheckboxSelection: false,
+    width: 60,
     cellRenderer: (params) => (
       <p>
         <span className="text-blue-950">#</span>

@@ -18,7 +18,7 @@ export async function getCustomers(options = {}) {
       params.toString() ? `?${params.toString()}` : ""
     }`;
     const response = await serverInstance.get(url);
-    return response.data;
+    return response.data.data.data || [];
   } catch (error) {
     console.error("Failed to fetch customers:", error.response);
     return [];
