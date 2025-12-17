@@ -4,8 +4,9 @@ import serverInstance from "./api-config";
 export async function getSalesSummaryReport(params = {}) {
   try {
     const response = await serverInstance.get("/reports/sales-summary", { params });
-    // Backend returns a single object, wrap in array for ReportLayout compatibility
-    return Array.isArray(response.data) ? response.data : [response.data];
+    // Backend returns a single object in response.data.data, wrap in array for ReportLayout compatibility
+    const data = response.data.data;
+    return Array.isArray(data) ? data : [data];
   } catch (error) {
     console.error("Failed to fetch sales summary report:", error.response);
     return [];
@@ -16,7 +17,7 @@ export async function getSalesSummaryReport(params = {}) {
 export async function getSalesByProductReport(params = {}) {
   try {
     const response = await serverInstance.get("/reports/sales-by-product", { params });
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     console.error("Failed to fetch sales by product report:", error.response);
     return [];
@@ -27,7 +28,7 @@ export async function getSalesByProductReport(params = {}) {
 export async function getCustomerPurchaseReportAPI(params = {}) {
   try {
     const response = await serverInstance.get("/reports/customer-purchase", { params });
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     console.error("Failed to fetch customer purchase report:", error.response);
     return [];
@@ -38,7 +39,7 @@ export async function getCustomerPurchaseReportAPI(params = {}) {
 export async function getProfitabilityReportAPI(params = {}) {
   try {
     const response = await serverInstance.get("/reports/profitability", { params });
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     console.error("Failed to fetch profitability report:", error.response);
     return [];
@@ -49,7 +50,7 @@ export async function getProfitabilityReportAPI(params = {}) {
 export async function getCurrentStockValuationReport(params = {}) {
   try {
     const response = await serverInstance.get("/reports/stock-valuation", { params });
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     console.error("Failed to fetch stock valuation report:", error.response);
     return [];
@@ -60,7 +61,7 @@ export async function getCurrentStockValuationReport(params = {}) {
 export async function getLowStockReportAPI(params = {}) {
   try {
     const response = await serverInstance.get("/reports/low-stock", { params });
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     if (error.response?.status === 404) {
       return [];
@@ -74,7 +75,7 @@ export async function getLowStockReportAPI(params = {}) {
 export async function getBatchExpiryReportAPI(params = {}) {
   try {
     const response = await serverInstance.get("/reports/batch-expiry", { params });
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     if (error.response?.status === 404) {
       return [];
@@ -88,7 +89,7 @@ export async function getBatchExpiryReportAPI(params = {}) {
 export async function getStockMovementAuditReport(params = {}) {
   try {
     const response = await serverInstance.get("/reports/stock-movement-audit", { params });
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     if (error.response?.status === 404) {
       return [];
@@ -102,7 +103,7 @@ export async function getStockMovementAuditReport(params = {}) {
 export async function getSupplierPurchaseCostReport(params = {}) {
   try {
     const response = await serverInstance.get("/reports/supplier-cost", { params });
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     console.error("Failed to fetch supplier purchase cost report:", error.response);
     return [];
@@ -124,7 +125,7 @@ export async function getSupplierPurchaseCostReport(params = {}) {
 export async function getPmsSalesReportAPI(params = {}) {
   try {
     const response = await serverInstance.get("/reports/sales/pms", { params });
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     if (error.response?.status === 404) {
       return [];
@@ -138,7 +139,7 @@ export async function getPmsSalesReportAPI(params = {}) {
 export async function getRevenueReportAPI(params = {}) {
   try {
     const response = await serverInstance.get("/reports/revenue", { params });
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     if (error.response?.status === 404) {
       return [];
@@ -152,7 +153,7 @@ export async function getRevenueReportAPI(params = {}) {
 export async function getGSTComplianceReportAPI(data = {}) {
   try {
     const response = await serverInstance.post("/reports/gst-compliance", data);
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     console.error("Failed to fetch GST compliance report:", error.response);
     return [];
@@ -163,7 +164,7 @@ export async function getGSTComplianceReportAPI(data = {}) {
 export async function getHSNSummaryReportAPI(data = {}) {
   try {
     const response = await serverInstance.post("/reports/hsn/summary", data);
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     console.error("Failed to fetch HSN summary report:", error.response);
     return [];
@@ -174,7 +175,7 @@ export async function getHSNSummaryReportAPI(data = {}) {
 export async function getStockAndSalesSummaryReport(rate, data = {}) {
   try {
     const response = await serverInstance.post(`/reports/stocks/rate/${rate}`, data);
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     if (error.response?.status === 404) {
       return [];
@@ -188,7 +189,7 @@ export async function getStockAndSalesSummaryReport(rate, data = {}) {
 export async function getAllInvoiceFinancialReportAPI(data = {}) {
   try {
     const response = await serverInstance.post("/reports/invoices/financial", data);
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     if (error.response?.status === 404) {
       return [];
