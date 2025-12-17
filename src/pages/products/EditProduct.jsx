@@ -20,7 +20,7 @@ const EditProduct = () => {
   const { id } = useParams();
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [rateType, setRateType] = useState("purchasePrice");
+  const [rateType, setRateType] = useState("salePrice");
   const { successPopup, errorPopup } = useStore();
 
   useEffect(() => {
@@ -53,10 +53,10 @@ const EditProduct = () => {
           upc: productData.upc
         };
 
-        mappedData.purchasePriceWithoutTax = calculatePurchasePriceWithoutTax(
-          mappedData.purchasePrice,
-          totalTax
-        );
+        mappedData.salePriceWithoutTax = calculateSalePriceWithoutTax(
+           mappedData.salePrice,
+           totalTax
+         );
 
         setData(mappedData);
       } catch (error) {
@@ -113,14 +113,14 @@ const EditProduct = () => {
     setRateType(event.target.value);
   };
 
-  const calculatePurchasePrice = (purchasePriceWithoutTax, taxRate) => {
+  const calculateSalePrice = (salePriceWithoutTax, taxRate) => {
     return parseFloat(
-      (Number(purchasePriceWithoutTax) * (1 + Number(taxRate) / 100)).toFixed(3)
+      (Number(salePriceWithoutTax) * (1 + Number(taxRate) / 100)).toFixed(3)
     );
   };
 
-  const calculatePurchasePriceWithoutTax = (purchasePrice, taxRate) => {
-    return parseFloat((purchasePrice / (1 + taxRate / 100)).toFixed(3));
+  const calculateSalePriceWithoutTax = (salePrice, taxRate) => {
+    return parseFloat((salePrice / (1 + taxRate / 100)).toFixed(3));
   };
 
   useEffect(() => {
@@ -132,36 +132,36 @@ const EditProduct = () => {
       (Number(data.cess) || 0);
 
     switch (rateType) {
-      case "purchasePriceWithoutTax":
-        setData((prevState) => ({
-          ...prevState,
-          purchasePrice: calculatePurchasePrice(
-            prevState.purchasePriceWithoutTax,
-            totalTax
-          ),
-        }));
-        break;
-      case "purchasePrice":
-        setData((prevState) => ({
-          ...prevState,
-          purchasePriceWithoutTax: calculatePurchasePriceWithoutTax(
-            Number(prevState.purchasePrice),
-            totalTax
-          ),
-        }));
-        break;
-      default:
-        break;
-    }
-  }, [
-    data.cgst,
-    data.sgst,
-    data.cess,
-    rateType,
-    data.purchasePriceWithoutTax,
-    data.purchasePrice,
-    data,
-  ]);
+       case "salePriceWithoutTax":
+         setData((prevState) => ({
+           ...prevState,
+           salePrice: calculateSalePrice(
+             prevState.salePriceWithoutTax,
+             totalTax
+           ),
+         }));
+         break;
+       case "salePrice":
+         setData((prevState) => ({
+           ...prevState,
+           salePriceWithoutTax: calculateSalePriceWithoutTax(
+             Number(prevState.salePrice),
+             totalTax
+           ),
+         }));
+         break;
+       default:
+         break;
+     }
+    }, [
+     data.cgst,
+     data.sgst,
+     data.cess,
+     rateType,
+     data.salePriceWithoutTax,
+     data.salePrice,
+     data,
+    ]);
 
   const metadata = [
     {
@@ -238,11 +238,11 @@ const EditProduct = () => {
           onChange={handleChange}
         />,
         <InputBox
-          key="salePrice"
-          name="salePrice"
+          key="purchasePrice"
+          name="purchasePrice"
           type="number"
-          label="Sale Price"
-          value={data.salePrice}
+          label="Purchase Price"
+          value={data.purchasePrice}
           onChange={handleChange}
         />,
         <FormControl component="fieldset" key="rateType">
@@ -255,33 +255,33 @@ const EditProduct = () => {
             onChange={handleRateTypeChange}
           >
             <FormControlLabel
-              value="purchasePrice"
+              value="salePrice"
               control={<Radio />}
-              label="Purchase Rate (With Tax)"
+              label="Sale Rate (With Tax)"
             />
             <FormControlLabel
-              value="purchasePriceWithoutTax"
+              value="salePriceWithoutTax"
               control={<Radio />}
-              label="Purchase Price Without Tax"
+              label="Sale Price Without Tax"
             />
           </RadioGroup>
         </FormControl>,
-        rateType === "purchasePriceWithoutTax" ? (
+        rateType === "salePriceWithoutTax" ? (
           <InputBox
-            key="purchasePriceWithoutTax"
-            name="purchasePriceWithoutTax"
+            key="salePriceWithoutTax"
+            name="salePriceWithoutTax"
             type="number"
-            label="Purchase Price (without taxes)"
-            value={data.purchasePriceWithoutTax}
+            label="Sale Price (without taxes)"
+            value={data.salePriceWithoutTax}
             onChange={handleChange}
           />
         ) : (
           <InputBox
-            key="purchasePrice"
-            name="purchasePrice"
+            key="salePrice"
+            name="salePrice"
             type="number"
-            label="Purchase Rate (with taxes)"
-            value={data.purchasePrice}
+            label="Sale Rate (with taxes)"
+            value={data.salePrice}
             onChange={handleChange}
           />
         ),

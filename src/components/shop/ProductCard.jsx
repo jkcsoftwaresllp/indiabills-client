@@ -29,7 +29,7 @@ const ProductCard = ({ product, showCartControls = false }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedVariants, setSelectedVariants] = useState({});
   const [error, setError] = useState('');
-  const [purchasePrice, setPurchasePrice] = useState(null);
+  const [salePrice, setSalePrice] = useState(null);
   const [loadingPrice, setLoadingPrice] = useState(false);
 
   const productId = product.itemId || product.id;
@@ -53,8 +53,8 @@ const ProductCard = ({ product, showCartControls = false }) => {
     const fetchProductDetails = async () => {
       setLoadingPrice(true);
       const productDetails = await getProductById(productId);
-      if (productDetails?.purchase_price) {
-        setPurchasePrice(productDetails.purchase_price);
+      if (productDetails?.sale_price) {
+        setSalePrice(productDetails.sale_price);
       }
       setLoadingPrice(false);
     };
@@ -135,7 +135,7 @@ const ProductCard = ({ product, showCartControls = false }) => {
             </div>
             <div className="text-right">
               <Typography variant="h6" className="text-blue-600 font-bold">
-                ₹{formatNumber(purchasePrice || 0)}
+                ₹{formatNumber(salePrice || 0)}
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 (Inc. GST)

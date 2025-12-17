@@ -17,7 +17,7 @@ const QuickEditModal = ({
   const [submitError, setSubmitError] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [priceInputType, setPriceInputType] = useState(null); // null, "withoutTax", or "withTax"
-  const [finalPriceType, setFinalPriceType] = useState(null); // "purchasePriceWithoutTax" or "purchaseRate"
+  const [finalPriceType, setFinalPriceType] = useState(null); // "salePriceWithoutTax" or "saleRate"
 
   // Calculate total tax
   const totalTax =
@@ -25,14 +25,14 @@ const QuickEditModal = ({
     (parseFloat(formData.sgst) || 0) +
     (parseFloat(formData.cess) || 0);
 
-  // Calculate price with tax based on purchase price without tax
-  const calculatedPriceWithTax = formData.purchasePriceWithoutTax
-    ? parseFloat(formData.purchasePriceWithoutTax) * (1 + totalTax / 100)
+  // Calculate price with tax based on sale price without tax
+  const calculatedPriceWithTax = formData.salePriceWithoutTax
+    ? parseFloat(formData.salePriceWithoutTax) * (1 + totalTax / 100)
     : 0;
 
-  // Calculate price without tax based on purchase price with tax
-  const calculatedPriceWithoutTax = formData.purchaseRate
-    ? parseFloat(formData.purchaseRate) / (1 + totalTax / 100)
+  // Calculate price without tax based on sale price with tax
+  const calculatedPriceWithoutTax = formData.saleRate
+    ? parseFloat(formData.saleRate) / (1 + totalTax / 100)
     : 0;
 
   useEffect(() => {
@@ -41,13 +41,13 @@ const QuickEditModal = ({
       setErrors({});
       setSubmitError("");
       // Auto-detect price input type based on existing data
-      if (data.purchase_price) {
-        // If purchase_price exists, assume it's "withoutTax" by default
+      if (data.sale_price) {
+        // If sale_price exists, assume it's "withoutTax" by default
         setPriceInputType("withoutTax");
-        setFinalPriceType("purchasePriceWithoutTax");
+        setFinalPriceType("salePriceWithoutTax");
       }
     }
-  }, [data, open]);
+    }, [data, open]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({
@@ -78,13 +78,13 @@ const QuickEditModal = ({
         priceInputType &&
         (priceInputType === "withoutTax" || priceInputType === "withTax")
       ) {
-        // If tax-based pricing was used, set purchase_price based on finalPriceType
-        if (finalPriceType === "purchasePriceWithoutTax") {
-          dataToSave.purchase_price =
-            dataToSave.purchasePriceWithoutTax || dataToSave.purchase_price;
-        } else if (finalPriceType === "purchaseRate") {
-          dataToSave.purchase_price =
-            dataToSave.purchaseRate || dataToSave.purchase_price;
+        // If tax-based pricing was used, set sale_price based on finalPriceType
+        if (finalPriceType === "salePriceWithoutTax") {
+          dataToSave.sale_price =
+            dataToSave.salePriceWithoutTax || dataToSave.sale_price;
+        } else if (finalPriceType === "saleRate") {
+          dataToSave.sale_price =
+            dataToSave.saleRate || dataToSave.sale_price;
         }
       }
 
@@ -149,20 +149,20 @@ const QuickEditModal = ({
           {editableColumns.length > 0 ? (
             <div className={styles.fieldGrid}>
               {editableColumns.map((col) => {
-                // Skip purchase_price if tax-based pricing is in use
-                if (
-                  col.field === "purchase_price" &&
-                  (priceInputType === "withoutTax" ||
-                    priceInputType === "withTax")
-                ) {
-                  return null;
-                }
+                // Skip sale_price if tax-based pricing is in use
+                  if (
+                    col.field === "sale_price" &&
+                    (priceInputType === "withoutTax" ||
+                      priceInputType === "withTax")
+                  ) {
+                    return null;
+                  }
 
-                // Render tax section header
-                if (
-                  col.field === "cgst" &&
-                  !editableColumns.find((c) => c.field === "purchase_price")
-                ) {
+                  // Render tax section header
+                  if (
+                    col.field === "cgst" &&
+                    !editableColumns.find((c) => c.field === "sale_price")
+                  ) {
                   return (
                     <div key="tax-section" className={styles.sectionHeader}>
                       <h4>Tax & Pricing</h4>
@@ -262,7 +262,7 @@ const QuickEditModal = ({
 
               {/* Price Input Type Selection */}
               {editableColumns.some(
-                (col) => col.field === "purchase_price"
+                (col) => col.field === "sale_price"
               ) && (
                 <>
                   <div
@@ -287,7 +287,7 @@ const QuickEditModal = ({
                           onChange={(e) => setPriceInputType(e.target.value)}
                           disabled={loading}
                         />
-                        Purchase Price (Without Tax)
+                        Sale Price (Without Tax)
                       </label>
                       <label className={styles.radioLabel}>
                         <input
@@ -298,7 +298,7 @@ const QuickEditModal = ({
                           onChange={(e) => setPriceInputType(e.target.value)}
                           disabled={loading}
                         />
-                        Purchase Price (With Tax)
+                        Sale Price (With Tax)
                       </label>
                     </div>
                   </div>
@@ -308,56 +308,56 @@ const QuickEditModal = ({
                       <div className={styles.fieldGroup}>
                         <label className={styles.fieldLabel}>
                           {priceInputType === "withoutTax"
-                            ? "Purchase Price (Without Tax)"
-                            : "Purchase Price (With Tax)"}{" "}
-                          *
-                        </label>
-                        <input
-                          type="number"
-                          name={
-                            priceInputType === "withoutTax"
-                              ? "purchasePriceWithoutTax"
-                              : "purchaseRate"
-                          }
-                          placeholder="0.00"
-                          value={
-                            priceInputType === "withoutTax"
-                              ? formData.purchasePriceWithoutTax || ""
-                              : formData.purchaseRate || ""
-                          }
-                          onChange={(e) =>
-                            handleChange(
-                              priceInputType === "withoutTax"
-                                ? "purchasePriceWithoutTax"
-                                : "purchaseRate",
-                              e.target.value
-                            )
-                          }
-                          className={`${styles.fieldInput} ${
-                            errors[
-                              priceInputType === "withoutTax"
-                                ? "purchasePriceWithoutTax"
-                                : "purchaseRate"
-                            ]
-                              ? styles.error
-                              : ""
-                          }`}
-                          min="0"
-                          step="0.01"
-                          disabled={loading}
-                        />
-                        {errors[
-                          priceInputType === "withoutTax"
-                            ? "purchasePriceWithoutTax"
-                            : "purchaseRate"
-                        ] && (
-                          <span className={styles.errorMsg}>
-                            {
-                              errors[
-                                priceInputType === "withoutTax"
-                                  ? "purchasePriceWithoutTax"
-                                  : "purchaseRate"
-                              ]
+                             ? "Sale Price (Without Tax)"
+                             : "Sale Price (With Tax)"}{" "}
+                           *
+                          </label>
+                          <input
+                           type="number"
+                           name={
+                             priceInputType === "withoutTax"
+                               ? "salePriceWithoutTax"
+                               : "saleRate"
+                           }
+                           placeholder="0.00"
+                           value={
+                             priceInputType === "withoutTax"
+                               ? formData.salePriceWithoutTax || ""
+                               : formData.saleRate || ""
+                           }
+                           onChange={(e) =>
+                             handleChange(
+                               priceInputType === "withoutTax"
+                                 ? "salePriceWithoutTax"
+                                 : "saleRate",
+                               e.target.value
+                             )
+                           }
+                           className={`${styles.fieldInput} ${
+                             errors[
+                               priceInputType === "withoutTax"
+                                 ? "salePriceWithoutTax"
+                                 : "saleRate"
+                             ]
+                               ? styles.error
+                               : ""
+                           }`}
+                           min="0"
+                           step="0.01"
+                           disabled={loading}
+                          />
+                          {errors[
+                           priceInputType === "withoutTax"
+                             ? "salePriceWithoutTax"
+                             : "saleRate"
+                          ] && (
+                           <span className={styles.errorMsg}>
+                             {
+                               errors[
+                                 priceInputType === "withoutTax"
+                                   ? "salePriceWithoutTax"
+                                   : "saleRate"
+                               ]
                             }
                           </span>
                         )}
@@ -366,30 +366,30 @@ const QuickEditModal = ({
                       <div className={styles.fieldGroup}>
                         <label className={styles.fieldLabel}>
                           {priceInputType === "withoutTax"
-                            ? "Purchase Price (With Tax)"
-                            : "Purchase Price (Without Tax)"}
-                        </label>
-                        <input
-                          type="number"
-                          name={
+                            ? "Sale Price (With Tax)"
+                            : "Sale Price (Without Tax)"}
+                            </label>
+                            <input
+                            type="number"
+                            name={
                             priceInputType === "withoutTax"
-                              ? "purchaseRate"
-                              : "purchasePriceWithoutTax"
-                          }
-                          placeholder="0.00"
-                          value={
+                              ? "saleRate"
+                              : "salePriceWithoutTax"
+                            }
+                            placeholder="0.00"
+                            value={
                             priceInputType === "withoutTax"
-                              ? formData.purchaseRate || ""
-                              : formData.purchasePriceWithoutTax || ""
-                          }
-                          onChange={(e) =>
+                              ? formData.saleRate || ""
+                              : formData.salePriceWithoutTax || ""
+                            }
+                            onChange={(e) =>
                             handleChange(
                               priceInputType === "withoutTax"
-                                ? "purchaseRate"
-                                : "purchasePriceWithoutTax",
+                                ? "saleRate"
+                                : "salePriceWithoutTax",
                               e.target.value
                             )
-                          }
+                            }
                           className={styles.fieldInput}
                           min="0"
                           step="0.01"
@@ -430,8 +430,8 @@ const QuickEditModal = ({
                               }
                               disabled={loading}
                             />
-                            Purchase Price Without Tax (₹
-                            {formData.purchasePriceWithoutTax || "0.00"})
+                            Sale Price Without Tax (₹
+                            {formData.salePriceWithoutTax || "0.00"})
                           </label>
                           <label className={styles.radioLabel}>
                             <input
@@ -444,8 +444,8 @@ const QuickEditModal = ({
                               }
                               disabled={loading}
                             />
-                            Purchase Price With Tax (₹
-                            {formData.purchaseRate || "0.00"})
+                            Sale Price With Tax (₹
+                            {formData.saleRate || "0.00"})
                           </label>
                         </div>
                       </div>

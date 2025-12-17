@@ -226,8 +226,8 @@ const ShopPage = () => {
           id: product.id,
           itemId: product.id,
           itemName: product.name,
-          price: product.salePrice,
-          salePrice: product.salePrice,
+          price: product.purchasePrice,
+          salePrice: product.purchasePrice,
           description: product.description,
           manufacturer: product.manufacturer,
           currentQuantity: 100, // Mock quantity for now

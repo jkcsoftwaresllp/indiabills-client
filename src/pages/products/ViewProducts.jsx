@@ -72,14 +72,14 @@ const colDefs = [
     cellStyle: { textTransform: "capitalize" },
   },
   {
-    field: "sale_price",
-    headerName: "Sale Price",
+    field: "purchase_price",
+    headerName: "Purchase Price",
     editable: true,
     cellClassRules: { money: (p) => p.value },
   },
   {
-    field: "purchase_price",
-    headerName: "Purchase Price",
+    field: "sale_price",
+    headerName: "sale Price",
     editable: true,
     cellClassRules: { money: (p) => p.value },
   },

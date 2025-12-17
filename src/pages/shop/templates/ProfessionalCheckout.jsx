@@ -104,7 +104,7 @@ const ProfessionalCheckout = () => {
         if (product) {
           const taxPercentage = (product.taxes?.cgst || 0) + (product.taxes?.sgst || 0) + (product.taxes?.cess || 0);
           details[item.product_id] = {
-            purchase_price: product.purchase_price,
+            sale_price: product.sale_price,
             tax: taxPercentage,
             taxes: product.taxes,
           };
@@ -125,7 +125,7 @@ const ProfessionalCheckout = () => {
 
     cartItems.forEach((item) => {
       const qty = quantities[item.product_id] || item.quantity;
-      const price = productDetails[item.product_id]?.purchase_price || item.price_at_addition;
+      const price = productDetails[item.product_id]?.sale_price || item.price_at_addition;
       const itemTotal = price * qty;
       subtotal += itemTotal;
 
@@ -407,7 +407,7 @@ const ProfessionalCheckout = () => {
                 <h2>Order Summary</h2>
                 <div className="cart-items">
                    {cartItems.map((item) => {
-                     const price = productDetails[item.product_id]?.purchase_price || item.price_at_addition;
+                     const price = productDetails[item.product_id]?.sale_price || item.price_at_addition;
                      return (
                        <div key={item.product_id} className="cart-item">
                          <div className="item-info">
@@ -798,7 +798,7 @@ const ProfessionalCheckout = () => {
 
             <div className="summary-items">
               {cartItems.map((item) => {
-                const price = productDetails[item.product_id]?.purchase_price || item.price_at_addition;
+                const price = productDetails[item.product_id]?.sale_price || item.price_at_addition;
                 return (
                   <div key={item.product_id} className="summary-item">
                     <div>
