@@ -1,5 +1,44 @@
 // Authentication helper functions with enhanced multi-org support
 
+// Password validation rules (must match backend: user.helper.js)
+export const validatePassword = (password) => {
+  const errors = [];
+
+  if (!password) {
+    errors.push('Password is required');
+    return { isValid: false, errors };
+  }
+
+  // Minimum length check
+  if (password.length < 8) {
+    errors.push('Password must be at least 8 characters long');
+  }
+
+  // Complexity regex - requires uppercase, lowercase, digit, and special character
+  const complexityRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+=\-])[A-Za-z\d@$!%*?&#^()_+=\-]{7,}$/;
+
+  if (!complexityRegex.test(password)) {
+    if (!/(?=.*[A-Z])/.test(password)) {
+      errors.push('Password must contain at least one uppercase letter');
+    }
+    if (!/(?=.*[a-z])/.test(password)) {
+      errors.push('Password must contain at least one lowercase letter');
+    }
+    if (!/(?=.*\d)/.test(password)) {
+      errors.push('Password must contain at least one number');
+    }
+    if (!/(?=.*[@$!%*?&#^()_+=\-])/.test(password)) {
+      errors.push('Password must contain at least one special character (@$!%*?&#^()_+=-');
+    }
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+};
+
 // Session management with localStorage (can be migrated to cookies later)
 export const setSession = (sessionData) => {
   localStorage.setItem('session', JSON.stringify(sessionData));
@@ -166,8 +205,11 @@ export const validateUserData = (data, isUpdate = false) => {
   }
 
   // Password validation
-  if (data.password && data.password.length < 8) {
-    errors.password = 'Password must be at least 8 characters long';
+  if (data.password) {
+    const passwordValidation = validatePassword(data.password);
+    if (!passwordValidation.isValid) {
+      errors.password = passwordValidation.errors.join(' ');
+    }
   }
 
   // Password confirmation

@@ -6,6 +6,7 @@ import { createUser, uploadUserImage } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import { Input, CircularProgress } from "@mui/material";
+import { validatePassword } from "../../utils/authHelper";
 import styles from './AddUser.module.css';
 
 const AddUser = () => {
@@ -41,8 +42,11 @@ const AddUser = () => {
       if (!formData.re_enter_password) newErrors.re_enter_password = 'Please confirm password';
 
       // Password validation
-      if (formData.password && formData.password.length < 8) {
-        newErrors.password = 'Must be at least 8 characters long';
+      if (formData.password) {
+        const passwordValidation = validatePassword(formData.password);
+        if (!passwordValidation.isValid) {
+          newErrors.password = passwordValidation.errors.join(' ');
+        }
       }
 
       // Password confirmation
@@ -282,7 +286,7 @@ const BasicPage = React.memo(({ formData, handleChange, errors }) => {
             <input
               type="password"
               name="password"
-              placeholder="At least 8 characters"
+              placeholder="Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char"
               value={formData.password}
               onChange={handleChange}
               className={`${styles.fieldInput} ${errors.password ? styles.error : ''}`}

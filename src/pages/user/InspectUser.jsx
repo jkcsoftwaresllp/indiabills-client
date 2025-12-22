@@ -5,6 +5,7 @@ import { getUserById, updateUser, deleteUser, uploadUserImage } from "../../netw
 import { useStore } from "../../store/store";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import { motion } from 'framer-motion';
+import { validatePassword } from "../../utils/authHelper";
 import styles from './InspectUser.module.css';
 
 const InspectUser = () => {
@@ -80,8 +81,9 @@ const InspectUser = () => {
         }
 
         if (formData.password) {
-            if (formData.password.length < 8) {
-                newErrors.password = 'Password must be at least 8 characters long';
+            const passwordValidation = validatePassword(formData.password);
+            if (!passwordValidation.isValid) {
+                newErrors.password = passwordValidation.errors.join(' ');
             }
             if (formData.password !== formData.confirm_password) {
                 newErrors.confirm_password = 'Passwords do not match';
@@ -541,7 +543,7 @@ const InspectUser = () => {
                                                 className={`${styles.input} ${errors.password ? styles.error : ''}`}
                                                 value={formData.password || ''}
                                                 onChange={handleChange}
-                                                placeholder="Leave blank to keep current password"
+                                                placeholder="Min 8 chars, 1 upper, 1 lower, 1 num, 1 special char (or leave blank)"
                                             />
                                             {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
                                         </div>

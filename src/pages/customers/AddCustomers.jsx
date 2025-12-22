@@ -6,6 +6,7 @@ import { createCustomer, uploadImg } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import { renameAndOptimize } from "../../utils/FormHelper";
+import { validatePassword } from "../../utils/authHelper";
 import styles from './AddCustomers.module.css';
 
 const AddCustomers = () => {
@@ -46,9 +47,12 @@ const AddCustomers = () => {
         newErrors.confirm_password = "Passwords do not match";
       }
 
-      // Validate password length
-      if (formData.password && formData.password.length < 8) {
-        newErrors.password = "Password must be at least 8 characters";
+      // Validate password using password validation function
+      if (formData.password) {
+        const passwordValidation = validatePassword(formData.password);
+        if (!passwordValidation.isValid) {
+          newErrors.password = passwordValidation.errors.join(' ');
+        }
       }
     } else if (pageNum === 2) {
       // Validate second slide (Business Details)
@@ -300,7 +304,7 @@ const BasicPage = React.memo(({ formData, handleChange, errors, setImage, upload
             <input
               type="password"
               name="password"
-              placeholder="At least 8 characters"
+              placeholder="Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char"
               value={formData.password || ''}
               onChange={handleChange}
               className={`${styles.fieldInput} ${errors.password ? styles.error : ''}`}
