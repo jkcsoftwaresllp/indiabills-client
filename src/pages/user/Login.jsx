@@ -28,13 +28,12 @@ const LoginPage = () => {
   const [showForgotDialog, setShowForgotDialog] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
-  const [forgotStep, setForgotStep] = useState("email"); // "email", "otp", or "password"
+  const [forgotStep, setForgotStep] = useState("email"); // "email" or "reset"
   const [forgotOtp, setForgotOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -82,7 +81,6 @@ const LoginPage = () => {
     setNewPassword("");
     setConfirmPassword("");
     setForgotStep("email");
-    setOtpVerified(false);
     setShowForgotDialog(true);
   };
 
@@ -103,29 +101,18 @@ const LoginPage = () => {
 
         if (response.status === 200) {
           successPopup("OTP sent to your email");
-          setForgotStep("otp");
+          setForgotStep("reset");
         } else {
           errorPopup(response.data?.message || "Failed to send OTP");
         }
-      } else if (forgotStep === "otp") {
-        // Step 2: Verify OTP only (no password)
+      } else if (forgotStep === "reset") {
+        // Step 2: Verify OTP and reset password (combined)
         if (!forgotOtp) {
           errorPopup("Please enter the OTP");
           setForgotLoading(false);
           return;
         }
 
-        const response = await verifyResetOtp(forgotEmail, forgotOtp);
-
-        if (response.status === 200) {
-          successPopup("OTP verified successfully!");
-          setOtpVerified(true);
-          setForgotStep("password");
-        } else {
-          errorPopup(response.data?.message || "Invalid OTP");
-        }
-      } else if (forgotStep === "password") {
-        // Step 3: Set new password
         if (!newPassword || !confirmPassword) {
           errorPopup("Please enter both password fields");
           setForgotLoading(false);
@@ -159,7 +146,6 @@ const LoginPage = () => {
           setNewPassword("");
           setConfirmPassword("");
           setForgotStep("email");
-          setOtpVerified(false);
         } else {
           errorPopup(response.data?.message || "Failed to reset password");
         }
@@ -177,14 +163,6 @@ const LoginPage = () => {
     setForgotOtp("");
     setNewPassword("");
     setConfirmPassword("");
-    setOtpVerified(false);
-  };
-
-  const handleBackToOtpStep = () => {
-    setForgotStep("otp");
-    setNewPassword("");
-    setConfirmPassword("");
-    setOtpVerified(false);
   };
 
   const handleLogin = async (e) => {
@@ -435,9 +413,7 @@ const LoginPage = () => {
                 <h3 className={styles.dialogTitle}>
                   {forgotStep === "email" 
                     ? "Reset Your Password" 
-                    : forgotStep === "otp" 
-                    ? "Verify OTP"
-                    : "Set New Password"}
+                    : "Verify OTP & Set New Password"}
                 </h3>
                 <button
                   type="button"
@@ -452,9 +428,7 @@ const LoginPage = () => {
               <p className={styles.dialogDescription}>
                 {forgotStep === "email"
                   ? "Enter your email address and we'll send you an OTP."
-                  : forgotStep === "otp"
-                  ? "Enter the 6-digit OTP sent to your email."
-                  : "Set your new password."}
+                  : "Enter the OTP sent to your email and set your new password."}
               </p>
 
               <form onSubmit={handleForgotPasswordSubmit} className={styles.dialogForm}>
@@ -479,27 +453,25 @@ const LoginPage = () => {
                   </div>
                 )}
 
-                {forgotStep === "otp" && (
-                  <div className={styles.dialogInputGroup}>
-                    <label htmlFor="forgotOtp" className={styles.label}>
-                      OTP Code
-                    </label>
-                    <input
-                      id="forgotOtp"
-                      type="text"
-                      className={styles.input}
-                      placeholder="Enter 6-digit OTP"
-                      value={forgotOtp}
-                      onChange={(e) => setForgotOtp(e.target.value)}
-                      maxLength="6"
-                      required
-                      disabled={forgotLoading}
-                    />
-                  </div>
-                )}
-
-                {forgotStep === "password" && (
+                {forgotStep === "reset" && (
                   <>
+                    <div className={styles.dialogInputGroup}>
+                      <label htmlFor="forgotOtp" className={styles.label}>
+                        OTP Code
+                      </label>
+                      <input
+                        id="forgotOtp"
+                        type="text"
+                        className={styles.input}
+                        placeholder="Enter 6-digit OTP"
+                        value={forgotOtp}
+                        onChange={(e) => setForgotOtp(e.target.value)}
+                        maxLength="6"
+                        required
+                        disabled={forgotLoading}
+                      />
+                    </div>
+
                     <div className={styles.dialogInputGroup}>
                       <label htmlFor="newPassword" className={styles.label}>
                         New Password
@@ -563,9 +535,7 @@ const LoginPage = () => {
                     onClick={
                       forgotStep === "email"
                         ? () => setShowForgotDialog(false)
-                        : forgotStep === "otp"
-                        ? handleBackToEmailStep
-                        : handleBackToOtpStep
+                        : handleBackToEmailStep
                     }
                     disabled={forgotLoading}
                   >
@@ -579,12 +549,10 @@ const LoginPage = () => {
                     {forgotLoading ? (
                       <>
                         <span className={styles.spinner}></span>
-                        {forgotStep === "email" ? "Sending..." : forgotStep === "otp" ? "Verifying..." : "Resetting..."}
+                        {forgotStep === "email" ? "Sending..." : "Resetting..."}
                       </>
                     ) : forgotStep === "email" ? (
                       "Send OTP"
-                    ) : forgotStep === "otp" ? (
-                      "Verify OTP"
                     ) : (
                       "Reset Password"
                     )}
