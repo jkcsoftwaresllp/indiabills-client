@@ -84,3 +84,43 @@ export async function checkSession() {
     };
   }
 }
+
+// Forgot password - Request OTP
+export async function forgotPassword(email) {
+  try {
+    const response = await serverInstance.post('/forgot-password', { email });
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Forgot password failed:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Failed to send OTP' }
+    };
+  }
+}
+
+// Verify reset OTP and/or update password
+// If password not provided: verifies OTP only
+// If password provided: verifies OTP and resets password
+export async function verifyResetOtp(email, otp, password = null, re_password = null) {
+  try {
+    const response = await serverInstance.post('/verify-reset-otp', {
+      email,
+      otp,
+      ...(password && re_password && { password, re_password })
+    });
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Verify reset OTP failed:', error.response);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || { message: 'Failed to process request' }
+    };
+  }
+}

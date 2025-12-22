@@ -10,7 +10,7 @@ import { ownerSignup, createOrganization, getOrganization, updateOrganization, g
 import { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier } from './suppliersApi';
 import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from './productsApi';
 import { getOffers, getOfferById, createOffer, updateOffer, deleteOffer } from './offersApi';
-import { login, switchOrganization, logout, getUserOrganizations } from './authApi';
+import { login, switchOrganization, logout, getUserOrganizations, forgotPassword, verifyResetOtp } from './authApi';
 import { getUsers, getUserById, getUserByUsername, getUsersByRole, createUser, updateUser, deleteUser } from './userApi';
 import { uploadUserImage } from './userApi';
 // import { updateOrganizationById } from './organizationApi';
@@ -384,6 +384,8 @@ export {
   switchOrganization,
   logout,
   getUserOrganizations,
+  forgotPassword,
+  verifyResetOtp,
   // User APIs
   getUsers,
   getUserById,

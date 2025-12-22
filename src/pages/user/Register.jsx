@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useStore } from "../../store/store";
 import { ownerSignup } from "../../network/api";
+import { validatePassword } from "../../utils/authHelper";
 import logo from "../../assets/IndiaBills_logo.png";
 import styles from "./Register.module.css";
 import Popup from "../../components/core/Popup";
@@ -12,6 +13,7 @@ const Register = () => {
   const [showrepassword, setShowrepassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+  const [errors, setErrors] = useState({});
   const [data, setData] = useState({
     firstName: "",
     lastName: "",
@@ -50,6 +52,13 @@ const Register = () => {
       ...prev,
       [name]: value,
     }));
+    // Clear error for this field
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }));
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -61,31 +70,34 @@ const Register = () => {
   };
 
   const validateForm = () => {
+    const newErrors = {};
+
     if (!data.firstName.trim()) {
-      errorPopup("First name is required");
-      return false;
+      newErrors.firstName = "First name is required";
     }
     if (!data.lastName.trim()) {
-      errorPopup("Last name is required");
-      return false;
+      newErrors.lastName = "Last name is required";
     }
     if (!data.email.trim()) {
-      errorPopup("Email is required");
-      return false;
+      newErrors.email = "Email is required";
     }
     if (!data.password) {
-      errorPopup("Password is required");
-      return false;
+      newErrors.password = "Password is required";
+    } else {
+      const passwordValidation = validatePassword(data.password);
+      if (!passwordValidation.isValid) {
+        newErrors.password = passwordValidation.errors.join(' ');
+      }
     }
-    if (data.password !== data.repassword) {
-      errorPopup("Passwords do not match");
-      return false;
+    if (data.password && data.password !== data.repassword) {
+      newErrors.repassword = "Passwords do not match";
     }
     if (!data.phone.trim()) {
-      errorPopup("Phone number is required");
-      return false;
+      newErrors.phone = "Phone number is required";
     }
-    return true;
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleRegister = async (e) => {
@@ -206,18 +218,19 @@ const Register = () => {
                     <div className={styles.inputWrapper}>
                       <MdOutlinePerson className={styles.fieldIcon} />
                       <input
-                        id="firstName"
-                        name="firstName"
-                        type="text"
-                        className={styles.input}
-                        onChange={handleInputChange}
-                        placeholder="Enter your first name"
-                        value={data.firstName}
-                        required
-                        disabled={loading}
-                      />
-                    </div>
-                  </div>
+                          id="firstName"
+                          name="firstName"
+                          type="text"
+                          className={`${styles.input} ${errors.firstName ? styles.error : ''}`}
+                          onChange={handleInputChange}
+                          placeholder="Enter your first name"
+                          value={data.firstName}
+                          required
+                          disabled={loading}
+                        />
+                      </div>
+                      {errors.firstName && <span className={styles.errorMessage}>{errors.firstName}</span>}
+                      </div>
 
                 <div className={styles.inputGroup}>
                   <label htmlFor="lastName" className={styles.label}>
@@ -226,18 +239,19 @@ const Register = () => {
                   <div className={styles.inputWrapper}>
                     <MdOutlinePerson className={styles.fieldIcon} />
                     <input
-                      id="lastName"
-                      name="lastName"
-                      type="text"
-                      className={styles.input}
-                      onChange={handleInputChange}
-                      placeholder="Enter your last name"
-                      value={data.lastName}
-                      required
-                      disabled={loading}
-                    />
-                  </div>
-                </div>
+                        id="lastName"
+                        name="lastName"
+                        type="text"
+                        className={`${styles.input} ${errors.lastName ? styles.error : ''}`}
+                        onChange={handleInputChange}
+                        placeholder="Enter your last name"
+                        value={data.lastName}
+                        required
+                        disabled={loading}
+                      />
+                    </div>
+                    {errors.lastName && <span className={styles.errorMessage}>{errors.lastName}</span>}
+                    </div>
               </div>
 
               <div className={styles.inputGroup}>
@@ -250,15 +264,16 @@ const Register = () => {
                     id="email"
                     name="email"
                     type="email"
-                    className={styles.input}
+                    className={`${styles.input} ${errors.email ? styles.error : ''}`}
                     onChange={handleInputChange}
                     placeholder="Enter your email"
                     value={data.email}
                     required
                     disabled={loading}
                   />
-                </div>
-              </div>
+                  </div>
+                  {errors.email && <span className={styles.errorMessage}>{errors.email}</span>}
+                  </div>
 
               <div className={styles.inputGroup}>
                 <label htmlFor="phone" className={styles.label}>
@@ -270,73 +285,76 @@ const Register = () => {
                     id="phone"
                     name="phone"
                     type="tel"
-                    className={styles.input}
+                    className={`${styles.input} ${errors.phone ? styles.error : ''}`}
                     onChange={handleInputChange}
                     placeholder="Enter your phone number"
                     value={data.phone}
                     required
                     disabled={loading}
                   />
-                </div>
-              </div>
+                  </div>
+                  {errors.phone && <span className={styles.errorMessage}>{errors.phone}</span>}
+                  </div>
 
               <div className={styles.inputGroup}>
-                <label htmlFor="password" className={styles.label}>
-                  Password
-                </label>
-                <div className={styles.inputWrapper}>
-                  <MdLock className={styles.fieldIcon} />
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    className={styles.input}
-                    onChange={handleInputChange}
-                    placeholder="Create a strong password"
-                    value={data.password}
-                    required
-                    disabled={loading}
-                  />
-                  <button
-                    type="button"
-                    className={styles.passwordToggle}
-                    onClick={togglePasswordVisibility}
-                    aria-label="Toggle password visibility"
-                    disabled={loading}
-                  >
-                    {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
-                  </button>
-                </div>
-              </div>
+                 <label htmlFor="password" className={styles.label}>
+                   Password
+                 </label>
+                 <div className={styles.inputWrapper}>
+                   <MdLock className={styles.fieldIcon} />
+                   <input
+                     id="password"
+                     name="password"
+                     type={showPassword ? "text" : "password"}
+                     className={`${styles.input} ${errors.password ? styles.error : ''}`}
+                     onChange={handleInputChange}
+                     placeholder="Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char"
+                     value={data.password}
+                     required
+                     disabled={loading}
+                   />
+                   <button
+                     type="button"
+                     className={styles.passwordToggle}
+                     onClick={togglePasswordVisibility}
+                     aria-label="Toggle password visibility"
+                     disabled={loading}
+                   >
+                     {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
+                   </button>
+                 </div>
+                 {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
+               </div>
 
               <div className={styles.inputGroup}>
-                <label htmlFor="repassword" className={styles.label}>
-                  Confirm Password
-                </label>
-                <div className={styles.inputWrapper}>
-                  <MdLock className={styles.fieldIcon} />
-                  <input
-                    id="repassword"
-                    name="repassword"
-                    type={showrepassword ? "text" : "password"}
-                    className={styles.input}
-                    onChange={handleInputChange}
-                    placeholder="Confirm your password"
-                    value={data.repassword}
-                    required
-                    disabled={loading}
-                  />
-                  <button
-                    type="button"
-                    className={styles.passwordToggle}
-                    onClick={togglerepasswordVisibility}
-                    aria-label="Toggle confirm password visibility"
-                    disabled={loading}
-                  >
-                    {showrepassword ? <MdVisibilityOff /> : <MdVisibility />}
-                  </button>
-                </div>
-              </div>
+                 <label htmlFor="repassword" className={styles.label}>
+                   Confirm Password
+                 </label>
+                 <div className={styles.inputWrapper}>
+                   <MdLock className={styles.fieldIcon} />
+                   <input
+                     id="repassword"
+                     name="repassword"
+                     type={showrepassword ? "text" : "password"}
+                     className={`${styles.input} ${errors.repassword ? styles.error : ''}`}
+                     onChange={handleInputChange}
+                     placeholder="Confirm your password"
+                     value={data.repassword}
+                     required
+                     disabled={loading}
+                   />
+                   <button
+                     type="button"
+                     className={styles.passwordToggle}
+                     onClick={togglerepasswordVisibility}
+                     aria-label="Toggle confirm password visibility"
+                     disabled={loading}
+                   >
+                     {showrepassword ? <MdVisibilityOff /> : <MdVisibility />}
+                   </button>
+                 </div>
+                 {errors.repassword && <span className={styles.errorMessage}>{errors.repassword}</span>}
+               </div>
               </div>
 
             <button

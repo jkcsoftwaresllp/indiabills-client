@@ -329,6 +329,24 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
+.errorMessage {
+  font-size: 0.8rem;
+  color: #ef4444;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  line-height: 1.3;
+}
+
+.input.error {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
 .passwordToggle:disabled {
   opacity: 0.5;
   cursor: not-allowed;

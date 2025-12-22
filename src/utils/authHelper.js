@@ -14,23 +14,24 @@ export const validatePassword = (password) => {
     errors.push('Password must be at least 8 characters long');
   }
 
-  // Complexity regex - requires uppercase, lowercase, digit, and special character
-  const complexityRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+=\-])[A-Za-z\d@$!%*?&#^()_+=\-]{7,}$/;
+  // Check for uppercase letter
+  if (!/[A-Z]/.test(password)) {
+    errors.push('Password must contain at least one uppercase letter');
+  }
 
-  if (!complexityRegex.test(password)) {
-    if (!/(?=.*[A-Z])/.test(password)) {
-      errors.push('Password must contain at least one uppercase letter');
-    }
-    if (!/(?=.*[a-z])/.test(password)) {
-      errors.push('Password must contain at least one lowercase letter');
-    }
-    if (!/(?=.*\d)/.test(password)) {
-      errors.push('Password must contain at least one number');
-    }
-    if (!/(?=.*[@$!%*?&#^()_+=\-])/.test(password)) {
-      errors.push('Password must contain at least one special character (@$!%*?&#^()_+=-');
-    }
+  // Check for lowercase letter
+  if (!/[a-z]/.test(password)) {
+    errors.push('Password must contain at least one lowercase letter');
+  }
+
+  // Check for digit
+  if (!/\d/.test(password)) {
+    errors.push('Password must contain at least one number');
+  }
+
+  // Check for special character
+  if (!/[@$!%*?&#^()_+=\-]/.test(password)) {
+    errors.push('Password must contain at least one special character (@$!%*?&#^()_+=-');
   }
 
   return {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { login } from "../../network/api";
+import { login, forgotPassword, verifyResetOtp } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useAuth } from "../../hooks/useAuth";
 import { setSession, setTempSession, setOrganizationContext } from "../../utils/authHelper";
@@ -28,6 +28,13 @@ const LoginPage = () => {
   const [showForgotDialog, setShowForgotDialog] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotStep, setForgotStep] = useState("email"); // "email", "otp", or "password"
+  const [forgotOtp, setForgotOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -71,33 +78,113 @@ const LoginPage = () => {
 
   const handleForgotPasswordClick = () => {
     setForgotEmail("");
+    setForgotOtp("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setForgotStep("email");
+    setOtpVerified(false);
     setShowForgotDialog(true);
   };
 
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
-
-    if (!forgotEmail) {
-      errorPopup("Please enter your email address");
-      return;
-    }
-
     setForgotLoading(true);
 
     try {
-      // TODO: Replace with actual forgot password API call when backend is ready
-      // const response = await forgotPassword({ email: forgotEmail });
-      
-      // Simulating API response for now
-      successPopup("Password reset link has been sent to your email");
-      setShowForgotDialog(false);
-      setForgotEmail("");
+      if (forgotStep === "email") {
+        // Step 1: Send OTP to email
+        if (!forgotEmail) {
+          errorPopup("Please enter your email address");
+          setForgotLoading(false);
+          return;
+        }
+
+        const response = await forgotPassword(forgotEmail);
+
+        if (response.status === 200) {
+          successPopup("OTP sent to your email");
+          setForgotStep("otp");
+        } else {
+          errorPopup(response.data?.message || "Failed to send OTP");
+        }
+      } else if (forgotStep === "otp") {
+        // Step 2: Verify OTP only (no password)
+        if (!forgotOtp) {
+          errorPopup("Please enter the OTP");
+          setForgotLoading(false);
+          return;
+        }
+
+        const response = await verifyResetOtp(forgotEmail, forgotOtp);
+
+        if (response.status === 200) {
+          successPopup("OTP verified successfully!");
+          setOtpVerified(true);
+          setForgotStep("password");
+        } else {
+          errorPopup(response.data?.message || "Invalid OTP");
+        }
+      } else if (forgotStep === "password") {
+        // Step 3: Set new password
+        if (!newPassword || !confirmPassword) {
+          errorPopup("Please enter both password fields");
+          setForgotLoading(false);
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          errorPopup("Passwords do not match");
+          setForgotLoading(false);
+          return;
+        }
+
+        if (newPassword.length < 8) {
+          errorPopup("Password must be at least 8 characters long");
+          setForgotLoading(false);
+          return;
+        }
+
+        const response = await verifyResetOtp(
+          forgotEmail,
+          forgotOtp,
+          newPassword,
+          confirmPassword
+        );
+
+        if (response.status === 200) {
+          successPopup("Password reset successful! You can now login.");
+          setShowForgotDialog(false);
+          setForgotEmail("");
+          setForgotOtp("");
+          setNewPassword("");
+          setConfirmPassword("");
+          setForgotStep("email");
+          setOtpVerified(false);
+        } else {
+          errorPopup(response.data?.message || "Failed to reset password");
+        }
+      }
     } catch (error) {
       console.error("Forgot password error:", error);
-      errorPopup("Failed to send reset link. Please try again later.");
+      errorPopup("An error occurred. Please try again later.");
     } finally {
       setForgotLoading(false);
     }
+  };
+
+  const handleBackToEmailStep = () => {
+    setForgotStep("email");
+    setForgotOtp("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setOtpVerified(false);
+  };
+
+  const handleBackToOtpStep = () => {
+    setForgotStep("otp");
+    setNewPassword("");
+    setConfirmPassword("");
+    setOtpVerified(false);
   };
 
   const handleLogin = async (e) => {
@@ -273,18 +360,18 @@ const LoginPage = () => {
 
               <div className={styles.inputGroup}>
                 <div className={styles.passwordLabelWrapper}>
-                  <label htmlFor="password" className={styles.label}>
-                    Password
-                  </label>
-                  {/* <button
-                    type="button"
-                    className={styles.forgotPasswordLink}
-                    onClick={handleForgotPasswordClick}
-                    disabled={loading}
-                  >
-                    Forgot password?
-                  </button> */}
-                </div>
+                    <label htmlFor="password" className={styles.label}>
+                      Password
+                    </label>
+                    <button
+                      type="button"
+                      className={styles.forgotPasswordLink}
+                      onClick={handleForgotPasswordClick}
+                      disabled={loading}
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
                 <div className={styles.inputWrapper}>
                   <MdOutlineLock className={styles.fieldIcon} />
                   <input
@@ -345,7 +432,13 @@ const LoginPage = () => {
           <div className={styles.dialogOverlay} onClick={() => setShowForgotDialog(false)}>
             <div className={styles.dialog} onClick={(e) => e.stopPropagation()}>
               <div className={styles.dialogHeader}>
-                <h3 className={styles.dialogTitle}>Reset Your Password</h3>
+                <h3 className={styles.dialogTitle}>
+                  {forgotStep === "email" 
+                    ? "Reset Your Password" 
+                    : forgotStep === "otp" 
+                    ? "Verify OTP"
+                    : "Set New Password"}
+                </h3>
                 <button
                   type="button"
                   className={styles.closeButton}
@@ -357,37 +450,126 @@ const LoginPage = () => {
               </div>
 
               <p className={styles.dialogDescription}>
-                Enter your email address and we'll send you a link to reset your password.
+                {forgotStep === "email"
+                  ? "Enter your email address and we'll send you an OTP."
+                  : forgotStep === "otp"
+                  ? "Enter the 6-digit OTP sent to your email."
+                  : "Set your new password."}
               </p>
 
               <form onSubmit={handleForgotPasswordSubmit} className={styles.dialogForm}>
-                <div className={styles.dialogInputGroup}>
-                  <label htmlFor="forgotEmail" className={styles.label}>
-                    Email Address
-                  </label>
-                  <div className={styles.inputWrapper}>
-                    <MdOutlineMail className={styles.fieldIcon} />
+                {forgotStep === "email" && (
+                  <div className={styles.dialogInputGroup}>
+                    <label htmlFor="forgotEmail" className={styles.label}>
+                      Email Address
+                    </label>
+                    <div className={styles.inputWrapper}>
+                      <MdOutlineMail className={styles.fieldIcon} />
+                      <input
+                        id="forgotEmail"
+                        type="email"
+                        className={styles.input}
+                        placeholder="Enter your email"
+                        value={forgotEmail}
+                        onChange={(e) => setForgotEmail(e.target.value)}
+                        required
+                        disabled={forgotLoading}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {forgotStep === "otp" && (
+                  <div className={styles.dialogInputGroup}>
+                    <label htmlFor="forgotOtp" className={styles.label}>
+                      OTP Code
+                    </label>
                     <input
-                      id="forgotEmail"
-                      type="email"
+                      id="forgotOtp"
+                      type="text"
                       className={styles.input}
-                      placeholder="Enter your email"
-                      value={forgotEmail}
-                      onChange={(e) => setForgotEmail(e.target.value)}
+                      placeholder="Enter 6-digit OTP"
+                      value={forgotOtp}
+                      onChange={(e) => setForgotOtp(e.target.value)}
+                      maxLength="6"
                       required
                       disabled={forgotLoading}
                     />
                   </div>
-                </div>
+                )}
+
+                {forgotStep === "password" && (
+                  <>
+                    <div className={styles.dialogInputGroup}>
+                      <label htmlFor="newPassword" className={styles.label}>
+                        New Password
+                      </label>
+                      <div className={styles.inputWrapper}>
+                        <MdOutlineLock className={styles.fieldIcon} />
+                        <input
+                          id="newPassword"
+                          type={showNewPassword ? "text" : "password"}
+                          className={styles.input}
+                          placeholder="Enter new password (min 8 characters)"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          required
+                          disabled={forgotLoading}
+                        />
+                        <button
+                          type="button"
+                          className={styles.passwordToggle}
+                          onClick={() => setShowNewPassword(!showNewPassword)}
+                          disabled={forgotLoading}
+                        >
+                          {showNewPassword ? <MdVisibilityOff /> : <MdVisibility />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className={styles.dialogInputGroup}>
+                      <label htmlFor="confirmPassword" className={styles.label}>
+                        Confirm Password
+                      </label>
+                      <div className={styles.inputWrapper}>
+                        <MdOutlineLock className={styles.fieldIcon} />
+                        <input
+                          id="confirmPassword"
+                          type={showConfirmPassword ? "text" : "password"}
+                          className={styles.input}
+                          placeholder="Re-enter password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          required
+                          disabled={forgotLoading}
+                        />
+                        <button
+                          type="button"
+                          className={styles.passwordToggle}
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          disabled={forgotLoading}
+                        >
+                          {showConfirmPassword ? <MdVisibilityOff /> : <MdVisibility />}
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 <div className={styles.dialogButtons}>
                   <button
                     type="button"
                     className={styles.cancelButton}
-                    onClick={() => setShowForgotDialog(false)}
+                    onClick={
+                      forgotStep === "email"
+                        ? () => setShowForgotDialog(false)
+                        : forgotStep === "otp"
+                        ? handleBackToEmailStep
+                        : handleBackToOtpStep
+                    }
                     disabled={forgotLoading}
                   >
-                    Cancel
+                    {forgotStep === "email" ? "Cancel" : "Back"}
                   </button>
                   <button
                     type="submit"
@@ -397,10 +579,14 @@ const LoginPage = () => {
                     {forgotLoading ? (
                       <>
                         <span className={styles.spinner}></span>
-                        Sending...
+                        {forgotStep === "email" ? "Sending..." : forgotStep === "otp" ? "Verifying..." : "Resetting..."}
                       </>
+                    ) : forgotStep === "email" ? (
+                      "Send OTP"
+                    ) : forgotStep === "otp" ? (
+                      "Verify OTP"
                     ) : (
-                      "Send Reset Link"
+                      "Reset Password"
                     )}
                   </button>
                 </div>
