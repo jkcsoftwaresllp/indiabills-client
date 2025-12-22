@@ -10,8 +10,8 @@ export const validatePassword = (password) => {
   }
 
   // Minimum length check
-  if (password.length < 8) {
-    errors.push('Password must be at least 8 characters long');
+  if (password.length < 7) {
+    errors.push('Password must be at least 7 characters long');
   }
 
   // Check for uppercase letter

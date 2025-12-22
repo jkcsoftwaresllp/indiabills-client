@@ -543,7 +543,7 @@ const InspectUser = () => {
                                                 className={`${styles.input} ${errors.password ? styles.error : ''}`}
                                                 value={formData.password || ''}
                                                 onChange={handleChange}
-                                                placeholder="Min 8 chars, 1 upper, 1 lower, 1 num, 1 special char (or leave blank)"
+                                                placeholder="Min 7 chars, 1 upper, 1 lower, 1 num, 1 special char (or leave blank)"
                                             />
                                             {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
                                         </div>

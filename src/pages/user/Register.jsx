@@ -308,7 +308,7 @@ const Register = () => {
                      type={showPassword ? "text" : "password"}
                      className={`${styles.input} ${errors.password ? styles.error : ''}`}
                      onChange={handleInputChange}
-                     placeholder="Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char"
+                     placeholder="Min 7 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char"
                      value={data.password}
                      required
                      disabled={loading}

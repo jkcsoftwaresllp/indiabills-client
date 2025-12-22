@@ -286,7 +286,7 @@ const BasicPage = React.memo(({ formData, handleChange, errors }) => {
             <input
               type="password"
               name="password"
-              placeholder="Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char"
+              placeholder="Min 7 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char"
               value={formData.password}
               onChange={handleChange}
               className={`${styles.fieldInput} ${errors.password ? styles.error : ''}`}
