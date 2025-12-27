@@ -161,12 +161,6 @@ const OrganizationSetup = () => {
       }
     }
 
-    if (activeStep === 2) {
-      if (!formData.domain.trim() && !formData.subdomain.trim()) {
-        newErrors.domain = "Either domain or subdomain is required";
-      }
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
