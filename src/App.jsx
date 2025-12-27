@@ -167,11 +167,14 @@ function App() {
             </div>
           ) : (
             // Setup/Login/Customer Layout (No Sidebar, Header, etc.)
-            <main className={styles.mainContent}>
-              <ReportsLayout>
-                <Routing />
-              </ReportsLayout>
-            </main>
+            <>
+              <main className={styles.mainContent}>
+                <ReportsLayout>
+                  <Routing />
+                </ReportsLayout>
+              </main>
+              <Popup />
+            </>
           )}
         </div>
 

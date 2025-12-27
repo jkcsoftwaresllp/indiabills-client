@@ -170,7 +170,34 @@ const OrganizationSetup = () => {
         clearTempSession();
         navigate("/login");
       } else {
-        errorPopup(response.data?.message || "Failed to create organization");
+        // Handle validation errors from backend
+        if (response.data?.errors && Array.isArray(response.data.errors)) {
+          const errorMessages = response.data.errors.join(" | ");
+          errorPopup(errorMessages);
+          // Also set field-level errors if applicable
+          const fieldErrors = {};
+          response.data.errors.forEach((error) => {
+            if (error.includes("name")) fieldErrors.name = error;
+            if (error.includes("domain")) fieldErrors.domain = error;
+            if (error.includes("subdomain")) fieldErrors.domain = error;
+            if (error.includes("email")) fieldErrors.email = error;
+            if (error.includes("phone")) fieldErrors.phone = error;
+            if (error.includes("website")) fieldErrors.website = error;
+            if (error.includes("logoUrl")) fieldErrors.logoUrl = error;
+            if (error.includes("pinCode")) fieldErrors.pinCode = error;
+            if (error.includes("brandPrimaryColor"))
+              fieldErrors.brandPrimaryColor = error;
+            if (error.includes("brandAccentColor"))
+              fieldErrors.brandAccentColor = error;
+          });
+          if (Object.keys(fieldErrors).length > 0) {
+            setErrors(fieldErrors);
+          }
+        } else if (response.data?.message) {
+          errorPopup(response.data.message);
+        } else {
+          errorPopup("Failed to create organization");
+        }
       }
     } catch (error) {
       console.error("Error creating organization:", error);
