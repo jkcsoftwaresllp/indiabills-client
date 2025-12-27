@@ -309,6 +309,109 @@
   cursor: not-allowed;
 }
 
+/* Custom Dropdown */
+.customDropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dropdownButton {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.75rem;
+  color: white;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.dropdownButton:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.dropdownButton:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(196, 32, 50, 0.5);
+  box-shadow: 0 0 0 3px rgba(196, 32, 50, 0.1);
+}
+
+.dropdownButton.open {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(196, 32, 50, 0.5);
+}
+
+.dropdownText {
+  flex: 1;
+}
+
+.dropdownIcon {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.5);
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+.dropdownButton.open .dropdownIcon {
+  transform: rotate(180deg);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0.5rem;
+  background: rgba(30, 41, 56, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  animation: slideDown 0.2s ease;
+}
+
+.dropdownMenu.up {
+  top: auto;
+  bottom: 100%;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  animation: slideUp 0.2s ease;
+}
+
+.dropdownOption {
+  padding: 0.75rem 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dropdownOption:last-child {
+  border-bottom: none;
+}
+
+.dropdownOption:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dropdownOption.selected {
+  background: rgba(196, 32, 50, 0.3);
+  color: white;
+}
+
 .fieldIcon {
   position: absolute;
   left: 1rem;

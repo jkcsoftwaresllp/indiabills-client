@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { createFirstTimeOrganization } from "../../network/api/organizationApi";
 import { useStore } from "../../store/store";
@@ -18,6 +18,7 @@ import {
   FiMail,
   FiMap,
   FiSettings,
+  FiChevronDown,
 } from "react-icons/fi";
 import { getOption } from "../../utils/FormHelper";
 
@@ -25,6 +26,9 @@ const OrganizationSetup = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
+  const [dropdownUp, setDropdownUp] = useState(false);
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { successPopup, errorPopup } = useStore();
 
@@ -74,6 +78,36 @@ const OrganizationSetup = () => {
     }
   }, [navigate, errorPopup]);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (stateDropdownOpen && dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setStateDropdownOpen(false);
+      }
+    };
+
+    if (stateDropdownOpen) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [stateDropdownOpen]);
+
+  useEffect(() => {
+    if (stateDropdownOpen && dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const menuHeight = 300;
+
+      if (spaceBelow < menuHeight && rect.top > menuHeight) {
+        setDropdownUp(true);
+      } else {
+        setDropdownUp(false);
+      }
+    }
+  }, [stateDropdownOpen]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -85,6 +119,20 @@ const OrganizationSetup = () => {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
+      }));
+    }
+  };
+
+  const handleStateSelect = (state) => {
+    setFormData((prev) => ({
+      ...prev,
+      state: state,
+    }));
+    setStateDropdownOpen(false);
+    if (errors.state) {
+      setErrors((prev) => ({
+        ...prev,
+        state: "",
       }));
     }
   };
@@ -376,21 +424,44 @@ const OrganizationSetup = () => {
 
               <div className={styles.formGroup}>
                 <label className={styles.label}>State</label>
-                <div className={styles.inputWrapper}>
+                <div className={styles.customDropdown} ref={dropdownRef}>
                   <FiMap className={styles.fieldIcon} />
-                  <select
-                    name="state"
-                    value={formData.state}
-                    onChange={handleChange}
-                    className={styles.select}
+                  <button
+                    type="button"
+                    className={`${styles.dropdownButton} ${
+                      stateDropdownOpen ? styles.open : ""
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setStateDropdownOpen(!stateDropdownOpen);
+                    }}
                   >
-                    <option value="">Select State</option>
-                    {getOption("state").map((state) => (
-                      <option key={state} value={state}>
-                        {state}
-                      </option>
-                    ))}
-                  </select>
+                    <span className={styles.dropdownText}>
+                      {formData.state || "Select State"}
+                    </span>
+                    <FiChevronDown className={styles.dropdownIcon} />
+                  </button>
+                  {stateDropdownOpen && (
+                    <div className={`${styles.dropdownMenu} ${dropdownUp ? styles.up : ''}`}>
+                      <div
+                        className={styles.dropdownOption}
+                        onClick={() => handleStateSelect("")}
+                      >
+                        Select State
+                      </div>
+                      {getOption("state").map((state) => (
+                        <div
+                          key={state}
+                          className={`${styles.dropdownOption} ${
+                            formData.state === state ? styles.selected : ""
+                          }`}
+                          onClick={() => handleStateSelect(state)}
+                        >
+                          {state}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
