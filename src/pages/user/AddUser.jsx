@@ -7,7 +7,22 @@ import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import { Input, CircularProgress } from "@mui/material";
 import { validatePassword } from "../../utils/authHelper";
+import { getBaseURL } from "../../network/api/api-config";
 import styles from './AddUser.module.css';
+
+// Helper function to build absolute image URLs
+const getImageUrl = (avatarUrl) => {
+  if (!avatarUrl) return '';
+  if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://')) {
+    return avatarUrl;
+  }
+  if (avatarUrl.startsWith('/uploads/')) {
+    // Get the base server URL without /v1
+    const baseURL = getBaseURL().replace('/v1', '');
+    return `${baseURL}${avatarUrl}`;
+  }
+  return avatarUrl;
+};
 
 const AddUser = () => {
   const { successPopup, errorPopup } = useStore();
@@ -72,9 +87,13 @@ const AddUser = () => {
         newErrors.phone = 'Invalid phone number (7-15 digits)';
       }
 
-      // Avatar URL validation (optional but if provided)
-      if (formData.avatar_url && !/^https?:\/\/.+/.test(formData.avatar_url)) {
-        newErrors.avatar_url = 'Invalid avatar URL';
+      // Avatar URL validation (optional but if provided) - can be external URL or local path
+      if (formData.avatar_url) {
+        const isExternalUrl = /^https?:\/\/.+/.test(formData.avatar_url);
+        const isLocalPath = formData.avatar_url.startsWith('/uploads/');
+        if (!isExternalUrl && !isLocalPath) {
+          newErrors.avatar_url = 'Invalid avatar URL or local path';
+        }
       }
     } else if (pageNum === 3) {
       // Step 3 validation: Role & Permissions
@@ -115,10 +134,11 @@ const AddUser = () => {
 
     setUploading(true);
     try {
-      const response = await uploadUserImage(file);
+      // Note: userId will be added after user is created, so we upload without userId for now
+      const response = await uploadUserImage(file, null);
 
       if (response.status === 200) {
-        const imageUrl = response.data.imageUrl || response.data.url;
+        const imageUrl = response.data.avatarUrl || response.data.imageUrl || response.data.url;
         setFormData(prev => ({
           ...prev,
           avatar_url: imageUrl
@@ -416,7 +436,7 @@ const ContactPage = React.memo(({ formData, handleChange, errors, handleImageUpl
 
             {formData.avatar_url && (
               <div className={styles.avatarPreview}>
-                <img src={formData.avatar_url} alt="Avatar preview" />
+                <img src={getImageUrl(formData.avatar_url)} alt="Avatar preview" />
                 <button
                   type="button"
                   className={styles.clearAvatarBtn}

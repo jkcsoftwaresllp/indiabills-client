@@ -8,6 +8,21 @@ import {
   Chip,
   IconButton
 } from '@mui/material';
+import { getBaseURL } from '../../network/api/api-config';
+
+// Helper function to build absolute image URLs
+const getImageUrl = (avatarUrl) => {
+  if (!avatarUrl) return '';
+  if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://')) {
+    return avatarUrl;
+  }
+  if (avatarUrl.startsWith('/uploads/')) {
+    // Get the base server URL without /v1
+    const baseURL = getBaseURL().replace('/v1', '');
+    return `${baseURL}${avatarUrl}`;
+  }
+  return avatarUrl;
+};
 
 const UserCard = ({ 
   id, 
@@ -39,11 +54,11 @@ const UserCard = ({
     <Card className="w-64 hover:shadow-lg transition-shadow duration-300 cursor-pointer">
       <CardContent className="text-center p-4">
         <div className="relative">
-          <Avatar
-            src={avatar}
-            alt={name}
-            sx={{ width: 80, height: 80, mx: 'auto', mb: 2 }}
-          />
+           <Avatar
+             src={getImageUrl(avatar)}
+             alt={name}
+             sx={{ width: 80, height: 80, mx: 'auto', mb: 2 }}
+           />
           <IconButton
           className="absolute top-0 right-0"
           onClick={handleViewUser}

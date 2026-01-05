@@ -120,10 +120,13 @@ export async function deleteUser(id) {
 }
 
 // Upload user image
-export async function uploadUserImage(imageFile) {
+export async function uploadUserImage(imageFile, userId) {
   try {
     const formData = new FormData();
     formData.append('image', imageFile);
+    if (userId) {
+      formData.append('userId', userId);
+    }
     
     const response = await serverInstance.post('/users/upload', formData, {
       headers: {

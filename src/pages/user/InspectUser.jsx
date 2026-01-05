@@ -6,7 +6,22 @@ import { useStore } from "../../store/store";
 import PageAnimate from "../../components/Animate/PageAnimate";
 import { motion } from 'framer-motion';
 import { validatePassword } from "../../utils/authHelper";
+import { getBaseURL } from "../../network/api/api-config";
 import styles from './InspectUser.module.css';
+
+// Helper function to build absolute image URLs
+const getImageUrl = (avatarUrl) => {
+    if (!avatarUrl) return '';
+    if (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://')) {
+        return avatarUrl;
+    }
+    if (avatarUrl.startsWith('/uploads/')) {
+        // Get the base server URL without /v1
+        const baseURL = getBaseURL().replace('/v1', '');
+        return `${baseURL}${avatarUrl}`;
+    }
+    return avatarUrl;
+};
 
 const InspectUser = () => {
     const { userID } = useParams();
@@ -76,8 +91,13 @@ const InspectUser = () => {
             newErrors.phone = 'Invalid phone number';
         }
 
-        if (formData.avatar_url && !/^https?:\/\/.+/.test(formData.avatar_url)) {
-            newErrors.avatar_url = 'Invalid avatar URL';
+        // avatar_url can be external URL or local path
+        if (formData.avatar_url) {
+            const isExternalUrl = /^https?:\/\/.+/.test(formData.avatar_url);
+            const isLocalPath = formData.avatar_url.startsWith('/uploads/');
+            if (!isExternalUrl && !isLocalPath) {
+                newErrors.avatar_url = 'Invalid avatar URL or local path';
+            }
         }
 
         if (formData.password) {
@@ -165,11 +185,16 @@ const InspectUser = () => {
 
         setUploading(true);
         try {
-            const response = await uploadUserImage(file);
+            const response = await uploadUserImage(file, userID);
             
             if (response.status === 200) {
-                const imageUrl = response.data.imageUrl || response.data.url;
+                const imageUrl = response.data.avatarUrl || response.data.imageUrl || response.data.url;
                 setFormData(prev => ({
+                    ...prev,
+                    avatar_url: imageUrl
+                }));
+                // Also update the displayed user object to show the new avatar
+                setUser(prev => ({
                     ...prev,
                     avatar_url: imageUrl
                 }));
@@ -246,19 +271,25 @@ const InspectUser = () => {
                     >
                         <div className={styles.profileContent}>
                             {/* Avatar */}
-                            <div className={styles.avatarWrapper}>
-                                {user?.avatar_url ? (
-                                    <img 
-                                        src={user.avatar_url} 
-                                        alt={user.first_name}
-                                        className={styles.avatar}
-                                    />
-                                ) : (
-                                    <div className={styles.avatarFallback}>
-                                        {user.first_name?.charAt(0)}{user.last_name?.charAt(0)}
-                                    </div>
-                                )}
-                            </div>
+                             <div className={styles.avatarWrapper}>
+                                 {user?.avatar_url ? (
+                                     <img 
+                                         src={getImageUrl(user.avatar_url)} 
+                                         alt={user.first_name}
+                                         className={styles.avatar}
+                                         onError={(e) => {
+                                             e.target.style.display = 'none';
+                                             if (e.target.nextElementSibling) {
+                                                 e.target.nextElementSibling.style.display = 'flex';
+                                             }
+                                         }}
+                                     />
+                                 ) : (
+                                     <div className={styles.avatarFallback}>
+                                         {user.first_name?.charAt(0)}{user.last_name?.charAt(0)}
+                                     </div>
+                                 )}
+                             </div>
 
                             {/* Upload Button */}
                             {editing && (
