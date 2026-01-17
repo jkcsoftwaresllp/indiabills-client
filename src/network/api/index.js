@@ -1,4 +1,5 @@
 import serverInstance from "./api-config";
+import { getProductsByDomain, registerCustomerByDomain, loginPublic } from './publicApi';
 import { getWarehouses, createWarehouse, updateWarehouse, deleteWarehouse, getWarehouseById } from './warehouseApi';
 import { getTransportPartners, createTransportPartner, updateTransportPartner, deleteTransportPartner, getTransportPartnerById } from './transportApi';
 import { getInventoryMovements, getInventoryMovementById, createInventoryMovement } from './inventoryMovementsApi';
@@ -294,6 +295,10 @@ async function fetchLogo() {
 }
 
 export {
+  // Public APIs
+  getProductsByDomain,
+  registerCustomerByDomain,
+  loginPublic,
   getData,
   getRequest,
   getReport,

@@ -9,6 +9,11 @@ import DashboardDelivery from "./DeliveryInterface/HomeDelivery";
 const Home = () => {
   const { user } = useAuth();
 
+  // If no user, redirect to login
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
   switch (user?.role) {
   case "admin":
   return <HomeAdmin />;
@@ -25,7 +30,7 @@ const Home = () => {
   case "customer":
   return <DashboardCustomer />;
     default:
-      return <>TODO : Need to Implement, Ask Backend to implement the API</>;
+      return <Navigate to="/login" replace />;
   }
 };
 
