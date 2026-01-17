@@ -29,6 +29,9 @@ import SubscriptionRoutes from './subscriptionRoutes';
 // DASHBOARD
 import Home from '../pages/interfaces/Home';
 
+// PUBLIC PAGES
+const PublicShop = lazy(() => import('../pages/shop/PublicShop'));
+
 const Routing = () => {
   const location = useLocation();
 
@@ -100,6 +103,9 @@ const Routing = () => {
 
              {/* MANAGER PORTAL */}
              <Route path="/manager/*" element={<ManagerRoutes />} />
+
+             {/* PUBLIC SHOP - Must be last to avoid catching other routes */}
+             <Route path="/:domain" element={<PublicShop />} />
           </Routes>
         </Suspense>
       </AnimatePresence>
