@@ -6,15 +6,12 @@ import OrganizationSelector from '../pages/user/OrganizationSelector';
 import CreateOrganization from '../pages/organization/CreateOrganization';
 
 const AuthRoutes = () => {
-  return (
-    <>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/register/:domain" element={<PublicRegister />} />
-      <Route path="/organization-selector" element={<OrganizationSelector />} />
-      <Route path="/organization/create" element={<CreateOrganization />} />
-    </>
-  );
+  return [
+  <Route key="login" path="/login" element={<LoginPage />} />,
+  <Route key="register" path="/register" element={<Register />} />,
+  <Route key="organization-selector" path="/organization-selector" element={<OrganizationSelector />} />,
+  <Route key="organization-create" path="/organization/create" element={<CreateOrganization />} />
+];
 };
 
 export default AuthRoutes;
