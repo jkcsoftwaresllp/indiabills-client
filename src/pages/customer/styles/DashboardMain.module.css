@@ -1,0 +1,104 @@
+.dashboardWrapper {
+  /* padding: 24px 32px; */
+  background: #f5f7fb;
+  min-height: 100vh;
+}
+
+.header {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.header h1 {
+  color: #1e2938;
+  font-size: 24px;
+}
+
+.header p {
+  color: #64748b;
+  margin-top: 6px;
+}
+
+.quickGrid {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.quickCard {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  transition: all 0.3s ease;
+}
+
+.quickCard:hover {
+  box-shadow: 0 14px 32px rgba(196,32,50,0.18);
+}
+
+.icon {
+  color: #c42032;
+  margin-bottom: 10px;
+}
+
+.banner {
+  margin-top: 30px;
+  background: linear-gradient(135deg, #1e2938, #0f172a);
+  color: white;
+  padding: 36px;
+  border-radius: 20px;
+}
+
+.banner button {
+  margin-top: 16px;
+  background: #c42032;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.productsSection {
+  margin-top: 40px;
+}
+
+.productGrid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 22px;
+}
+
+.productCard {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.productImage {
+  height: 140px;
+  border-radius: 12px;
+  background: #e5e7eb;
+}
+
+.price {
+  color: #c42032;
+  font-weight: 600;
+}
+
+.productCard button {
+  margin-top: 10px;
+  width: 100%;
+  background: #1e2938;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+}

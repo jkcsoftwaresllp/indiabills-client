@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import CustomerLayout from '../layouts/customer/CustomerLayout';
 import SpinnerFullPage from '../pages/more/spinner';
+import EcommerceCustomerDashboard from '../pages/customer/EcommerceCustomerDashboard';
 
 // Customer Pages
 const CustomerDashboard = lazy(() => import('../pages/customer/CustomerDashboard'));
@@ -32,6 +33,9 @@ const CustomerRoutes = () => {
           <Route path="support" element={<CustomerSupport />} />
           <Route path="cart" element={<PlaceOrder />} />
           <Route path="payment/:randomLink" element={<PaymentGateway />} />
+
+          {/* ================= E-commerce Dashboard ================ */}
+          <Route path="ecommerce-dashboard/" element={<EcommerceCustomerDashboard />} />
         </Route>
       </Routes>
     </Suspense>

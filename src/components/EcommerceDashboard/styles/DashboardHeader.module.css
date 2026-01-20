@@ -1,0 +1,96 @@
+.header {
+  background: linear-gradient(135deg, #1e2938, #0f172a);
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  min-height: 72px;
+}
+
+/* LEFT SECTION */
+.left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* LOGO */
+.logo {
+  height: 34px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+}
+
+/* USER BLOCK */
+.userBlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #c42032;
+  object-fit: cover;
+}
+
+.userText h1 {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.userText p {
+  font-size: 12px;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+
+/* RIGHT STATS */
+.stats {
+  display: flex;
+  gap: 12px;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 8px 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 90px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.statCard:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+.statIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(196, 32, 50, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c42032;
+}
+
+.statInfo span {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.statInfo p {
+  font-size: 11px;
+  opacity: 0.85;
+  margin-top: 2px;
+}
