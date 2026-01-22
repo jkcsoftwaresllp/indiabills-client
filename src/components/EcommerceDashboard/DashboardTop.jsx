@@ -25,6 +25,7 @@ export default function DashboardTop({
     activeCategory,
     onCategoryChange,
     onSearch,
+    categoriesVisible = true,
 }) {
     return (
         <section className={styles.container}>
@@ -76,19 +77,21 @@ export default function DashboardTop({
             </div>
 
             {/* CATEGORIES */}
-            <div className={styles.categories}>
-                {categories.map((cat) => (
-                    <div
-                        key={cat.id}
-                        className={`${styles.category} ${activeCategory === cat.id ? styles.active : ""
-                            }`}
-                        onClick={() => onCategoryChange?.(cat.id)}
-                    >
-                        <div className={styles.iconBox}>{cat.icon}</div>
-                        <p>{cat.label}</p>
-                    </div>
-                ))}
-            </div>
+            {categoriesVisible &&
+                <div className={styles.categories}>
+                    {categories.map((cat) => (
+                        <div
+                            key={cat.id}
+                            className={`${styles.category} ${activeCategory === cat.id ? styles.active : ""
+                                }`}
+                            onClick={() => onCategoryChange?.(cat.id)}
+                        >
+                            <div className={styles.iconBox}>{cat.icon}</div>
+                            <p>{cat.label}</p>
+                        </div>
+                    ))}
+                </div>
+            }
         </section>
     );
 }

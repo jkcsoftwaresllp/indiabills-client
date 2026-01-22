@@ -1,0 +1,81 @@
+.card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.status {
+  background: #dcfce7;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+/* Items */
+.items {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.items img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* Timeline */
+.timeline {
+  display: flex;
+  gap: 8px;
+}
+
+.step {
+  flex: 1;
+  padding: 6px;
+  background: #f1f5f9;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.active {
+  background: #dcfce7;
+  font-weight: 500;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.primary {
+  background: #2563eb;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 8px;
+}
+
+.secondary {
+  background: #f1f5f9;
+  padding: 6px 14px;
+  border-radius: 8px;
+}

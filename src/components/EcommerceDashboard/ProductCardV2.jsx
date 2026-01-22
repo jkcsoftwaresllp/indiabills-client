@@ -3,13 +3,22 @@ import QuantitySelector from "./QuantitySelector";
 import StockBadge from "./StockBadge";
 import styles from "./styles/ProductCardV2.module.css";
 
-export default function ProductCardV2({ product }) {
+export default function ProductCardV2({ product, isWishlisted, onToggleWishlist, showQuantity }) {
   return (
     <div className={styles.card}>
       {/* Wishlist */}
-      <button className={styles.wishlist}>
-        <Heart size={18} />
+      <button
+        className={`${styles.wishlist} ${isWishlisted ? styles.active : ""
+          }`}
+        onClick={() => onToggleWishlist(product)}
+      >
+        <Heart
+          size={18}
+          fill={isWishlisted ? "#dc2626" : "none"}
+          color={isWishlisted ? "#dc2626" : "#334155"}
+        />
       </button>
+
 
       {/* Image */}
       <div className={styles.imageBox}>
@@ -54,7 +63,7 @@ export default function ProductCardV2({ product }) {
         </div>
 
         {/* Quantity */}
-        <QuantitySelector />
+        {showQuantity && <QuantitySelector />}
 
         {/* CTA */}
         <button className={styles.addBtn}>

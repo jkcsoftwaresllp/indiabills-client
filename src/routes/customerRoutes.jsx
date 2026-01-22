@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import CustomerLayout from '../layouts/customer/CustomerLayout';
 import SpinnerFullPage from '../pages/more/spinner';
 import EcommerceCustomerDashboard from '../pages/customer/EcommerceCustomerDashboard';
+import EcommerceCustomerWishlist from '../pages/customer/EcommerceCustomerWishlist';
+import EcommerceCustomerMyOrder from '../pages/customer/EcommerceCustomerMyOrder';
 
 // Customer Pages
 const CustomerDashboard = lazy(() => import('../pages/customer/CustomerDashboard'));
@@ -36,6 +38,8 @@ const CustomerRoutes = () => {
 
           {/* ================= E-commerce Dashboard ================ */}
           <Route path="ecommerce-dashboard/" element={<EcommerceCustomerDashboard />} />
+          <Route path="ecommerce-dashboard/wishlist" element={<EcommerceCustomerWishlist />} />
+          <Route path="ecommerce-dashboard/my-orders" element={<EcommerceCustomerMyOrder />} />
         </Route>
       </Routes>
     </Suspense>

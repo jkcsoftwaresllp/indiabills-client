@@ -22,12 +22,18 @@
   padding: 6px;
   border: none;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .wishlist:hover {
   background: #fee2e2;
+  transform: scale(1.1);
 }
+
+.wishlist.active {
+  background: #fee2e2;
+}
+
 
 /* Image */
 .imageBox {
@@ -150,12 +156,24 @@
   color: white;
   border: none;
   padding: 12px;
-  border-radius: 12px;
+  border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.3s ease;
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    opacity 0.2s ease;
 }
 
+/* Hover */
 .addBtn:hover {
-  opacity: 0.9;
+  opacity: 0.95;
+  box-shadow: 0 8px 18px rgba(185, 28, 28, 0.35);
+}
+
+/* Click / Press */
+.addBtn:active {
+  transform: scale(0.96);
+  box-shadow: 0 4px 10px rgba(185, 28, 28, 0.25);
 }

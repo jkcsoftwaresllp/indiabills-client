@@ -1,60 +1,11 @@
-// Main dashboard content ONLY (sidebar space reserved)
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import styles from "./styles/DashboardMain.module.css";
-import { ShoppingCart, Heart, FileText, Package, User } from "lucide-react";
-import DashboardHeader from "../../components/EcommerceDashboard/DashboardHeader";
-import QuickActions from "../../components/EcommerceDashboard/QuickActions";
+import React, { useState } from 'react'
+import styles from "./styles/EcommerceCustomerWishlist.module.css";
 import avatar1 from "../../assets/images/avatar.jpg"
-import ProductExplorer from "../../components/EcommerceDashboard/ProductExplorer";
-import { useState } from "react";
-import ProductGrid from "../../components/EcommerceDashboard/ProductGrid";
-import BannerSlider from "../../components/EcommerceDashboard/BannerSlider";
-import DashboardTop from "../../components/EcommerceDashboard/DashboardTop";
+import DashboardTop from '../../components/EcommerceDashboard/DashboardTop';
+import ProductGrid from '../../components/EcommerceDashboard/ProductGrid';
 
-const quickActions = [
-    {
-        title: "My Orders",
-        desc: "Track & manage orders",
-        icon: Package,
-        route: "/customer/ecommerce-dashboard/my-orders",
-    },
-    {
-        title: "Invoices",
-        desc: "Billing & GST details",
-        icon: FileText,
-        route: "/invoices",
-    },
-    {
-        title: "Cart",
-        desc: "Complete your purchase",
-        icon: ShoppingCart,
-        route: "/cart",
-    },
-    {
-        title: "Wishlist",
-        desc: "Saved for later",
-        icon: Heart,
-        route: "/customer/ecommerce-dashboard/wishlist",
-    },
-    {
-        title: "Profile",
-        desc: "Account settings",
-        icon: User,
-        route: "/profile",
-    },
-];
-
-const bannerImages = [
-    "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/734002bea5bac800.jpg?q=60",
-    "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/1338bd4fc60390d8.jpg?q=60",
-    "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/1f9c9ad24c2bc37b.jpg?q=60",
-    "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/c1786792b3252eb0.jpg?q=60",
-    "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/66faf3950cda0b7a.png?q=60",
-];
-
-
-const products = [
+function EcommerceCustomerWishlist() {
+    const products = [
     {
         id: 1,
         name: "iPhone 15 Pro Max (256 GB)",
@@ -147,53 +98,18 @@ const products = [
     },
 ];
 
-
-
-
-export default function EcommerceCustomerDashboard() {
-    const navigate = useNavigate();
-
     const [activeCategory, setActiveCategory] = useState("mobiles");
-
-
     return (
-        <div className={styles.dashboardWrapper}>
-            {/* Header */}
-            {/* <DashboardHeader
-                user={{ name: "Joy", avatar: avatar1 }}
-                stats={{ orders: 12, cart: 3, wishlist: 5 }}
-            /> */}
-            {/* Search & Filters */}
-            {/* <ProductExplorer
-                onSearch={(value) => console.log("Search:", value)}
-                activeCategory={activeCategory}
-                onCategoryChange={setActiveCategory}
-            /> */}
+        <div className={styles.wrapper} >
             <DashboardTop
                 user={{ name: "Joy", avatar: avatar1, wishlistCount: 3, cartCount: 5, }}
                 stats={{ orders: 12, cart: 3, wishlist: 5 }}
                 onSearch={(value) => console.log("Search:", value)}
                 activeCategory={activeCategory}
                 onCategoryChange={setActiveCategory} />
-
-            {/* Quick Actions */}
-            <QuickActions
-                actions={quickActions}
-                onNavigate={navigate}
-            />
-
-            {/* Banner */}
-            <BannerSlider
-                images={bannerImages}
-                interval={4500}
-                onClick={() => navigate("/products")}
-            />
-
-            {/* Product Preview Placeholder */}
-            <div className={styles.productsSection}>
-                <ProductGrid products={products} />
-            </div>
+                <ProductGrid iswishlisted={true} products={products} />
         </div>
-    );
+    )
 }
 
+export default EcommerceCustomerWishlist
