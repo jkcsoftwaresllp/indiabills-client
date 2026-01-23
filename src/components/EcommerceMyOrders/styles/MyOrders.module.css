@@ -2,8 +2,13 @@
   padding: 24px;
   background: #f5f7fb;
   min-height: 100vh;
+  margin-top: 90px;
 }
-
+.DashTop{
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
 /* Header Card */
 .header {
   display: flex;
@@ -27,7 +32,7 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  background: linear-gradient(135deg, #c42032, #f63b3e);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,7 +63,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 16px;
-  background: #2563eb;
+  background: #c42032;
   color: #ffffff;
   border-radius: 10px;
   font-size: 14px;
@@ -69,7 +74,7 @@
 }
 
 .primaryBtn:hover {
-  background: #1d4ed8;
+  background: #d81d23;
   transform: translateY(-1px);
 }
 

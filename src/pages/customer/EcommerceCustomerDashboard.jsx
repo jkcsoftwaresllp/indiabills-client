@@ -29,7 +29,7 @@ const quickActions = [
         title: "Cart",
         desc: "Complete your purchase",
         icon: ShoppingCart,
-        route: "/cart",
+        route: "/customer/ecommerce-dashboard/cart",
     },
     {
         title: "Wishlist",

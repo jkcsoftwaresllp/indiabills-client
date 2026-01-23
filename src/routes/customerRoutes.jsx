@@ -5,6 +5,7 @@ import SpinnerFullPage from '../pages/more/spinner';
 import EcommerceCustomerDashboard from '../pages/customer/EcommerceCustomerDashboard';
 import EcommerceCustomerWishlist from '../pages/customer/EcommerceCustomerWishlist';
 import EcommerceCustomerMyOrder from '../pages/customer/EcommerceCustomerMyOrder';
+import EcommerceCustomerCart from '../pages/customer/EcommerceCustomerCart';
 
 // Customer Pages
 const CustomerDashboard = lazy(() => import('../pages/customer/CustomerDashboard'));
@@ -40,6 +41,7 @@ const CustomerRoutes = () => {
           <Route path="ecommerce-dashboard/" element={<EcommerceCustomerDashboard />} />
           <Route path="ecommerce-dashboard/wishlist" element={<EcommerceCustomerWishlist />} />
           <Route path="ecommerce-dashboard/my-orders" element={<EcommerceCustomerMyOrder />} />
+          <Route path="ecommerce-dashboard/cart" element={<EcommerceCustomerCart />} />
         </Route>
       </Routes>
     </Suspense>

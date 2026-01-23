@@ -45,20 +45,20 @@
   font-weight: 500;
   border: none;
   cursor: pointer;
-  background: #f1f5f9;
+  background: #f9f1f2;
   color: #334155;
   transition: all 0.2s ease;
 }
 
 .chip:hover {
-  background: #e2e8f0;
+  background: #f0e2e4;
 }
 
 .active {
-  background: #2563eb;
+  background: #c42032;
   color: #ffffff;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 4px 10px rgba(235, 37, 47, 0.35);
 }
 .active:hover{
-  background: #2563eb;
+  background: #c42032;
 }
