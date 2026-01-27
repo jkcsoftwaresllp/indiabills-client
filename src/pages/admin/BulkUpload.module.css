@@ -36,19 +36,53 @@
   padding: 0;
 }
 
+/* Override Material-UI Stepper colors to use theme red */
+:global(.MuiStepper-root) {
+  background: transparent;
+}
+
+:global(.MuiStepIcon-root.Mui-active) {
+  color: #c42032 !important;
+}
+
+:global(.MuiStepIcon-root.Mui-completed) {
+  color: #c42032 !important;
+}
+
+:global(.MuiStepConnector-line.Mui-active) {
+  border-color: #c42032 !important;
+}
+
+:global(.MuiStepLabel-label.Mui-active) {
+  color: #c42032 !important;
+  font-weight: 600;
+}
+
 /* ============ FEATURE SELECTION STEP ============ */
-.featureGrid {
-  margin-bottom: 2rem;
+.featureSelector {
+  margin-bottom: 3rem;
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 1.25rem;
 }
 
 .featureCard {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1.5rem 1.25rem;
   border-radius: 14px;
-  border: 1.5px solid rgba(15, 23, 42, 0.08);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border: 1.5px solid #e8ecf1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  box-shadow: 0 2px 12px rgba(30, 41, 56, 0.05);
   overflow: hidden;
 }
 
@@ -66,47 +100,80 @@
 }
 
 .featureCard:hover {
-  border-color: rgba(196, 32, 50, 0.2);
-  box-shadow: 0 12px 24px rgba(196, 32, 50, 0.08), 0 4px 8px rgba(0, 0, 0, 0.08);
-  transform: translateY(-4px);
+  border-color: #cbd5e1;
+  box-shadow: 0 12px 24px rgba(30, 41, 56, 0.08);
+  transform: translateY(-3px);
 }
 
 .featureCard:hover::before {
   transform: scaleX(1);
 }
 
-.featureCard.selected {
-  border-color: rgba(196, 32, 50, 0.3);
-  background: linear-gradient(135deg, #fef2f2 0%, #f8fafc 100%);
-  box-shadow: 0 12px 28px rgba(196, 32, 50, 0.12), 0 0 0 3px rgba(196, 32, 50, 0.06);
+.featureCard:focus-visible {
+  outline: 2px solid #c42032;
+  outline-offset: 2px;
 }
 
-.featureCardContent {
-  padding: 1.75rem;
+.featureIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, #fef2f2 0%, #ffe8eb 100%);
+  border-radius: 12px;
+  color: #c42032;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
-.featureCardTitle {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #1e2938;
-  margin-bottom: 0.75rem;
-  letter-spacing: -0.3px;
+.featureCard:hover .featureIcon {
+  background: linear-gradient(135deg, #fde5e8 0%, #fcd2d9 100%);
+  box-shadow: 0 8px 16px rgba(196, 32, 50, 0.15);
+  transform: scale(1.08);
 }
 
-.featureCardDescription {
+.featureName {
   font-size: 0.875rem;
-  color: #64748b;
-  margin-bottom: 1rem;
-  line-height: 1.5;
-  min-height: 2.4rem;
+  font-weight: 600;
+  color: #1e2938;
+  margin: 0;
+  text-align: center;
+  letter-spacing: -0.2px;
+  line-height: 1.35;
 }
 
-.featureCardFooter {
-  font-size: 0.8rem;
-  color: #94a3b8;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.selectBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #c42032 0%, #a01a28 100%);
+  border-radius: 50%;
+  color: white;
+  border: 3px solid white;
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(196, 32, 50, 0.3);
+}
+
+.selectBadge svg {
+  color: white;
+}
+
+.featureCardActive {
+  background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+  border-color: #c42032;
+  box-shadow: 0 16px 32px rgba(196, 32, 50, 0.12), 0 0 0 1px rgba(196, 32, 50, 0.08);
+}
+
+.featureCardActive .featureIcon {
+  background: linear-gradient(135deg, #c42032 0%, #a01a28 100%);
+  color: white;
+  box-shadow: 0 8px 20px rgba(196, 32, 50, 0.25);
 }
 
 /* ============ FIELD SELECTION STEP ============ */
@@ -587,6 +654,15 @@
   }
 }
 
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
 /* ============ RESPONSIVE DESIGN ============ */
 @media (max-width: 768px) {
   .container {
@@ -655,8 +731,27 @@
     font-size: 0.8rem;
   }
 
-  .featureGrid {
-    margin-bottom: 1.5rem;
+  .featureSelector {
+    margin-bottom: 2rem;
+  }
+
+  .gridContainer {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 1rem;
+  }
+
+  .featureCard {
+    padding: 1.25rem 1rem;
+    gap: 0.75rem;
+  }
+
+  .featureIcon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .featureName {
+    font-size: 0.8rem;
   }
 
   .fieldSection {

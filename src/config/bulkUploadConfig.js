@@ -848,8 +848,8 @@ export const BULK_UPLOAD_FEATURES = {
     description: 'Upload multiple warehouses in bulk',
     endpoint: '/internal/bulk/warehouses',
     dataKey: 'warehouses',
-    icon: 'FiBox',
-    status: 'coming_soon',
+    icon: 'FiHome',
+    status: 'active',
     fields: {
       warehouseName: {
         label: 'Warehouse Name',

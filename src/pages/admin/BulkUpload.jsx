@@ -2,6 +2,89 @@ import React, { useState } from 'react';
 import { useStore } from '../../store/store';
 import { bulkCreateBatches, bulkCreateProducts, bulkCreateSuppliers, bulkCreateCustomers, bulkCreateCustomerAddresses, bulkCreateTransportPartners, bulkCreateInventoryMovements, bulkCreatePromotionalOffers, bulkCreateInventoryStock, bulkCreateUsers, bulkCreateWarehouses } from '../../network/api';
 import { FiUpload, FiDownload, FiAlertCircle, FiCheckCircle, FiX, FiChevronRight, FiChevronLeft } from 'react-icons/fi';
+
+// Professional SVG Icon Component - Unique icons for each feature
+const FeatureIcon = ({ name }) => {
+  const icons = {
+    FiBox: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+        <polyline points="12 22.08 12 12"></polyline>
+      </svg>
+    ),
+    FiList: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="8" y1="6" x2="21" y2="6"></line>
+        <line x1="8" y1="12" x2="21" y2="12"></line>
+        <line x1="8" y1="18" x2="21" y2="18"></line>
+        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+      </svg>
+    ),
+    FiTool: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 0-8.94-8.94l-2.83 2.83a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l2.83-2.83z"></path>
+        <circle cx="11" cy="13" r="1"></circle>
+      </svg>
+    ),
+    FiUsers: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+    ),
+    FiMapPin: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+      </svg>
+    ),
+    FiTruck: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="1" y="6" width="22" height="12"></rect>
+        <path d="M1 18h23"></path>
+        <circle cx="4" cy="21" r="2"></circle>
+        <circle cx="20" cy="21" r="2"></circle>
+        <path d="M23 18V6"></path>
+        <path d="M15 6V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2"></path>
+      </svg>
+    ),
+    FiMove: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="5 9 2 12 5 15"></polyline>
+        <polyline points="9 5 12 2 15 5"></polyline>
+        <polyline points="15 19 12 22 9 19"></polyline>
+        <polyline points="19 9 22 12 19 15"></polyline>
+        <circle cx="12" cy="12" r="2"></circle>
+      </svg>
+    ),
+    FiTag: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+        <circle cx="8" cy="8" r="1"></circle>
+      </svg>
+    ),
+    FiPackage: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73"></path>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+        <polyline points="12 22.08 12 12"></polyline>
+      </svg>
+    ),
+    FiHome: (
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+    ),
+  };
+  return icons[name] || icons.FiBox;
+};
 import {
   Box,
   Paper,
@@ -303,32 +386,32 @@ const BulkUpload = () => {
       {activeStep === 0 && (
         <Box>
           <h2 className={styles.sectionTitle}>
-            What would you like to bulk upload?
+            Select a feature to upload
           </h2>
-          <Grid container spacing={3} className={styles.featureGrid}>
-            {features.map((feat) => (
-              <Grid item xs={12} sm={6} md={4} key={feat.id}>
-                <Card
-                  className={`${styles.featureCard} ${selectedFeature === feat.id ? styles.selected : ''}`}
+          <div className={styles.featureSelector}>
+            <div className={styles.gridContainer}>
+              {features.map((feat) => (
+                <button
+                  key={feat.id}
+                  className={`${styles.featureCard} ${selectedFeature === feat.id ? styles.featureCardActive : ''}`}
                   onClick={() => handleFeatureSelect(feat.id)}
+                  title={feat.label}
                 >
-                  <CardActionArea>
-                    <CardContent className={styles.featureCardContent}>
-                      <h3 className={styles.featureCardTitle}>
-                        {feat.label}
-                      </h3>
-                      <p className={styles.featureCardDescription}>
-                        {feat.description}
-                      </p>
-                      <p className={styles.featureCardFooter}>
-                        {getAllFields(feat.id).length} fields
-                      </p>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+                  <div className={styles.featureIcon}>
+                    <FeatureIcon name={feat.icon} />
+                  </div>
+                  <h3 className={styles.featureName}>{feat.label}</h3>
+                  {selectedFeature === feat.id && (
+                    <div className={styles.selectBadge}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
         </Box>
       )}
 

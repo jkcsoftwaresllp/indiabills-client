@@ -354,6 +354,7 @@ export {
   deleteBatch,
   getBatchesByWarehouse,
   transferBatch,
+  // Bulk Upload APIs
   bulkCreateBatches,
   bulkCreateProducts,
   bulkCreateSuppliers,
