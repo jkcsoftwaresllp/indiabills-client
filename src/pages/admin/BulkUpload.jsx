@@ -159,9 +159,9 @@ const BulkUpload = () => {
     );
   };
 
-  const handleSelectAllRequired = () => {
-    const requiredKeys = requiredFields.map((f) => f.key);
-    setSelectedFields(requiredKeys);
+  const handleSelectAll = () => {
+    const allKeys = allFields.map((f) => f.key);
+    setSelectedFields(allKeys);
   };
 
   const handleClearFields = () => {
@@ -173,6 +173,20 @@ const BulkUpload = () => {
       errorPopup('Please select at least one field');
       return;
     }
+
+    // Check if all required fields are selected
+    const requiredKeys = requiredFields.map((f) => f.key);
+    const missingRequired = requiredKeys.filter((key) => !selectedFields.includes(key));
+    
+    if (missingRequired.length > 0) {
+      const missingFieldNames = requiredFields
+        .filter((f) => missingRequired.includes(f.key))
+        .map((f) => f.label)
+        .join(', ');
+      errorPopup(`Required fields not selected: ${missingFieldNames}`);
+      return;
+    }
+
     setActiveStep(2);
   };
 
@@ -422,20 +436,15 @@ const BulkUpload = () => {
             Select fields to upload for {feature?.label}
           </h2>
 
-          {/* Info */}
-          <Alert severity="info" className={styles.infoAlert}>
-            <strong>Required fields:</strong> {requiredFields.map((f) => f.label).join(', ')}
-          </Alert>
-
           {/* Action Buttons */}
           <Box className={styles.actionButtons}>
             <Button 
               variant="outlined" 
               size="small" 
-              onClick={handleSelectAllRequired}
+              onClick={handleSelectAll}
               className={styles.actionButtonsSmall}
             >
-              Select All Required
+              Select All
             </Button>
             <Button 
               variant="outlined" 
@@ -477,7 +486,6 @@ const BulkUpload = () => {
                       <Checkbox
                         checked={selectedFields.includes(field.key)}
                         onChange={() => handleFieldToggle(field.key)}
-                        disabled={field.required}
                       />
                     </TableCell>
                     <TableCell className={`${styles.tableCell} ${styles.tableCellBold}`}>

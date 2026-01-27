@@ -58,6 +58,15 @@
   font-weight: 600;
 }
 
+/* Override Material-UI Checkbox color to use theme red */
+:global(.MuiCheckbox-root.Mui-checked) {
+  color: #c42032 !important;
+}
+
+:global(.MuiCheckbox-root:hover) {
+  background-color: rgba(196, 32, 50, 0.04) !important;
+}
+
 /* ============ FEATURE SELECTION STEP ============ */
 .featureSelector {
   margin-bottom: 3rem;
@@ -263,7 +272,7 @@
 }
 
 .tableRowSelected {
-  background-color: rgba(196, 32, 50, 0.04);
+  background-color: rgba(59, 130, 246, 0.06);
 }
 
 .tableCell {
