@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../../store/store';
-import { bulkCreateBatches } from '../../network/api';
+import { bulkCreateBatches, bulkCreateProducts, bulkCreateSuppliers, bulkCreateCustomers, bulkCreateCustomerAddresses, bulkCreateTransportPartners, bulkCreateInventoryMovements, bulkCreatePromotionalOffers, bulkCreateInventoryStock, bulkCreateUsers, bulkCreateWarehouses } from '../../network/api';
 import { FiUpload, FiDownload, FiAlertCircle, FiCheckCircle, FiX, FiChevronRight, FiChevronLeft } from 'react-icons/fi';
 import {
   Box,
@@ -26,6 +26,7 @@ import {
   DialogActions,
   Alert,
   Chip,
+  Typography,
 } from '@mui/material';
 import {
   getActiveFeatures,
@@ -148,7 +149,16 @@ const BulkUpload = () => {
               }
             }
 
-            row[key] = value;
+            // Handle nested fields with dot notation (e.g., taxes.cgst)
+            if (key.includes('.')) {
+              const [parentKey, childKey] = key.split('.');
+              if (!row[parentKey]) {
+                row[parentKey] = {};
+              }
+              row[parentKey][childKey] = value;
+            } else {
+              row[key] = value;
+            }
           });
 
           if (Object.keys(row).length > 0) {
@@ -180,38 +190,61 @@ const BulkUpload = () => {
     setUploadProgress(0);
 
     try {
-      // For now, only batches are implemented
-      if (selectedFeature === 'batches') {
-        const response = await bulkCreateBatches(data);
+       let response;
+       
+       // Call appropriate API based on feature
+       if (selectedFeature === 'batches') {
+         response = await bulkCreateBatches(data);
+       } else if (selectedFeature === 'products') {
+         response = await bulkCreateProducts(data);
+       } else if (selectedFeature === 'suppliers') {
+         response = await bulkCreateSuppliers(data);
+       } else if (selectedFeature === 'customers') {
+         response = await bulkCreateCustomers(data);
+       } else if (selectedFeature === 'customerAddresses') {
+         response = await bulkCreateCustomerAddresses(data);
+       } else if (selectedFeature === 'transportPartners') {
+         response = await bulkCreateTransportPartners(data);
+       } else if (selectedFeature === 'inventoryMovements') {
+         response = await bulkCreateInventoryMovements(data);
+       } else if (selectedFeature === 'promotionalOffers') {
+         response = await bulkCreatePromotionalOffers(data);
+       } else if (selectedFeature === 'inventoryStock') {
+         response = await bulkCreateInventoryStock(data);
+       } else if (selectedFeature === 'users') {
+         response = await bulkCreateUsers(data);
+       } else if (selectedFeature === 'warehouses') {
+         response = await bulkCreateWarehouses(data);
+       } else {
+         errorPopup(`Bulk upload for ${feature?.label} is coming soon`);
+         return;
+       }
 
-        setUploadProgress(100);
+       setUploadProgress(100);
 
-        if (response.status === 201) {
-          setUploadResult({
-            success: true,
-            message: response.message,
-            count: response.count,
-          });
-          setData([]);
-          successPopup(`${response.count} records created successfully!`);
-          // Reset to step 1 after success
-          setTimeout(() => {
-            setActiveStep(0);
-            setSelectedFeature(null);
-            setSelectedFields([]);
-          }, 2000);
-        } else {
-          setUploadResult({
-            success: false,
-            message: response.message,
-            errors: response.errors,
-          });
-          setErrorDialogOpen(true);
-          errorPopup(response.message);
-        }
-      } else {
-        errorPopup(`Bulk upload for ${feature?.label} is coming soon`);
-      }
+       if (response.status === 201) {
+         setUploadResult({
+           success: true,
+           message: response.message,
+           count: response.count,
+         });
+         setData([]);
+         successPopup(`${response.count} records created successfully!`);
+         // Reset to step 1 after success
+         setTimeout(() => {
+           setActiveStep(0);
+           setSelectedFeature(null);
+           setSelectedFields([]);
+         }, 2000);
+       } else {
+         setUploadResult({
+           success: false,
+           message: response.message,
+           errors: response.errors,
+         });
+         setErrorDialogOpen(true);
+         errorPopup(response.message);
+       }
     } catch (error) {
       setUploadResult({
         success: false,
@@ -481,11 +514,20 @@ const BulkUpload = () => {
                         <TableCell align="center" className={styles.tableCell}>
                           {index + 1}
                         </TableCell>
-                        {fieldsToUpload.map((field) => (
-                          <TableCell key={field.key} className={styles.tableCell}>
-                            {row[field.key] ?? '-'}
-                          </TableCell>
-                        ))}
+                        {fieldsToUpload.map((field) => {
+                          let cellValue = '-';
+                          if (field.key.includes('.')) {
+                            const [parentKey, childKey] = field.key.split('.');
+                            cellValue = row[parentKey]?.[childKey] ?? '-';
+                          } else {
+                            cellValue = row[field.key] ?? '-';
+                          }
+                          return (
+                            <TableCell key={field.key} className={styles.tableCell}>
+                              {cellValue}
+                            </TableCell>
+                          );
+                        })}
                       </TableRow>
                     ))}
                   </TableBody>

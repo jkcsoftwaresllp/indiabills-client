@@ -6,7 +6,7 @@ import { getInventoryMovements, getInventoryMovementById, createInventoryMovemen
 import { getInventoryStock, getInventoryStockById, createInventoryStock } from './inventoryStockApi';
 import { getReconciliations, getReconciliationById, createReconciliation, getReconciliationDetails, addReconciliationDetails, updateReconciliationStatus } from './reconciliationsApi';
 import { getBatches, getBatchById, createBatch, updateBatch, deleteBatch, getBatchesByWarehouse, transferBatch } from './batchesApi';
-import { bulkCreateBatches } from './bulkUploadApi';
+import { bulkCreateBatches, bulkCreateProducts, bulkCreateSuppliers, bulkCreateCustomers, bulkCreateCustomerAddresses, bulkCreateTransportPartners, bulkCreateInventoryMovements, bulkCreatePromotionalOffers, bulkCreateInventoryStock, bulkCreateUsers, bulkCreateWarehouses } from './bulkUploadApi';
 import { getCustomers, getCustomerById, createCustomer, updateCustomer, deleteCustomer, getCustomerProfile, getCustomerProfileById } from './customersApi';
 import { ownerSignup, createOrganization, getOrganization, updateOrganization, getOrganizationById } from './organizationApi';
 import { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier } from './suppliersApi';
@@ -355,6 +355,16 @@ export {
   getBatchesByWarehouse,
   transferBatch,
   bulkCreateBatches,
+  bulkCreateProducts,
+  bulkCreateSuppliers,
+  bulkCreateCustomers,
+  bulkCreateCustomerAddresses,
+  bulkCreateTransportPartners,
+  bulkCreateInventoryMovements,
+  bulkCreatePromotionalOffers,
+  bulkCreateInventoryStock,
+  bulkCreateUsers,
+  bulkCreateWarehouses,
   // Customer APIs
   getCustomers,
   getCustomerById,
