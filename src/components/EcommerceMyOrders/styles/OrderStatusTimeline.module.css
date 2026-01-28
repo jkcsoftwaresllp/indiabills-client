@@ -1,0 +1,17 @@
+.timeline {
+  display: flex;
+  gap: 8px;
+}
+
+.step {
+  flex: 1;
+  padding: 6px;
+  background: #f1f5f9;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.active {
+  background: #dcfce7;
+}

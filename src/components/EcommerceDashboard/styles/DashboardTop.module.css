@@ -1,0 +1,157 @@
+.container {
+  background: #ffffff;
+  padding: 16px 22px;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.06);
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* LOGO */
+.logo {
+  height: 66px; /* increased size */
+  cursor: pointer;
+}
+
+/* SEARCH */
+.searchBox {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f1f5ff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: #555;
+}
+
+.searchBox input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+}
+
+/* ACTIONS */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* USER BUTTON */
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #222;
+}
+
+.actionBtn:hover {
+  color: #2a55e5;
+}
+
+/* ICON BUTTON */
+/* ACTION BUTTON WITH TEXT */
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #222;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.actionBtn:hover {
+  background: #f1f5ff;
+  color: #2a55e5;
+}
+
+/* .iconBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: #f5f7ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iconBtn:hover {
+  background: #e8efff;
+  color: #2a55e5;
+} */
+
+/* CATEGORIES */
+.categories {
+  margin-top: 18px;
+  display: flex;
+  gap: 28px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  padding-top: 5px;
+}
+
+.categories::-webkit-scrollbar {
+  display: none;
+}
+
+.category {
+  min-width: 90px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.category:hover {
+  transform: translateY(-4px);
+}
+
+/* ICON CARD */
+.iconBox {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: #f5f7ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 6px;
+}
+
+.category p {
+  font-size: 13px;
+  font-weight: 500;
+  color: #222;
+}
+
+/* ACTIVE */
+.active .iconBox {
+  background: #e8efff;
+  box-shadow: 0 8px 20px rgba(40, 90, 255, 0.25);
+}
+
+.active p {
+  color: #2a55e5;
+  font-weight: 600;
+}

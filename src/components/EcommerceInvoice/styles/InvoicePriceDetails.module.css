@@ -1,0 +1,42 @@
+.box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  position: sticky;
+  top: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.free {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.total {
+  border-top: 1px dashed #e5e7eb;
+  margin-top: 14px;
+  padding-top: 14px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* 🔥 Badge Style */
+.downloadBadge {
+  margin-top: 18px;
+  width: 100%;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
+}

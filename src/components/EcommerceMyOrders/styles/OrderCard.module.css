@@ -1,0 +1,131 @@
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.orderId {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.date {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Status pill (same vibe as filter chips) */
+.status {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.pending {
+  background: #fff7ed;
+  color: #b45309;
+}
+
+.shipped {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.delivered {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.cancelled {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+/* Items */
+.items {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.items img {
+  width: 42px;
+  height: 42px;
+  /* border-radius: 10px; */
+  object-fit: cover;
+  border: 1px solid #e2e8f0;
+}
+
+.more {
+  font-size: 12px;
+  font-weight: 500;
+  background: #f1f5f9;
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: #475569;
+}
+
+/* Timeline */
+.timeline {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.step {
+  flex: 1;
+  padding: 7px;
+  text-align: center;
+  border-radius: 10px;
+  font-size: 12px;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.activeStep {
+  background: #f9f1f2;
+  color: #c42032;
+  font-weight: 500;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.primary {
+  background: #c42032;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.primary:hover {
+  background: #a61b2a;
+}
+
+.secondary {
+  background: #f8fafc;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #334155;
+}

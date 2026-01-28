@@ -1,0 +1,173 @@
+.card {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 18px;
+  padding: 18px;
+  background: #fff;
+  /* border-radius: 16px; */
+  border: 1px solid #f1f1f1;
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* Image */
+.imageBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageBox img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+/* Details */
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.brand {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c42032;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Meta */
+.meta {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #111;
+}
+
+.rating svg {
+  color: #f59e0b;
+}
+
+.rating small {
+  color: #666;
+}
+
+.stock {
+  font-size: 12px;
+  color: #c42032;
+  font-weight: 500;
+}
+
+/* Price */
+.priceRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.price {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.mrp {
+  font-size: 13px;
+  text-decoration: line-through;
+  color: #888;
+}
+
+.discount {
+  font-size: 12px;
+  color: #c42032;
+  font-weight: 600;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.qty {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.qty button {
+  background: #fff;
+  border: none;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.qty span {
+  min-width: 28px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Buttons */
+.save,
+.remove {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.save {
+  color: #555;
+}
+
+.remove {
+  color: #c42032;
+}
+
+/* Total */
+.total {
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .card {
+    grid-template-columns: 90px 1fr;
+  }
+
+  .total {
+    grid-column: span 2;
+    text-align: right;
+    margin-top: 8px;
+  }
+}

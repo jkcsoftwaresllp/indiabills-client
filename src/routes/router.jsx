@@ -29,6 +29,7 @@ import SubscriptionRoutes from './subscriptionRoutes';
 
 // DASHBOARD
 import Home from '../pages/interfaces/Home';
+import EcommerceCustomerDashboard from '../pages/customer/EcommerceCustomerDashboard';
 
 // PUBLIC PAGES
 const PublicShop = lazy(() => import('../pages/shop/PublicShop'));
@@ -109,7 +110,8 @@ const Routing = () => {
              <Route path="/manager/*" element={<ManagerRoutes />} />
 
              {/* PUBLIC SHOP - Must be last to avoid catching other routes */}
-             <Route path="/:domain" element={<PublicShop />} />
+             {/* <Route path="/:domain" element={<PublicShop />} /> */}
+             <Route path="/:domain" element={<EcommerceCustomerDashboard />} />
           </Routes>
         </Suspense>
       </AnimatePresence>
