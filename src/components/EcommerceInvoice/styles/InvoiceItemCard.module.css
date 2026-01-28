@@ -1,0 +1,26 @@
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.card img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.brand {
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.price {
+  font-weight: 700;
+  font-size: 16px;
+}

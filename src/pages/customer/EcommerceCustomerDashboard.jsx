@@ -23,7 +23,7 @@ const quickActions = [
         title: "Invoices",
         desc: "Billing & GST details",
         icon: FileText,
-        route: "/invoices",
+        route: "/customer/ecommerce-dashboard/orders-invoices",
     },
     {
         title: "Cart",
@@ -158,17 +158,6 @@ export default function EcommerceCustomerDashboard() {
 
     return (
         <div className={styles.dashboardWrapper}>
-            {/* Header */}
-            {/* <DashboardHeader
-                user={{ name: "Joy", avatar: avatar1 }}
-                stats={{ orders: 12, cart: 3, wishlist: 5 }}
-            /> */}
-            {/* Search & Filters */}
-            {/* <ProductExplorer
-                onSearch={(value) => console.log("Search:", value)}
-                activeCategory={activeCategory}
-                onCategoryChange={setActiveCategory}
-            /> */}
             <DashboardTop
                 user={{ name: "Joy", avatar: avatar1, wishlistCount: 3, cartCount: 5, }}
                 stats={{ orders: 12, cart: 3, wishlist: 5 }}

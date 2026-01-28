@@ -1,0 +1,90 @@
+.page {
+  /* padding: 24px; */
+  background: #f6f8fb;
+  min-height: 100vh;
+}
+
+/* 🔥 Header Card */
+.header {
+  background: linear-gradient(135deg, #ffffff, #f9fafb);
+  /* border-radius: 18px; */
+  padding: 22px 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerTop h2 {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.headerTop p {
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.search {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  width: 220px;
+}
+
+/* Bottom section */
+.headerBottom {
+  margin-top: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 10px;
+}
+
+.chip {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.active {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  border: none;
+}
+
+/* Stats */
+.stats {
+  display: flex;
+  gap: 24px;
+}
+
+.stats span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.stats strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* List */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

@@ -1,0 +1,132 @@
+.card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px 22px;
+  display: grid;
+  grid-template-columns: 2.2fr 1.4fr auto;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  margin: 0 24px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.1);
+}
+
+/* Accent strip */
+.accent {
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 5px;
+  border-radius: 999px;
+}
+
+.accentPaid {
+  background: linear-gradient(180deg, #22c55e, #16a34a);
+}
+
+.accentPending {
+  background: linear-gradient(180deg, #facc15, #eab308);
+}
+
+/* LEFT */
+.left h4 {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.meta {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Product preview */
+.preview {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.preview span {
+  width: 22px;
+  height: 22px;
+  background: #e5e7eb;
+  border-radius: 50%;
+}
+
+.preview small {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* CENTER */
+.center {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.amount {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.status {
+  width: fit-content;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.paid {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.pending {
+  background: #fef9c3;
+  color: #92400e;
+}
+
+.payment {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* RIGHT */
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.viewBtn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  border: none;
+  padding: 11px 20px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(239, 68, 68, 0.35);
+  transition: transform 0.2s ease;
+}
+
+.viewBtn:hover {
+  transform: scale(1.04);
+}
+
+.subAction {
+  font-size: 11px;
+  color: #6b7280;
+}
