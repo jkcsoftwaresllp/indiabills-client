@@ -4,8 +4,12 @@ import {
     User,
     Heart,
     ShoppingCart,
+    LogOut,
 } from "lucide-react";
 import indiaBillsLogo from "../../assets/IndiaBills_logo.png";
+import { useNavigate } from "react-router-dom";
+import { useContext, useState, useRef, useEffect } from "react";
+import { AuthContext } from "../../store/context";
 
 const categories = [
     { id: "minutes", label: "Minutes", icon: "🛵" },
@@ -27,6 +31,64 @@ export default function DashboardTop({
     onSearch,
     categoriesVisible = true,
 }) {
+    const navigate = useNavigate();
+    const { user: authUser, logout } = useContext(AuthContext);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleAuthClick = () => {
+        // Get domain from URL or use default
+        const domain = window.location.hostname.split(".")[0] || "indiabills";
+        navigate(`/register/${domain}`);
+    };
+
+    const handleUserMenuClick = () => {
+        if (authUser) {
+            setIsDropdownOpen(!isDropdownOpen);
+        } else {
+            handleAuthClick();
+        }
+    };
+
+    const handleMenuOption = (action) => {
+        setIsDropdownOpen(false);
+        switch (action) {
+            case 'orders':
+                navigate('/customer/orders');
+                break;
+            case 'invoices':
+                navigate('/customer/invoices');
+                break;
+            case 'cart':
+                navigate('/customer/cart');
+                break;
+            case 'wishlist':
+                navigate('/customer/wishlist');
+                break;
+            case 'profile':
+                navigate('/customer/profile');
+                break;
+            case 'logout':
+                logout();
+                navigate('/login');
+                break;
+            default:
+                break;
+        }
+    };
+
     return (
         <section className={styles.container}>
             {/* HEADER */}
@@ -50,28 +112,73 @@ export default function DashboardTop({
 
                 {/* ACTIONS */}
                 <div className={styles.actions}>
-                    {/* USER */}
-                    <button className={styles.actionBtn}>
-                        <User size={18} />
-                        <span>{user ? user.name : "Login"}</span>
+                    {/* USER / LOGIN BUTTON WITH DROPDOWN */}
+                    <div className={styles.userMenuContainer} ref={dropdownRef}>
+                        <button className={styles.actionBtn} onClick={handleUserMenuClick}>
+                            <User size={18} />
+                            <span>{authUser?.name?.split(' ')[0] || "Login/Signup"}</span>
+                        </button>
+
+                        {/* DROPDOWN MENU */}
+                        {isDropdownOpen && authUser && (
+                            <div className={styles.dropdownMenu}>
+                                <button
+                                    className={styles.dropdownItem}
+                                    onClick={() => handleMenuOption('orders')}
+                                >
+                                    My Orders
+                                </button>
+                                <button
+                                    className={styles.dropdownItem}
+                                    onClick={() => handleMenuOption('invoices')}
+                                >
+                                    Invoices
+                                </button>
+                                <button
+                                    className={styles.dropdownItem}
+                                    onClick={() => handleMenuOption('cart')}
+                                >
+                                    Cart
+                                </button>
+                                <button
+                                    className={styles.dropdownItem}
+                                    onClick={() => handleMenuOption('wishlist')}
+                                >
+                                    Wishlist
+                                </button>
+                                <button
+                                    className={styles.dropdownItem}
+                                    onClick={() => handleMenuOption('profile')}
+                                >
+                                    Profile
+                                </button>
+                                <div className={styles.dropdownDivider}></div>
+                                <button
+                                    className={`${styles.dropdownItem} ${styles.logoutBtn}`}
+                                    onClick={() => handleMenuOption('logout')}
+                                >
+                                    <LogOut size={16} />
+                                    Logout
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* WISHLIST - Icon only */}
+                    <button className={styles.actionBtn} onClick={handleAuthClick}>
+                        <Heart size={18} />
+                        {authUser?.wishlistCount && (
+                            <span>{authUser.wishlistCount}</span>
+                        )}
                     </button>
 
-                    {/* SHOW ONLY IF USER LOGGED IN */}
-                    {user && (
-                        <>
-                            {/* WISHLIST */}
-                            <button className={styles.actionBtn}>
-                                <Heart size={18} />
-                                <span>{user.wishlistCount}</span>
-                            </button>
-
-                            {/* CART */}
-                            <button className={styles.actionBtn}>
-                                <ShoppingCart size={18} />
-                                <span>{user.cartCount}</span>
-                            </button>
-                        </>
-                    )}
+                    {/* CART - Icon only */}
+                    <button className={styles.actionBtn} onClick={handleAuthClick}>
+                        <ShoppingCart size={18} />
+                        {authUser?.cartCount && (
+                            <span>{authUser.cartCount}</span>
+                        )}
+                    </button>
                 </div>
 
             </div>

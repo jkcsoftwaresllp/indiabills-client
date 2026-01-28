@@ -102,7 +102,7 @@ function App() {
   };
 
   // Determine if we should show the default layout (sidebar, header, etc.)
-  // Exclude: /customer/* (customer portal), /operator/*, /manager/*, /setup, /login, /register, /register/:domain/* (public register), /organization/setup
+  // Exclude: /customer/* (customer portal), /operator/*, /manager/*, /setup, /login, /register, /register/:domain/* (public register), /organization/setup, /:domain (domain routes)
   // Include: /customers (admin customer management - note the 's' at end)
   const showDefaultLayout =
     location.pathname !== "/setup" &&
@@ -112,7 +112,8 @@ function App() {
     location.pathname !== "/organization/setup" &&
     !/^\/customer(\/|$)/.test(location.pathname) &&
     !location.pathname.startsWith("/operator") &&
-    !location.pathname.startsWith("/manager");
+    !location.pathname.startsWith("/manager") &&
+    !/^\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/|$)/.test(location.pathname);
 
   return (
     <AuthProvider>

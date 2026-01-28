@@ -17,31 +17,31 @@ const quickActions = [
         title: "My Orders",
         desc: "Track & manage orders",
         icon: Package,
-        route: "/customer/ecommerce-dashboard/my-orders",
+        route: "/customer/orders",
     },
     {
         title: "Invoices",
         desc: "Billing & GST details",
         icon: FileText,
-        route: "/customer/ecommerce-dashboard/orders-invoices",
+        route: "/customer/invoices",
     },
     {
         title: "Cart",
         desc: "Complete your purchase",
         icon: ShoppingCart,
-        route: "/customer/ecommerce-dashboard/cart",
+        route: "/customer/cart",
     },
     {
         title: "Wishlist",
         desc: "Saved for later",
         icon: Heart,
-        route: "/customer/ecommerce-dashboard/wishlist",
+        route: "/customer/wishlist",
     },
     {
         title: "Profile",
         desc: "Account settings",
         icon: User,
-        route: "/profile",
+        route: "/customer/profile",
     },
 ];
 
@@ -159,7 +159,7 @@ export default function EcommerceCustomerDashboard() {
     return (
         <div className={styles.dashboardWrapper}>
             <DashboardTop
-                user={{ name: "Joy", avatar: avatar1, wishlistCount: 3, cartCount: 5, }}
+                user={null}
                 stats={{ orders: 12, cart: 3, wishlist: 5 }}
                 onSearch={(value) => console.log("Search:", value)}
                 activeCategory={activeCategory}
