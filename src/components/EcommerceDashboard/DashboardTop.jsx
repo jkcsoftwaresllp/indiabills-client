@@ -7,7 +7,7 @@ import {
     LogOut,
 } from "lucide-react";
 import indiaBillsLogo from "../../assets/IndiaBills_logo.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useState, useRef, useEffect } from "react";
 import { AuthContext } from "../../store/context";
 
@@ -32,9 +32,30 @@ export default function DashboardTop({
     categoriesVisible = true,
 }) {
     const navigate = useNavigate();
+    const { domain: urlDomain } = useParams();
     const { user: authUser, logout } = useContext(AuthContext);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+
+    // Extract domain from URL
+    const getDomain = () => {
+        // First, try to get from URL params
+        if (urlDomain) {
+            return urlDomain;
+        }
+
+        // If not in params, try to extract from pathname
+        const pathname = window.location.pathname;
+        const pathParts = pathname.split('/').filter(p => p);
+        
+        // Check if first part looks like a domain (contains a dot)
+        if (pathParts.length > 0 && pathParts[0].includes('.')) {
+            return pathParts[0];
+        }
+
+        // Default to indiabills
+        return "indiabills";
+    };
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -49,8 +70,7 @@ export default function DashboardTop({
     }, []);
 
     const handleAuthClick = () => {
-        // Get domain from URL or use default
-        const domain = window.location.hostname.split(".")[0] || "indiabills";
+        const domain = getDomain();
         navigate(`/register/${domain}`);
     };
 
