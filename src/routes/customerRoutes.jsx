@@ -46,6 +46,7 @@ const CustomerRoutes = () => {
           <Route path="ecommerce-dashboard/cart" element={<EcommerceCustomerCart />} />
           <Route path="ecommerce-dashboard/orders-invoices" element={<InvoiceListPage />} />
           <Route path="ecommerce-dashboard/orders-invoices/:id" element={<EcommerceCustomerInvoice />} />
+          <Route path="ecommerce-dashboard/profile" element={<CustomerProfile />} />
         </Route>
       </Routes>
     </Suspense>

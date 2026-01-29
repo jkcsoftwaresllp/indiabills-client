@@ -41,7 +41,7 @@ const quickActions = [
         title: "Profile",
         desc: "Account settings",
         icon: User,
-        route: "/profile",
+        route: "/customer/ecommerce-dashboard/profile",
     },
 ];
 
