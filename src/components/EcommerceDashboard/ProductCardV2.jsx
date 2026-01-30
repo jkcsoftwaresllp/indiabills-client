@@ -10,7 +10,7 @@ export default function ProductCardV2({ product, isWishlisted, onToggleWishlist,
       <button
         className={`${styles.wishlist} ${isWishlisted ? styles.active : ""
           }`}
-        onClick={() => onToggleWishlist(product)}
+        onClick={() => onToggleWishlist && onToggleWishlist(product)}
       >
         <Heart
           size={18}
@@ -36,7 +36,7 @@ export default function ProductCardV2({ product, isWishlisted, onToggleWishlist,
             <Star size={14} /> {product.rating}
           </span>
           <span className={styles.reviews}>
-            ({product.reviews.toLocaleString()})
+            ({(product.reviews || 0).toLocaleString()})
           </span>
         </div>
 

@@ -11,7 +11,8 @@ import { useState, useEffect } from "react";
 import ProductGrid from "../../components/EcommerceDashboard/ProductGrid";
 import BannerSlider from "../../components/EcommerceDashboard/BannerSlider";
 import DashboardTop from "../../components/EcommerceDashboard/DashboardTop";
-import { getProducts, getBatches, getProductsByDomain, getBatchesByDomain } from "../../network/api";
+import { getProducts, getBatches, getProductsByDomain, getBatchesByDomain, toggleWishlist } from "../../network/api";
+import { useStore } from "../../store/store";
 
 const quickActions = [
     {
@@ -63,10 +64,24 @@ const bannerImages = [
 export default function EcommerceCustomerDashboard() {
     const navigate = useNavigate();
     const { domain } = useParams();
+    const { customerData, updateCustomerWishlist, successPopup } = useStore();
 
     const [activeCategory, setActiveCategory] = useState("mobiles");
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    // Handle wishlist toggle
+    const handleToggleWishlist = async (product) => {
+        const result = await toggleWishlist(product.id);
+        if (result.status === 200) {
+            const isCurrentlyWishlisted = customerData.wishlist.some(item => item.id === product.id);
+            const updatedWishlist = isCurrentlyWishlisted
+                ? customerData.wishlist.filter(item => item.id !== product.id)
+                : [...customerData.wishlist, product];
+            updateCustomerWishlist(updatedWishlist);
+            successPopup(isCurrentlyWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
+        }
+    };
 
     // Fetch products from API
     useEffect(() => {
@@ -188,7 +203,11 @@ export default function EcommerceCustomerDashboard() {
                         <p>Loading products...</p>
                     </div>
                 ) : products.length > 0 ? (
-                    <ProductGrid products={products} />
+                    <ProductGrid 
+                        products={products}
+                        onToggleWishlist={handleToggleWishlist}
+                        showQuantity={false}
+                    />
                 ) : (
                     <div style={{ textAlign: 'center', padding: '40px 20px' }}>
                         <p>No products available</p>
