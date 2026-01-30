@@ -103,6 +103,10 @@ function EcommerceCustomerWishlist() {
         }
     };
 
+    const handleAddToCart = async (product) => {
+        // onAddToCart is handled by the ProductCardV2 component via useCart hook
+    };
+
     if (loading) {
         return (
             <div className={styles.wrapper}>
@@ -130,6 +134,7 @@ function EcommerceCustomerWishlist() {
                     iswishlisted={true} 
                     products={products} 
                     onToggleWishlist={handleToggleWishlist}
+                    onAddToCart={handleAddToCart}
                     showQuantity={false}
                 />
             )}

@@ -1,7 +1,11 @@
 import { ShieldCheck, Tag } from "lucide-react";
 import styles from "./styles/CartPriceSummary.module.css";
+import { useCart } from "../../hooks/useCart";
+import { useNavigate } from "react-router-dom";
 
 export default function CartPriceSummary({ items }) {
+  const navigate = useNavigate();
+  const { checkout } = useCart();
   const subtotal = items.reduce(
     (sum, i) => sum + i.price * i.qty,
     0
@@ -56,7 +60,9 @@ export default function CartPriceSummary({ items }) {
         You will save ₹{savings} on this order 🎉
       </p>
 
-      <button className={styles.checkout}>
+      <button className={styles.checkout} onClick={() => checkout().then(res => {
+        if (res.success) navigate('/customer');
+      })}>
         Place Order
       </button>
 

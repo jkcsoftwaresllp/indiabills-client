@@ -83,6 +83,12 @@ export default function EcommerceCustomerDashboard() {
         }
     };
 
+    // Handle add to cart
+    const handleAddToCart = async (product) => {
+        // onAddToCart is handled by the ProductCardV2 component via useCart hook
+        // This function is here for potential future use or logging
+    };
+
     // Fetch products from API
     useEffect(() => {
         const fetchProducts = async () => {
@@ -206,6 +212,7 @@ export default function EcommerceCustomerDashboard() {
                     <ProductGrid 
                         products={products}
                         onToggleWishlist={handleToggleWishlist}
+                        onAddToCart={handleAddToCart}
                         showQuantity={false}
                     />
                 ) : (

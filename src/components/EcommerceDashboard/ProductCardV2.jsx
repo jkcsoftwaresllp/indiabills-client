@@ -1,9 +1,41 @@
-import { Heart, Star, CalendarDays } from "lucide-react";
+import { Heart, Star, CalendarDays, ShoppingCart } from "lucide-react";
+import { useState } from "react";
 import QuantitySelector from "./QuantitySelector";
 import StockBadge from "./StockBadge";
 import styles from "./styles/ProductCardV2.module.css";
+import { addToCart } from "../../network/api";
+import { useStore } from "../../store/store";
 
-export default function ProductCardV2({ product, isWishlisted, onToggleWishlist, showQuantity }) {
+export default function ProductCardV2({ product, isWishlisted, onToggleWishlist, showQuantity, onAddToCart }) {
+  const { successPopup, errorPopup, addCartItem } = useStore();
+  const [quantity, setQuantity] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const handleAddToCart = async () => {
+    setLoading(true);
+    try {
+      const result = await addToCart({ product_id: product.id, quantity });
+      if (result.status === 201 || result.status === 200) {
+        // Update store with new cart item
+        const newCartItem = {
+          id: result.data?.id || Date.now(),
+          product_id: product.id,
+          quantity: quantity,
+          price_at_addition: product.price,
+        };
+        addCartItem(newCartItem);
+        successPopup('Product added to cart');
+        setQuantity(1);
+      } else {
+        errorPopup(result.error || 'Failed to add to cart');
+      }
+    } catch (error) {
+      errorPopup('Error adding to cart');
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className={styles.card}>
       {/* Wishlist */}
@@ -59,15 +91,35 @@ export default function ProductCardV2({ product, isWishlisted, onToggleWishlist,
         {/* Details */}
         <div className={styles.details}>
           <span>Dimensions: {product.dimensions || "—"}</span>
-          <span>Weight: {product.weight || "—"} g</span>
+          <span>Weight: {product.weight ? parseFloat(product.weight).toFixed(2) : "—"} g</span>
         </div>
 
         {/* Quantity */}
-        {showQuantity && <QuantitySelector />}
+        {showQuantity && (
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '4px' }}>Quantity</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button 
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                style={{ padding: '4px 8px', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer' }}
+              >
+                −
+              </button>
+              <span style={{ minWidth: '30px', textAlign: 'center' }}>{quantity}</span>
+              <button 
+                onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                style={{ padding: '4px 8px', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer' }}
+              >
+                +
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* CTA */}
-        <button className={styles.addBtn}>
-          ADD TO CART
+        <button className={styles.addBtn} onClick={handleAddToCart} disabled={loading || product.stock === 0}>
+          <ShoppingCart size={16} style={{ marginRight: '6px', display: 'inline' }} />
+          {loading ? 'Adding...' : product.stock === 0 ? 'Out of Stock' : 'ADD TO CART'}
         </button>
       </div>
     </div>

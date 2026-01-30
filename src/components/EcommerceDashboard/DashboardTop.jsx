@@ -35,7 +35,7 @@ export default function DashboardTop({
     const navigate = useNavigate();
     const { domain: urlDomain } = useParams();
     const { user: authUser, logout } = useContext(AuthContext);
-    const { customerData } = useStore();
+    const { customerData, cart } = useStore();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -79,6 +79,15 @@ export default function DashboardTop({
     const handleWishlistClick = () => {
         if (authUser) {
             navigate('/customer/wishlist');
+        } else {
+            const domain = getDomain();
+            navigate(`/register/${domain}`);
+        }
+    };
+
+    const handleCartClick = () => {
+        if (authUser) {
+            navigate('/customer/cart');
         } else {
             const domain = getDomain();
             navigate(`/register/${domain}`);
@@ -204,10 +213,10 @@ export default function DashboardTop({
                     </button>
 
                     {/* CART - Icon only */}
-                    <button className={styles.actionBtn} onClick={handleAuthClick}>
+                    <button className={styles.actionBtn} onClick={handleCartClick}>
                         <ShoppingCart size={18} />
-                        {authUser?.cartCount && (
-                            <span>{authUser.cartCount}</span>
+                        {cart?.items && cart.items.length > 0 && (
+                            <span>{cart.items.length}</span>
                         )}
                     </button>
                 </div>

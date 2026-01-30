@@ -2,7 +2,7 @@ import ProductCardV2 from "./ProductCardV2";
 import styles from "./styles/ProductGrid.module.css";
 import { useStore } from "../../store/store";
 
-export default function ProductGrid({ products, iswishlisted = false, onToggleWishlist, showQuantity = true, }) {
+export default function ProductGrid({ products, iswishlisted = false, onToggleWishlist, onAddToCart, showQuantity = true, }) {
   const { customerData } = useStore();
 
   return (
@@ -13,7 +13,7 @@ export default function ProductGrid({ products, iswishlisted = false, onToggleWi
           <ProductCardV2
             key={product.id}
             product={product}
-            onAddToCart={(p) => console.log("Add to cart:", p)}
+            onAddToCart={onAddToCart}
             isWishlisted={iswishlisted || isWishlisted}
             onToggleWishlist={onToggleWishlist}
             showQuantity={showQuantity}
