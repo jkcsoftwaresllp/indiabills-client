@@ -10,6 +10,7 @@ import indiaBillsLogo from "../../assets/IndiaBills_logo.png";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useState, useRef, useEffect } from "react";
 import { AuthContext } from "../../store/context";
+import { useStore } from "../../store/store";
 
 const categories = [
     { id: "minutes", label: "Minutes", icon: "🛵" },
@@ -34,6 +35,7 @@ export default function DashboardTop({
     const navigate = useNavigate();
     const { domain: urlDomain } = useParams();
     const { user: authUser, logout } = useContext(AuthContext);
+    const { customerData } = useStore();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -72,6 +74,15 @@ export default function DashboardTop({
     const handleAuthClick = () => {
         const domain = getDomain();
         navigate(`/register/${domain}`);
+    };
+
+    const handleWishlistClick = () => {
+        if (authUser) {
+            navigate('/customer/wishlist');
+        } else {
+            const domain = getDomain();
+            navigate(`/register/${domain}`);
+        }
     };
 
     const handleUserMenuClick = () => {
@@ -185,10 +196,10 @@ export default function DashboardTop({
                     </div>
 
                     {/* WISHLIST - Icon only */}
-                    <button className={styles.actionBtn} onClick={handleAuthClick}>
+                    <button className={styles.actionBtn} onClick={handleWishlistClick}>
                         <Heart size={18} />
-                        {authUser?.wishlistCount && (
-                            <span>{authUser.wishlistCount}</span>
+                        {customerData?.wishlist && customerData.wishlist.length > 0 && (
+                            <span>{customerData.wishlist.length}</span>
                         )}
                     </button>
 

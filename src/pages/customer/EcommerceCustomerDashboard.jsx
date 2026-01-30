@@ -178,7 +178,7 @@ export default function EcommerceCustomerDashboard() {
         <div className={styles.dashboardWrapper}>
             <DashboardTop
                 user={null}
-                stats={{ orders: 12, cart: 3, wishlist: 5 }}
+                stats={{ orders: 12, cart: 3, wishlist: customerData.wishlist?.length || 0 }}
                 onSearch={(value) => console.log("Search:", value)}
                 activeCategory={activeCategory}
                 onCategoryChange={setActiveCategory} />
