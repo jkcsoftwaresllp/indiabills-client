@@ -6,6 +6,7 @@ import EcommerceCustomerDashboard from '../pages/customer/EcommerceCustomerDashb
 import EcommerceCustomerWishlist from '../pages/customer/EcommerceCustomerWishlist';
 import EcommerceCustomerMyOrder from '../pages/customer/EcommerceCustomerMyOrder';
 import EcommerceCustomerCart from '../pages/customer/EcommerceCustomerCart';
+import EcommerceCustomerCheckout from '../pages/customer/EcommerceCustomerCheckout';
 import EcommerceCustomerInvoice from '../pages/customer/EcommerceCustomerInvoice';
 import InvoiceListPage from '../components/EcommerceInvoice/InvoiceListPage';
 
@@ -37,6 +38,7 @@ const CustomerRoutes = () => {
           <Route path="profile" element={<CustomerProfile />} />
           <Route path="support" element={<CustomerSupport />} />
           <Route path="cart" element={<EcommerceCustomerCart />} />
+          <Route path="checkout" element={<EcommerceCustomerCheckout />} />
           <Route path="payment/:randomLink" element={<PaymentGateway />} />
 
           {/* ================= E-commerce Dashboard (Legacy Routes) ================ */}

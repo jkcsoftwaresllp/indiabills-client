@@ -1,0 +1,261 @@
+.container {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e2938;
+  flex: 1;
+}
+
+.header svg {
+  color: #c42032;
+}
+
+.addressList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.addressCard {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafbfc;
+  position: relative;
+}
+
+.addressCard:hover {
+  border-color: #d1d5db;
+  background: #f9fafb;
+}
+
+.addressCard.selected {
+  border-color: #c42032;
+  background: #fce8eb;
+}
+
+.radioCircle {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: all 0.3s ease;
+}
+
+.addressCard.selected .radioCircle {
+  border-color: #c42032;
+  background: #c42032;
+}
+
+.radioCircle svg {
+  color: white;
+  width: 14px;
+  height: 14px;
+}
+
+.addressContent {
+  flex: 1;
+}
+
+.addressLabel {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #dbeafe;
+  color: #1e40af;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.badgeDefault {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #d1fae5;
+  color: #065f46;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.name {
+  margin: 0 0 4px 0;
+  font-weight: 600;
+  font-size: 15px;
+  color: #1f2937;
+}
+
+.address {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.city {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.phone {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.addBtn {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px dashed #d1d5db;
+  background: #fafbfc;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #4b5563;
+  transition: all 0.3s ease;
+}
+
+.addBtn:hover {
+  border-color: #c42032;
+  background: #fce8eb;
+  color: #c42032;
+}
+
+.successMsg {
+  padding: 12px 16px;
+  background: #d1fae5;
+  color: #065f46;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  opacity: 0;
+  margin-left: auto;
+}
+
+.addressCard:hover .deleteBtn {
+  opacity: 1;
+}
+
+.deleteBtn:hover:not(:disabled) {
+  color: #dc2626;
+  background: #fee2e2;
+  border-radius: 6px;
+}
+
+.deleteBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorAlert {
+  padding: 12px 16px;
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  border-left: 4px solid #dc2626;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .addressCard {
+    padding: 12px;
+  }
+
+  .deleteBtn {
+    opacity: 1;
+  }
+}

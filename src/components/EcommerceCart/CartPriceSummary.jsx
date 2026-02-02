@@ -60,10 +60,8 @@ export default function CartPriceSummary({ items }) {
         You will save ₹{savings} on this order 🎉
       </p>
 
-      <button className={styles.checkout} onClick={() => checkout().then(res => {
-        if (res.success) navigate('/customer');
-      })}>
-        Place Order
+      <button className={styles.checkout} onClick={() => navigate('/customer/checkout')}>
+        Checkout
       </button>
 
       <div className={styles.secure}>
