@@ -275,6 +275,126 @@
   height: fit-content;
 }
 
+/* Payment Methods */
+.paymentMethods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paymentMethod {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.paymentMethod:hover {
+  border-color: #c42032;
+  background: #fef9f9;
+}
+
+.paymentMethod.selected {
+  border-color: #c42032;
+  background: #fef9f9;
+}
+
+.methodRadio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #c42032;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.paymentMethod.selected .methodRadio {
+  border-color: #c42032;
+  background: #c42032;
+  color: #ffffff;
+}
+
+.methodContent {
+  flex: 1;
+}
+
+.methodName {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.methodDesc {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Payment Details Form */
+.paymentDetails {
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formGroup:last-child {
+  margin-bottom: 0;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: #c42032;
+  box-shadow: 0 0 0 3px rgba(196, 32, 50, 0.1);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.paymentStep h2 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .container {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Loader, Lock } from 'lucide-react';
+import { ArrowLeft, Loader, Lock, Check } from 'lucide-react';
 import styles from './styles/CheckoutPage.module.css';
 import indiaBillsLogo from '../../assets/IndiaBills_logo.png';
 import AddressSelector from './AddressSelector';
@@ -8,6 +8,7 @@ import PaymentMethod from './PaymentMethod';
 import OrderSummary from './OrderSummary';
 import { getCustomerAddresses } from '../../network/api/customersApi';
 import { checkoutCart } from '../../network/api/cartApi';
+import { createPayment } from '../../network/api';
 
 export default function CheckoutPage({ cartItems = [] }) {
   const navigate = useNavigate();
@@ -17,8 +18,17 @@ export default function CheckoutPage({ cartItems = [] }) {
   const [sameAsBilling, setSameAsBilling] = useState(true);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [currentStep, setCurrentStep] = useState('address'); // address, payment, review
+  const [currentStep, setCurrentStep] = useState('address'); // address, payment
   const [error, setError] = useState('');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+  const [payment, setPayment] = useState({
+    paymentMethod: 'cash',
+    upi: '',
+    cardNumber: '',
+    cardHolderName: '',
+    expiryDate: '',
+    cvv: '',
+  });
 
   useEffect(() => {
     fetchAddresses();
@@ -65,6 +75,23 @@ export default function CheckoutPage({ cartItems = [] }) {
   };
 
   const handlePlaceOrder = async () => {
+    // Validate payment method
+    if (!selectedPaymentMethod) {
+      setError('Please select a payment method');
+      return;
+    }
+
+    // Validate payment details based on method
+    if (selectedPaymentMethod === 'upi' && !payment.upi) {
+      setError('Please enter UPI ID');
+      return;
+    }
+
+    if (selectedPaymentMethod === 'card' && (!payment.cardNumber || !payment.cardHolderName || !payment.expiryDate || !payment.cvv)) {
+      setError('Please fill all card details');
+      return;
+    }
+
     if (!selectedShipping || !selectedBilling) {
       setError('Please select shipping and billing addresses');
       return;
@@ -73,19 +100,55 @@ export default function CheckoutPage({ cartItems = [] }) {
     setSubmitting(true);
     setError('');
     try {
+      // Create order
       const result = await checkoutCart({
         billing_address_id: selectedBilling,
         shipping_address_id: selectedShipping,
         notes: ''
       });
 
-      if (result.status === 201) {
-        navigate('/customer/order-confirmation', {
-          state: { orderId: result.data?.order_id }
-        });
-      } else {
+      if (result.status !== 201) {
         setError(result.error || 'Failed to place order');
+        setSubmitting(false);
+        return;
       }
+
+      // Extract order data
+      const actualData = result.data?.data || result.data || result;
+      const orderId = actualData.order_id;
+      const customerId = actualData.customer_id;
+
+      if (!orderId || !customerId) {
+        setError('Error: Missing order information from checkout');
+        setSubmitting(false);
+        return;
+      }
+
+      // Create payment record
+      try {
+        const paymentData = {
+          order_id: orderId,
+          customer_id: customerId,
+          payment_method: selectedPaymentMethod,
+          payment_status: 'pending',
+          amount: cartItems.reduce((sum, item) => sum + (item.price * item.qty), 0),
+          payment_date: new Date().toISOString().split('T')[0],
+          upi: selectedPaymentMethod === 'upi' ? payment.upi : undefined,
+          card_number: selectedPaymentMethod === 'card' ? payment.cardNumber : undefined,
+          card_holder_name: selectedPaymentMethod === 'card' ? payment.cardHolderName : undefined,
+          expiry_date: selectedPaymentMethod === 'card' ? payment.expiryDate : undefined,
+          cvv: selectedPaymentMethod === 'card' ? payment.cvv : undefined,
+        };
+
+        await createPayment(paymentData);
+      } catch (error) {
+        console.error('Error creating payment:', error);
+      }
+
+      // Navigate to orders (same as ProfessionalCheckout)
+      navigate('/customer/orders', {
+        state: { orderId, newOrder: true }
+      });
     } catch (err) {
       setError(err.message || 'Failed to place order');
     } finally {
@@ -239,7 +302,89 @@ export default function CheckoutPage({ cartItems = [] }) {
                 Back
               </button>
 
-              <PaymentMethod />
+              <h2>Payment Method</h2>
+
+              <div className={styles.paymentMethods}>
+                {[
+                  { id: 'cash', name: 'Cash on Delivery', desc: 'Pay when you receive' },
+                  { id: 'upi', name: 'UPI', desc: 'Google Pay, PhonePe, etc.' },
+                  { id: 'card', name: 'Credit/Debit Card', desc: 'Visa, Mastercard' },
+                ].map((method) => (
+                  <div
+                    key={method.id}
+                    className={`${styles.paymentMethod} ${selectedPaymentMethod === method.id ? styles.selected : ''}`}
+                    onClick={() => setSelectedPaymentMethod(method.id)}
+                  >
+                    <div className={styles.methodRadio}>
+                      {selectedPaymentMethod === method.id && <Check size={16} />}
+                    </div>
+                    <div className={styles.methodContent}>
+                      <p className={styles.methodName}>{method.name}</p>
+                      <p className={styles.methodDesc}>{method.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {selectedPaymentMethod === 'upi' && (
+                <div className={styles.paymentDetails}>
+                  <div className={styles.formGroup}>
+                    <label>UPI ID</label>
+                    <input
+                      type="text"
+                      value={payment.upi}
+                      onChange={(e) => setPayment({ ...payment, upi: e.target.value })}
+                      placeholder="username@bankname"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {selectedPaymentMethod === 'card' && (
+                <div className={styles.paymentDetails}>
+                  <div className={styles.formGroup}>
+                    <label>Card Number</label>
+                    <input
+                      type="text"
+                      value={payment.cardNumber}
+                      onChange={(e) => setPayment({ ...payment, cardNumber: e.target.value })}
+                      placeholder="1234 5678 9012 3456"
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label>Card Holder Name</label>
+                    <input
+                      type="text"
+                      value={payment.cardHolderName}
+                      onChange={(e) => setPayment({ ...payment, cardHolderName: e.target.value })}
+                      placeholder="Full name on card"
+                    />
+                  </div>
+
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label>Expiry Date</label>
+                      <input
+                        type="text"
+                        value={payment.expiryDate}
+                        onChange={(e) => setPayment({ ...payment, expiryDate: e.target.value })}
+                        placeholder="MM/YY"
+                      />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label>CVV</label>
+                      <input
+                        type="password"
+                        value={payment.cvv}
+                        onChange={(e) => setPayment({ ...payment, cvv: e.target.value })}
+                        placeholder="123"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <button
                 className={styles.placeOrderBtn}

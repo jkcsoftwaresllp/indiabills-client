@@ -39,6 +39,7 @@ const CustomerRoutes = () => {
           <Route path="support" element={<CustomerSupport />} />
           <Route path="cart" element={<EcommerceCustomerCart />} />
           <Route path="checkout" element={<EcommerceCustomerCheckout />} />
+          <Route path="order-confirmation" element={<EcommerceCustomerMyOrder />} />
           <Route path="payment/:randomLink" element={<PaymentGateway />} />
 
           {/* ================= E-commerce Dashboard (Legacy Routes) ================ */}
