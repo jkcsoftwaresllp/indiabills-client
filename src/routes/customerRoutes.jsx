@@ -32,7 +32,7 @@ const CustomerRoutes = () => {
           <Route index element={<EcommerceCustomerDashboard />} />
           <Route path="orders" element={<EcommerceCustomerMyOrder />} />
           <Route path="orders/:orderId" element={<InspectOrder />} />
-          <Route path="invoices" element={<EcommerceCustomerInvoice />} />
+          <Route path="invoices" element={<InvoiceListPage />} />
           <Route path="invoices/:id" element={<EcommerceCustomerInvoice />} />
           <Route path="wishlist" element={<EcommerceCustomerWishlist />} />
           <Route path="profile" element={<CustomerProfile />} />
