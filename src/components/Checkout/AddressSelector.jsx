@@ -70,11 +70,13 @@ export default function AddressSelector({
                 {selectedAddressId === addr.id && <Check size={16} />}
               </div>
               <div className={styles.addressContent}>
-                <div className={styles.addressLabel}>
-                  {addr.label && <span className={styles.badge}>{addr.label}</span>}
-                  {addr.is_default && <span className={styles.badgeDefault}>Default</span>}
+                <div className={styles.nameRow}>
+                  <p className={styles.name}>{addr.contact_name || 'No name'}</p>
+                  <div className={styles.addressLabel}>
+                    {addr.label && <span className={styles.badge}>{addr.label}</span>}
+                    {addr.is_default && <span className={styles.badgeDefault}>Default</span>}
+                  </div>
                 </div>
-                <p className={styles.name}>{addr.contact_name || 'No name'}</p>
                 <p className={styles.address}>
                   {addr.address_line1}
                   {addr.address_line2 ? `, ${addr.address_line2}` : ''}

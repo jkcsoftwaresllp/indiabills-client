@@ -2,22 +2,22 @@
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
 .header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
   border-bottom: 2px solid #f3f4f6;
 }
 
 .header h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #1e2938;
   flex: 1;
@@ -30,16 +30,37 @@
 .addressList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 16px;
+  max-height: 450px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.addressList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.addressList::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.addressList::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.addressList::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }
 
 .addressCard {
   display: flex;
-  gap: 16px;
-  padding: 16px;
+  gap: 12px;
+  padding: 12px;
   border: 2px solid #e5e7eb;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
   background: #fafbfc;
@@ -84,54 +105,64 @@
   flex: 1;
 }
 
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
 .addressLabel {
   display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 6px;
+  align-items: center;
 }
 
 .badge {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 2px 8px;
   background: #dbeafe;
   color: #1e40af;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .badgeDefault {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 2px 8px;
   background: #d1fae5;
   color: #065f46;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .name {
-  margin: 0 0 4px 0;
+  margin: 0;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14px;
   color: #1f2937;
 }
 
 .address {
-  margin: 0 0 4px 0;
-  font-size: 14px;
+  margin: 0 0 2px 0;
+  font-size: 13px;
   color: #4b5563;
+  line-height: 1.3;
 }
 
 .city {
-  margin: 0 0 8px 0;
-  font-size: 13px;
+  margin: 0 0 2px 0;
+  font-size: 12px;
   color: #6b7280;
+  line-height: 1.3;
 }
 
 .phone {
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   color: #6b7280;
 }
 

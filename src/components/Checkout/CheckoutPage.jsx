@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Loader } from 'lucide-react';
+import { ArrowLeft, Loader, Lock } from 'lucide-react';
 import styles from './styles/CheckoutPage.module.css';
-import CheckoutHeader from './CheckoutHeader';
+import indiaBillsLogo from '../../assets/IndiaBills_logo.png';
 import AddressSelector from './AddressSelector';
 import PaymentMethod from './PaymentMethod';
 import OrderSummary from './OrderSummary';
@@ -95,8 +95,21 @@ export default function CheckoutPage({ cartItems = [] }) {
 
   if (loading) {
     return (
-      <div className={styles.page}>
-        <CheckoutHeader />
+      <div className={styles.checkoutPage}>
+        <header className={styles.checkoutHeader}>
+          <div className={styles.headerLeft}>
+            <img src={indiaBillsLogo} alt="IndiaBills" className={styles.headerLogo} />
+            <div className={styles.headerTitle}>
+              <h1>Secure Checkout</h1>
+            </div>
+          </div>
+          <div className={styles.headerRight}>
+            <div className={styles.securityBadge}>
+              <Lock size={16} />
+              <span>Secure Payment</span>
+            </div>
+          </div>
+        </header>
         <div className={styles.loader}>
           <Loader size={40} className={styles.spinner} />
           <p>Loading checkout...</p>
@@ -107,8 +120,21 @@ export default function CheckoutPage({ cartItems = [] }) {
 
   if (cartItems.length === 0) {
     return (
-      <div className={styles.page}>
-        <CheckoutHeader />
+      <div className={styles.checkoutPage}>
+        <header className={styles.checkoutHeader}>
+          <div className={styles.headerLeft}>
+            <img src={indiaBillsLogo} alt="IndiaBills" className={styles.headerLogo} />
+            <div className={styles.headerTitle}>
+              <h1>Secure Checkout</h1>
+            </div>
+          </div>
+          <div className={styles.headerRight}>
+            <div className={styles.securityBadge}>
+              <Lock size={16} />
+              <span>Secure Payment</span>
+            </div>
+          </div>
+        </header>
         <div className={styles.emptyState}>
           <p>Your cart is empty</p>
           <button onClick={() => navigate('/customer/cart')}>
@@ -127,8 +153,33 @@ export default function CheckoutPage({ cartItems = [] }) {
   );
 
   return (
-    <div className={styles.page}>
-      <CheckoutHeader currentStep={currentStep} onBack={() => navigate('/customer/cart')} />
+    <div className={styles.checkoutPage}>
+      <header className={styles.checkoutHeader}>
+        <div className={styles.headerLeft}>
+          <img src={indiaBillsLogo} alt="IndiaBills" className={styles.headerLogo} />
+          <div className={styles.headerTitle}>
+            <h1>Secure Checkout</h1>
+          </div>
+        </div>
+        <div className={styles.headerRight}>
+          <div className={styles.securityBadge}>
+            <Lock size={16} />
+            <span>Secure Payment</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Back Navigation */}
+      <div className={styles.backNavigation}>
+        <button 
+          className={styles.backBtn}
+          onClick={() => navigate('/customer/cart')}
+          title="Back to cart"
+        >
+          <ArrowLeft size={20} />
+          <span>Back to Cart</span>
+        </button>
+      </div>
 
       <div className={styles.container}>
         {/* Main Content */}
