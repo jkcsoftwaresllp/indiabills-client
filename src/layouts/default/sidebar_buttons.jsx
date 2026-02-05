@@ -17,6 +17,7 @@ import {
   FiTrendingUp,
   FiBox,
   FiHelpCircle,
+  FiUpload,
 } from "react-icons/fi";
 
 export default [
@@ -101,6 +102,12 @@ export default [
         roles: ["admin", "operator", "delivery"],
       },
     ],
+  },
+  {
+    to: "/bulk-upload",
+    icon: <FiUpload />,
+    label: "Bulk Upload",
+    roles: ["admin"],
   },
   {
     group: "Shop",

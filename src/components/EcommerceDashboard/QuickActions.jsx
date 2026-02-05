@@ -1,8 +1,45 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import styles from "./styles/QuickActions.module.css";
+import { useContext } from "react";
+import { AuthContext } from "../../store/context";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function QuickActions({ actions, onNavigate }) {
+    const { user: authUser } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const { domain: urlDomain } = useParams();
+
+    // Extract domain from URL
+    const getDomain = () => {
+        // First, try to get from URL params
+        if (urlDomain) {
+            return urlDomain;
+        }
+
+        // If not in params, try to extract from pathname
+        const pathname = window.location.pathname;
+        const pathParts = pathname.split('/').filter(p => p);
+        
+        // Check if first part looks like a domain (contains a dot)
+        if (pathParts.length > 0 && pathParts[0].includes('.')) {
+            return pathParts[0];
+        }
+
+        // Default to indiabills
+        return "indiabills";
+    };
+
+    const handleActionClick = (route) => {
+        if (!authUser) {
+            const domain = getDomain();
+            navigate(`/register/${domain}`);
+        } else {
+            // If authenticated, navigate to the route
+            onNavigate(route);
+        }
+    };
+
     return (
         <div className={styles.grid}>
             {actions.map((item, index) => (
@@ -11,7 +48,7 @@ export default function QuickActions({ actions, onNavigate }) {
                     whileHover={{ y: -10 }}
                     whileTap={{ scale: 0.97 }}
                     className={styles.card}
-                    onClick={() => onNavigate(item.route)}
+                    onClick={() => handleActionClick(item.route)}
                 >
                     {/* Accent strip */}
                     <span className={styles.accent} />

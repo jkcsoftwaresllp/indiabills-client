@@ -6,6 +6,7 @@ import EcommerceCustomerDashboard from '../pages/customer/EcommerceCustomerDashb
 import EcommerceCustomerWishlist from '../pages/customer/EcommerceCustomerWishlist';
 import EcommerceCustomerMyOrder from '../pages/customer/EcommerceCustomerMyOrder';
 import EcommerceCustomerCart from '../pages/customer/EcommerceCustomerCart';
+import EcommerceCustomerCheckout from '../pages/customer/EcommerceCustomerCheckout';
 import EcommerceCustomerInvoice from '../pages/customer/EcommerceCustomerInvoice';
 import InvoiceListPage from '../components/EcommerceInvoice/InvoiceListPage';
 
@@ -28,18 +29,20 @@ const CustomerRoutes = () => {
     <Suspense fallback={<SpinnerFullPage />}>
       <Routes>
         <Route path="/" element={<CustomerLayout />}>
-          <Route index element={<CustomerDashboard />} />
-          <Route path="orders" element={<CustomerOrders />} />
+          <Route index element={<EcommerceCustomerDashboard />} />
+          <Route path="orders" element={<EcommerceCustomerMyOrder />} />
           <Route path="orders/:orderId" element={<InspectOrder />} />
-          <Route path="invoices" element={<CustomerInvoices />} />
-          <Route path="invoice/:orderId" element={<OrderInvoice />} />
-          <Route path="wishlist" element={<CustomerWishlist />} />
+          <Route path="invoices" element={<InvoiceListPage />} />
+          <Route path="invoices/:id" element={<EcommerceCustomerInvoice />} />
+          <Route path="wishlist" element={<EcommerceCustomerWishlist />} />
           <Route path="profile" element={<CustomerProfile />} />
           <Route path="support" element={<CustomerSupport />} />
-          <Route path="cart" element={<PlaceOrder />} />
+          <Route path="cart" element={<EcommerceCustomerCart />} />
+          <Route path="checkout" element={<EcommerceCustomerCheckout />} />
+          <Route path="order-confirmation" element={<EcommerceCustomerMyOrder />} />
           <Route path="payment/:randomLink" element={<PaymentGateway />} />
 
-          {/* ================= E-commerce Dashboard ================ */}
+          {/* ================= E-commerce Dashboard (Legacy Routes) ================ */}
           <Route path="ecommerce-dashboard/" element={<EcommerceCustomerDashboard />} />
           <Route path="ecommerce-dashboard/wishlist" element={<EcommerceCustomerWishlist />} />
           <Route path="ecommerce-dashboard/my-orders" element={<EcommerceCustomerMyOrder />} />

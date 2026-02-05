@@ -1,0 +1,201 @@
+.container {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.container h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.subtitle {
+  margin: 0 0 20px 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.methodsList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.methodCard {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafbfc;
+}
+
+.methodCard:hover {
+  border-color: #d1d5db;
+  background: #f9fafb;
+}
+
+.methodCard.selected {
+  border-color: #c42032;
+  background: #fce8eb;
+}
+
+.radioCircle {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: all 0.3s ease;
+}
+
+.methodCard.selected .radioCircle {
+  border-color: #c42032;
+  background: #c42032;
+}
+
+.checkedDot {
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border-radius: 50%;
+}
+
+.methodContent {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+}
+
+.methodContent svg {
+  color: #c42032;
+  flex-shrink: 0;
+}
+
+.methodContent h4 {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.methodContent p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.cardForm {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.field {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.field input {
+  padding: 11px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+  color: #1f2937;
+  transition: border-color 0.3s ease;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: #c42032;
+  box-shadow: 0 0 0 3px rgba(196, 32, 50, 0.1);
+}
+
+.field input::placeholder {
+  color: #9ca3af;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.razorpayInfo {
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.razorpayInfo p {
+  margin: 0;
+  font-size: 14px;
+  color: #1e40af;
+  line-height: 1.5;
+}
+
+.security {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: #f0fdf4;
+  border-radius: 8px;
+  color: #15803d;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.security svg {
+  color: #22c55e;
+}
+
+@media (max-width: 768px) {
+  .methodsList {
+    grid-template-columns: 1fr;
+  }
+
+  .twoCol {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    padding: 16px;
+  }
+}

@@ -1,6 +1,6 @@
 import styles from "./styles/MyOrders.module.css";
 import { OrdersHeader } from "./OrdersHeader";
-import { OrdersFilterBar } from "./OrdersFilterBar";
+// import { OrdersFilterBar } from "./OrdersFilterBar";
 import { OrdersList } from "./OrdersList";
 import DashboardTop from "../EcommerceDashboard/DashboardTop";
 import { useState } from "react";
@@ -21,7 +21,7 @@ export default function MyOrders() {
                 </div>
             <div className={styles.container}>
                 <OrdersHeader />
-                <OrdersFilterBar />
+                {/* <OrdersFilterBar /> */}
                 <OrdersList />
             </div>
         </>

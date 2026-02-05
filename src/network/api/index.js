@@ -1,11 +1,12 @@
 import serverInstance from "./api-config";
-import { getProductsByDomain, registerCustomerByDomain, loginPublic } from './publicApi';
+import { getProductsByDomain, getProductByDomain, getBatchesByDomain, getBatchByDomain, registerCustomerByDomain, loginPublic } from './publicApi';
 import { getWarehouses, createWarehouse, updateWarehouse, deleteWarehouse, getWarehouseById } from './warehouseApi';
 import { getTransportPartners, createTransportPartner, updateTransportPartner, deleteTransportPartner, getTransportPartnerById } from './transportApi';
 import { getInventoryMovements, getInventoryMovementById, createInventoryMovement } from './inventoryMovementsApi';
 import { getInventoryStock, getInventoryStockById, createInventoryStock } from './inventoryStockApi';
 import { getReconciliations, getReconciliationById, createReconciliation, getReconciliationDetails, addReconciliationDetails, updateReconciliationStatus } from './reconciliationsApi';
 import { getBatches, getBatchById, createBatch, updateBatch, deleteBatch, getBatchesByWarehouse, transferBatch } from './batchesApi';
+import { bulkCreateBatches, bulkCreateProducts, bulkCreateSuppliers, bulkCreateCustomers, bulkCreateCustomerAddresses, bulkCreateTransportPartners, bulkCreateInventoryMovements, bulkCreatePromotionalOffers, bulkCreateInventoryStock, bulkCreateUsers, bulkCreateWarehouses } from './bulkUploadApi';
 import { getCustomers, getCustomerById, createCustomer, updateCustomer, deleteCustomer, getCustomerProfile, getCustomerProfileById } from './customersApi';
 import { ownerSignup, createOrganization, getOrganization, updateOrganization, getOrganizationById } from './organizationApi';
 import { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier } from './suppliersApi';
@@ -297,6 +298,9 @@ async function fetchLogo() {
 export {
   // Public APIs
   getProductsByDomain,
+  getProductByDomain,
+  getBatchesByDomain,
+  getBatchByDomain,
   registerCustomerByDomain,
   loginPublic,
   getData,
@@ -353,6 +357,18 @@ export {
   deleteBatch,
   getBatchesByWarehouse,
   transferBatch,
+  // Bulk Upload APIs
+  bulkCreateBatches,
+  bulkCreateProducts,
+  bulkCreateSuppliers,
+  bulkCreateCustomers,
+  bulkCreateCustomerAddresses,
+  bulkCreateTransportPartners,
+  bulkCreateInventoryMovements,
+  bulkCreatePromotionalOffers,
+  bulkCreateInventoryStock,
+  bulkCreateUsers,
+  bulkCreateWarehouses,
   // Customer APIs
   getCustomers,
   getCustomerById,

@@ -4,8 +4,13 @@ import {
     User,
     Heart,
     ShoppingCart,
+    LogOut,
 } from "lucide-react";
 import indiaBillsLogo from "../../assets/IndiaBills_logo.png";
+import { useNavigate, useParams } from "react-router-dom";
+import { useContext, useState, useRef, useEffect } from "react";
+import { AuthContext } from "../../store/context";
+import { useStore } from "../../store/store";
 
 const categories = [
     { id: "minutes", label: "Minutes", icon: "🛵" },
@@ -27,6 +32,103 @@ export default function DashboardTop({
     onSearch,
     categoriesVisible = true,
 }) {
+    const navigate = useNavigate();
+    const { domain: urlDomain } = useParams();
+    const { user: authUser, logout } = useContext(AuthContext);
+    const { customerData, cart } = useStore();
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    // Extract domain from URL
+    const getDomain = () => {
+        // First, try to get from URL params
+        if (urlDomain) {
+            return urlDomain;
+        }
+
+        // If not in params, try to extract from pathname
+        const pathname = window.location.pathname;
+        const pathParts = pathname.split('/').filter(p => p);
+        
+        // Check if first part looks like a domain (contains a dot)
+        if (pathParts.length > 0 && pathParts[0].includes('.')) {
+            return pathParts[0];
+        }
+
+        // Default to indiabills
+        return "indiabills";
+    };
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleAuthClick = () => {
+        const domain = getDomain();
+        navigate(`/register/${domain}`);
+    };
+
+    const handleWishlistClick = () => {
+        if (authUser) {
+            navigate('/customer/wishlist');
+        } else {
+            const domain = getDomain();
+            navigate(`/register/${domain}`);
+        }
+    };
+
+    const handleCartClick = () => {
+        if (authUser) {
+            navigate('/customer/cart');
+        } else {
+            const domain = getDomain();
+            navigate(`/register/${domain}`);
+        }
+    };
+
+    const handleUserMenuClick = () => {
+        if (authUser) {
+            setIsDropdownOpen(!isDropdownOpen);
+        } else {
+            handleAuthClick();
+        }
+    };
+
+    const handleMenuOption = (action) => {
+        setIsDropdownOpen(false);
+        switch (action) {
+            case 'orders':
+                navigate('/customer/orders');
+                break;
+            case 'invoices':
+                navigate('/customer/invoices');
+                break;
+            case 'cart':
+                navigate('/customer/cart');
+                break;
+            case 'wishlist':
+                navigate('/customer/wishlist');
+                break;
+            case 'profile':
+                navigate('/customer/profile');
+                break;
+            case 'logout':
+                logout();
+                navigate('/login');
+                break;
+            default:
+                break;
+        }
+    };
+
     return (
         <section className={styles.container}>
             {/* HEADER */}
@@ -50,28 +152,73 @@ export default function DashboardTop({
 
                 {/* ACTIONS */}
                 <div className={styles.actions}>
-                    {/* USER */}
-                    <button className={styles.actionBtn}>
-                        <User size={18} />
-                        <span>{user ? user.name : "Login"}</span>
+                    {/* USER / LOGIN BUTTON WITH DROPDOWN */}
+                    <div className={styles.userMenuContainer} ref={dropdownRef}>
+                        <button className={styles.actionBtn} onClick={handleUserMenuClick}>
+                            <User size={18} />
+                            <span>{authUser?.name?.split(' ')[0] || "Login/Signup"}</span>
+                        </button>
+
+                        {/* DROPDOWN MENU */}
+                        {isDropdownOpen && authUser && (
+                            <div className={styles.dropdownMenu}>
+                                <button
+                                    className={styles.dropdownItem}
+                                    onClick={() => handleMenuOption('orders')}
+                                >
+                                    My Orders
+                                </button>
+                                <button
+                                    className={styles.dropdownItem}
+                                    onClick={() => handleMenuOption('invoices')}
+                                >
+                                    Invoices
+                                </button>
+                                <button
+                                    className={styles.dropdownItem}
+                                    onClick={() => handleMenuOption('cart')}
+                                >
+                                    Cart
+                                </button>
+                                <button
+                                    className={styles.dropdownItem}
+                                    onClick={() => handleMenuOption('wishlist')}
+                                >
+                                    Wishlist
+                                </button>
+                                <button
+                                    className={styles.dropdownItem}
+                                    onClick={() => handleMenuOption('profile')}
+                                >
+                                    Profile
+                                </button>
+                                <div className={styles.dropdownDivider}></div>
+                                <button
+                                    className={`${styles.dropdownItem} ${styles.logoutBtn}`}
+                                    onClick={() => handleMenuOption('logout')}
+                                >
+                                    <LogOut size={16} />
+                                    Logout
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* WISHLIST - Icon only */}
+                    <button className={styles.actionBtn} onClick={handleWishlistClick}>
+                        <Heart size={18} />
+                        {customerData?.wishlist && customerData.wishlist.length > 0 && (
+                            <span>{customerData.wishlist.length}</span>
+                        )}
                     </button>
 
-                    {/* SHOW ONLY IF USER LOGGED IN */}
-                    {user && (
-                        <>
-                            {/* WISHLIST */}
-                            <button className={styles.actionBtn}>
-                                <Heart size={18} />
-                                <span>{user.wishlistCount}</span>
-                            </button>
-
-                            {/* CART */}
-                            <button className={styles.actionBtn}>
-                                <ShoppingCart size={18} />
-                                <span>{user.cartCount}</span>
-                            </button>
-                        </>
-                    )}
+                    {/* CART - Icon only */}
+                    <button className={styles.actionBtn} onClick={handleCartClick}>
+                        <ShoppingCart size={18} />
+                        {cart?.items && cart.items.length > 0 && (
+                            <span>{cart.items.length}</span>
+                        )}
+                    </button>
                 </div>
 
             </div>

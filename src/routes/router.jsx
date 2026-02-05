@@ -7,6 +7,7 @@ import SpinnerFullPage from '../pages/more/spinner';
 // Route Components
 import AuthRoutes from './authRoutes';
 import SetupRoutes from './setupRoutes';
+import AdminRoutes from './adminRoutes';
 import ProductRoutes from './productRoutes';
 import CustomerManagementRoutes from './customerManagementRoutes';
 import TransportRoutes from './transportRoutes';
@@ -50,6 +51,9 @@ const Routing = () => {
             
             {/* SETUP ROUTES */}
             {SetupRoutes()}
+
+            {/* ADMIN ROUTES */}
+            {AdminRoutes()}
             
             {/* PRODUCT ROUTES */}
             {ProductRoutes()}

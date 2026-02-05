@@ -3,13 +3,64 @@ import serverInstance from './api-config';
 // Get products by domain (public API)
 export async function getProductsByDomain(domain, params = {}) {
   try {
-    const response = await serverInstance.post(`/products/${domain}`, {}, { params });
+    const response = await serverInstance.get(`/products/${domain}`, { params });
+    return {
+      status: response.status,
+      data: response.data?.data || []
+    };
+  } catch (error) {
+    console.error(`Failed to fetch products for domain ${domain}:`, error.response);
+    return {
+      status: error.response?.status || 500,
+      data: []
+    };
+  }
+}
+
+// Get single product by domain (public API)
+export async function getProductByDomain(domain, productId) {
+  try {
+    const response = await serverInstance.get(`/products/${domain}/${productId}`);
+    return {
+      status: response.status,
+      data: response.data
+    };
+  } catch (error) {
+    console.error(`Failed to fetch product ${productId} for domain ${domain}:`, error.response);
+    return {
+      status: error.response?.status || 500,
+      data: null
+    };
+  }
+}
+
+// Get batches by domain (public API)
+export async function getBatchesByDomain(domain, params = {}) {
+  try {
+    const response = await serverInstance.get(`/batches/${domain}`, { params });
+    return {
+      status: response.status,
+      data: response.data?.data || []
+    };
+  } catch (error) {
+    console.error(`Failed to fetch batches for domain ${domain}:`, error.response);
+    return {
+      status: error.response?.status || 500,
+      data: []
+    };
+  }
+}
+
+// Get single batch by domain (public API)
+export async function getBatchByDomain(domain, batchId) {
+  try {
+    const response = await serverInstance.get(`/batches/${domain}/${batchId}`);
     return {
       status: response.status,
       data: response.data?.data || null
     };
   } catch (error) {
-    console.error(`Failed to fetch products for domain ${domain}:`, error.response);
+    console.error(`Failed to fetch batch ${batchId} for domain ${domain}:`, error.response);
     return {
       status: error.response?.status || 500,
       data: null
