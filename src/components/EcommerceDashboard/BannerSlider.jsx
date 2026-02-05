@@ -1,5 +1,3 @@
-// components/Dashboard/BannerSlider.jsx
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 

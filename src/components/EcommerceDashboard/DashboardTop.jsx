@@ -1,29 +1,35 @@
 import styles from "./styles/DashboardTop.module.css";
-import {
-    Search,
-    User,
-    Heart,
-    ShoppingCart,
-    LogOut,
-} from "lucide-react";
+import { Search, User, Heart, ShoppingCart, LogOut, } from "lucide-react";
 import indiaBillsLogo from "../../assets/IndiaBills_logo.png";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useState, useRef, useEffect } from "react";
 import { AuthContext } from "../../store/context";
 import { useStore } from "../../store/store";
+import minutesImg from "../../assets/images/minutes.webp";
+import mobilesImg from "../../assets/images/mobiles.webp";
+import tvImg from "../../assets/images/tv.webp";
+import electronicsImg from "../../assets/images/electronics.png";
+import fashionImg from "../../assets/images/fashion.webp";
+import homeImg from "../../assets/images/home.webp";
+import beautyImg from "../../assets/images/beauty.webp";
+import furnitureImg from "../../assets/images/furniture.jpg";
+import flightImg from "../../assets/images/flight.webp";
+import groceryImg from "../../assets/images/grocery.webp";
+
 
 const categories = [
-    { id: "minutes", label: "Minutes", icon: "🛵" },
-    { id: "mobiles", label: "Mobiles", icon: "📱" },
-    { id: "tv", label: "TVs & Appliances", icon: "📺" },
-    { id: "electronics", label: "Electronics", icon: "💻" },
-    { id: "fashion", label: "Fashion", icon: "👕" },
-    { id: "home", label: "Home & Kitchen", icon: "🏠" },
-    { id: "beauty", label: "Beauty & Toys", icon: "🧸" },
-    { id: "furniture", label: "Furniture", icon: "🛋️" },
-    { id: "flight", label: "Flight Bookings", icon: "✈️" },
-    { id: "grocery", label: "Grocery", icon: "🛒" },
+  { id: "minutes", label: "Minutes", icon: minutesImg },
+  { id: "mobiles", label: "Mobiles", icon: mobilesImg },
+  { id: "tv", label: "TVs & Appliances", icon: tvImg },
+  { id: "electronics", label: "Electronics", icon: electronicsImg },
+  { id: "fashion", label: "Fashion", icon: fashionImg },
+  { id: "home", label: "Home & Kitchen", icon: homeImg },
+  { id: "beauty", label: "Beauty & Toys", icon: beautyImg },
+  { id: "furniture", label: "Furniture", icon: furnitureImg },
+  { id: "flight", label: "Flight Bookings", icon: flightImg },
+  { id: "grocery", label: "Grocery", icon: groceryImg },
 ];
+
 
 export default function DashboardTop({
     user,
@@ -233,7 +239,8 @@ export default function DashboardTop({
                                 }`}
                             onClick={() => onCategoryChange?.(cat.id)}
                         >
-                            <div className={styles.iconBox}>{cat.icon}</div>
+                            {/* <div className={styles.iconBox}>{cat.icon}</div> */}
+                            <img className={styles.iconBox} src={cat.icon} alt={cat.label} />
                             <p>{cat.label}</p>
                         </div>
                     ))}

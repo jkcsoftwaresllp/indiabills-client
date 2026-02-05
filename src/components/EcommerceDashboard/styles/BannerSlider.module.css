@@ -28,5 +28,44 @@
 :global(.swiper-pagination-bullet-active) {
   background: #ffffff;
   width: 20px;
-  border-radius: 6px;
+}
+@media (max-width: 1279px) {
+  .wrapper {
+    height: 220px;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
+  }
+}
+@media (max-width: 991px) {
+  .wrapper {
+    height: 200px;
+    margin-top: 12px;
+  }
+
+  :global(.swiper-pagination-bullet) {
+    transform: scale(0.9);
+  }
+}
+@media (max-width: 767px) {
+  .wrapper {
+    height: 160px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  :global(.swiper-pagination-bullet) {
+    width: 6px;
+    height: 6px;
+  }
+
+  :global(.swiper-pagination-bullet-active) {
+    width: 14px;
+  }
+}
+@media (max-width: 420px) {
+  .wrapper {
+    height: 130px;
+  }
+
+  :global(.swiper-pagination) {
+    bottom: 6px !important;
+  }
 }
