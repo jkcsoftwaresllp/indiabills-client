@@ -8,6 +8,13 @@ export default defineConfig(({ mode }) => {
             'process.env.REACT_APP_SERVER_URL': JSON.stringify(env.REACT_APP_SERVER_URL),
         },
         plugins: [react()],
+
+        // THESE
+        cacheDir: '.vite-cache',
+        optimizeDeps: {
+            force: true,
+        },
+
         server: {
             port: 3000,
         },

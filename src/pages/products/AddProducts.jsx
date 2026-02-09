@@ -58,33 +58,33 @@ const AddProducts = () => {
       if (!formData.manufacturer?.trim()) newErrors.manufacturer = 'Manufacturer is required';
       if (!formData.categoryId) newErrors.categoryId = 'Category is required';
     } else if (pageNum === 2) {
-       // Step 2: Pricing & Inventory
-       const unitMrp = parseFloat(formData.unitMRP);
-       const purchasePrice = parseFloat(formData.purchasePrice);
+      // Step 2: Pricing & Inventory
+      const unitMrp = parseFloat(formData.unitMRP);
+      const purchasePrice = parseFloat(formData.purchasePrice);
 
-       if (!formData.unitMRP || isNaN(unitMrp) || unitMrp <= 0) {
-         newErrors.unitMRP = 'Valid Unit MRP is required';
-       }
-       if (!formData.purchasePrice || isNaN(purchasePrice) || purchasePrice <= 0) {
-         newErrors.purchasePrice = 'Valid Purchase Price is required';
-       }
-       if (!priceInputType) {
-         newErrors.priceInputType = 'Select which price to enter';
-       }
-       if (priceInputType === "withoutTax" && (!formData.salePriceWithoutTax || isNaN(parseFloat(formData.salePriceWithoutTax)) || parseFloat(formData.salePriceWithoutTax) <= 0)) {
-         newErrors.salePriceWithoutTax = 'Valid sale price (without tax) is required';
-       }
-       if (priceInputType === "withTax" && (!formData.saleRate || isNaN(parseFloat(formData.saleRate)) || parseFloat(formData.saleRate) <= 0)) {
-         newErrors.saleRate = 'Valid sale price (with tax) is required';
-       }
-       if (!finalPriceType) {
-         newErrors.finalPriceType = 'Select your final sale price';
-       }
+      if (!formData.unitMRP || isNaN(unitMrp) || unitMrp <= 0) {
+        newErrors.unitMRP = 'Valid Unit MRP is required';
+      }
+      if (!formData.purchasePrice || isNaN(purchasePrice) || purchasePrice <= 0) {
+        newErrors.purchasePrice = 'Valid Purchase Price is required';
+      }
+      if (!priceInputType) {
+        newErrors.priceInputType = 'Select which price to enter';
+      }
+      if (priceInputType === "withoutTax" && (!formData.salePriceWithoutTax || isNaN(parseFloat(formData.salePriceWithoutTax)) || parseFloat(formData.salePriceWithoutTax) <= 0)) {
+        newErrors.salePriceWithoutTax = 'Valid sale price (without tax) is required';
+      }
+      if (priceInputType === "withTax" && (!formData.saleRate || isNaN(parseFloat(formData.saleRate)) || parseFloat(formData.saleRate) <= 0)) {
+        newErrors.saleRate = 'Valid sale price (with tax) is required';
+      }
+      if (!finalPriceType) {
+        newErrors.finalPriceType = 'Select your final sale price';
+      }
 
-       if (formData.weight && (isNaN(parseFloat(formData.weight)) || parseFloat(formData.weight) <= 0)) {
-         newErrors.weight = 'Weight must be positive';
-       }
-     }
+      if (formData.weight && (isNaN(parseFloat(formData.weight)) || parseFloat(formData.weight) <= 0)) {
+        newErrors.weight = 'Weight must be positive';
+      }
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -152,10 +152,10 @@ const AddProducts = () => {
     setIsSubmitting(true);
 
     try {
-       // Use the final selected sale price
-       const salePrice = finalPriceType === "salePriceWithoutTax" 
-         ? parseFloat(formData.salePriceWithoutTax) 
-         : parseFloat(formData.saleRate);
+      // Use the final selected sale price
+      const salePrice = finalPriceType === "salePriceWithoutTax"
+        ? parseFloat(formData.salePriceWithoutTax)
+        : parseFloat(formData.saleRate);
 
       const apiData = {
         name: formData.itemName.trim(),
@@ -183,8 +183,8 @@ const AddProducts = () => {
         variants: formData.variants?.filter(v => v.key?.trim())
           .map(variant => ({
             key: variant.key.trim(),
-            values: Array.isArray(variant.values) 
-              ? variant.values 
+            values: Array.isArray(variant.values)
+              ? variant.values
               : variant.values.split(",").map(v => v.trim()).filter(v => v)
           })) || []
       };
@@ -216,15 +216,15 @@ const AddProducts = () => {
       categories={categories}
     />,
     <PricingPage
-       key="pricing"
-       formData={formData}
-       handleChange={handleChange}
-       errors={errors}
-       priceInputType={priceInputType}
-       setPriceInputType={setPriceInputType}
-       finalPriceType={finalPriceType}
-       setFinalPriceType={setFinalPriceType}
-     />,
+      key="pricing"
+      formData={formData}
+      handleChange={handleChange}
+      errors={errors}
+      priceInputType={priceInputType}
+      setPriceInputType={setPriceInputType}
+      finalPriceType={finalPriceType}
+      setFinalPriceType={setFinalPriceType}
+    />,
     <VariantPage
       key="variants"
       formData={formData}
@@ -426,257 +426,257 @@ const BasicPage = React.memo(({ formData, handleChange, errors, categories }) =>
 BasicPage.displayName = 'BasicPage';
 
 const PricingPage = React.memo(({ formData, handleChange, errors, priceInputType, setPriceInputType, finalPriceType, setFinalPriceType }) => {
-    const totalTax = (parseFloat(formData.cgst) || 0) + (parseFloat(formData.sgst) || 0) + (parseFloat(formData.cess) || 0);
-    const calculatedPriceWithTax = formData.salePriceWithoutTax ? parseFloat(formData.salePriceWithoutTax) * (1 + totalTax / 100) : 0;
-    const calculatedPriceWithoutTax = formData.saleRate ? parseFloat(formData.saleRate) / (1 + totalTax / 100) : 0;
+  const totalTax = (parseFloat(formData.cgst) || 0) + (parseFloat(formData.sgst) || 0) + (parseFloat(formData.cess) || 0);
+  const calculatedPriceWithTax = formData.salePriceWithoutTax ? parseFloat(formData.salePriceWithoutTax) * (1 + totalTax / 100) : 0;
+  const calculatedPriceWithoutTax = formData.saleRate ? parseFloat(formData.saleRate) / (1 + totalTax / 100) : 0;
 
-   return (
-     <MultiPageAnimate>
-       <div className={styles.formContent}>
-         <div className={styles.pageHeader}>
-           <FiDollarSign className={styles.pageIcon} />
-           <h1>Pricing & Inventory</h1>
-           <p>Set prices and stock levels</p>
-         </div>
+  return (
+    <MultiPageAnimate>
+      <div className={styles.formContent}>
+        <div className={styles.pageHeader}>
+          <FiDollarSign className={styles.pageIcon} />
+          <h1>Pricing & Inventory</h1>
+          <p>Set prices and stock levels</p>
+        </div>
 
-         <div className={styles.fieldGrid}>
-           {/* Pricing Section */}
-           <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
-             <div className={styles.sectionHeader}>
-               <FiTag size={18} />
-               <h3>Pricing</h3>
-             </div>
-           </div>
+        <div className={styles.fieldGrid}>
+          {/* Pricing Section */}
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <div className={styles.sectionHeader}>
+              <FiTag size={18} />
+              <h3>Pricing</h3>
+            </div>
+          </div>
 
-           <div className={styles.fieldGroup}>
-             <label className={styles.fieldLabel}>Unit MRP *</label>
-             <div className={styles.currencyInput}>
-               <span className={styles.currencySymbol}>₹</span>
-               <input
-                 type="number"
-                 name="unitMRP"
-                 placeholder="0.00"
-                 value={formData.unitMRP}
-                 onChange={handleChange}
-                 className={`${styles.fieldInput} ${errors.unitMRP ? styles.error : ''}`}
-                 min="0"
-                 step="0.01"
-               />
-             </div>
-             {errors.unitMRP && <span className={styles.errorMsg}>{errors.unitMRP}</span>}
-           </div>
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Unit MRP *</label>
+            <div className={styles.currencyInput}>
+              <span className={styles.currencySymbol}>₹</span>
+              <input
+                type="number"
+                name="unitMRP"
+                placeholder="0.00"
+                value={formData.unitMRP}
+                onChange={handleChange}
+                className={`${styles.fieldInput} ${errors.unitMRP ? styles.error : ''}`}
+                min="0"
+                step="0.01"
+              />
+            </div>
+            {errors.unitMRP && <span className={styles.errorMsg}>{errors.unitMRP}</span>}
+          </div>
 
-           <div className={styles.fieldGroup}>
-             <label className={styles.fieldLabel}>Purchase Price *</label>
-             <div className={styles.currencyInput}>
-               <span className={styles.currencySymbol}>₹</span>
-               <input
-                 type="number"
-                 name="purchasePrice"
-                 placeholder="0.00"
-                 value={formData.purchasePrice}
-                 onChange={handleChange}
-                 className={`${styles.fieldInput} ${errors.purchasePrice ? styles.error : ''}`}
-                 min="0"
-                 step="0.01"
-               />
-             </div>
-             {errors.purchasePrice && <span className={styles.errorMsg}>{errors.purchasePrice}</span>}
-           </div>
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Purchase Price *</label>
+            <div className={styles.currencyInput}>
+              <span className={styles.currencySymbol}>₹</span>
+              <input
+                type="number"
+                name="purchasePrice"
+                placeholder="0.00"
+                value={formData.purchasePrice}
+                onChange={handleChange}
+                className={`${styles.fieldInput} ${errors.purchasePrice ? styles.error : ''}`}
+                min="0"
+                step="0.01"
+              />
+            </div>
+            {errors.purchasePrice && <span className={styles.errorMsg}>{errors.purchasePrice}</span>}
+          </div>
 
-           {/* Taxes Section */}
-           <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
-             <div className={styles.sectionHeader}>
-               <FiAlertCircle size={18} />
-               <h3>Taxes</h3>
-             </div>
-           </div>
+          {/* Taxes Section */}
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <div className={styles.sectionHeader}>
+              <FiAlertCircle size={18} />
+              <h3>Taxes</h3>
+            </div>
+          </div>
 
-           <div className={styles.fieldGroup}>
-             <label className={styles.fieldLabel}>CGST (%)</label>
-             <input
-               type="number"
-               name="cgst"
-               placeholder="0"
-               value={formData.cgst}
-               onChange={handleChange}
-               className={styles.fieldInput}
-               min="0"
-               max="100"
-               step="0.01"
-             />
-           </div>
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>CGST (%)</label>
+            <input
+              type="number"
+              name="cgst"
+              placeholder="0"
+              value={formData.cgst}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              min="0"
+              max="100"
+              step="0.01"
+            />
+          </div>
 
-           <div className={styles.fieldGroup}>
-             <label className={styles.fieldLabel}>SGST (%)</label>
-             <input
-               type="number"
-               name="sgst"
-               placeholder="0"
-               value={formData.sgst}
-               onChange={handleChange}
-               className={styles.fieldInput}
-               min="0"
-               max="100"
-               step="0.01"
-             />
-           </div>
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>SGST (%)</label>
+            <input
+              type="number"
+              name="sgst"
+              placeholder="0"
+              value={formData.sgst}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              min="0"
+              max="100"
+              step="0.01"
+            />
+          </div>
 
-           <div className={styles.fieldGroup}>
-             <label className={styles.fieldLabel}>CESS (%)</label>
-             <input
-               type="number"
-               name="cess"
-               placeholder="0"
-               value={formData.cess}
-               onChange={handleChange}
-               className={styles.fieldInput}
-               min="0"
-               max="100"
-               step="0.01"
-             />
-           </div>
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>CESS (%)</label>
+            <input
+              type="number"
+              name="cess"
+              placeholder="0"
+              value={formData.cess}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              min="0"
+              max="100"
+              step="0.01"
+            />
+          </div>
 
-           {/* Sale Price Section */}
-           <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
-             <label className={styles.fieldLabel}>Step 1: Which price would you like to enter? *</label>
-             {errors.priceInputType && <span className={styles.errorMsg}>{errors.priceInputType}</span>}
-             <div className={styles.rateTypeOptions}>
-               <label className={styles.radioLabel}>
-                 <input
-                   type="radio"
-                   name="priceInputType"
-                   value="withoutTax"
-                   checked={priceInputType === "withoutTax"}
-                   onChange={(e) => setPriceInputType(e.target.value)}
-                 />
-                 Sale Price (Without Tax)
-               </label>
-               <label className={styles.radioLabel}>
-                 <input
-                   type="radio"
-                   name="priceInputType"
-                   value="withTax"
-                   checked={priceInputType === "withTax"}
-                   onChange={(e) => setPriceInputType(e.target.value)}
-                 />
-                 Sale Price (With Tax)
-               </label>
-             </div>
-           </div>
+          {/* Sale Price Section */}
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <label className={styles.fieldLabel}>Step 1: Which price would you like to enter? *</label>
+            {errors.priceInputType && <span className={styles.errorMsg}>{errors.priceInputType}</span>}
+            <div className={styles.rateTypeOptions}>
+              <label className={styles.radioLabel}>
+                <input
+                  type="radio"
+                  name="priceInputType"
+                  value="withoutTax"
+                  checked={priceInputType === "withoutTax"}
+                  onChange={(e) => setPriceInputType(e.target.value)}
+                />
+                Sale Price (Without Tax)
+              </label>
+              <label className={styles.radioLabel}>
+                <input
+                  type="radio"
+                  name="priceInputType"
+                  value="withTax"
+                  checked={priceInputType === "withTax"}
+                  onChange={(e) => setPriceInputType(e.target.value)}
+                />
+                Sale Price (With Tax)
+              </label>
+            </div>
+          </div>
 
-           {priceInputType && (
-             <>
-               <div className={styles.fieldGroup}>
-                 <label className={styles.fieldLabel}>
-                   {priceInputType === "withoutTax" ? "Sale Price (Without Tax)" : "Sale Price (With Tax)"} *
-                 </label>
-                 <div className={styles.currencyInput}>
-                   <span className={styles.currencySymbol}>₹</span>
-                   <input
-                     type="number"
-                     name={priceInputType === "withoutTax" ? "salePriceWithoutTax" : "saleRate"}
-                     placeholder="0.00"
-                     value={priceInputType === "withoutTax" ? formData.salePriceWithoutTax || '' : formData.saleRate || ''}
-                     onChange={handleChange}
-                     className={`${styles.fieldInput} ${errors[priceInputType === "withoutTax" ? "salePriceWithoutTax" : "saleRate"] ? styles.error : ''}`}
-                     min="0"
-                     step="0.01"
-                   />
-                 </div>
-                 {errors[priceInputType === "withoutTax" ? "salePriceWithoutTax" : "saleRate"] && (
-                   <span className={styles.errorMsg}>{errors[priceInputType === "withoutTax" ? "salePriceWithoutTax" : "saleRate"]}</span>
-                 )}
-               </div>
+          {priceInputType && (
+            <>
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>
+                  {priceInputType === "withoutTax" ? "Sale Price (Without Tax)" : "Sale Price (With Tax)"} *
+                </label>
+                <div className={styles.currencyInput}>
+                  <span className={styles.currencySymbol}>₹</span>
+                  <input
+                    type="number"
+                    name={priceInputType === "withoutTax" ? "salePriceWithoutTax" : "saleRate"}
+                    placeholder="0.00"
+                    value={priceInputType === "withoutTax" ? formData.salePriceWithoutTax || '' : formData.saleRate || ''}
+                    onChange={handleChange}
+                    className={`${styles.fieldInput} ${errors[priceInputType === "withoutTax" ? "salePriceWithoutTax" : "saleRate"] ? styles.error : ''}`}
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                {errors[priceInputType === "withoutTax" ? "salePriceWithoutTax" : "saleRate"] && (
+                  <span className={styles.errorMsg}>{errors[priceInputType === "withoutTax" ? "salePriceWithoutTax" : "saleRate"]}</span>
+                )}
+              </div>
 
-               <div className={styles.fieldGroup}>
-                 <label className={styles.fieldLabel}>
-                   {priceInputType === "withoutTax" ? "Sale Price (With Tax)" : "Sale Price (Without Tax)"}
-                 </label>
-                 <div className={styles.currencyInput}>
-                   <span className={styles.currencySymbol}>₹</span>
-                   <input
-                     type="number"
-                     name={priceInputType === "withoutTax" ? "saleRate" : "salePriceWithoutTax"}
-                     placeholder="0.00"
-                     value={priceInputType === "withoutTax" ? formData.saleRate || '' : formData.salePriceWithoutTax || ''}
-                     onChange={handleChange}
-                     className={styles.fieldInput}
-                     min="0"
-                     step="0.01"
-                   />
-                 </div>
-                 <small className={styles.fieldHint}>Recommended: ₹{priceInputType === "withoutTax" ? calculatedPriceWithTax.toFixed(2) : calculatedPriceWithoutTax.toFixed(2)} (based on {totalTax}% tax)</small>
-               </div>
+              <div className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>
+                  {priceInputType === "withoutTax" ? "Sale Price (With Tax)" : "Sale Price (Without Tax)"}
+                </label>
+                <div className={styles.currencyInput}>
+                  <span className={styles.currencySymbol}>₹</span>
+                  <input
+                    type="number"
+                    name={priceInputType === "withoutTax" ? "saleRate" : "salePriceWithoutTax"}
+                    placeholder="0.00"
+                    value={priceInputType === "withoutTax" ? formData.saleRate || '' : formData.salePriceWithoutTax || ''}
+                    onChange={handleChange}
+                    className={styles.fieldInput}
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                <small className={styles.fieldHint}>Recommended: ₹{priceInputType === "withoutTax" ? calculatedPriceWithTax.toFixed(2) : calculatedPriceWithoutTax.toFixed(2)} (based on {totalTax}% tax)</small>
+              </div>
 
-               <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
-                 <label className={styles.fieldLabel}>Step 2: Which price should be used for your records? *</label>
-                 {errors.finalPriceType && <span className={styles.errorMsg}>{errors.finalPriceType}</span>}
-                 <div className={styles.rateTypeOptions}>
-                   <label className={styles.radioLabel}>
-                     <input
-                       type="radio"
-                       name="finalPriceType"
-                       value="salePriceWithoutTax"
-                       checked={finalPriceType === "salePriceWithoutTax"}
-                       onChange={(e) => setFinalPriceType(e.target.value)}
-                     />
-                     Sale Price Without Tax (₹{formData.salePriceWithoutTax || '0.00'})
-                   </label>
-                   <label className={styles.radioLabel}>
-                     <input
-                       type="radio"
-                       name="finalPriceType"
-                       value="saleRate"
-                       checked={finalPriceType === "saleRate"}
-                       onChange={(e) => setFinalPriceType(e.target.value)}
-                     />
-                     Sale Price With Tax (₹{formData.saleRate || '0.00'})
-                   </label>
-                 </div>
-               </div>
-             </>
-           )}
+              <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+                <label className={styles.fieldLabel}>Step 2: Which price should be used for your records? *</label>
+                {errors.finalPriceType && <span className={styles.errorMsg}>{errors.finalPriceType}</span>}
+                <div className={styles.rateTypeOptions}>
+                  <label className={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      name="finalPriceType"
+                      value="salePriceWithoutTax"
+                      checked={finalPriceType === "salePriceWithoutTax"}
+                      onChange={(e) => setFinalPriceType(e.target.value)}
+                    />
+                    Sale Price Without Tax (₹{formData.salePriceWithoutTax || '0.00'})
+                  </label>
+                  <label className={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      name="finalPriceType"
+                      value="saleRate"
+                      checked={finalPriceType === "saleRate"}
+                      onChange={(e) => setFinalPriceType(e.target.value)}
+                    />
+                    Sale Price With Tax (₹{formData.saleRate || '0.00'})
+                  </label>
+                </div>
+              </div>
+            </>
+          )}
 
-           {/* Inventory Section */}
-           <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
-             <div className={styles.sectionHeader}>
-               <FiBox size={18} />
-               <h3>Inventory</h3>
-             </div>
-           </div>
+          {/* Inventory Section */}
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <div className={styles.sectionHeader}>
+              <FiBox size={18} />
+              <h3>Inventory</h3>
+            </div>
+          </div>
 
-           <div className={styles.fieldGroup}>
-             <label className={styles.fieldLabel}>Reorder Level</label>
-             <input
-               type="number"
-               name="reorderLevel"
-               placeholder="10"
-               value={formData.reorderLevel}
-               onChange={handleChange}
-               className={styles.fieldInput}
-               min="0"
-             />
-             <small className={styles.fieldHint}>When stock drops below this, you'll be notified</small>
-           </div>
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Reorder Level</label>
+            <input
+              type="number"
+              name="reorderLevel"
+              placeholder="10"
+              value={formData.reorderLevel}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              min="0"
+            />
+            <small className={styles.fieldHint}>When stock drops below this, you'll be notified</small>
+          </div>
 
-           <div className={styles.fieldGroup}>
-             <label className={styles.fieldLabel}>Max Stock Level</label>
-             <input
-               type="number"
-               name="maxStockLevel"
-               placeholder="100"
-               value={formData.maxStockLevel}
-               onChange={handleChange}
-               className={styles.fieldInput}
-               min="0"
-             />
-             <small className={styles.fieldHint}>Maximum stock to maintain</small>
-           </div>
-         </div>
-       </div>
-     </MultiPageAnimate>
-   );
+          <div className={styles.fieldGroup}>
+            <label className={styles.fieldLabel}>Max Stock Level</label>
+            <input
+              type="number"
+              name="maxStockLevel"
+              placeholder="100"
+              value={formData.maxStockLevel}
+              onChange={handleChange}
+              className={styles.fieldInput}
+              min="0"
+            />
+            <small className={styles.fieldHint}>Maximum stock to maintain</small>
+          </div>
+        </div>
+      </div>
+    </MultiPageAnimate>
+  );
 });
 
 PricingPage.displayName = 'PricingPage';

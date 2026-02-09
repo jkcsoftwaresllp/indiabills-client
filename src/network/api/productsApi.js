@@ -11,6 +11,7 @@ export async function getProducts() {
     return [];
   }
 }
+///////
 
 // Get product by ID
 export async function getProductById(id) {

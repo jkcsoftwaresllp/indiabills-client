@@ -12,6 +12,9 @@ import {
 import { useStore } from "../../store/store";
 import { IconButton, Tooltip } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import styles from "./ViewProducts.module.css";
+import { FiPackage, FiBox, FiTrendingUp, FiMapPin, } from "react-icons/fi";
+import { deleteCategory, getCategories, updateCategory } from "../../network/api/Category";
 
 const colDefs = [
   {
@@ -134,11 +137,10 @@ const colDefs = [
     headerName: "Status",
     cellRenderer: (params) => (
       <span
-        className={`py-1 px-3 rounded-full text-xs ${
-          params.value
-            ? "bg-green-100 text-green-800"
-            : "bg-red-100 text-red-800"
-        }`}
+        className={`py-1 px-3 rounded-full text-xs ${params.value
+          ? "bg-green-100 text-green-800"
+          : "bg-red-100 text-red-800"
+          }`}
       >
         {params.value ? "Active" : "Inactive"}
       </span>
@@ -252,16 +254,101 @@ const ViewProducts = () => {
     return await updateProduct(id, data);
   };
 
+  // =============================================================================================  
+  const [activeTab, setActiveTab] = useState(0);
+
   return (
-    <ViewData
-      title="Items"
-      idField="id"
-      customDataFetcher={getProducts}
-      initialColDefs={colDefs}
-      deleteHandler={deleteProduct}
-      updateHandler={handleUpdateProduct}
-      transformPayload={transformToBackendFormat}
-    />
+    <div className={styles.MainContainer} >
+      <div className={styles.headerSection}>
+        <div>
+          <h1 className={styles.pageTitle}>
+            <FiPackage size={28} />
+            Products Management
+          </h1>
+          <p className={styles.breadcrumbNav}>
+            Products / Categories
+          </p>
+        </div>
+      </div>
+      {/* Stats Cards */}
+      <div className={styles.statsContainer}>
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>
+            <FiBox />
+          </div>
+          <div className={styles.statLabel}>Products</div>
+          <h3 className={styles.statValue}>{1}</h3>
+        </div>
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>
+            <FiTrendingUp />
+          </div>
+          <div className={styles.statLabel}>Categories</div>
+          <h3 className={styles.statValue}>{12}</h3>
+        </div>
+        {/* <div className={styles.statCard}>
+          <div className={styles.statIcon}>
+            <FiMapPin />
+          </div>
+          <div className={styles.statLabel}>Warehouses</div>
+          <h3 className={styles.statValue}>{warehouses.length}</h3>
+        </div>
+        {selectedWarehouse && (
+          <div className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <FiPackage />
+            </div>
+            <div className={styles.statLabel}>Total Batches</div>
+            <h3 className={styles.statValue}>{entries.length}</h3>
+          </div>
+        )} */}
+      </div>
+      {/* Tabs */}
+      <div className={styles.tabsWrapper}>
+        <div className={styles.customTabs}>
+          <button
+            className={`${styles.tabButton} ${activeTab === 0 ? styles.active : ""}`}
+            onClick={() => setActiveTab(0)}
+          >
+            <FiPackage size={18} style={{ marginRight: "0.5rem" }} />
+            Categories
+          </button>
+          <button
+            className={`${styles.tabButton} ${activeTab === 1 ? styles.active : ""}`}
+            onClick={() => setActiveTab(1)}
+          >
+            <FiMapPin size={18} style={{ marginRight: "0.5rem" }} />
+            Products
+          </button>
+        </div>
+      </div>
+
+      {/* Category */}
+      {activeTab === 0 &&
+        <ViewData
+          title="Category"
+          idField="id"
+          customDataFetcher={getCategories}
+          initialColDefs={colDefs}
+          deleteHandler={deleteCategory}
+          updateHandler={updateCategory}
+          transformPayload={transformToBackendFormat}
+        />
+      }
+      {/* Products */}
+      {activeTab === 1 &&
+        <ViewData
+          title="Products"
+          idField="id"
+          customDataFetcher={getProducts}
+          initialColDefs={colDefs}
+          deleteHandler={deleteProduct}
+          updateHandler={handleUpdateProduct}
+          transformPayload={transformToBackendFormat}
+        />
+      }
+
+    </div>
   );
 };
 

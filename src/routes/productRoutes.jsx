@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 import { Route } from 'react-router-dom';
 import ProtectedRoute from './protectedRoutes';
+import AddCategory from '../pages/products/category/AddCategory';
 
 const ProductList = lazy(() => import('../pages/products/ViewProducts'));
 const AddProducts = lazy(() => import('../pages/products/AddProducts'));
@@ -48,7 +49,20 @@ const ProductRoutes = () => {
           roles={['admin', 'operator']}
         />
       }
+    />,
+    <Route
+      key="products-category-add"
+      path="/products/category/add"
+      element={
+        <ProtectedRoute
+          element={AddCategory}
+          roles={['admin', 'operator']}
+        />
+      }
     />
+
+
+
   ];
 };
 
