@@ -264,10 +264,6 @@ const AddProducts = () => {
 export default AddProducts;
 
 const BasicPage = React.memo(({ formData, handleChange, errors, categories }) => {
-  const categoryList = categories.length > 0 ? categories : [
-    "Electronics", "Sports", "Home Decorations", "Toys", "Fashion", "Food", "Others"
-  ];
-
   return (
     <MultiPageAnimate>
       <div className={styles.formContent}>
@@ -337,9 +333,13 @@ const BasicPage = React.memo(({ formData, handleChange, errors, categories }) =>
               className={`${styles.fieldInput} ${styles.selectInput} ${errors.categoryId ? styles.error : ''}`}
             >
               <option value="">Select a category</option>
-              {categoryList.map((cat, idx) => (
-                <option key={idx} value={idx + 1}>{cat}</option>
-              ))}
+              {categories && categories.length > 0 ? (
+                categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))
+              ) : (
+                <option disabled>No categories available</option>
+              )}
             </select>
             {errors.categoryId && <span className={styles.errorMsg}>{errors.categoryId}</span>}
           </div>

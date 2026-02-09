@@ -16,7 +16,8 @@ import styles from "./ViewProducts.module.css";
 import { FiPackage, FiBox, FiTrendingUp, FiMapPin, } from "react-icons/fi";
 import { deleteCategory, getCategories, updateCategory } from "../../network/api/Category";
 
-const colDefs = [
+// Column definitions for Products
+const productColDefs = [
   {
     field: "id",
     headerName: "ID",
@@ -168,6 +169,65 @@ const colDefs = [
         </IconButton>
       </Tooltip>
     ),
+  },
+];
+
+// Column definitions for Categories
+const categoryColDefs = [
+  {
+    field: "id",
+    headerName: "ID",
+    width: 50,
+    cellRenderer: (params) => (
+      <p>
+        <span className="text-blue-950">#</span>
+        <span className="font-medium">{params.value}</span>
+      </p>
+    ),
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    width: 270,
+    filter: true,
+    editable: true,
+    cellStyle: { textTransform: "capitalize" },
+  },
+  {
+    field: "description",
+    headerName: "Description",
+    editable: true,
+    cellStyle: { textTransform: "capitalize" },
+  },
+  {
+    field: "code",
+    headerName: "Code",
+    editable: true,
+  },
+  {
+    field: "parent_id",
+    headerName: "Parent Category",
+    editable: true,
+  },
+  {
+    field: "is_active",
+    headerName: "Status",
+    cellRenderer: (params) => (
+      <span
+        className={`py-1 px-3 rounded-full text-xs ${params.value
+          ? "bg-green-100 text-green-800"
+          : "bg-red-100 text-red-800"
+          }`}
+      >
+        {params.value ? "Active" : "Inactive"}
+      </span>
+    ),
+  },
+  {
+    field: "created_at",
+    headerName: "Created At",
+    valueFormatter: ({ value }) =>
+      value ? new Date(value).toLocaleDateString() : "—",
   },
 ];
 
@@ -329,10 +389,16 @@ const ViewProducts = () => {
           title="Category"
           idField="id"
           customDataFetcher={getCategories}
-          initialColDefs={colDefs}
+          initialColDefs={categoryColDefs}
           deleteHandler={deleteCategory}
           updateHandler={updateCategory}
-          transformPayload={transformToBackendFormat}
+          transformPayload={(data) => ({
+            name: data.name,
+            description: data.description,
+            code: data.code,
+            parent_id: data.parent_id,
+            is_active: Boolean(data.is_active),
+          })}
         />
       }
       {/* Products */}
@@ -341,7 +407,7 @@ const ViewProducts = () => {
           title="Products"
           idField="id"
           customDataFetcher={getProducts}
-          initialColDefs={colDefs}
+          initialColDefs={productColDefs}
           deleteHandler={deleteProduct}
           updateHandler={handleUpdateProduct}
           transformPayload={transformToBackendFormat}

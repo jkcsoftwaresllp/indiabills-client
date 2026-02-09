@@ -2,17 +2,23 @@ import serverInstance from "./api-config";
 
 export async function getCategories() {
     try {
-        // const id = 3
-        console.log("Category Api call")
-        const response = await serverInstance.get("/internal/category" )
-        console.log("category:", response.data.data.data)
-        return response.data?.data || [];
+        const response = await serverInstance.get("/internal/category");
+        return response.data?.data?.data || [];
     } catch (error) {
         console.error("Failed to fetch category:", error.response);
         return [];
     }
 }
 
+export async function createCategory(categoryData) {
+    try {
+        const response = await serverInstance.post("/internal/category", categoryData);
+        return { status: response.status, data: response.data };
+    } catch (error) {
+        console.error("Failed to create category:", error.response);
+        return { status: error.response?.status || 500, data: error.response?.data };
+    }
+}
 
 export async function deleteCategory(id) {
     try {
@@ -20,16 +26,16 @@ export async function deleteCategory(id) {
         return { status: response.status, data: response.data };
     } catch (error) {
         console.error(`Failed to delete category ${id}:`, error.response);
-        return { status: error.response?.status || 500, data: error.response.data };
+        return { status: error.response?.status || 500, data: error.response?.data };
     }
 }
 
 export async function updateCategory(id, categoryData) {
     try {
-        const response = await serverInstance.put(`/internal/category/${id}`, categoryData);
+        const response = await serverInstance.patch(`/internal/category/${id}`, categoryData);
         return { status: response.status, data: response.data };
     } catch (error) {
         console.error(`Failed to update category ${id}:`, error.response);
-        return { status: error.response?.status || 500, data: error.response.data };
+        return { status: error.response?.status || 500, data: error.response?.data };
     }
 }
