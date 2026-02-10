@@ -12,9 +12,12 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { handleFormFieldChange } from "../../utils/FormHelper";
 import { useStore } from "../../store/store";
+import { getCategories } from "../../network/api/Category";
 
 const EditProduct = () => {
   const { id } = useParams();
@@ -22,17 +25,32 @@ const EditProduct = () => {
   const [loading, setLoading] = useState(true);
   const [rateType, setRateType] = useState("salePrice");
   const { successPopup, errorPopup } = useStore();
+  const [categories, setCategories] = useState([]);
+
+  // Fetch categories on mount
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const categoriesData = await getCategories();
+      setCategories(Array.isArray(categoriesData) ? categoriesData : []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getProductById(id);
-        
+
         if (response.status !== 200 || !response.data) {
           console.error("Failed to fetch product:", response);
           return;
         }
-        
+
         const productData = response.data;
 
         const taxes = productData.taxes || {};
@@ -50,13 +68,13 @@ const EditProduct = () => {
           sgst: taxes.sgst || productData.sgst || 0,
           cess: taxes.cess || productData.cess || 0,
           barcode: productData.barcode || productData.upc,
-          upc: productData.upc
+          upc: productData.upc,
         };
 
         mappedData.salePriceWithoutTax = calculateSalePriceWithoutTax(
-           mappedData.salePrice,
-           totalTax
-         );
+          mappedData.salePrice,
+          totalTax,
+        );
 
         setData(mappedData);
       } catch (error) {
@@ -87,24 +105,24 @@ const EditProduct = () => {
       salePrice: Number(updatedData.salePrice),
       reorderLevel: Number(updatedData.reorderLevel) || 0,
       isActive: true,
-      unitOfMeasure: updatedData.unitOfMeasure || 'pieces',
+      unitOfMeasure: updatedData.unitOfMeasure || "pieces",
       maxStockLevel: Number(updatedData.maxStockLevel),
       hsn: updatedData.hsn,
       upc: updatedData.upc,
       taxes: {
         cgst: Number(updatedData.cgst) || 0,
         sgst: Number(updatedData.sgst) || 0,
-        cess: Number(updatedData.cess) || 0
+        cess: Number(updatedData.cess) || 0,
       },
-      variants: updatedData.variants || []
+      variants: updatedData.variants || [],
     };
 
     const response = await updateProduct(id, apiData);
     if (response === 200) {
-      successPopup('Product updated successfully');
+      successPopup("Product updated successfully");
       return true;
     } else {
-      errorPopup('Failed to update product');
+      errorPopup("Failed to update product");
       return false;
     }
   };
@@ -115,7 +133,7 @@ const EditProduct = () => {
 
   const calculateSalePrice = (salePriceWithoutTax, taxRate) => {
     return parseFloat(
-      (Number(salePriceWithoutTax) * (1 + Number(taxRate) / 100)).toFixed(3)
+      (Number(salePriceWithoutTax) * (1 + Number(taxRate) / 100)).toFixed(3),
     );
   };
 
@@ -132,36 +150,36 @@ const EditProduct = () => {
       (Number(data.cess) || 0);
 
     switch (rateType) {
-       case "salePriceWithoutTax":
-         setData((prevState) => ({
-           ...prevState,
-           salePrice: calculateSalePrice(
-             prevState.salePriceWithoutTax,
-             totalTax
-           ),
-         }));
-         break;
-       case "salePrice":
-         setData((prevState) => ({
-           ...prevState,
-           salePriceWithoutTax: calculateSalePriceWithoutTax(
-             Number(prevState.salePrice),
-             totalTax
-           ),
-         }));
-         break;
-       default:
-         break;
-     }
-    }, [
-     data.cgst,
-     data.sgst,
-     data.cess,
-     rateType,
-     data.salePriceWithoutTax,
-     data.salePrice,
-     data,
-    ]);
+      case "salePriceWithoutTax":
+        setData((prevState) => ({
+          ...prevState,
+          salePrice: calculateSalePrice(
+            prevState.salePriceWithoutTax,
+            totalTax,
+          ),
+        }));
+        break;
+      case "salePrice":
+        setData((prevState) => ({
+          ...prevState,
+          salePriceWithoutTax: calculateSalePriceWithoutTax(
+            Number(prevState.salePrice),
+            totalTax,
+          ),
+        }));
+        break;
+      default:
+        break;
+    }
+  }, [
+    data.cgst,
+    data.sgst,
+    data.cess,
+    rateType,
+    data.salePriceWithoutTax,
+    data.salePrice,
+    data,
+  ]);
 
   const metadata = [
     {
@@ -183,14 +201,26 @@ const EditProduct = () => {
           value={data.description}
           onChange={handleChange}
         />,
-        <InputBox
-        key="categoryId"
-        name="categoryId"
-        type="number"
-        label="Category ID"
-        value={data.categoryId}
-        onChange={handleChange}
-        />,
+        <FormControl key="categoryId" fullWidth sx={{ mb: 2 }}>
+          <FormLabel>Category</FormLabel>
+          <Select
+            name="categoryId"
+            value={data.categoryId || ""}
+            onChange={(e) =>
+              handleChange(
+                "categoryId",
+                e.target.value ? Number(e.target.value) : "",
+              )
+            }
+          >
+            <MenuItem value="">Select a category</MenuItem>
+            {categories.map((cat) => (
+              <MenuItem key={cat.id} value={cat.id}>
+                {cat.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>,
         <InputBox
           optional
           key="manufacturer"
@@ -374,10 +404,10 @@ const EditProduct = () => {
       <Typography variant="h4" gutterBottom>
         Edit Product #{id}
       </Typography>
-      <InspectData 
-        data={data} 
-        metadata={metadata} 
-        title={"products"} 
+      <InspectData
+        data={data}
+        metadata={metadata}
+        title={"products"}
         id={id}
         onSave={handleSave}
       />

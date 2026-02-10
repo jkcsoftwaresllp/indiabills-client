@@ -13,11 +13,15 @@ import { useStore } from "../../store/store";
 import { IconButton, Tooltip } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import styles from "./ViewProducts.module.css";
-import { FiPackage, FiBox, FiTrendingUp, FiMapPin, } from "react-icons/fi";
-import { deleteCategory, getCategories, updateCategory } from "../../network/api/Category";
+import { FiPackage, FiBox, FiTrendingUp, FiMapPin } from "react-icons/fi";
+import {
+  deleteCategory,
+  getCategories,
+  updateCategory,
+} from "../../network/api/Category";
 
 // Column definitions for Products
-const productColDefs = [
+const getProductColDefs = (categoryOptions = []) => [
   {
     field: "id",
     headerName: "ID",
@@ -47,6 +51,7 @@ const productColDefs = [
     field: "category_id",
     headerName: "Category",
     editable: true,
+    options: categoryOptions,
   },
   {
     field: "barcode",
@@ -138,10 +143,11 @@ const productColDefs = [
     headerName: "Status",
     cellRenderer: (params) => (
       <span
-        className={`py-1 px-3 rounded-full text-xs ${params.value
-          ? "bg-green-100 text-green-800"
-          : "bg-red-100 text-red-800"
-          }`}
+        className={`py-1 px-3 rounded-full text-xs ${
+          params.value
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
+        }`}
       >
         {params.value ? "Active" : "Inactive"}
       </span>
@@ -214,10 +220,11 @@ const categoryColDefs = [
     headerName: "Status",
     cellRenderer: (params) => (
       <span
-        className={`py-1 px-3 rounded-full text-xs ${params.value
-          ? "bg-green-100 text-green-800"
-          : "bg-red-100 text-red-800"
-          }`}
+        className={`py-1 px-3 rounded-full text-xs ${
+          params.value
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
+        }`}
       >
         {params.value ? "Active" : "Inactive"}
       </span>
@@ -235,6 +242,9 @@ const ViewProducts = () => {
   const navigate = useNavigate();
   const { successPopup, errorPopup, refreshTableSetId } = useStore();
   const [wishlistItems, setWishlistItems] = useState(new Set());
+  const [productsCount, setProductsCount] = useState(0);
+  const [categoriesCount, setCategoriesCount] = useState(0);
+  const [categoryOptions, setCategoryOptions] = useState([]);
 
   // Transform frontend data (snake_case) to backend format (camelCase)
   const transformToBackendFormat = (data) => {
@@ -269,7 +279,31 @@ const ViewProducts = () => {
   // Fetch wishlist on mount
   useEffect(() => {
     fetchWishlistItems();
+    fetchCounts();
   }, []);
+
+  const fetchCounts = async () => {
+    const productsResponse = await getProducts();
+    const categoriesResponse = await getCategories();
+    const productsList = Array.isArray(productsResponse.data)
+      ? productsResponse.data
+      : Array.isArray(productsResponse)
+        ? productsResponse
+        : [];
+    const categoriesList = Array.isArray(categoriesResponse)
+      ? categoriesResponse
+      : [];
+
+    setProductsCount(productsList.length);
+    setCategoriesCount(categoriesList.length);
+
+    // Update category options
+    const options = categoriesList.map((cat) => ({
+      value: cat.id,
+      label: cat.name,
+    }));
+    setCategoryOptions(options);
+  };
 
   const fetchWishlistItems = async () => {
     const response = await getWishlist();
@@ -314,20 +348,18 @@ const ViewProducts = () => {
     return await updateProduct(id, data);
   };
 
-  // =============================================================================================  
+  // =============================================================================================
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div className={styles.MainContainer} >
+    <div className={styles.MainContainer}>
       <div className={styles.headerSection}>
         <div>
           <h1 className={styles.pageTitle}>
             <FiPackage size={28} />
             Products Management
           </h1>
-          <p className={styles.breadcrumbNav}>
-            Products / Categories
-          </p>
+          <p className={styles.breadcrumbNav}>Products / Categories</p>
         </div>
       </div>
       {/* Stats Cards */}
@@ -337,14 +369,14 @@ const ViewProducts = () => {
             <FiBox />
           </div>
           <div className={styles.statLabel}>Products</div>
-          <h3 className={styles.statValue}>{1}</h3>
+          <h3 className={styles.statValue}>{productsCount}</h3>
         </div>
         <div className={styles.statCard}>
           <div className={styles.statIcon}>
             <FiTrendingUp />
           </div>
           <div className={styles.statLabel}>Categories</div>
-          <h3 className={styles.statValue}>{12}</h3>
+          <h3 className={styles.statValue}>{categoriesCount}</h3>
         </div>
         {/* <div className={styles.statCard}>
           <div className={styles.statIcon}>
@@ -384,7 +416,7 @@ const ViewProducts = () => {
       </div>
 
       {/* Category */}
-      {activeTab === 0 &&
+      {activeTab === 0 && (
         <ViewData
           title="Category"
           idField="id"
@@ -400,20 +432,19 @@ const ViewProducts = () => {
             is_active: Boolean(data.is_active),
           })}
         />
-      }
+      )}
       {/* Products */}
-      {activeTab === 1 &&
+      {activeTab === 1 && (
         <ViewData
           title="Products"
           idField="id"
           customDataFetcher={getProducts}
-          initialColDefs={productColDefs}
+          initialColDefs={getProductColDefs(categoryOptions)}
           deleteHandler={deleteProduct}
           updateHandler={handleUpdateProduct}
           transformPayload={transformToBackendFormat}
         />
-      }
-
+      )}
     </div>
   );
 };
