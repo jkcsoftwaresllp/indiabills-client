@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useState, useRef, useEffect } from "react";
 import { AuthContext } from "../../store/context";
 import { useStore } from "../../store/store";
+import { getUsedCategories } from "../../network/api/Category";
 import minutesImg from "../../assets/images/minutes.webp";
 import mobilesImg from "../../assets/images/mobiles.webp";
 import tvImg from "../../assets/images/tv.webp";
@@ -16,19 +17,19 @@ import furnitureImg from "../../assets/images/furniture.jpg";
 import flightImg from "../../assets/images/flight.webp";
 import groceryImg from "../../assets/images/grocery.webp";
 
-
-const categories = [
-  { id: "minutes", label: "Minutes", icon: minutesImg },
-  { id: "mobiles", label: "Mobiles", icon: mobilesImg },
-  { id: "tv", label: "TVs & Appliances", icon: tvImg },
-  { id: "electronics", label: "Electronics", icon: electronicsImg },
-  { id: "fashion", label: "Fashion", icon: fashionImg },
-  { id: "home", label: "Home & Kitchen", icon: homeImg },
-  { id: "beauty", label: "Beauty & Toys", icon: beautyImg },
-  { id: "furniture", label: "Furniture", icon: furnitureImg },
-  { id: "flight", label: "Flight Bookings", icon: flightImg },
-  { id: "grocery", label: "Grocery", icon: groceryImg },
-];
+// Fallback static categories mapping for UI display
+const categoryIconMap = {
+  "minutes": minutesImg,
+  "mobiles": mobilesImg,
+  "tv": tvImg,
+  "electronics": electronicsImg,
+  "fashion": fashionImg,
+  "home": homeImg,
+  "beauty": beautyImg,
+  "furniture": furnitureImg,
+  "flight": flightImg,
+  "grocery": groceryImg,
+};
 
 
 export default function DashboardTop({
@@ -43,7 +44,34 @@ export default function DashboardTop({
     const { user: authUser, logout } = useContext(AuthContext);
     const { customerData, cart } = useStore();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [categories, setCategories] = useState([]);
     const dropdownRef = useRef(null);
+
+    // Fetch categories that are used in products
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const usedCategories = await getUsedCategories();
+                // Map backend categories to include icons
+                const categoriesWithIcons = usedCategories.map(cat => {
+                  // Try to match icon by name (normalized)
+                  const nameLower = cat.name?.toLowerCase().replace(/\s+/g, '_') || '';
+                  const icon = categoryIconMap[cat.name?.toLowerCase()] || 
+                               categoryIconMap[nameLower] || 
+                               minutesImg;
+                  return {
+                    id: cat.id,
+                    label: cat.name,
+                    icon: icon
+                  };
+                });
+                setCategories(categoriesWithIcons);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     // Extract domain from URL
     const getDomain = () => {

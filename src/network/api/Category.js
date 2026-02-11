@@ -39,3 +39,17 @@ export async function updateCategory(id, categoryData) {
         return { status: error.response?.status || 500, data: error.response?.data };
     }
 }
+
+export async function getUsedCategories() {
+    try {
+        // Get domain from URL or use default
+        const pathParts = window.location.pathname.split('/').filter(p => p);
+        const domain = pathParts.length > 0 && pathParts[0].includes('.') ? pathParts[0] : 'indiabills';
+        
+        const response = await serverInstance.get(`/category/${domain}`);
+        return response.data?.data?.data || [];
+    } catch (error) {
+        console.error("Failed to fetch used categories:", error.response);
+        return [];
+    }
+}

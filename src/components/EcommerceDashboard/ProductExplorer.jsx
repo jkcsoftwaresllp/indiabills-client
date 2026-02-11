@@ -1,24 +1,54 @@
 import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getUsedCategories } from "../../network/api/Category";
 import styles from "./styles/ProductExplorer.module.css";
 
-const categories = [
-  { id: "minutes", label: "Minutes", icon: "🛵" },
-  { id: "mobiles", label: "Mobiles", icon: "📱" },
-  { id: "tv", label: "TVs & Appliances", icon: "📺" },
-  { id: "electronics", label: "Electronics", icon: "💻" },
-  { id: "fashion", label: "Fashion", icon: "👕" },
-  { id: "home", label: "Home & Kitchen", icon: "🏠" },
-  { id: "beauty", label: "Beauty & Toys", icon: "🧸" },
-  { id: "furniture", label: "Furniture", icon: "🛋️" },
-  { id: "flight", label: "Flight Bookings", icon: "✈️" },
-  { id: "grocery", label: "Grocery", icon: "🛒" },
-];
+// Emoji mapping for categories
+const categoryEmojiMap = {
+  "minutes": "🛵",
+  "mobiles": "📱",
+  "tv": "📺",
+  "electronics": "💻",
+  "fashion": "👕",
+  "home": "🏠",
+  "beauty": "🧸",
+  "furniture": "🛋️",
+  "flight": "✈️",
+  "grocery": "🛒",
+};
 
 export default function ProductExplorer({
   onSearch,
   activeCategory,
   onCategoryChange,
 }) {
+  const [categories, setCategories] = useState([]);
+
+  // Fetch categories that are used in products
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const usedCategories = await getUsedCategories();
+        // Map backend categories to include emojis
+        const categoriesWithEmojis = usedCategories.map(cat => {
+          // Try to match emoji by name (normalized)
+          const nameLower = cat.name?.toLowerCase().replace(/\s+/g, '_') || '';
+          const icon = categoryEmojiMap[cat.name?.toLowerCase()] || 
+                       categoryEmojiMap[nameLower] || 
+                       "📦";
+          return {
+            id: cat.id,
+            label: cat.name,
+            icon: icon
+          };
+        });
+        setCategories(categoriesWithEmojis);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
   return (
     <div className={styles.wrapper}>
       {/* Search Bar */}
@@ -42,7 +72,7 @@ export default function ProductExplorer({
             onClick={() => onCategoryChange?.(cat.id)}
           >
             <div className={styles.icon}>{cat.icon}</div>
-            <span>{cat.label}</span>
+            <span>{cat.label || cat.name}</span>
           </div>
         ))}
       </div>

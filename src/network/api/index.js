@@ -23,7 +23,7 @@ import { getPayments, getPaymentById, updatePaymentStatus, createPayment, getInv
 import { toggleWishlist, getWishlist, clearWishlist } from './wishlistApi';
 import { getSubscriptionPlans, getSubscriptionPlan, createSubscriptionOrder, verifySubscriptionPayment, getSubscriptionHistory } from './subscriptionApi';
 import { getCustomerOrders, getCustomerOrderById } from './ordersApi';
-import { getCategories, createCategory, deleteCategory, updateCategory } from './Category';
+import { getCategories, createCategory, deleteCategory, updateCategory, getUsedCategories } from './Category';
 import {
   getSalesSummaryReport,
   getSalesByProductReport,
@@ -456,6 +456,7 @@ export {
    createCategory,
    deleteCategory,
    updateCategory,
+   getUsedCategories,
    // Report APIs
    getSalesSummaryReport,
    getSalesByProductReport,
