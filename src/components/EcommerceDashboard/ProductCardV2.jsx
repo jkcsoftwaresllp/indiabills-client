@@ -1,5 +1,6 @@
 import { Heart, Star, CalendarDays, ShoppingCart } from "lucide-react";
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import QuantitySelector from "./QuantitySelector";
 import StockBadge from "./StockBadge";
 import styles from "./styles/ProductCardV2.module.css";
@@ -8,10 +9,27 @@ import { useStore } from "../../store/store";
 
 export default function ProductCardV2({ product, isWishlisted, onToggleWishlist, showQuantity, onAddToCart }) {
   const { successPopup, errorPopup, addCartItem } = useStore();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
 
+  // Extract domain from URL path
+  const getDomainFromPath = () => {
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    // Assuming domain is the last segment in /customer/dashboard/:domain
+    return pathSegments[pathSegments.length - 1] || '';
+  };
+
   const handleAddToCart = async () => {
+    // Check if user is authenticated
+    const session = localStorage.getItem("session");
+    if (!session) {
+      const domain = getDomainFromPath();
+      navigate(`/register/${domain}`);
+      return;
+    }
+
     setLoading(true);
     try {
       const result = await addToCart({ product_id: product.id, quantity });
@@ -36,13 +54,28 @@ export default function ProductCardV2({ product, isWishlisted, onToggleWishlist,
       setLoading(false);
     }
   };
+
+  const handleToggleWishlist = () => {
+    // Check if user is authenticated
+    const session = localStorage.getItem("session");
+    if (!session) {
+      const domain = getDomainFromPath();
+      navigate(`/register/${domain}`);
+      return;
+    }
+
+    // Call the original wishlist toggle handler
+    if (onToggleWishlist) {
+      onToggleWishlist(product);
+    }
+  };
   return (
     <div className={styles.card}>
       {/* Wishlist */}
       <button
         className={`${styles.wishlist} ${isWishlisted ? styles.active : ""
           }`}
-        onClick={() => onToggleWishlist && onToggleWishlist(product)}
+        onClick={handleToggleWishlist}
       >
         <Heart
           size={18}
