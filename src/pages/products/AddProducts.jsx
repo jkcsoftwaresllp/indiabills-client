@@ -1,8 +1,8 @@
-import { FiArrowLeft, FiBox, FiDollarSign, FiTag, FiAlertCircle } from 'react-icons/fi';
+import { FiArrowLeft, FiBox, FiDollarSign, FiTag, FiAlertCircle, FiImage, FiLoader } from 'react-icons/fi';
 import React, { useState, useCallback, useEffect } from "react";
 import MultiPageAnimate from "../../components/Animate/MultiPageAnimate";
 import AddForm from "../../components/FormComponent/AddForm";
-import { createProduct } from "../../network/api";
+import { createProduct, uploadProductImage } from "../../network/api";
 import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
@@ -32,13 +32,15 @@ const AddProducts = () => {
     sgst: '0',
     cess: '0',
     unitOfMeasure: 'pieces',
-    variants: []
+    variants: [],
+    imageUrl: '' // For product image
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories, setCategories] = useState([]);
   const [priceInputType, setPriceInputType] = useState(null); // null, "withoutTax", or "withTax"
   const [finalPriceType, setFinalPriceType] = useState(null); // "salePriceWithoutTax" or "saleRate"
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Load categories on component mount
   useEffect(() => {
@@ -143,6 +145,30 @@ const AddProducts = () => {
     }));
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const result = await uploadProductImage(file);
+      if (result.status === 200) {
+        setFormData((prev) => ({
+          ...prev,
+          imageUrl: result.data.imageUrl || result.data.url,
+        }));
+        successPopup("Image uploaded successfully");
+      } else {
+        errorPopup("Failed to upload image");
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      errorPopup("Error uploading image");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const submit = async () => {
     if (!validateCurrentStep(2)) {
       errorPopup("Please fix validation errors!");
@@ -175,6 +201,7 @@ const AddProducts = () => {
         unitOfMeasure: formData.unitOfMeasure || 'pieces',
         hsn: formData.hsn?.trim() || null,
         upc: formData.upc?.trim() || null,
+        imageUrl: formData.imageUrl || null,
         taxes: {
           cgst: parseFloat(formData.cgst) || 0,
           sgst: parseFloat(formData.sgst) || 0,
@@ -214,6 +241,8 @@ const AddProducts = () => {
       handleChange={handleChange}
       errors={errors}
       categories={categories}
+      onImageUpload={handleImageUpload}
+      uploadingImage={uploadingImage}
     />,
     <PricingPage
       key="pricing"
@@ -263,7 +292,7 @@ const AddProducts = () => {
 
 export default AddProducts;
 
-const BasicPage = React.memo(({ formData, handleChange, errors, categories }) => {
+const BasicPage = React.memo(({ formData, handleChange, errors, categories, onImageUpload, uploadingImage }) => {
   return (
     <MultiPageAnimate>
       <div className={styles.formContent}>
@@ -416,6 +445,62 @@ const BasicPage = React.memo(({ formData, handleChange, errors, categories }) =>
               step="0.01"
             />
             {errors.weight && <span className={styles.errorMsg}>{errors.weight}</span>}
+          </div>
+
+          {/* Product Image Section */}
+          <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <label className={styles.fieldLabel}>Product Image</label>
+            <div className={styles.imageUploadContainer} style={{
+              border: '2px dashed #ccc',
+              borderRadius: '8px',
+              padding: '20px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              backgroundColor: '#f9f9f9',
+              position: 'relative',
+              minHeight: '150px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={onImageUpload}
+                disabled={uploadingImage}
+                style={{
+                  position: 'absolute',
+                  width: '100%',
+                  height: '100%',
+                  opacity: 0,
+                  cursor: uploadingImage ? 'not-allowed' : 'pointer'
+                }}
+              />
+              {formData.imageUrl ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                  <img 
+                    src={formData.imageUrl} 
+                    alt="Product preview" 
+                    style={{ maxHeight: '120px', maxWidth: '120px', borderRadius: '4px' }}
+                  />
+                  <p style={{ color: '#666', fontSize: '12px', margin: 0 }}>Click to change image</p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                  <FiImage size={32} style={{ color: '#999' }} />
+                  {uploadingImage ? (
+                    <p style={{ color: '#666', margin: 0 }}>
+                      <FiLoader size={16} style={{ animation: 'spin 1s linear infinite', marginRight: '8px' }} />
+                      Uploading...
+                    </p>
+                  ) : (
+                    <p style={{ color: '#666', margin: 0 }}>Click or drag to upload product image</p>
+                  )}
+                </div>
+              )}
+            </div>
+            <small className={styles.fieldHint}>Recommended: JPG or PNG, max 5MB</small>
           </div>
         </div>
       </div>

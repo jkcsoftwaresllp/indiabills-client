@@ -145,27 +145,28 @@ export default function EcommerceCustomerDashboard() {
                 }
 
                 const mappedProducts = apiProducts.map(product => {
-                    // API returns snake_case, not camelCase
-                    const salePrice = parseFloat(product.sale_price) || 0;
-                    const unitMRP = parseFloat(product.unit_mrp) || salePrice;
-                    const discount = unitMRP > 0 ? Math.round(((unitMRP - salePrice) / unitMRP) * 100) : 0;
+                     // API returns snake_case, not camelCase
+                     const salePrice = parseFloat(product.sale_price) || 0;
+                     const unitMRP = parseFloat(product.unit_mrp) || salePrice;
+                     const discount = unitMRP > 0 ? Math.round(((unitMRP - salePrice) / unitMRP) * 100) : 0;
 
-                    return {
-                        id: product.id,
-                        name: product.name || "Unnamed Product",
-                        brand: product.manufacturer || "Unknown Brand",
-                        image: "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
-                        price: Math.round(salePrice),
-                        mrp: Math.round(unitMRP),
-                        discount: discount,
-                        rating: 4.5,
-                        reviews: 0,
-                        stock: Math.floor(batchQuantityMap[product.id] || 0),
-                        expiry: null,
-                        dimensions: product.dimensions || "N/A",
-                        weight: product.weight || 0,
-                    };
-                });
+                     return {
+                         id: product.id,
+                         name: product.name || "Unnamed Product",
+                         brand: product.manufacturer || "Unknown Brand",
+                         image: product.image_url || "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
+                         image_url: product.image_url,
+                         price: Math.round(salePrice),
+                         mrp: Math.round(unitMRP),
+                         discount: discount,
+                         rating: 4.5,
+                         reviews: 0,
+                         stock: Math.floor(batchQuantityMap[product.id] || 0),
+                         expiry: null,
+                         dimensions: product.dimensions || "N/A",
+                         weight: product.weight || 0,
+                     };
+                 });
 
                 console.log("Mapped Products:", mappedProducts);
                 setProducts(mappedProducts);

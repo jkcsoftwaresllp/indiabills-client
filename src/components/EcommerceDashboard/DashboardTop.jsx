@@ -54,9 +54,11 @@ export default function DashboardTop({
                 const usedCategories = await getUsedCategories();
                 // Map backend categories to include icons
                 const categoriesWithIcons = usedCategories.map(cat => {
-                  // Try to match icon by name (normalized)
+                  // First, use image_url from database if available
+                  // Otherwise, fall back to static icon mapping
                   const nameLower = cat.name?.toLowerCase().replace(/\s+/g, '_') || '';
-                  const icon = categoryIconMap[cat.name?.toLowerCase()] || 
+                  const icon = cat.image_url || 
+                               categoryIconMap[cat.name?.toLowerCase()] || 
                                categoryIconMap[nameLower] || 
                                minutesImg;
                   return {

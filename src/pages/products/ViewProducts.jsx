@@ -34,6 +34,22 @@ const getProductColDefs = (categoryOptions = []) => [
     ),
   },
   {
+    field: "image_url",
+    headerName: "Image",
+    width: 80,
+    cellRenderer: (params) => (
+      params.value ? (
+        <img 
+          src={params.value} 
+          alt="Product" 
+          style={{ maxHeight: '50px', maxWidth: '50px', borderRadius: '4px', objectFit: 'cover' }}
+        />
+      ) : (
+        <span style={{ color: '#999' }}>—</span>
+      )
+    ),
+  },
+  {
     field: "name",
     headerName: "Item",
     width: 270,
@@ -189,6 +205,22 @@ const categoryColDefs = [
         <span className="text-blue-950">#</span>
         <span className="font-medium">{params.value}</span>
       </p>
+    ),
+  },
+  {
+    field: "image_url",
+    headerName: "Image",
+    width: 80,
+    cellRenderer: (params) => (
+      params.value ? (
+        <img 
+          src={params.value} 
+          alt="Category" 
+          style={{ maxHeight: '50px', maxWidth: '50px', borderRadius: '4px', objectFit: 'cover' }}
+        />
+      ) : (
+        <span style={{ color: '#999' }}>—</span>
+      )
     ),
   },
   {

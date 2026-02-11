@@ -10,7 +10,7 @@ import { bulkCreateBatches, bulkCreateProducts, bulkCreateSuppliers, bulkCreateC
 import { getCustomers, getCustomerById, createCustomer, updateCustomer, deleteCustomer, getCustomerProfile, getCustomerProfileById } from './customersApi';
 import { ownerSignup, createOrganization, getOrganization, updateOrganization, getOrganizationById } from './organizationApi';
 import { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier } from './suppliersApi';
-import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from './productsApi';
+import { getProducts, getProductById, createProduct, updateProduct, deleteProduct, uploadProductImage } from './productsApi';
 import { getOffers, getOfferById, createOffer, updateOffer, deleteOffer } from './offersApi';
 import { login, switchOrganization, logout, getUserOrganizations, forgotPassword, verifyResetOtp } from './authApi';
 import { getUsers, getUserById, getUserByUsername, getUsersByRole, createUser, updateUser, deleteUser } from './userApi';
@@ -23,7 +23,7 @@ import { getPayments, getPaymentById, updatePaymentStatus, createPayment, getInv
 import { toggleWishlist, getWishlist, clearWishlist } from './wishlistApi';
 import { getSubscriptionPlans, getSubscriptionPlan, createSubscriptionOrder, verifySubscriptionPayment, getSubscriptionHistory } from './subscriptionApi';
 import { getCustomerOrders, getCustomerOrderById } from './ordersApi';
-import { getCategories, createCategory, deleteCategory, updateCategory, getUsedCategories } from './Category';
+import { getCategories, createCategory, deleteCategory, updateCategory, getUsedCategories, uploadCategoryImage } from './Category';
 import {
   getSalesSummaryReport,
   getSalesByProductReport,
@@ -395,6 +395,7 @@ export {
   createProduct,
   updateProduct,
   deleteProduct,
+  uploadProductImage,
   // Offer APIs
   getOffers,
   getOfferById,
@@ -457,6 +458,7 @@ export {
    deleteCategory,
    updateCategory,
    getUsedCategories,
+   uploadCategoryImage,
    // Report APIs
    getSalesSummaryReport,
    getSalesByProductReport,

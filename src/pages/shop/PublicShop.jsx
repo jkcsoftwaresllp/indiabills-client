@@ -50,7 +50,7 @@ const PublicShop = () => {
             description: product.description,
             manufacturer: product.manufacturer,
             currentQuantity: 0, // Public users don't see real stock
-            imageUrl: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800',
+            imageUrl: product.image_url || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800',
             unitMRP: product.unit_mrp,
             brand: product.brand,
             sku: product.sku,

@@ -44,27 +44,28 @@ function EcommerceCustomerCart() {
             }
 
             // Transform cart items to display format
-            const transformed = cartItems.map(item => {
-                const product = productMap[item.product_id];
-                const salePrice = parseFloat(product?.sale_price) || item.price_at_addition || 0;
-                const unitMRP = parseFloat(product?.unit_mrp) || salePrice;
-                const discount = unitMRP > 0 ? Math.round(((unitMRP - salePrice) / unitMRP) * 100) : 0;
+             const transformed = cartItems.map(item => {
+                 const product = productMap[item.product_id];
+                 const salePrice = parseFloat(product?.sale_price) || item.price_at_addition || 0;
+                 const unitMRP = parseFloat(product?.unit_mrp) || salePrice;
+                 const discount = unitMRP > 0 ? Math.round(((unitMRP - salePrice) / unitMRP) * 100) : 0;
 
-                return {
-                    id: `cart-${item.id}`,
-                    productId: item.product_id,
-                    name: product?.name || "Unknown Product",
-                    brand: product?.manufacturer || "Unknown Brand",
-                    image: "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
-                    price: Math.round(salePrice),
-                    mrp: Math.round(unitMRP),
-                    discount: discount,
-                    rating: 4.5,
-                    reviews: 0,
-                    stock: 100,
-                    qty: item.quantity,
-                };
-            });
+                 return {
+                     id: `cart-${item.id}`,
+                     productId: item.product_id,
+                     name: product?.name || "Unknown Product",
+                     brand: product?.manufacturer || "Unknown Brand",
+                     image: product?.image_url || "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
+                     image_url: product?.image_url,
+                     price: Math.round(salePrice),
+                     mrp: Math.round(unitMRP),
+                     discount: discount,
+                     rating: 4.5,
+                     reviews: 0,
+                     stock: 100,
+                     qty: item.quantity,
+                 };
+             });
 
             setDisplayItems(transformed);
             setLoading(false);

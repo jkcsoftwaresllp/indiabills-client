@@ -54,7 +54,7 @@ export default function ProductCardV2({ product, isWishlisted, onToggleWishlist,
 
       {/* Image */}
       <div className={styles.imageBox}>
-        <img src={product.image} alt={product.name} />
+        <img src={product.image_url || product.image || '/placeholder-product.png'} alt={product.name} />
       </div>
 
       {/* Content */}

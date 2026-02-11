@@ -1,12 +1,14 @@
 import serverInstance from './api-config';
+import { convertImageUrlsToAbsolute } from './imageUrlHelper';
 
 // Get products by domain (public API)
 export async function getProductsByDomain(domain, params = {}) {
   try {
     const response = await serverInstance.get(`/products/${domain}`, { params });
+    const data = response.data?.data || [];
     return {
       status: response.status,
-      data: response.data?.data || []
+      data: convertImageUrlsToAbsolute(data)
     };
   } catch (error) {
     console.error(`Failed to fetch products for domain ${domain}:`, error.response);
@@ -23,7 +25,7 @@ export async function getProductByDomain(domain, productId) {
     const response = await serverInstance.get(`/products/${domain}/${productId}`);
     return {
       status: response.status,
-      data: response.data
+      data: convertImageUrlsToAbsolute(response.data)
     };
   } catch (error) {
     console.error(`Failed to fetch product ${productId} for domain ${domain}:`, error.response);

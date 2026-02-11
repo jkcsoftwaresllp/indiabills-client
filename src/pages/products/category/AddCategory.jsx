@@ -1,8 +1,8 @@
-import { FiArrowLeft, FiTag, FiFileText } from 'react-icons/fi';
+import { FiArrowLeft, FiTag, FiFileText, FiImage, FiLoader } from 'react-icons/fi';
 import React, { useState, useCallback, useEffect } from "react";
 import MultiPageAnimate from "../../../components/Animate/MultiPageAnimate";
 import AddForm from "../../../components/FormComponent/AddForm";
-import { createCategory, getCategories } from "../../../network/api/Category";
+import { createCategory, getCategories, uploadCategoryImage } from "../../../network/api/Category";
 import { useStore } from "../../../store/store";
 import { useNavigate } from "react-router-dom";
 import styles from "./styles/AddCategory.module.css";
@@ -16,11 +16,13 @@ const AddCategory = () => {
     name: "",
     description: "",
     code: "",
+    imageUrl: "",
     // parent_id: "", // TODO: Enable for hierarchical categories
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // TODO: Fetch parent categories on mount - Enable for hierarchical categories
   // useEffect(() => {
@@ -68,6 +70,30 @@ const AddCategory = () => {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const result = await uploadCategoryImage(file);
+      if (result.status === 200) {
+        setFormData((prev) => ({
+          ...prev,
+          imageUrl: result.data.imageUrl || result.data.url,
+        }));
+        successPopup("Image uploaded successfully");
+      } else {
+        errorPopup("Failed to upload image");
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      errorPopup("Error uploading image");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const submit = async () => {
     if (!validateCurrentStep(1)) {
       errorPopup("Please fix validation errors!");
@@ -81,6 +107,7 @@ const AddCategory = () => {
         name: formData.name.trim(),
         description: formData.description?.trim() || null,
         code: formData.code?.trim() || null,
+        imageUrl: formData.imageUrl || null,
         // parent_id: formData.parent_id ? parseInt(formData.parent_id) : null, // TODO: Enable for hierarchical categories
       };
 
@@ -108,6 +135,8 @@ const AddCategory = () => {
       formData={formData}
       handleChange={handleChange}
       errors={errors}
+      onImageUpload={handleImageUpload}
+      uploadingImage={uploadingImage}
       // parentCategories={parentCategories} // TODO: Enable for hierarchical categories
     />,
     <DetailsPage
@@ -148,7 +177,7 @@ const AddCategory = () => {
 export default AddCategory;
 
 const BasicPage = React.memo(
-  ({ formData, handleChange, errors }) => {
+  ({ formData, handleChange, errors, onImageUpload, uploadingImage }) => {
     // parentCategories // TODO: Enable for hierarchical categories
     return (
       <MultiPageAnimate>
@@ -217,14 +246,70 @@ const BasicPage = React.memo(
               </small>
             </div>
             */}
-          </div>
-        </div>
-      </MultiPageAnimate>
-    );
-  }
-);
 
-BasicPage.displayName = "BasicPage";
+            {/* Category Image Section */}
+            <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+             <label className={styles.fieldLabel}>Category Image</label>
+             <div style={{
+               border: '2px dashed #ccc',
+               borderRadius: '8px',
+               padding: '20px',
+               textAlign: 'center',
+               cursor: 'pointer',
+               backgroundColor: '#f9f9f9',
+               position: 'relative',
+               minHeight: '150px',
+               display: 'flex',
+               flexDirection: 'column',
+               alignItems: 'center',
+               justifyContent: 'center'
+             }}>
+               <input
+                 type="file"
+                 accept="image/*"
+                 onChange={onImageUpload}
+                 disabled={uploadingImage}
+                 style={{
+                   position: 'absolute',
+                   width: '100%',
+                   height: '100%',
+                   opacity: 0,
+                   cursor: uploadingImage ? 'not-allowed' : 'pointer'
+                 }}
+               />
+               {formData.imageUrl ? (
+                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                   <img 
+                     src={formData.imageUrl} 
+                     alt="Category preview" 
+                     style={{ maxHeight: '120px', maxWidth: '120px', borderRadius: '4px' }}
+                   />
+                   <p style={{ color: '#666', fontSize: '12px', margin: 0 }}>Click to change image</p>
+                 </div>
+               ) : (
+                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                   <FiImage size={32} style={{ color: '#999' }} />
+                   {uploadingImage ? (
+                     <p style={{ color: '#666', margin: 0 }}>
+                       <FiLoader size={16} style={{ animation: 'spin 1s linear infinite', marginRight: '8px' }} />
+                       Uploading...
+                     </p>
+                   ) : (
+                     <p style={{ color: '#666', margin: 0 }}>Click or drag to upload category image</p>
+                   )}
+                 </div>
+               )}
+             </div>
+             <small className={styles.fieldHint}>Recommended: JPG or PNG, max 5MB</small>
+            </div>
+            </div>
+            </div>
+            </MultiPageAnimate>
+            );
+            }
+            );
+
+            BasicPage.displayName = "BasicPage";
 
 const DetailsPage = React.memo(({ formData, handleChange, errors }) => {
   return (
