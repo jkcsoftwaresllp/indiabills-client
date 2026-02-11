@@ -1,6 +1,7 @@
 import { Heart, Star, CalendarDays, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import AuthModal from "../AuthModal/AuthModal";
 import QuantitySelector from "./QuantitySelector";
 import StockBadge from "./StockBadge";
 import styles from "./styles/ProductCardV2.module.css";
@@ -13,6 +14,7 @@ export default function ProductCardV2({ product, isWishlisted, onToggleWishlist,
   const location = useLocation();
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Extract domain from URL path
   const getDomainFromPath = () => {
@@ -25,8 +27,7 @@ export default function ProductCardV2({ product, isWishlisted, onToggleWishlist,
     // Check if user is authenticated
     const session = localStorage.getItem("session");
     if (!session) {
-      const domain = getDomainFromPath();
-      navigate(`/register/${domain}`);
+      setShowAuthModal(true);
       return;
     }
 
@@ -59,8 +60,7 @@ export default function ProductCardV2({ product, isWishlisted, onToggleWishlist,
     // Check if user is authenticated
     const session = localStorage.getItem("session");
     if (!session) {
-      const domain = getDomainFromPath();
-      navigate(`/register/${domain}`);
+      setShowAuthModal(true);
       return;
     }
 
@@ -70,7 +70,15 @@ export default function ProductCardV2({ product, isWishlisted, onToggleWishlist,
     }
   };
   return (
-    <div className={styles.card}>
+    <>
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        domain={getDomainFromPath()}
+      />
+
+      <div className={styles.card}>
       {/* Wishlist */}
       <button
         className={`${styles.wishlist} ${isWishlisted ? styles.active : ""
@@ -155,6 +163,7 @@ export default function ProductCardV2({ product, isWishlisted, onToggleWishlist,
           {loading ? 'Adding...' : product.stock === 0 ? 'Out of Stock' : 'ADD TO CART'}
         </button>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

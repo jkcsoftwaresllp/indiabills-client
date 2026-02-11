@@ -1,14 +1,16 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import styles from "./styles/QuickActions.module.css";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../store/context";
+import AuthModal from "../AuthModal/AuthModal";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function QuickActions({ actions, onNavigate }) {
     const { user: authUser } = useContext(AuthContext);
     const navigate = useNavigate();
     const { domain: urlDomain } = useParams();
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     // Extract domain from URL
     const getDomain = () => {
@@ -32,8 +34,7 @@ export default function QuickActions({ actions, onNavigate }) {
 
     const handleActionClick = (route) => {
         if (!authUser) {
-            const domain = getDomain();
-            navigate(`/register/${domain}`);
+            setShowAuthModal(true);
         } else {
             // If authenticated, navigate to the route
             onNavigate(route);
@@ -41,7 +42,15 @@ export default function QuickActions({ actions, onNavigate }) {
     };
 
     return (
-        <div className={styles.grid}>
+        <>
+            {/* Auth Modal */}
+            <AuthModal 
+                isOpen={showAuthModal} 
+                onClose={() => setShowAuthModal(false)} 
+                domain={getDomain()}
+            />
+
+            <div className={styles.grid}>
             {actions.map((item, index) => (
                 <motion.div
                     key={index}
@@ -65,6 +74,7 @@ export default function QuickActions({ actions, onNavigate }) {
                     </div>
                 </motion.div>
             ))}
-        </div>
+            </div>
+        </>
     );
 }

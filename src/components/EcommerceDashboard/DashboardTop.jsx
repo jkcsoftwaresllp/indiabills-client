@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useState, useRef, useEffect } from "react";
 import { AuthContext } from "../../store/context";
 import { useStore } from "../../store/store";
+import AuthModal from "../AuthModal/AuthModal";
 import { getUsedCategories } from "../../network/api/Category";
 import minutesImg from "../../assets/images/minutes.webp";
 import mobilesImg from "../../assets/images/mobiles.webp";
@@ -44,6 +45,7 @@ export default function DashboardTop({
     const { user: authUser, logout } = useContext(AuthContext);
     const { customerData, cart } = useStore();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
     const [categories, setCategories] = useState([]);
     const dropdownRef = useRef(null);
 
@@ -108,16 +110,14 @@ export default function DashboardTop({
     }, []);
 
     const handleAuthClick = () => {
-        const domain = getDomain();
-        navigate(`/register/${domain}`);
+        setShowAuthModal(true);
     };
 
     const handleWishlistClick = () => {
         if (authUser) {
             navigate('/customer/wishlist');
         } else {
-            const domain = getDomain();
-            navigate(`/register/${domain}`);
+            setShowAuthModal(true);
         }
     };
 
@@ -125,8 +125,7 @@ export default function DashboardTop({
         if (authUser) {
             navigate('/customer/cart');
         } else {
-            const domain = getDomain();
-            navigate(`/register/${domain}`);
+            setShowAuthModal(true);
         }
     };
 
@@ -166,7 +165,15 @@ export default function DashboardTop({
     };
 
     return (
-        <section className={styles.container}>
+        <>
+            {/* Auth Modal */}
+            <AuthModal 
+                isOpen={showAuthModal} 
+                onClose={() => setShowAuthModal(false)} 
+                domain={getDomain()}
+            />
+
+            <section className={styles.container}>
             {/* HEADER */}
             <div className={styles.header}>
                 {/* LOGO */}
@@ -276,6 +283,7 @@ export default function DashboardTop({
                     ))}
                 </div>
             }
-        </section>
+            </section>
+        </>
     );
 }
