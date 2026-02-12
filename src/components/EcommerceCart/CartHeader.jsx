@@ -1,5 +1,5 @@
 import styles from "./styles/CartHeader.module.css";
-import indiaBillsLogo from "../../assets/indiaBills_logo.png";
+import indiaBillsLogo from "../../assets/IndiaBills_logo.png";
 import { ShieldCheck, Truck } from "lucide-react";
 
 export default function CartHeader({ count }) {
