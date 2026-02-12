@@ -6,6 +6,7 @@ import indiaBillsLogo from '../../assets/IndiaBills_logo.png';
 import AddressSelector from './AddressSelector';
 import PaymentMethod from './PaymentMethod';
 import OrderSummary from './OrderSummary';
+import EmptyCartState from '../EcommerceCart/EmptyCartState';
 import { getCustomerAddresses } from '../../network/api/customersApi';
 import { checkoutCart } from '../../network/api/cartApi';
 import { createPayment } from '../../network/api';
@@ -182,30 +183,7 @@ export default function CheckoutPage({ cartItems = [] }) {
   }
 
   if (cartItems.length === 0) {
-    return (
-      <div className={styles.checkoutPage}>
-        <header className={styles.checkoutHeader}>
-          <div className={styles.headerLeft}>
-            <img src={indiaBillsLogo} alt="IndiaBills" className={styles.headerLogo} />
-            <div className={styles.headerTitle}>
-              <h1>Secure Checkout</h1>
-            </div>
-          </div>
-          <div className={styles.headerRight}>
-            <div className={styles.securityBadge}>
-              <Lock size={16} />
-              <span>Secure Payment</span>
-            </div>
-          </div>
-        </header>
-        <div className={styles.emptyState}>
-          <p>Your cart is empty</p>
-          <button onClick={() => navigate('/customer/cart')}>
-            Back to Cart
-          </button>
-        </div>
-      </div>
-    );
+    return <EmptyCartState />;
   }
 
   const shippingAddresses = addresses.filter(a => 
