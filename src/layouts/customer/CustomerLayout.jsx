@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { useState } from 'react';
 import { IconButton, Box } from '@mui/material';
 import { FiMenu } from 'react-icons/fi';
-import CustomerSidebar from './CustomerSidebar';
+// import CustomerSidebar from './CustomerSidebar';
 import Popup from '../../components/core/Popup';
 import NotificationPanel from '../../components/Notifications/NotificationPanel';
 import styles from '../../App.module.css';
@@ -23,13 +23,13 @@ const CustomerLayout = () => {
     <div className={styles.appWrapper}>
       {/* Mobile Header with Menu Button */}
       <Box sx={{ display: { xs: 'flex', sm: 'none' }, alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '0.75rem 1rem', backgroundColor: '#1e293b', borderBottom: '1px solid #334155' }}>
-        <IconButton 
+        <IconButton
           onClick={handleMobileMenuToggle}
           sx={{ color: '#ffffff', position: 'absolute', left: '1rem' }}
         >
           <FiMenu size={24} />
         </IconButton>
-        <img 
+        <img
           src={Organization.logo ? `${getBaseURL()}/${Organization.logo}` : logo}
           alt="Logo"
           style={{ height: '45px', objectFit: 'contain' }}
@@ -38,13 +38,12 @@ const CustomerLayout = () => {
 
       <div className={styles.layoutWrapper}>
         {/* Customer Sidebar */}
-        <div
-          className={`${styles.sidebarWrapper} ${
-            collapse ? styles.collapsed : ''
-          }`}
+        {/* <div
+          className={`${styles.sidebarWrapper} ${collapse ? styles.collapsed : ''
+            }`}
         >
           <CustomerSidebar mobileOpen={mobileMenuOpen} setMobileOpen={setMobileMenuOpen} />
-        </div>
+        </div> */}
 
         {/* Scrollable Main Content */}
         <div className={styles.contentWrapper}>

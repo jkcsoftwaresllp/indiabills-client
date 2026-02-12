@@ -296,6 +296,8 @@ const ViewData = ({
         navigate(`${currentPath}/add`);
       } else if (currentPath.startsWith("/operator/")) {
         navigate(`${currentPath}/add`);
+      } else if (title === "Category") {
+        navigate(`/products/category/add`);
       } else if (currentPath.startsWith("/products")) {
         navigate(`${currentPath}/add`);
       } else if (currentPath.startsWith("/transport")) {
@@ -383,7 +385,7 @@ const ViewData = ({
 
           <section className="flex items-center justify-center sm:justify-between gap-2 w-full sm:w-auto">
             {!disableControls && (
-              <MouseHoverPopover
+              <MouseHoverPopover 
                 triggerElement={
                   <button
                     onClick={handleQuickEdit}

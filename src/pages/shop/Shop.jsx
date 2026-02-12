@@ -91,7 +91,7 @@ const ShopPage = () => {
           manufacturer: product.manufacturer,
           // Fetch remaining quantity from batches
           currentQuantity: Math.floor(batchQuantityMap[product.id] || 0),
-          imageUrl: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800',
+          imageUrl: product.image_url || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800',
           // Fetch tax from backend, with fallback to 0
           cgst: product.cgst || (product.taxes?.cgst || 0),
           sgst: product.sgst || (product.taxes?.sgst || 0),

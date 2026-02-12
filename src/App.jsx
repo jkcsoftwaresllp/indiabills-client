@@ -84,16 +84,8 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    async function fetchData() {
-      if (session === null) {
-        // Always redirect to unified login page
-        navigate("/login");
-      }
-    }
-
-    fetchData().then();
-  }, []);
+  // Let the router handle all redirects based on protected route wrappers
+  // Don't auto-redirect here as it interferes with route matching
 
   const keyMap = {
     SHOW_POPUP: "ctrl+k",
@@ -110,16 +102,18 @@ function App() {
   };
 
   // Determine if we should show the default layout (sidebar, header, etc.)
-  // Exclude: /customer/* (customer portal), /operator/*, /manager/*, /setup, /login, /register, /organization/setup
+  // Exclude: /customer/* (customer portal), /operator/*, /manager/*, /setup, /login, /register, /register/:domain/* (public register), /organization/setup, /:domain (domain routes)
   // Include: /customers (admin customer management - note the 's' at end)
   const showDefaultLayout =
     location.pathname !== "/setup" &&
     location.pathname !== "/login" &&
     location.pathname !== "/register" &&
+    !location.pathname.startsWith("/register/") &&
     location.pathname !== "/organization/setup" &&
     !/^\/customer(\/|$)/.test(location.pathname) &&
     !location.pathname.startsWith("/operator") &&
-    !location.pathname.startsWith("/manager");
+    !location.pathname.startsWith("/manager") &&
+    !/^\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/|$)/.test(location.pathname);
 
   return (
     <AuthProvider>

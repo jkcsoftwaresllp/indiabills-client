@@ -38,6 +38,7 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
+  const [guestDomain, setGuestDomain] = useState("");
 
   const { successPopup, errorPopup } = useStore();
   const navigate = useNavigate();
@@ -398,6 +399,43 @@ const LoginPage = () => {
             <Link to="/register" className={styles.signupButton}>
               Create New Account
             </Link>
+
+            <div className={styles.divider}>
+              <span>Browse as guest?</span>
+            </div>
+
+            <div className={styles.guestBrowseSection}>
+              <div className={styles.inputGroup}>
+                <label htmlFor="guestDomain" className={styles.label}>
+                  Store Domain
+                </label>
+                <div className={styles.inputWrapper}>
+                  <input
+                    id="guestDomain"
+                    type="text"
+                    className={styles.input}
+                    placeholder="e.g., aetherlabs.io"
+                    value={guestDomain}
+                    onChange={(e) => setGuestDomain(e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                className={styles.signupButton}
+                onClick={() => {
+                  if (!guestDomain.trim()) {
+                    errorPopup("Please enter a store domain");
+                    return;
+                  }
+                  navigate(`/${guestDomain.trim()}`);
+                }}
+                disabled={loading}
+              >
+                Browse Products
+              </button>
+            </div>
 
             <p className={styles.footerText}>
               Need help? <Link to="#" className={styles.helpLink}>Contact support</Link>

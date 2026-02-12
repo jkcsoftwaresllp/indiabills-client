@@ -235,11 +235,10 @@ const ViewInventory = () => {
       headerName: "Status",
       cellRenderer: (params) => (
         <span
-          className={`py-1 px-3 rounded-full text-xs ${
-            params.value
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
+          className={`py-1 px-3 rounded-full text-xs ${params.value
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
+            }`}
         >
           {params.value ? "Active" : "Inactive"}
         </span>
@@ -434,7 +433,7 @@ const ViewInventory = () => {
     [entries, batchNumberSearch, invoiceNumberSearch]
   );
 
-  const filteredColDefs = useMemo(() => 
+  const filteredColDefs = useMemo(() =>
     colDefs.filter((col) => selectedColumns.includes(col.field)),
     [selectedColumns]
   );
@@ -522,7 +521,7 @@ const ViewInventory = () => {
       },
     },
   ];
-
+  ///
   return (
     <PageAnimate>
       <div className={styles.pageWrapper}>
@@ -718,11 +717,10 @@ const ViewInventory = () => {
                     triggerElement={
                       <button
                         onClick={handleBatchQuickEdit}
-                        className={`transition ease-in-out p-2 w-fit bg-primary rounded-full ${
-                          selectedBatchRows.length === 0
-                            ? "text-slate-200"
-                            : "text-amber-500 -translate-y-1 shadow-lg"
-                        }`}
+                        className={`transition ease-in-out p-2 w-fit bg-primary rounded-full ${selectedBatchRows.length === 0
+                          ? "text-slate-200"
+                          : "text-amber-500 -translate-y-1 shadow-lg"
+                          }`}
                         disabled={selectedBatchRows.length === 0}
                       >
                         <FiZap size={20} />
@@ -853,9 +851,8 @@ const ViewInventory = () => {
                             ].map((check, idx) => (
                               <div
                                 key={idx}
-                                className={`${styles.checklistItem} ${
-                                  check.done ? styles.completed : styles.pending
-                                }`}
+                                className={`${styles.checklistItem} ${check.done ? styles.completed : styles.pending
+                                  }`}
                               >
                                 <div className={styles.checklistCheckbox}>
                                   {check.done && "✓"}
@@ -957,8 +954,8 @@ const ViewInventory = () => {
                     <TableCell>
                       {subBatch.manufactureDate
                         ? new Date(
-                            subBatch.manufactureDate
-                          ).toLocaleDateString()
+                          subBatch.manufactureDate
+                        ).toLocaleDateString()
                         : "-"}
                     </TableCell>
                     <TableCell>

@@ -13,7 +13,7 @@ const ViewInventoryStock = lazy(() => import('../pages/inventory/ViewInventorySt
 const AddInventoryStock = lazy(() => import('../pages/inventory/AddInventoryStock'));
 const ViewInventoryMovements = lazy(() => import('../pages/inventory/ViewInventoryMovements'));
 const AddInventoryMovement = lazy(() => import('../pages/inventory/AddInventoryMovement'));
-
+///
 const InventoryRoutes = () => {
   return [
     <Route

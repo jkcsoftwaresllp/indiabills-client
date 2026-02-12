@@ -1,14 +1,16 @@
 import serverInstance from "./api-config";
+import { getProductsByDomain, getProductByDomain, getBatchesByDomain, getBatchByDomain, registerCustomerByDomain, loginPublic } from './publicApi';
 import { getWarehouses, createWarehouse, updateWarehouse, deleteWarehouse, getWarehouseById } from './warehouseApi';
 import { getTransportPartners, createTransportPartner, updateTransportPartner, deleteTransportPartner, getTransportPartnerById } from './transportApi';
 import { getInventoryMovements, getInventoryMovementById, createInventoryMovement } from './inventoryMovementsApi';
 import { getInventoryStock, getInventoryStockById, createInventoryStock } from './inventoryStockApi';
 import { getReconciliations, getReconciliationById, createReconciliation, getReconciliationDetails, addReconciliationDetails, updateReconciliationStatus } from './reconciliationsApi';
 import { getBatches, getBatchById, createBatch, updateBatch, deleteBatch, getBatchesByWarehouse, transferBatch } from './batchesApi';
+import { bulkCreateBatches, bulkCreateProducts, bulkCreateSuppliers, bulkCreateCustomers, bulkCreateCustomerAddresses, bulkCreateTransportPartners, bulkCreateInventoryMovements, bulkCreatePromotionalOffers, bulkCreateInventoryStock, bulkCreateUsers, bulkCreateWarehouses } from './bulkUploadApi';
 import { getCustomers, getCustomerById, createCustomer, updateCustomer, deleteCustomer, getCustomerProfile, getCustomerProfileById } from './customersApi';
 import { ownerSignup, createOrganization, getOrganization, updateOrganization, getOrganizationById } from './organizationApi';
 import { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier } from './suppliersApi';
-import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from './productsApi';
+import { getProducts, getProductById, createProduct, updateProduct, deleteProduct, uploadProductImage } from './productsApi';
 import { getOffers, getOfferById, createOffer, updateOffer, deleteOffer } from './offersApi';
 import { login, switchOrganization, logout, getUserOrganizations, forgotPassword, verifyResetOtp } from './authApi';
 import { getUsers, getUserById, getUserByUsername, getUsersByRole, createUser, updateUser, deleteUser } from './userApi';
@@ -21,6 +23,7 @@ import { getPayments, getPaymentById, updatePaymentStatus, createPayment, getInv
 import { toggleWishlist, getWishlist, clearWishlist } from './wishlistApi';
 import { getSubscriptionPlans, getSubscriptionPlan, createSubscriptionOrder, verifySubscriptionPayment, getSubscriptionHistory } from './subscriptionApi';
 import { getCustomerOrders, getCustomerOrderById } from './ordersApi';
+import { getCategories, createCategory, deleteCategory, updateCategory, getUsedCategories, uploadCategoryImage } from './Category';
 import {
   getSalesSummaryReport,
   getSalesByProductReport,
@@ -294,6 +297,13 @@ async function fetchLogo() {
 }
 
 export {
+  // Public APIs
+  getProductsByDomain,
+  getProductByDomain,
+  getBatchesByDomain,
+  getBatchByDomain,
+  registerCustomerByDomain,
+  loginPublic,
   getData,
   getRequest,
   getReport,
@@ -348,6 +358,18 @@ export {
   deleteBatch,
   getBatchesByWarehouse,
   transferBatch,
+  // Bulk Upload APIs
+  bulkCreateBatches,
+  bulkCreateProducts,
+  bulkCreateSuppliers,
+  bulkCreateCustomers,
+  bulkCreateCustomerAddresses,
+  bulkCreateTransportPartners,
+  bulkCreateInventoryMovements,
+  bulkCreatePromotionalOffers,
+  bulkCreateInventoryStock,
+  bulkCreateUsers,
+  bulkCreateWarehouses,
   // Customer APIs
   getCustomers,
   getCustomerById,
@@ -373,6 +395,7 @@ export {
   createProduct,
   updateProduct,
   deleteProduct,
+  uploadProductImage,
   // Offer APIs
   getOffers,
   getOfferById,
@@ -429,6 +452,13 @@ export {
    // Order APIs
    getCustomerOrders,
    getCustomerOrderById,
+   // Category APIs
+   getCategories,
+   createCategory,
+   deleteCategory,
+   updateCategory,
+   getUsedCategories,
+   uploadCategoryImage,
    // Report APIs
    getSalesSummaryReport,
    getSalesByProductReport,

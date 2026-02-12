@@ -289,6 +289,7 @@ const CustomerProfile = () => {
     <PageAnimate>
       <div className="w-full min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         {/* Header Section */}
+        
         <div className="relative overflow-hidden px-6 pt-8 pb-12 bg-gradient-to-r from-slate-900 to-slate-800">
           <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-red-500 opacity-5 blur-3xl" />
           <div className="relative">
@@ -795,7 +796,7 @@ const CustomerProfile = () => {
                                       address.address_type
                                         .charAt(0)
                                         .toUpperCase() +
-                                        address.address_type.slice(1)}
+                                      address.address_type.slice(1)}
                                   </Typography>
                                 </div>
                                 {address.is_default && (

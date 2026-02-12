@@ -53,12 +53,13 @@ export function storeOptions(key, value) {
 }
 
 export function cacheCategories() {
-  console.info("[info] Caching category list");
-  serverInstance.get("/products/categories/").then((response) => {
-    if (response.data !== null) {
-      storeOptions("categories", response.data);
-    }
-  });
+   console.info("[info] Caching category list");
+   serverInstance.get("/internal/category").then((response) => {
+     // Backend returns { page, limit, total, totalPages, data: rows }
+     if (response.data?.data?.data) {
+       storeOptions("categories", response.data.data.data);
+     }
+   });
 }
 
 export function checkCategories() {

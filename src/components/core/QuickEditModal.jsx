@@ -1,6 +1,8 @@
-import { FiSave, FiTrash2, FiX, FiEdit3, FiAlertCircle } from "react-icons/fi";
+import { FiSave, FiTrash2, FiX, FiEdit3, FiAlertCircle, FiImage, FiLoader } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import styles from "./QuickEditModal.module.css";
+import { uploadProductImage } from "../../network/api/productsApi";
+import { uploadCategoryImage } from "../../network/api/Category";
 
 const QuickEditModal = ({
   open,
@@ -18,6 +20,7 @@ const QuickEditModal = ({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [priceInputType, setPriceInputType] = useState(null); // null, "withoutTax", or "withTax"
   const [finalPriceType, setFinalPriceType] = useState(null); // "salePriceWithoutTax" or "saleRate"
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Calculate total tax
   const totalTax =
@@ -114,6 +117,41 @@ const QuickEditModal = ({
 
   const handleCancelDelete = () => {
     setShowDeleteConfirm(false);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      let result;
+      // Determine which upload function to use based on data fields
+      if (formData.id && formData.name) {
+        // Check if it's a product or category based on available fields
+        if (formData.category_id !== undefined || formData.manufacturer !== undefined) {
+          // It's a product
+          result = await uploadProductImage(file, formData.id);
+        } else {
+          // It's a category
+          result = await uploadCategoryImage(file, formData.id);
+        }
+      } else {
+        return;
+      }
+
+      if (result.status === 200) {
+        setFormData((prev) => ({
+          ...prev,
+          image_url: result.data.imageUrl || result.data.url,
+        }));
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setSubmitError("Error uploading image");
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const editableColumns = columns.filter((col) => col.editable && col.field);
@@ -452,10 +490,65 @@ const QuickEditModal = ({
                     </>
                   )}
                 </>
-              )}
-            </div>
-          ) : (
-            <div className={styles.emptyState}>
+                )}
+
+                {/* Image Upload Section */}
+                <div className={styles.fieldGroup} style={{ gridColumn: "1/-1" }}>
+                <label className={styles.fieldLabel}>Product/Category Image</label>
+                <div style={{
+                 border: '2px dashed #ccc',
+                 borderRadius: '8px',
+                 padding: '20px',
+                 textAlign: 'center',
+                 cursor: 'pointer',
+                 backgroundColor: '#f9f9f9',
+                 position: 'relative',
+                 minHeight: '150px',
+                 display: 'flex',
+                 flexDirection: 'column',
+                 alignItems: 'center',
+                 justifyContent: 'center'
+                }}>
+                 <input
+                   type="file"
+                   accept="image/*"
+                   onChange={handleImageUpload}
+                   disabled={uploadingImage || loading}
+                   style={{
+                     position: 'absolute',
+                     width: '100%',
+                     height: '100%',
+                     opacity: 0,
+                     cursor: uploadingImage || loading ? 'not-allowed' : 'pointer'
+                   }}
+                 />
+                 {formData.image_url ? (
+                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                     <img 
+                       src={formData.image_url} 
+                       alt="Preview" 
+                       style={{ maxHeight: '120px', maxWidth: '120px', borderRadius: '4px' }}
+                     />
+                     <p style={{ color: '#666', fontSize: '12px', margin: 0 }}>Click to change image</p>
+                   </div>
+                 ) : (
+                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                     <FiImage size={32} style={{ color: '#999' }} />
+                     {uploadingImage ? (
+                       <p style={{ color: '#666', margin: 0 }}>
+                         <FiLoader size={16} style={{ animation: 'spin 1s linear infinite', marginRight: '8px' }} />
+                         Uploading...
+                       </p>
+                     ) : (
+                       <p style={{ color: '#666', margin: 0 }}>Click to upload image</p>
+                     )}
+                   </div>
+                 )}
+                </div>
+                </div>
+                </div>
+                ) : (
+                <div className={styles.emptyState}>
               <div className={styles.emptyIcon}>
                 <FiEdit3 />
               </div>

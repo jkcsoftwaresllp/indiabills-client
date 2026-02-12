@@ -7,6 +7,7 @@ import SpinnerFullPage from '../pages/more/spinner';
 // Route Components
 import AuthRoutes from './authRoutes';
 import SetupRoutes from './setupRoutes';
+import AdminRoutes from './adminRoutes';
 import ProductRoutes from './productRoutes';
 import CustomerManagementRoutes from './customerManagementRoutes';
 import TransportRoutes from './transportRoutes';
@@ -28,6 +29,10 @@ import SubscriptionRoutes from './subscriptionRoutes';
 
 // DASHBOARD
 import Home from '../pages/interfaces/Home';
+import EcommerceCustomerDashboard from '../pages/customer/EcommerceCustomerDashboard';
+
+// PUBLIC PAGES
+const PublicShop = lazy(() => import('../pages/shop/PublicShop'));
 
 const Routing = () => {
   const location = useLocation();
@@ -46,6 +51,9 @@ const Routing = () => {
             
             {/* SETUP ROUTES */}
             {SetupRoutes()}
+
+            {/* ADMIN ROUTES */}
+            {AdminRoutes()}
             
             {/* PRODUCT ROUTES */}
             {ProductRoutes()}
@@ -100,6 +108,10 @@ const Routing = () => {
 
              {/* MANAGER PORTAL */}
              <Route path="/manager/*" element={<ManagerRoutes />} />
+
+             {/* PUBLIC SHOP - Must be last to avoid catching other routes */}
+             {/* <Route path="/:domain" element={<PublicShop />} /> */}
+             <Route path="/:domain" element={<EcommerceCustomerDashboard />} />
           </Routes>
         </Suspense>
       </AnimatePresence>

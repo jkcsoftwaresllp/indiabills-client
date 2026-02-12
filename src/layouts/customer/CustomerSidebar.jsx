@@ -93,7 +93,7 @@ const CustomerSidebar = ({ mobileOpen = false, setMobileOpen = () => {} }) => {
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/customer/login';
+    window.location.href = '/login';
   };
 
   const handleViewOrganization = () => {

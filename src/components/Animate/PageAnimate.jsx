@@ -9,7 +9,8 @@ const PageAnimate = ({ children, nostyle }) => {
   // const {} = useStore();
 
   const giveClass =
-    "w-full min-h-full p-4 flex bg-light text-dark rounded-xl flex-col gap-8";
+    // "w-full min-h-full p-4 flex bg-light text-dark rounded-xl flex-col gap-8";
+    "w-full min-h-full flex bg-light text-dark flex-col gap-8";
 
   if (animationSettings === false) {
     return <div className={`${nostyle ? "" : giveClass}`}>{children}</div>;

@@ -1,0 +1,85 @@
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  margin-left: 24px;
+}
+
+/* IMAGE */
+.imageBox {
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  background: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageBox img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* INFO */
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brand {
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.variant {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.meta {
+  margin-top: 4px;
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* PRICE */
+.priceBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.unit {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.discount {
+  font-size: 13px;
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.final {
+  font-size: 17px;
+  font-weight: 800;
+  color: #111827;
+}

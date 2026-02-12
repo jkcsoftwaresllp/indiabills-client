@@ -12,8 +12,16 @@ import {
 import { useStore } from "../../store/store";
 import { IconButton, Tooltip } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import styles from "./ViewProducts.module.css";
+import { FiPackage, FiBox, FiTrendingUp, FiMapPin } from "react-icons/fi";
+import {
+  deleteCategory,
+  getCategories,
+  updateCategory,
+} from "../../network/api/Category";
 
-const colDefs = [
+// Column definitions for Products
+const getProductColDefs = (categoryOptions = []) => [
   {
     field: "id",
     headerName: "ID",
@@ -23,6 +31,22 @@ const colDefs = [
         <span className="text-blue-950">#</span>
         <span className="font-medium">{params.value}</span>
       </p>
+    ),
+  },
+  {
+    field: "image_url",
+    headerName: "Image",
+    width: 80,
+    cellRenderer: (params) => (
+      params.value ? (
+        <img 
+          src={params.value} 
+          alt="Product" 
+          style={{ maxHeight: '50px', maxWidth: '50px', borderRadius: '4px', objectFit: 'cover' }}
+        />
+      ) : (
+        <span style={{ color: '#999' }}>—</span>
+      )
     ),
   },
   {
@@ -43,6 +67,7 @@ const colDefs = [
     field: "category_id",
     headerName: "Category",
     editable: true,
+    options: categoryOptions,
   },
   {
     field: "barcode",
@@ -169,10 +194,89 @@ const colDefs = [
   },
 ];
 
+// Column definitions for Categories
+const categoryColDefs = [
+  {
+    field: "id",
+    headerName: "ID",
+    width: 50,
+    cellRenderer: (params) => (
+      <p>
+        <span className="text-blue-950">#</span>
+        <span className="font-medium">{params.value}</span>
+      </p>
+    ),
+  },
+  {
+    field: "image_url",
+    headerName: "Image",
+    width: 80,
+    cellRenderer: (params) => (
+      params.value ? (
+        <img 
+          src={params.value} 
+          alt="Category" 
+          style={{ maxHeight: '50px', maxWidth: '50px', borderRadius: '4px', objectFit: 'cover' }}
+        />
+      ) : (
+        <span style={{ color: '#999' }}>—</span>
+      )
+    ),
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    width: 270,
+    filter: true,
+    editable: true,
+    cellStyle: { textTransform: "capitalize" },
+  },
+  {
+    field: "description",
+    headerName: "Description",
+    editable: true,
+    cellStyle: { textTransform: "capitalize" },
+  },
+  {
+    field: "code",
+    headerName: "Code",
+    editable: true,
+  },
+  {
+    field: "parent_id",
+    headerName: "Parent Category",
+    editable: true,
+  },
+  {
+    field: "is_active",
+    headerName: "Status",
+    cellRenderer: (params) => (
+      <span
+        className={`py-1 px-3 rounded-full text-xs ${
+          params.value
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
+        }`}
+      >
+        {params.value ? "Active" : "Inactive"}
+      </span>
+    ),
+  },
+  {
+    field: "created_at",
+    headerName: "Created At",
+    valueFormatter: ({ value }) =>
+      value ? new Date(value).toLocaleDateString() : "—",
+  },
+];
+
 const ViewProducts = () => {
   const navigate = useNavigate();
   const { successPopup, errorPopup, refreshTableSetId } = useStore();
   const [wishlistItems, setWishlistItems] = useState(new Set());
+  const [productsCount, setProductsCount] = useState(0);
+  const [categoriesCount, setCategoriesCount] = useState(0);
+  const [categoryOptions, setCategoryOptions] = useState([]);
 
   // Transform frontend data (snake_case) to backend format (camelCase)
   const transformToBackendFormat = (data) => {
@@ -207,7 +311,31 @@ const ViewProducts = () => {
   // Fetch wishlist on mount
   useEffect(() => {
     fetchWishlistItems();
+    fetchCounts();
   }, []);
+
+  const fetchCounts = async () => {
+    const productsResponse = await getProducts();
+    const categoriesResponse = await getCategories();
+    const productsList = Array.isArray(productsResponse.data)
+      ? productsResponse.data
+      : Array.isArray(productsResponse)
+        ? productsResponse
+        : [];
+    const categoriesList = Array.isArray(categoriesResponse)
+      ? categoriesResponse
+      : [];
+
+    setProductsCount(productsList.length);
+    setCategoriesCount(categoriesList.length);
+
+    // Update category options
+    const options = categoriesList.map((cat) => ({
+      value: cat.id,
+      label: cat.name,
+    }));
+    setCategoryOptions(options);
+  };
 
   const fetchWishlistItems = async () => {
     const response = await getWishlist();
@@ -252,16 +380,104 @@ const ViewProducts = () => {
     return await updateProduct(id, data);
   };
 
+  // =============================================================================================
+  const [activeTab, setActiveTab] = useState(0);
+
   return (
-    <ViewData
-      title="Items"
-      idField="id"
-      customDataFetcher={getProducts}
-      initialColDefs={colDefs}
-      deleteHandler={deleteProduct}
-      updateHandler={handleUpdateProduct}
-      transformPayload={transformToBackendFormat}
-    />
+    <div className={styles.MainContainer}>
+      <div className={styles.headerSection}>
+        <div>
+          <h1 className={styles.pageTitle}>
+            <FiPackage size={28} />
+            Products Management
+          </h1>
+          <p className={styles.breadcrumbNav}>Products / Categories</p>
+        </div>
+      </div>
+      {/* Stats Cards */}
+      <div className={styles.statsContainer}>
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>
+            <FiBox />
+          </div>
+          <div className={styles.statLabel}>Products</div>
+          <h3 className={styles.statValue}>{productsCount}</h3>
+        </div>
+        <div className={styles.statCard}>
+          <div className={styles.statIcon}>
+            <FiTrendingUp />
+          </div>
+          <div className={styles.statLabel}>Categories</div>
+          <h3 className={styles.statValue}>{categoriesCount}</h3>
+        </div>
+        {/* <div className={styles.statCard}>
+          <div className={styles.statIcon}>
+            <FiMapPin />
+          </div>
+          <div className={styles.statLabel}>Warehouses</div>
+          <h3 className={styles.statValue}>{warehouses.length}</h3>
+        </div>
+        {selectedWarehouse && (
+          <div className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <FiPackage />
+            </div>
+            <div className={styles.statLabel}>Total Batches</div>
+            <h3 className={styles.statValue}>{entries.length}</h3>
+          </div>
+        )} */}
+      </div>
+      {/* Tabs */}
+      <div className={styles.tabsWrapper}>
+        <div className={styles.customTabs}>
+          <button
+            className={`${styles.tabButton} ${activeTab === 0 ? styles.active : ""}`}
+            onClick={() => setActiveTab(0)}
+          >
+            <FiPackage size={18} style={{ marginRight: "0.5rem" }} />
+            Categories
+          </button>
+          <button
+            className={`${styles.tabButton} ${activeTab === 1 ? styles.active : ""}`}
+            onClick={() => setActiveTab(1)}
+          >
+            <FiMapPin size={18} style={{ marginRight: "0.5rem" }} />
+            Products
+          </button>
+        </div>
+      </div>
+
+      {/* Category */}
+      {activeTab === 0 && (
+        <ViewData
+          title="Category"
+          idField="id"
+          customDataFetcher={getCategories}
+          initialColDefs={categoryColDefs}
+          deleteHandler={deleteCategory}
+          updateHandler={updateCategory}
+          transformPayload={(data) => ({
+            name: data.name,
+            description: data.description,
+            code: data.code,
+            parent_id: data.parent_id,
+            is_active: Boolean(data.is_active),
+          })}
+        />
+      )}
+      {/* Products */}
+      {activeTab === 1 && (
+        <ViewData
+          title="Products"
+          idField="id"
+          customDataFetcher={getProducts}
+          initialColDefs={getProductColDefs(categoryOptions)}
+          deleteHandler={deleteProduct}
+          updateHandler={handleUpdateProduct}
+          transformPayload={transformToBackendFormat}
+        />
+      )}
+    </div>
   );
 };
 
