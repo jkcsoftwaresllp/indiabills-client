@@ -87,11 +87,13 @@ const Sidebar = ({ mobileOpen = false, setMobileOpen = () => {} }) => {
     try {
       const response = await logout("ALL");
       if (response.status === 200) {
+        setLogoutDialog(false);
         authLogout();
         navigate("/login");
       }
     } catch (error) {
       console.error("Logout error:", error);
+      setLogoutDialog(false);
       authLogout();
       navigate("/login");
     }
@@ -121,6 +123,7 @@ const Sidebar = ({ mobileOpen = false, setMobileOpen = () => {} }) => {
         // Clear current session and org context
         localStorage.removeItem('session');
         localStorage.removeItem('organizationContext');
+        setLogoutDialog(false);
         navigate("/organization-selector");
       }
     } catch (error) {
@@ -141,6 +144,7 @@ const Sidebar = ({ mobileOpen = false, setMobileOpen = () => {} }) => {
       }
       localStorage.removeItem('session');
       localStorage.removeItem('organizationContext');
+      setLogoutDialog(false);
       navigate("/organization-selector");
     }
   };

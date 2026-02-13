@@ -66,11 +66,13 @@ const Header = ({ onMobileMenuToggle }) => {
     try {
       const response = await logout('ALL');
       if (response.status === 200) {
+        setLogoutDialog(false);
         authLogout();
         navigate('/login');
       }
     } catch (error) {
       console.error('Logout error:', error);
+      setLogoutDialog(false);
       authLogout();
       navigate('/login');
     }
@@ -83,10 +85,12 @@ const Header = ({ onMobileMenuToggle }) => {
         // Clear current session but keep temp session for org selection
         localStorage.removeItem('session');
         localStorage.removeItem('organizationContext');
+        setLogoutDialog(false);
         navigate('/organization-selector');
       }
     } catch (error) {
       console.error('Organization logout error:', error);
+      setLogoutDialog(false);
       navigate('/organization-selector');
     }
   };
