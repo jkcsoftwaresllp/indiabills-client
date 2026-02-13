@@ -190,7 +190,6 @@ const ViewData = ({
   };
 
   const handleQuickEdit = () => {
-    console.log("Quick Edit clicked, selected rows:", selectedRows);
     if (selectedRows.length === 0) {
       alert("Please select a row to edit");
       return;
@@ -210,8 +209,6 @@ const ViewData = ({
       const payloadToSend = transformPayload
         ? transformPayload(updatedData)
         : updatedData;
-
-      console.log("Sending update payload:", payloadToSend);
 
       let response;
       // Use updateHandler if available, otherwise fall back to updateStuff
@@ -277,7 +274,6 @@ const ViewData = ({
 
   const onSelectionChanged = (event) => {
     const selected = event.api.getSelectedRows();
-    console.log("Selection changed:", selected);
     setSelectedRows(selected);
   };
 
@@ -291,7 +287,6 @@ const ViewData = ({
       navigate("/inventory/add");
     } else {
       const currentPath = window.location.pathname;
-      console.log("Current Path:", currentPath);
       if (currentPath.startsWith("/manager/")) {
         navigate(`${currentPath}/add`);
       } else if (currentPath.startsWith("/operator/")) {

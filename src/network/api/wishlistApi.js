@@ -28,8 +28,6 @@ export async function getWishlist(search = '', page = 1, limit = 20) {
 
     const response = await serverInstance.get(`/internal/wishlist/wishlist?${params.toString()}`);
     
-    console.log('Wishlist API Response:', response.data);
-    
     // Map API response to component format
     // Backend returns data as an array directly, not an object with items property
     const items = (response.data?.data || []).map(item => ({
@@ -42,8 +40,6 @@ export async function getWishlist(search = '', page = 1, limit = 20) {
       created_at: item.created_at,
       manufacturer: item.brand || '' // Use brand field from API
     }));
-    
-    console.log('Mapped items:', items);
     
     return {
       status: response.status,

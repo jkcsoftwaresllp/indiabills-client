@@ -12,11 +12,9 @@ export async function getTransportPartners(options = {}) {
 
     const url = `/internal/transport-partners${params.toString() ? `?${params.toString()}` : ''}`;
     const response = await serverInstance.get(url);
-    console.log('Full response data:', response.data);
     let dataArray = [];
     if (Array.isArray(response.data)) {
       dataArray = response.data;
-      console.log('Response is an array:', dataArray);
     } else if (response.data.data && Array.isArray(response.data.data)) {
       dataArray = response.data.data;
     } else if (response.data && typeof response.data === 'object' && response.data.name) {

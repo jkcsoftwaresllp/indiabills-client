@@ -25,7 +25,6 @@ export function OrdersList() {
         });
 
         if (response.status === 200 && response.data) {
-          console.log("API Response:", response.data);
           // Handle both possible response structures
           let apiOrders = [];
           if (Array.isArray(response.data)) {

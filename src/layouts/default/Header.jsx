@@ -112,12 +112,9 @@ const Header = ({ onMobileMenuToggle }) => {
     setSwitchingOrg(true);
     try {
       const response = await switchOrganization(orgId);
-      console.log('[SWITCH_ORG] Response:', response);
       
       if (response.status === 200) {
          const { token, activeOrg, user, subscription } = response.data;
-         
-         console.log('[SWITCH_ORG] activeOrg:', activeOrg, 'user:', user);
          
          // Update session with new organization context
          const currentSession = getSession();
@@ -131,13 +128,11 @@ const Header = ({ onMobileMenuToggle }) => {
              subscription: subscription
            };
            
-           console.log('[SWITCH_ORG] Updating session:', updatedSession);
            setSession(updatedSession);
            
            // Update organization context
            const orgData = (user.orgs || currentSession.orgs)?.find(org => org.orgId === activeOrg.orgId);
            if (orgData) {
-             console.log('[SWITCH_ORG] Setting org context:', orgData);
              setOrganizationContext({
                id: activeOrg.orgId,
                name: orgData.name || 'Organization',
@@ -148,8 +143,7 @@ const Header = ({ onMobileMenuToggle }) => {
                subscription: subscription
              });
            }
-          
-          console.log('[SWITCH_ORG] Reloading page...');
+
           // Reload the page to refresh with new organization context
           window.location.reload();
         }

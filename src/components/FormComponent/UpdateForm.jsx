@@ -141,7 +141,6 @@ const UpdateForm = ({ title, id, metadata }) => {
                                                 </FormAnimate>
                                             );
                                         } else {
-                                            console.log(item.name);
                                             return null;
                                         }
                                     })}

@@ -78,7 +78,6 @@ files.forEach((filePath) => {
     if (content !== originalContent) {
       fs.writeFileSync(filePath, content, 'utf-8');
       const relPath = path.relative(srcDir, filePath);
-      console.log(`✓ Fixed: ${relPath} -> ${correctPath}`);
       modified++;
     }
   } catch (error) {
@@ -87,7 +86,3 @@ files.forEach((filePath) => {
     errors++;
   }
 });
-
-console.log(`\nSummary:`);
-console.log(`Files fixed: ${modified}`);
-console.log(`Errors: ${errors}`);

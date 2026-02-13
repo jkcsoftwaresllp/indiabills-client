@@ -3,8 +3,6 @@ import TextField from '@mui/material/TextField';
 
 const InputBoxStream = ({ field, value, handleChange, disabled, required, moreVisible }) => {
 
-  // console.log(field, value);
-
   const name = field.name;
   const label = field.label;
   const type = field.type;

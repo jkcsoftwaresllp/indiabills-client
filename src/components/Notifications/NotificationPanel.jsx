@@ -21,11 +21,9 @@ const NotificationPanel = () => {
   useEffect(() => {
     // Fetch existing notes when user logs in
     if (user) {
-      console.log("Fetching existing notes for user:", user);
       getNotes()
         .then((response) => {
           if (response.data && Array.isArray(response.data)) {
-            console.log("Fetched notes:", response.data);
             response.data.forEach((note) => {
               addNotification({
                 id: note.notesId || Math.random(),
@@ -43,8 +41,6 @@ const NotificationPanel = () => {
   }, [user?.id]); // Only fetch when user changes
 
   useEffect(() => {
-    console.log("NotificationPanel mounted, user:", user);
-    console.log("Socket connected:", socket.connected);
     
     const handleNewAnnouncement = (announcement) => {
       // Show announcement notification based on user's role/location
@@ -80,29 +76,20 @@ const NotificationPanel = () => {
     const handleNewNote = (note) => {
       // Show note notification if targeted to user's role or user ID
       if (!user) {
-        console.log("User not loaded yet");
         return;
       }
-      
-      console.log("Note received:", note);
-      console.log("Current user:", user);
-      console.log("targetRoles:", note.targetRoles);
-      console.log("targetUsers:", note.targetUsers);
       
       let shouldShow = false;
 
       if (note.targetRoles && Array.isArray(note.targetRoles) && note.targetRoles.includes(user.role)) {
-        console.log("Note matches user role:", user.role);
         shouldShow = true;
       }
 
       if (note.targetUsers && Array.isArray(note.targetUsers) && note.targetUsers.includes(user.id)) {
-        console.log("Note matches user id:", user.id);
         shouldShow = true;
       }
 
       if (shouldShow) {
-        console.log("Showing notification");
         addNotification({
           id: note.notesId || Math.random(),
           title: note.title,

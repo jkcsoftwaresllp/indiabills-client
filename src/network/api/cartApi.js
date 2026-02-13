@@ -57,11 +57,7 @@ export async function updateCartItem(productData) {
 // Get cart items
 export async function getCart() {
   try {
-    console.log('Fetching cart items...');
     const response = await serverInstance.get('/internal/cart/');
-    
-    console.log('Cart API Response:', response.data);
-    console.log('Cart API Status:', response.status);
     
     // Handle different response formats
     let cartData = [];
@@ -96,8 +92,6 @@ export async function getCart() {
       brand: item.brand,
       barcode: item.barcode
     }));
-    
-    console.log('Mapped cart items:', cartItems);
     
     return {
       status: response.status,

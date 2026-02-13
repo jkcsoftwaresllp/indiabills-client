@@ -145,7 +145,6 @@ files.forEach((filePath) => {
     if (wasModified) {
       fs.writeFileSync(filePath, newContent, 'utf-8');
       const relPath = path.relative(srcDir, filePath);
-      console.log(`✓ ${relPath}`);
       modified++;
     }
     processed++;
@@ -155,8 +154,3 @@ files.forEach((filePath) => {
     errors++;
   }
 });
-
-console.log(`\n Summary:`);
-console.log(`Total files scanned: ${processed}`);
-console.log(`Files modified: ${modified}`);
-console.log(`Errors: ${errors}`);

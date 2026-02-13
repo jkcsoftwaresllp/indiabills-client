@@ -16,7 +16,6 @@ const DataGrid = ({
   const onSelectionChangedCallback = useCallback(() => {
     if (gridRef.current && gridRef.current.api) {
       const selectedRows = gridRef.current.api.getSelectedRows();
-      console.log('Selected rows in DataGrid:', selectedRows);
       if (onSelectionChanged) {
         onSelectionChanged({ api: gridRef.current.api });
       }

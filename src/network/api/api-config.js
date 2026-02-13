@@ -14,7 +14,6 @@ export const _getBaseURL = () => {
       baseURL += `:${port}`;
     }
 
-    // console.log("baseURL",baseURL);
 
     if (port === "4173") {
       return "http://localhost:7980/";

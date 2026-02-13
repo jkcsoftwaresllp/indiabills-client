@@ -29,9 +29,7 @@ export async function getCustomerOrders(options = {}) {
     }
 
     const url = `/internal/customers/orders?${params}`;
-    console.log('Fetching customer orders with URL:', url, 'Options:', options);
     const response = await serverInstance.get(url);
-    console.log('Customer orders response:', response.data);
     return {
       status: response.status,
       data: response.data,
@@ -50,7 +48,6 @@ export async function getCustomerOrders(options = {}) {
 export async function getCustomerOrderById(orderId) {
   try {
     const response = await serverInstance.get(`/internal/customers/orders/${orderId}`);
-    console.log('Customer order response:', response.data);
     return {
       status: response.status,
       data: response.data,

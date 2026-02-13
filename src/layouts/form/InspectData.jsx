@@ -9,7 +9,6 @@ const InspectData = ({ data, metadata = [], url, title, id }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", data);
 
     const dataToSend = { ...data };
     // spaghetti code 101 ↴

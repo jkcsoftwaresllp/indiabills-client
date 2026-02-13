@@ -94,7 +94,6 @@ function App() {
 
   const handlers = {
     SHOW_POPUP: () => {
-      console.log("Popup shortcut triggered");
     },
     GO_HOME: () => {
       navigate("/");

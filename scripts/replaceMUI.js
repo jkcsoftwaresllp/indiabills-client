@@ -125,7 +125,6 @@ files.forEach((file) => {
 
     if (content !== originalContent) {
       fs.writeFileSync(file, content, 'utf-8');
-      console.log(`✓ Processed: ${path.relative(srcDir, file)}`);
       processedCount++;
     }
   } catch (error) {
@@ -133,7 +132,3 @@ files.forEach((file) => {
     errorCount++;
   }
 });
-
-console.log(`\n\nSummary:`);
-console.log(`Processed: ${processedCount} files`);
-console.log(`Errors: ${errorCount} files`);

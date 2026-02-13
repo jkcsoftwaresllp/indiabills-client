@@ -7,8 +7,6 @@ export default function DateInput({ label, name, value, setData, }) {
 
     const dateValue = value ? dayjs(value) : null;
 
-    console.log(dateValue);
-
     return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker

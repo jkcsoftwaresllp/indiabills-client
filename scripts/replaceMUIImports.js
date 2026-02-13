@@ -120,7 +120,6 @@ files.forEach((filePath) => {
         `from '${importPath}'`
       );
       fs.writeFileSync(filePath, finalContent, 'utf-8');
-      console.log(`✓ ${path.relative(srcDir, filePath)}`);
       modified++;
     }
   } catch (error) {
@@ -129,7 +128,3 @@ files.forEach((filePath) => {
   }
   processed++;
 });
-console.log(`\n Summary:`);
-console.log(`Total files scanned: ${processed}`);
-console.log(`Files modified: ${modified}`);
-console.log(`Errors: ${errors}`);
