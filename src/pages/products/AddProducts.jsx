@@ -7,7 +7,7 @@ import { useStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import styles from './AddProducts.module.css';
-import { getCategoryOptions } from "../../utils/cacheHelper";
+import { getCategories } from "../../network/api/Category";
 
 const AddProducts = () => {
   const { successPopup, errorPopup } = useStore();
@@ -45,8 +45,14 @@ const AddProducts = () => {
   // Load categories on component mount
   useEffect(() => {
     const loadCategories = async () => {
-      const categoryOptions = getCategoryOptions();
-      setCategories(categoryOptions);
+      try {
+        const categoryOptions = await getCategories();
+        if (Array.isArray(categoryOptions)) {
+          setCategories(categoryOptions);
+        }
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      }
     };
     loadCategories();
   }, []);

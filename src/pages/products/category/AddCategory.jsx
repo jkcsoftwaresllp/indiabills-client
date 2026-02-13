@@ -5,6 +5,7 @@ import AddForm from "../../../components/FormComponent/AddForm";
 import { createCategory, getCategories, uploadCategoryImage } from "../../../network/api/Category";
 import { useStore } from "../../../store/store";
 import { useNavigate } from "react-router-dom";
+import { cacheCategories } from "../../../utils/cacheHelper";
 import styles from "./styles/AddCategory.module.css";
 
 const AddCategory = () => {
@@ -115,6 +116,8 @@ const AddCategory = () => {
 
       if (response.status === 201 || response.status === 200) {
         successPopup("Category created successfully!");
+        // Refresh category cache so it's available in AddProducts dropdown
+        cacheCategories();
         setTimeout(() => navigate("/products"), 500);
       } else {
         errorPopup(response.data?.message || "Failed to create category");
