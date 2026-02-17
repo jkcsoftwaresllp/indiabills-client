@@ -154,7 +154,9 @@ export default function EcommerceCustomerDashboard() {
                         id: product.id,
                         name: product.name || "Unnamed Product",
                         brand: product.manufacturer || "Unknown Brand",
-                        image: "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
+
+                        image: product.image_url || "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800",
+                        image_url: product.image_url,
                         price: Math.round(salePrice),
                         mrp: Math.round(unitMRP),
                         discount: discount,
@@ -209,7 +211,7 @@ export default function EcommerceCustomerDashboard() {
                         <p>Loading products...</p>
                     </div>
                 ) : products.length > 0 ? (
-                    <ProductGrid 
+                    <ProductGrid
                         products={products}
                         onToggleWishlist={handleToggleWishlist}
                         onAddToCart={handleAddToCart}
