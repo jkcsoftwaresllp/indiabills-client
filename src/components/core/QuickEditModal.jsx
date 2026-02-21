@@ -40,14 +40,32 @@ const QuickEditModal = ({
 
   useEffect(() => {
     if (data) {
-      setFormData({ ...data });
+      // Calculate total tax from the incoming data
+      const totalTax =
+        (parseFloat(data.cgst) || 0) +
+        (parseFloat(data.sgst) || 0) +
+        (parseFloat(data.cess) || 0);
+
+      // Calculate sale price without tax from the current sale_price
+      const salePriceWithoutTax = data.sale_price 
+        ? parseFloat((data.sale_price / (1 + totalTax / 100)).toFixed(2))
+        : 0;
+
+      // Initialize form data with fresh data and calculated fields
+      const freshFormData = {
+        ...data,
+        salePriceWithoutTax,
+        saleRate: parseFloat(data.sale_price),
+      };
+
+      setFormData(freshFormData);
       setErrors({});
       setSubmitError("");
-      // Auto-detect price input type based on existing data
+      
+      // Set price input type and final price type
       if (data.sale_price) {
-        // If sale_price exists, assume it's "withoutTax" by default
-        setPriceInputType("withoutTax");
-        setFinalPriceType("salePriceWithoutTax");
+        setPriceInputType("withTax");
+        setFinalPriceType("saleRate");
       }
     }
     }, [data, open]);
