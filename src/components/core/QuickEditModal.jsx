@@ -91,6 +91,10 @@ const QuickEditModal = ({
         }
       }
 
+      // Clean up temporary fields added by price calculation
+      delete dataToSave.salePriceWithoutTax;
+      delete dataToSave.saleRate;
+
       await onSave(dataToSave);
     } catch (error) {
       setSubmitError(error.message || "Failed to save changes");
@@ -459,9 +463,9 @@ const QuickEditModal = ({
                             <input
                               type="radio"
                               name="finalPriceType"
-                              value="purchasePriceWithoutTax"
+                              value="salePriceWithoutTax"
                               checked={
-                                finalPriceType === "purchasePriceWithoutTax"
+                                finalPriceType === "salePriceWithoutTax"
                               }
                               onChange={(e) =>
                                 setFinalPriceType(e.target.value)
@@ -475,8 +479,8 @@ const QuickEditModal = ({
                             <input
                               type="radio"
                               name="finalPriceType"
-                              value="purchaseRate"
-                              checked={finalPriceType === "purchaseRate"}
+                              value="saleRate"
+                              checked={finalPriceType === "saleRate"}
                               onChange={(e) =>
                                 setFinalPriceType(e.target.value)
                               }
