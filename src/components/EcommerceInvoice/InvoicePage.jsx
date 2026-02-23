@@ -1,91 +1,141 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import InvoiceHeader from "./InvoiceHeader";
 import InvoiceItemCard from "./InvoiceItemCard";
 import InvoicePriceDetails from "./InvoicePriceDetails";
 import styles from "./styles/InvoicePage.module.css";
+import { getInvoice } from "../../network/api";
 
 export default function InvoicePage() {
-  const invoice = {
-    invoiceId: "INV-2026-0042",
-    date: "25 Jan 2026",
-    status: "PAID",
-  };
+  const { id } = useParams();
+  const [invoiceData, setInvoiceData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const items = [
-    {
-      id: 1,
-      brand: "Apple",
-      name: "iPhone 15 Pro Max",
-      variant: "256 GB • Natural Titanium",
-      sku: "APL-IP15PM-256",
-      category: "Smartphones",
-      price: 134999,
-      qty: 1,
-      discount: 5000,
+  useEffect(() => {
+    const fetchInvoice = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        if (!id) {
+          setError('Invoice ID is required');
+          return;
+        }
+
+        const response = await getInvoice(id);
+        
+        if (response.status === 200 && response.data?.data) {
+          setInvoiceData(response.data.data);
+        } else {
+          setError('Failed to load invoice details');
+        }
+      } catch (err) {
+        console.error('Error fetching invoice:', err);
+        setError(err.message || 'Failed to load invoice');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInvoice();
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className={styles.page}>
+        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <p>Loading invoice details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.page}>
+        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#d32f2f' }}>
+          <p>Error: {error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!invoiceData) {
+    return (
+      <div className={styles.page}>
+        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <p>No invoice data available</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { invoice, order, payment } = invoiceData;
+
+  // Transform items for display
+  const items = order?.items?.map((item, index) => {
+    // Use total_without_tax if available (already multiplied by qty), otherwise calculate
+    const totalPrice = item.total_without_tax || (item.sale_price * item.quantity);
+    return {
+      id: item.order_item_id || index,
+      brand: "Unknown",
+      name: item.product_name || "Product",
+      variant: item.variant || "N/A",
+      sku: item.sku || "N/A",
+      category: "Product",
+      price: item.sale_price || 0,
+      qty: item.quantity || 1,
+      discount: item.discount || 0,
+      cgst: item.cgst || 0,
+      sgst: item.sgst || 0,
+      cess: item.cess || 0,
       returnEligible: true,
-      image:
-        "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcS3nC2qKUux8jHgT56FG6XmqIAHdyBUoqUr14lWt4FYNbOAgtqNgXwSXeZoRyrxMV6Nusxcn1G-z9oErJjcPPeoatnJe3UpGvYuHbL74P0TXPnnWSzFPSRGQ9HW08YTYm8r5LcQIh4&usqp=CAc",
-    },
-    {
-      id: 2,
-      brand: "Samsung",
-      name: "Galaxy S24 Ultra",
-      variant: "512 GB • Titanium Gray",
-      sku: "SMS-S24U-512",
-      category: "Smartphones",
-      price: 129999,
-      qty: 1,
-      discount: 3000,
-      returnEligible: true,
-      image:
-        "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTZB7hHkMFCZ5coN1nuoJmU-580Gn6lhxt_EBSre_pGyxz3oan_K10qXJ_mch-rF3pW3fUA8l-Qmo22n7deN6pLISmt_2OsSZVP5SIVCBWsjRrbmrVa-JHs&usqp=CAc",
-    },
-    {
-      id: 3,
-      brand: "Apple",
-      name: "AirPods Pro (2nd Generation)",
-      variant: "USB-C Charging Case",
-      sku: "APL-APP2-USBC",
-      category: "Accessories",
-      price: 24999,
-      qty: 1,
-      discount: 2000,
-      returnEligible: false,
-      image:
-        "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcQoQYnNP5v1N4GW4ZdvvkOFfMLGElwC3yrlkxnCiKUKRyo_tGr7QK5YOMuLp8CvAaSGyGVUPWJ0GcnQJLK_5wxTPHP3qYTu32dvSY3FU-BDtVXWKNCnjtuj_Dhfn_wyQwvtq2EjGg&usqp=CAc",
-    },
-  ];
+      image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect fill='%23e0e0e0' width='150' height='150'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='12'%3ENo Image%3C/text%3E%3C/svg%3E",
+    };
+  }) || [];
 
-  // 🔥 Calculations (REAL WORLD LOGIC)
-  const subtotal = items.reduce(
-    (s, i) => s + i.price * i.qty,
-    0
-  );
+  // Calculate total amount same as price details: subtotal - discount + shipping
+  const subtotalAmount = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const discountAmount = items.reduce((s, i) => s + (i.discount || 0), 0);
+  const shippingAmount = 0;
+  const totalAmount = subtotalAmount - discountAmount + shippingAmount;
 
-  const totalDiscount = items.reduce(
-    (s, i) => s + (i.discount || 0),
-    0
-  );
+  const invoiceStatus = payment?.payment_status === 'completed' || payment?.payment_status === 'paid' 
+    ? 'PAID' 
+    : 'PENDING';
 
-  const tax = Math.round((subtotal - totalDiscount) * 0.18);
-  const totalAmount = subtotal - totalDiscount + tax;
+  const invoiceDate = invoice?.invoice_date 
+    ? new Date(invoice.invoice_date).toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      })
+    : 'N/A';
 
   return (
     <div className={styles.page}>
       <InvoiceHeader
-        invoiceId={invoice.invoiceId}
-        date={invoice.date}
-        status={invoice.status}
+        invoiceId={invoice?.invoice_number || id}
+        date={invoiceDate}
+        status={invoiceStatus}
         totalAmount={totalAmount}
       />
 
       <div className={styles.body}>
         <div className={styles.items}>
-          {items.map((item) => (
-            <InvoiceItemCard key={item.id} item={item} />
-          ))}
+          {items.length > 0 ? (
+            items.map((item) => (
+              <InvoiceItemCard key={item.id} item={item} />
+            ))
+          ) : (
+            <div style={{ textAlign: 'center', padding: '20px' }}>
+              No items in this invoice
+            </div>
+          )}
         </div>
 
-        <InvoicePriceDetails items={items} />
+        <InvoicePriceDetails items={items} invoiceData={invoiceData} />
       </div>
     </div>
   );

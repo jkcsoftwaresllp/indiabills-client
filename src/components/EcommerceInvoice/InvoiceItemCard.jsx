@@ -28,17 +28,17 @@ export default function InvoiceItemCard({ item }) {
       {/* PRICE */}
       <div className={styles.priceBox}>
         <span className={styles.unit}>
-          ₹{item.price} × {item.qty}
+          ₹{(item.price || 0).toLocaleString()} × {item.qty}
         </span>
 
         {item.discount > 0 && (
           <span className={styles.discount}>
-            −₹{item.discount}
+            −₹{(item.discount || 0).toLocaleString()}
           </span>
         )}
 
         <span className={styles.final}>
-          ₹{finalPrice}
+          ₹{(finalPrice || 0).toLocaleString()}
         </span>
       </div>
     </div>

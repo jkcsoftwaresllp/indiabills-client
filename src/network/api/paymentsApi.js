@@ -94,7 +94,7 @@ export async function createPayment(paymentData) {
 // Get invoice by identifier
 export async function getInvoice(identifier) {
   try {
-    const response = await serverInstance.get(`/invoices/${identifier}`);
+    const response = await serverInstance.get(`/internal/invoices/${identifier}`);
     return {
       status: response.status,
       data: response.data,

@@ -26,7 +26,7 @@ export default function InvoiceHeader({
 
       {/* Right */}
       <div className={styles.right}>
-        <span className={styles.amount}>₹{totalAmount}</span>
+        <span className={styles.amount}>₹{totalAmount?.toLocaleString() || '0'}</span>
 
         <span
           className={`${styles.status} ${

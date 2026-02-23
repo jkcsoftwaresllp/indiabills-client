@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./styles/InvoiceOrderCard.module.css";
 
-export default function InvoiceOrderCard({ order }) {
+export default function InvoiceOrderCard({ order, invoiceId, paymentId }) {
   const navigate = useNavigate();
   const isPaid = order.status === "PAID";
+
+  // Use invoiceId if available, otherwise use order ID
+  const navId = invoiceId || paymentId || order.id;
 
   return (
     <div className={styles.card}>
@@ -35,7 +38,7 @@ export default function InvoiceOrderCard({ order }) {
 
       {/* CENTER */}
       <div className={styles.center}>
-        <span className={styles.amount}>₹{order.total}</span>
+        <span className={styles.amount}>₹{order.total.toLocaleString()}</span>
 
         <span
           className={`${styles.status} ${
@@ -56,7 +59,7 @@ export default function InvoiceOrderCard({ order }) {
           className={styles.viewBtn}
           onClick={() =>
             navigate(
-              `/customer/ecommerce-dashboard/orders-invoices/${order.id}`
+              `/customer/invoices/${navId}`
             )
           }
         >
