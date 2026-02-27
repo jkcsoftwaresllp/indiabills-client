@@ -1,6 +1,6 @@
 import { FiShoppingCart, FiPackage } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
-import ProductCard from '../../components/shop/ProductCard';
+import ProductCardV2 from '../../components/EcommerceDashboard/ProductCardV2';
 import SearchBar from '../../components/LayoutComponent/SearchBar';
 import PageAnimate from '../../components/Animate/PageAnimate';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRoutes } from '../../hooks/useRoutes';
 import { useCart } from '../../hooks/useCart';
-import { getProducts, getBatches } from '../../network/api';
+import { getProducts, getBatches, toggleWishlist } from '../../network/api';
 import { getShopAnnouncements } from '../../network/api/channelApi';
 import { socket } from '../../network/websocket';
 import styles from './Shop.module.css';
@@ -21,7 +21,7 @@ const ShopPage = () => {
   const [searchFieldByName, setSearchFieldByName] = useState('');
   const [cartItemCount, setCartItemCount] = useState(0);
 
-  const { selectedProducts, cart } = useStore();
+  const { selectedProducts, cart, customerData, updateCustomerWishlist } = useStore();
   const { getCartItemCount } = useCart();
   const { getRoute } = useRoutes();
   const navigate = useNavigate();
@@ -81,27 +81,42 @@ const ShopPage = () => {
           });
         }
 
-        const mappedProducts = products.map(product => ({
-          id: product.id,
-          itemId: product.id,
-          itemName: product.name,
-          price: product.purchasePrice,
-          salePrice: product.purchasePrice,
-          description: product.description,
-          manufacturer: product.manufacturer,
-          // Fetch remaining quantity from batches
-          currentQuantity: Math.floor(batchQuantityMap[product.id] || 0),
-          imageUrl: product.image_url || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800',
-          // Fetch tax from backend, with fallback to 0
-          cgst: product.cgst || (product.taxes?.cgst || 0),
-          sgst: product.sgst || (product.taxes?.sgst || 0),
-          cess: product.cess || (product.taxes?.cess || 0),
-          hsn: product.barcode || '',
-          unitMRP: product.unitMRP,
-          dimensions: product.dimensions,
-          weight: product.weight,
-          reorderLevel: product.reorderLevel
-        }));
+        const mappedProducts = products.map(product => {
+          // API returns snake_case, use sale_price and unit_mrp
+          const salePrice = parseFloat(product.sale_price || product.purchasePrice) || 0;
+          const unitMRP = parseFloat(product.unit_mrp || product.unitMRP) || salePrice;
+          const discount = unitMRP > 0 ? Math.round(((unitMRP - salePrice) / unitMRP) * 100) : 0;
+
+          return {
+            id: product.id,
+            itemId: product.id,
+            name: product.name,
+            brand: product.manufacturer || 'Unknown Brand',
+            price: Math.round(salePrice),
+            mrp: Math.round(unitMRP),
+            discount: discount,
+            rating: 4.5,
+            reviews: 0,
+            stock: Math.floor(batchQuantityMap[product.id] || 0),
+            image_url: product.image_url || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800',
+            expiry: product.expiryDate ? new Date(product.expiryDate).toLocaleDateString() : 'No Expiry',
+            dimensions: product.dimensions || '—',
+            weight: product.weight || 0,
+            // Keep original properties for compatibility
+            itemName: product.name,
+            salePrice: salePrice,
+            description: product.description,
+            manufacturer: product.manufacturer,
+            currentQuantity: Math.floor(batchQuantityMap[product.id] || 0),
+            imageUrl: product.image_url || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800',
+            cgst: product.cgst || (product.taxes?.cgst || 0),
+            sgst: product.sgst || (product.taxes?.sgst || 0),
+            cess: product.cess || (product.taxes?.cess || 0),
+            hsn: product.barcode || '',
+            unitMRP: unitMRP,
+            reorderLevel: product.reorderLevel
+          };
+        });
         if (mappedProducts.length > 0) {
           setProducts(mappedProducts);
         }
@@ -144,6 +159,21 @@ const ShopPage = () => {
     navigate(getRoute('/cart'));
   };
 
+  const handleToggleWishlist = async (product) => {
+    const result = await toggleWishlist(product.id);
+    if (result.status === 200) {
+      const isInWishlist = customerData.wishlist.some(item => item.product_id === product.id);
+      const updatedWishlist = isInWishlist
+        ? customerData.wishlist.filter(item => item.product_id !== product.id)
+        : [...customerData.wishlist, { product_id: product.id }];
+      updateCustomerWishlist(updatedWishlist);
+    }
+  };
+
+  const handleAddToCart = async (product, quantity) => {
+    // This is handled by ProductCardV2 internally
+  };
+
   const renderCatalogueContent = () => {
     if (isLoading) {
       return (
@@ -184,7 +214,13 @@ const ShopPage = () => {
               exit="exit"
               layout
             >
-              <ProductCard product={product} />
+              <ProductCardV2 
+                product={product}
+                isWishlisted={customerData.wishlist.some(item => item.product_id === product.id)}
+                onToggleWishlist={handleToggleWishlist}
+                onAddToCart={handleAddToCart}
+                showQuantity={true}
+              />
             </motion.div>
           ))}
         </AnimatePresence>
