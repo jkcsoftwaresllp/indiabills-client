@@ -1,55 +1,7 @@
-// import { useEffect, useState } from "react";
-// import { useAuth } from "../../hooks/useAuth";
-// import AdminCheck from "./templates/AdminCheckout";
-// import CustomerCheckout from "./templates/CustomerCheckout"; // Ensure this path is correct
-// import { getInvoiceCount } from "../../network/api";
-// import SpinnerFullPage from "../more/spinner";
-
-// const PlaceOrder = () => {
-//   const { user } = useAuth();
-//   const [loading, setLoading] = useState(true);
-
-//   // useEffect(() => {
-//   //   getInvoiceCount().then(() => {
-//   //     setLoading(false);
-//   //   });
-//   // }, []);
-
-//   const renderContent = () => {
-//     console.log("AAAAAAAAAAAAAA User role:", user?.role);
-//     switch (user?.role) {
-//       case "admin":
-//         return <AdminCheck />;
-//       case "operator":
-//         return <AdminCheck />;
-//       case "customer":
-//         return <CustomerCheckout />;
-//       default:
-//         return <p>Unauthorized</p>;
-//     }
-//   };
-
-//   if (loading) {return (
-//     <>
-//     </>
-//   )
-// } 
-//   return (
-//     <div>
-//       {renderContent()}
-//     </div>
-//   );
-// };
-
-// export default PlaceOrder;
-
-
-
-
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import ProfessionalCheckout from "./templates/ProfessionalCheckout";
+import EcommerceCustomerCart from "../customer/EcommerceCustomerCart";
 import SpinnerFullPage from "../more/spinner";
 
 const PlaceOrder = () => {
@@ -65,7 +17,7 @@ const PlaceOrder = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (loading || !user) return <SpinnerFullPage />;
+    if (loading || !user) return <SpinnerFullPage />;
 
   // if (user.role !== "customer") {
   //   return (
@@ -77,7 +29,7 @@ const PlaceOrder = () => {
 
   return (
     <div>
-      <ProfessionalCheckout />
+      <EcommerceCustomerCart />
     </div>
   );
 };

@@ -1,11 +1,18 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./styles/EmptyCartState.module.css";
 
 export default function EmptyCartState() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleStartShopping = () => {
-    navigate('/customer');
+    // If accessed from /cart or /checkout (admin shop), go to /shop
+    // If accessed from /customer/cart or /customer/checkout, go to /customer
+    if (location.pathname === '/cart' || location.pathname === '/checkout') {
+      navigate('/shop');
+    } else {
+      navigate('/customer');
+    }
   };
 
   return (

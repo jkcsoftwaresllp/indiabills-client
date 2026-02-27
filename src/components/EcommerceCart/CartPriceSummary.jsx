@@ -1,11 +1,22 @@
 import { ShieldCheck, Tag } from "lucide-react";
 import styles from "./styles/CartPriceSummary.module.css";
 import { useCart } from "../../hooks/useCart";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function CartPriceSummary({ items }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { checkout } = useCart();
+  
+  const handleCheckout = () => {
+    // If accessed from /cart route (admin/shop), go to /checkout
+    // If accessed from /customer/cart route, go to /customer/checkout
+    if (location.pathname === '/cart') {
+      navigate('/checkout');
+    } else {
+      navigate('/customer/checkout');
+    }
+  };
   const subtotal = items.reduce(
     (sum, i) => sum + i.price * i.qty,
     0
@@ -60,7 +71,7 @@ export default function CartPriceSummary({ items }) {
         You will save ₹{savings} on this order 🎉
       </p>
 
-      <button className={styles.checkout} onClick={() => navigate('/customer/checkout')}>
+      <button className={styles.checkout} onClick={handleCheckout}>
         Checkout
       </button>
 
