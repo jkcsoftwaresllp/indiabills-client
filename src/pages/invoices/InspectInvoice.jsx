@@ -1,118 +1,177 @@
-import { TextField, Grid, Button } from '@mui/material';
-import ViewData from "../../layouts/form/ViewData";
-import { useNavigate } from "react-router-dom";
-import { useStore } from "../../store/store";
-import { deleteRow } from "../../network/api";
-import { formatDate } from "../../utils/FormHelper";
+import { useMemo, useState, useEffect } from "react";
+import InvoiceOrderCard from "../../components/EcommerceInvoice/InvoiceOrderCard";
+import styles from "../../components/EcommerceInvoice/styles/InvoiceListPage.module.css";
+import { getCustomerOrders } from "../../network/api";
 
 const ViewInvoices = () => {
-  const navigate = useNavigate();
-  const { successPopup, errorPopup, refreshTableSetId, Organization } = useStore();
+  const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
-  const colDefs = [
-    { headerName: 'ID', field: 'invoiceId', width: 50, cellRenderer: (params) => (<p><span className="text-blue-950">#</span><span className="font-medium">{params.value}</span></p>) },
-    { headerName: 'Invoice Number', field: 'invoiceNumber', valueFormatter: ({ value }) => `${Organization.initials}-${value}` },
-    { headerName: 'Invoice Date', field: 'invoiceDate', valueFormatter: ({ value }) => new Date(value).toLocaleDateString() },
-    { headerName: 'Order ID', field: 'orderId' },
-    { headerName: 'Due Date', field: 'dueDate', valueFormatter: ({ value }) => formatDate(value) },
-    { headerName: 'Payment ID', field: 'paymentId' },
-    { headerName: 'Payment Date', field: 'paymentDate', valueFormatter: ({ value }) => formatDate(value) },
-    { headerName: 'Status', field: 'status' },
-    { headerName: 'Date Added', field: 'dateAdded', valueFormatter: ({ value }) => formatDate(value) },
-    { headerName: 'Updated At', field: 'updatedAt', valueFormatter: ({ value }) => formatDate(value) },
-    { headerName: 'Payment Mode', field: 'paymentMode' },
-    { headerName: 'Online Method', field: 'onlineMethod' },
-    { headerName: 'UPI', field: 'upi' },
-    { headerName: 'Card Number', field: 'cardNumber' },
-    { headerName: 'Card Holder Name', field: 'cardHolderName' },
-    { headerName: 'Expiry Date', field: 'expiryDate', valueFormatter: ({ value }) => formatDate(value) },
-    { headerName: 'CVV', field: 'cvv' },
-    { headerName: 'Card Type', field: 'cardType' },
-    { headerName: 'Bank Name', field: 'bankName' },
-    { headerName: 'Payment Status', field: 'paymentStatus' },
-    { headerName: 'Customer ID', field: 'customerId' },
-    { headerName: 'Order Date', field: 'orderDate', valueFormatter: ({ value }) => formatDate(value) },
-    { headerName: 'Order Status', field: 'orderStatus' },
-    { headerName: 'Shipping Address', field: 'shippingAddress' },
-    { headerName: 'Total Amount', field: 'totalAmount' },
-    { headerName: 'Tax Amount', field: 'taxAmount' },
-    { headerName: 'Discount Applied', field: 'discountApplied' },
-    { headerName: 'Shipping Cost', field: 'shippingCost' },
-    { headerName: 'Shipping Date', field: 'shippingDate', valueFormatter: ({ value }) => formatDate(value) },
-    { headerName: 'Placed By User ID', field: 'placedByUserId' },
-    { headerName: 'Customer Name', field: 'customerName' },
-    { headerName: 'Items', field: 'items', cellRenderer: 'agGroupCellRenderer' },
-  ];
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
-  const menuOptions = [
-    {
-      label: "Inspect",
-      onClick: (data) => {
-        navigate(`/invoice/${data?.invoiceId}`);
-      },
-    },
-    {
-      label: "Delete",
-      onClick: (data) => {
-        deleteRow(`invoices/delete/${data?.orderId}`).then((response) => {
-          if (response === 200) {
-            successPopup("Deleted successfully");
-            refreshTableSetId(data?.invoiceId);
-            navigate("/invoices");
-          } else {
-            errorPopup("Failed to delete");
-          }
-        });
+  const fetchOrders = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await getCustomerOrders();
+
+      // Handle response structure - data.data.data for orders array
+      const ordersList = response.data?.data?.data || response.data?.data || [];
+
+      if (response.status === 200 && Array.isArray(ordersList)) {
+        // Transform backend orders to card format
+        const transformedOrders = ordersList.map((order) => ({
+          id: order.id,
+          invoiceId: order.invoice_id,
+          paymentId: order.payment_id,
+          date: order.order_date
+            ? new Date(order.order_date).toLocaleDateString("en-IN", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })
+            : "N/A",
+          itemsCount: order.order_items_count || 0,
+          total: parseFloat(order.total_amount) || 0,
+          status: order.payment_status === "paid" ? "PAID" : "PENDING",
+          paymentMethod: order.payment_method || "N/A",
+          orderStatus: order.order_status,
+        }));
+
+        setOrders(transformedOrders);
+      } else {
+        setError("Failed to load orders");
       }
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setError(err.message || "Failed to load orders");
+    } finally {
+      setIsLoading(false);
     }
-  ];
-
-  // Get invoices from localStorage
-  const getInvoicesData = () => {
-    const storedOrders = localStorage.getItem('customerOrders');
-    if (storedOrders) {
-      const orders = JSON.parse(storedOrders);
-      return orders.map((order, index) => ({
-        invoiceId: order.orderId,
-        invoiceNumber: order.invoiceNumber,
-        invoiceDate: order.orderDate,
-        orderId: order.orderId,
-        dueDate: order.orderDate,
-        paymentId: `PAY${order.orderId}`,
-        paymentDate: order.orderDate,
-        status: order.paymentStatus === 'paid' ? 'Paid' : 'Pending',
-        dateAdded: order.orderDate,
-        updatedAt: order.orderDate,
-        paymentMode: 'Online',
-        onlineMethod: 'UPI',
-        paymentStatus: order.paymentStatus === 'paid' ? 'Success' : 'Pending',
-        customerId: `CUST${order.orderId}`,
-        orderDate: order.orderDate,
-        orderStatus: order.orderStatus,
-        shippingAddress: '123 Street, City',
-        totalAmount: parseFloat(order.totalAmount),
-        taxAmount: parseFloat(order.totalAmount) * 0.18,
-        discountApplied: 0,
-        shippingCost: 30,
-        customerName: order.customerName,
-        items: order.items.map(item => item.itemName).join(', '),
-      }));
-    }
-    return [];
   };
 
-  const mockData = getInvoicesData();
+  /* 🔥 FILTER LOGIC */
+  const filteredOrders = useMemo(() => {
+    return orders.filter((order) => {
+      const matchSearch = (order.id?.toString() || "")
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+      const matchStatus = statusFilter === "ALL" || order.status === statusFilter;
+
+      return matchSearch && matchStatus;
+    });
+  }, [orders, search, statusFilter]);
+
+  const totalAmount = filteredOrders.reduce((sum, o) => sum + o.total, 0);
+
+  if (isLoading) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <div className={styles.headerTop}>
+            <div>
+              <h2>My Orders & Invoices</h2>
+              <p>Track, view & download your invoices</p>
+            </div>
+          </div>
+        </div>
+        <div style={{ textAlign: "center", padding: "40px 20px" }}>
+          <p>Loading your invoices...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <div className={styles.headerTop}>
+            <div>
+              <h2>My Orders & Invoices</h2>
+              <p>Track, view & download your invoices</p>
+            </div>
+          </div>
+        </div>
+        <div style={{ textAlign: "center", padding: "40px 20px", color: "#d32f2f" }}>
+          <p>Error: {error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <ViewData
-      menuOptions={menuOptions}
-      title="Invoice"
-      url="/invoices"
-      disableControls
-      initialColDefs={colDefs}
-      dateRange={true}
-      mockData={mockData} // Pass mock data here
-    />
+    <div className={styles.page}>
+      {/* 🔥 HEADER */}
+      <div className={styles.header}>
+        <div className={styles.headerTop}>
+          <div>
+            <h2>My Orders & Invoices</h2>
+            <p>Track, view & download your invoices</p>
+          </div>
+
+          <input
+            className={styles.search}
+            placeholder="Search by Invoice ID"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        <div className={styles.headerBottom}>
+          {/* FILTERS */}
+          <div className={styles.filters}>
+            {["ALL", "PAID", "PENDING"].map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`${styles.chip} ${
+                  statusFilter === s ? styles.active : ""
+                }`}
+              >
+                {s === "ALL" ? "All" : s}
+              </button>
+            ))}
+          </div>
+
+          {/* STATS */}
+          <div className={styles.stats}>
+            <div>
+              <span>Total Orders</span>
+              <strong>{filteredOrders.length}</strong>
+            </div>
+            <div>
+              <span>Total Amount</span>
+              <strong>₹{totalAmount.toLocaleString()}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* LIST */}
+      <div className={styles.list}>
+        {filteredOrders.length === 0 ? (
+          <div className={styles.empty}>
+            {orders.length === 0 ? "No invoices yet" : "No invoices found"}
+          </div>
+        ) : (
+          filteredOrders.map((order) => (
+            <InvoiceOrderCard
+              key={order.id}
+              order={order}
+              invoiceId={order.invoiceId}
+              paymentId={order.paymentId}
+            />
+          ))
+        )}
+      </div>
+    </div>
   );
 };
 

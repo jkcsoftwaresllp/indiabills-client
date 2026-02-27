@@ -67,13 +67,13 @@ const PlaceOrder = () => {
 
   if (loading || !user) return <SpinnerFullPage />;
 
-  if (user.role !== "customer") {
-    return (
-      <div className="p-4 text-center text-red-600 text-lg font-semibold">
-        Access Denied: This page is only accessible to customers.
-      </div>
-    );
-  }
+  // if (user.role !== "customer") {
+  //   return (
+  //     <div className="p-4 text-center text-red-600 text-lg font-semibold">
+  //       Access Denied: This page is only accessible to customers.
+  //     </div>
+  //   );
+  // }
 
   return (
     <div>
